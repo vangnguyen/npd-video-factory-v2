@@ -3481,3 +3481,17 @@ REGRESSIONS: related checks pass; preservation seal verifies 15 historical accep
 EXTERNAL BLOCKERS: genuine configured providers, browser/client restrictions, Owner and production acceptance remain separate from safe implementation.
 OWNER ACTION REQUIRED: none for safe work; listening/UAT stays deferred as requested.
 NEXT WAVE: continue remaining original Mode A/B UI/media/provider/Meta analytics and North Star gaps, then full A/B/C. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3 / 6 / 16 — shared Native visual properties component
+STATUS: component implemented, mock/local-real tested; full waves and North Star remain open.
+HEAD SHA: parent f9e227e162a96592b333c68390880125e2ac4efc; resulting exact HEAD is recorded in recovery/20261007/visual-properties-program-state.json after preservation seal.
+CAPABILITIES COMPLETED: shared crop/translation/scale/rotation/opacity widget; only changed fields sent; automatic crop path preserved on transform-only edit; manual crop only replaces selected path; source/audio/caption windows preserved; context/draft/uncertain-response fences; static module/CSS routing repaired.
+CAPABILITIES PARTIAL: Source graph drag/drop, effects/SFX authoring, renderer limits, whole Source editor/browser/non-developer/Owner and complete Modes A/B/A/B/C. Matrix 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED = 59 unclosed broad groups.
+TESTS: Studio 708 PASS including 14 new; Native related 25 PASS in 4 modules including 3 new static cases, 62 imported modules via HTTP. Separate static run overlaps; do not add counts. Prior sealed renderer/API/332 Native broad results were not rerun. Two actual new preview/final renderer/FullQC bundles, 4 independent PIL/FFmpeg geometry ROIs, two separate-process cold recoveries including undo/redo/history/source/render/approval fences passed.
+REAL PROVIDER TESTS: none; new ASR/TTS/provider/paid calls 0.
+MOCK TESTS: synthetic moving video/tone PCM, fixture human and DOM; Mode B saved ASR fixture. Actual shared widget and signed HTTP/SQLite/FFmpeg/Remotion/QC/restore; whole Source editor DOM/browser was not exercised.
+EVIDENCE: NATIVE_VISUAL_PROPERTIES.md; north-star/visual-properties-evidence.json; native-visual-properties-mode-a-n1, native-visual-properties-mode-b-n3; visual-properties-geometry-a-n1/b-n1; visual-properties-cold-restore-a-n1.json/b-n1.json; 33 signed controller requests; 1080x1920/30fps, A 3.3s, B canonical 3s / measured 3.051s and A/V delta 0.051s within QC.
+REGRESSIONS: related checks pass; static dependency transport regression discovered/repaired. Preservation seal checks 15 historical accepted artifacts and clean live source. No historical/accepted deletion or replacement, no rejected deletion retry. New owned fixtures cleaned after verified exports.
+EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta metric/scope content remain distinct gates.
+OWNER ACTION REQUIRED: none for safe work; listening/UAT stays deferred as requested.
+NEXT WAVE: Native Source graph drag/drop and every remaining original North Star gap. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

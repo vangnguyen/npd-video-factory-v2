@@ -28,7 +28,8 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    if args.visual_properties and not args.video_timeline:parser.error('--visual-properties requires --video-timeline')
     if out.exists() or out==REPO or REPO in out.parents:raise ValueError('Fresh external evidence directory required')
     out.mkdir(parents=True);case=NarratedMediaTracksTests();case.short_owned_root=args.video_timeline;server=manager=None
     try:
@@ -70,7 +71,7 @@ def main():
         if args.video_timeline:
             from services.windows_native.narrated_timeline_editor import view as editor_view
             durable_json(context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
-                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf})
+                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf,'visual_properties':args.visual_properties})
             run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_narrated_video_http_ui.mjs'),str(context)],capture_output=True,check=True,timeout=90)
             editor_controller=json.loads(run.stdout);durable_json(out/'video-controller.json',editor_controller)
             durable_json(out/'timeline-editor.json',editor_view(case.store,current['id'],case.workspace))
@@ -160,6 +161,7 @@ def main():
             'canonical_undo_redo_exact_snapshot':args.timeline_editor or args.video_timeline,
             'canonical_editor_history_exact_after_restore':args.timeline_editor or args.video_timeline,
             'canonical_video_render':args.video_timeline,'video_editing_controller':args.video_timeline,
+            'actual_shared_visual_properties_widget':args.visual_properties,
             'exports':{p.relative_to(out).as_posix():file_sha(p) for p in out.rglob('*') if p.is_file()}}
         durable_json(out/'evidence.json',receipt);print(json.dumps({k:v for k,v in receipt.items() if k not in {'exports','immutable_source_media'}},ensure_ascii=False))
     finally:

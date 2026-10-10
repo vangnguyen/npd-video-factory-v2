@@ -44,6 +44,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--evidence-dir', type=Path, required=True)
     parser.add_argument('--source-caption-retiming', action='store_true')
+    parser.add_argument('--visual-properties', action='store_true')
     args = parser.parse_args()
     out = args.evidence_dir.resolve()
     if out.exists() or out == REPO or REPO in out.parents:
@@ -81,6 +82,17 @@ def main():
         if args.source_caption_retiming and (controller['reopened']['imports_total']!=2 or controller['reopened']['duration_seconds']!=3.75):
             raise AssertionError('Source follow/manual/reimport path differs')
         durable_json(out / 'signed-controller.json', controller)
+        visual_controller = None
+        if args.visual_properties:
+            context_body['project'] = case.store.get(current['id'])
+            durable_json(context, context_body)
+            visual_run = subprocess.run([r'C:\Program Files\nodejs\node.exe',
+                str(REPO/'scripts/native_source_visual_properties_http_ui.mjs'),str(context)],
+                capture_output=True,timeout=90)
+            if visual_run.returncode:
+                raise AssertionError(visual_run.stderr.decode('utf-8',errors='replace')[:6000])
+            visual_controller = json.loads(visual_run.stdout)
+            durable_json(out/'visual-controller.json',visual_controller)
         server.shutdown()
         server.server_close()
         thread.join()
@@ -178,7 +190,7 @@ def main():
         manager.close()
         manager = None
         source_page = catalog(case.store, current['id'], case.workspace)
-        if args.source_caption_retiming:
+        if args.source_caption_retiming or args.visual_properties:
             from services.windows_native.auto_edit_timeline import view
             durable_json(out/'timeline-editor.json',view(case.store,current['id']))
             with case.store.transaction() as con:
@@ -218,6 +230,9 @@ def main():
             'browser_rendered': False, 'owner_UAT': False, 'real_speech_quality_accepted': False,
             'publishing_enabled': False, 'production_deployed': False,
             'complete_artifact_A_acceptance': False, 'owned_temporary_data_cleaned_after_export': True,
+            'actual_shared_visual_properties_widget': args.visual_properties,
+            'visual_widget_requests': len(visual_controller['requests']) if visual_controller else 0,
+            'whole_source_editor_DOM_exercised': False,
             'exports': {str(path.relative_to(out)).replace('\\', '/'): file_sha(path)
                 for path in out.rglob('*') if path.is_file()}}
         if args.source_caption_retiming:

@@ -39,7 +39,8 @@ def main():
             if actual_history!=history:raise AssertionError('Cold history differs')
             store.verified_render(evidence['job_id'],con)
         resolve_assets(config,before);verified=verify_physical(destination,before['document'])
-        if len(verified)!=2:raise AssertionError('Physical SRT and selected video not verified')
+        expected_sources=evidence['imports']
+        if len(verified)!=expected_sources:raise AssertionError('Physical imported source count differs')
         target=next(r for r in reversed(history) if r['canonical_timeline']['sha256']!=actual['document']['canonical_timeline']['sha256'])
         undone=restore(store,pid,actual['revision'],{'expected_version':actual['shot_timeline']['version'],'restore_revision':target['revision']})
         if undone['shot_timeline']['sha256']!=target['canonical_timeline']['sha256']:raise AssertionError('Cold undo differs')

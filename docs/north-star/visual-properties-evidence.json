@@ -1,0 +1,242 @@
+{
+  "schema_version": "north-star-native-visual-properties-evidence-v1",
+  "recorded_at": "2026-10-10T23:05:39.116446+00:00",
+  "parent_head": "f9e227e162a96592b333c68390880125e2ac4efc",
+  "master_spec_sections": [
+    39,
+    40
+  ],
+  "implementation": {
+    "same_canonical_source_for_both_modes": true,
+    "crop_translation_scale_rotation_opacity_UI": true,
+    "only_changed_properties_sent": true,
+    "transform_only_preserves_crop_path": true,
+    "manual_crop_replaces_selected_path": true,
+    "source_windows_other_tracks_preserved": true,
+    "draft_and_context_fences": true,
+    "uncertain_save_not_repeated": true,
+    "illustrative_schematic_not_decoded_frame": true,
+    "static_dependency_transport_fixed": true
+  },
+  "tests": {
+    "Studio": 708,
+    "new_Studio_included": 14,
+    "Native_related": 25,
+    "Native_modules": 4,
+    "new_Native_included": 3,
+    "static_modules_HTTP": 62,
+    "static_run_overlaps_native_related": true
+  },
+  "local_real": {
+    "A": {
+      "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1",
+      "timeline_seconds": 3.3,
+      "metrics": {
+        "duration_seconds": 3.3,
+        "width": 1080,
+        "height": 1920,
+        "fps": 30.0,
+        "av_sync_delta_seconds": 0.0,
+        "audio_clipping": false,
+        "black_frame_seconds": 0,
+        "freeze_frame_seconds": 0
+      },
+      "signed_media_controller_requests": 6,
+      "visual_controller_requests": 14,
+      "actual_shared_visual_widget": true,
+      "whole_source_editor_DOM_exercised": false,
+      "actual_narrated_timeline_controller": true,
+      "cold_restore": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-cold-restore-a-n1.json",
+        "sha256": "e16635a0dbaf13bf2f1a5836306eedb0dc7498fce661b298f9ef34401c829657",
+        "bytes": 4488
+      },
+      "independent_geometry": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-geometry-a-n1\\evidence.json",
+        "sha256": "2aa9432d42f16f59b733867e455caa7a3b953f9ed4df54dd276ccbfde4d4f20e",
+        "bytes": 2271
+      },
+      "preview_final_PCM_sha256": "daffc5f3a14a697a43f25e95ac726167beb84d1d0305708d934a36ba8ba272b6",
+      "files": {
+        "evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\evidence.json",
+          "sha256": "fad06ada5de7a9b4b2fa3ba32acd69c26df4c4e0eebec10fe55be11d43140210",
+          "bytes": 9565
+        },
+        "qc.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\qc.json",
+          "sha256": "85390c3456b9967d17e798ffd97ccfca129319f9b9fb9a60c0a22c830dae3062",
+          "bytes": 19439
+        },
+        "final.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\final.mp4",
+          "sha256": "2fe76dde6bb69b953007c0aa74e87c9402858addea9c1d3f7ce6bc4e1d43108e",
+          "bytes": 803193
+        },
+        "preview.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\preview.mp4",
+          "sha256": "2fe76dde6bb69b953007c0aa74e87c9402858addea9c1d3f7ce6bc4e1d43108e",
+          "bytes": 803193
+        },
+        "timeline.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\timeline.json",
+          "sha256": "1e8b0cec90bed22214bfad2188858bf92d7bfbd6351e8ff7ca4d9dcf4d6651c0",
+          "bytes": 6578
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\project.json",
+          "sha256": "f98e39750c84088d776b6f405bf78c61abbb3f6b7b868d8b71712f25b7276ec2",
+          "bytes": 152067
+        },
+        "backup.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-a-n1\\backup.zip",
+          "sha256": "a9e07fb93e7f88b7eefd5973fc0c4804ec5825a9cb26ff8ddd7fd9ebc16b74ac",
+          "bytes": 53537661
+        }
+      }
+    },
+    "B": {
+      "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3",
+      "timeline_seconds": 3.0,
+      "metrics": {
+        "duration_seconds": 3.051,
+        "width": 1080,
+        "height": 1920,
+        "fps": 30.0,
+        "av_sync_delta_seconds": 0.051,
+        "audio_clipping": false,
+        "black_frame_seconds": 0,
+        "freeze_frame_seconds": 0
+      },
+      "signed_media_controller_requests": 6,
+      "visual_controller_requests": 7,
+      "actual_shared_visual_widget": true,
+      "whole_source_editor_DOM_exercised": false,
+      "actual_narrated_timeline_controller": false,
+      "cold_restore": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-cold-restore-b-n1.json",
+        "sha256": "73adf6ca23a43e0aaea6a6310cd64ce76446fb1061c7fddd535df5d5e99b10e4",
+        "bytes": 4848
+      },
+      "independent_geometry": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-geometry-b-n1\\evidence.json",
+        "sha256": "a000ae3d0c65b8a8ced3e6dba9a220dbc0c9045bfc1729d48c58e83bf76665f2",
+        "bytes": 2273
+      },
+      "preview_final_PCM_sha256": "d86d0cdd338b98cb5517a3572395999c29baa3ed94ff8d85132bb69bdd1a1cb6",
+      "files": {
+        "evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\evidence.json",
+          "sha256": "8cdbd3cbd97b70fffce7e053ad71073d00e1a5da0a58abf412567199d8bd5eae",
+          "bytes": 7176
+        },
+        "qc.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\qc.json",
+          "sha256": "b8e8b6100b596596f3574259a15b2cb30b48e5aceb79cd8291256d47c7fbde62",
+          "bytes": 15455
+        },
+        "final.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\final.mp4",
+          "sha256": "ad4809b670075a7a367b91febd3c01e59805b052605e8f9c218903f390bb3db4",
+          "bytes": 748022
+        },
+        "preview.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\preview.mp4",
+          "sha256": "f95e099a2e66492e70804646882110ebbd47f28c7b2e6298d64211f7d3d3b968",
+          "bytes": 297576
+        },
+        "timeline.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\timeline.json",
+          "sha256": "b8999a60fcb5e9f9aa8a95cec2e1f31066c1907e1441ed212bd36ed70fedac85",
+          "bytes": 29745
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\project.json",
+          "sha256": "331ea371ee7c7d9dd33a9b8dd0bc436d10690dbf3acedc17cefc607803285698",
+          "bytes": 155158
+        },
+        "backup.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-visual-properties-mode-b-n3\\backup.zip",
+          "sha256": "fba45c41dea4d1acb856b80b81c102b55367b39a2ee0cadb9d96fc818e2ec51b",
+          "bytes": 18255100
+        }
+      }
+    }
+  },
+  "total_signed_controller_requests": 33,
+  "qualifications": {
+    "implemented": true,
+    "mock_tested": true,
+    "local_real_tested": true,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "provider_calls": 0,
+    "paid_calls": 0,
+    "new_ASR_or_TTS_calls": 0,
+    "fake_DOM": true,
+    "fixture_human": true,
+    "synthetic_moving_video_and_tones": true,
+    "Mode_B_saved_ASR_fixture": true,
+    "browser_rendered": false,
+    "owner_UAT": false,
+    "complete_Mode_A_acceptance": false,
+    "complete_Mode_B_acceptance": false,
+    "complete_artifact_A_acceptance": false,
+    "complete_artifact_B_acceptance": false,
+    "complete_artifact_C_acceptance": false,
+    "publishing_enabled": false
+  },
+  "remaining": [
+    "Native Source graph drag/drop and effects/SFX authoring",
+    "full Source editor/browser/non-developer/Owner acceptance at required sizes",
+    "existing renderer limits",
+    "all original broad gaps/providers/production and full A/B/C"
+  ],
+  "regression_limits": {
+    "prior_sealed_tests_not_repeated": {
+      "head": "f9e227e162a96592b333c68390880125e2ac4efc",
+      "Native_related": 332,
+      "Renderer": 40,
+      "API_related_linux": 34,
+      "API_skipped": 2
+    },
+    "actual_renderer_reused_in_both_new_media_bundles": true
+  },
+  "retention": {
+    "owned_new_fixtures_teardown_after_verified_export": true,
+    "accepted_or_historical_artifact_deleted_or_replaced": false,
+    "rejected_deletion_retried": false
+  },
+  "logs": {
+    "visual-properties-studio-regression-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-studio-regression-n2.log",
+      "sha256": "e55c011fc03d26ab434ed9a7eb9bee22980c6168d1868a6c685101d71bbe1d2c",
+      "bytes": 73098
+    },
+    "visual-properties-native-related-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-native-related-n1.log",
+      "sha256": "8b95d250c6047390ea67d079e6b016b87ac44ccb54a56d13a598b2a529f51ff8",
+      "bytes": 130
+    },
+    "visual-properties-static-http-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-static-http-n1.log",
+      "sha256": "338a98c5e26ab0c2af3054a0ecc871096aa5f735ea22fc165ce68ef01a81eeee",
+      "bytes": 106
+    },
+    "visual-properties-mode-a-render-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-mode-a-render-n1.log",
+      "sha256": "5d8370091460b8940e8d9c6040c6814419b537a16f0df2650646d56d8e2db0e9",
+      "bytes": 1613
+    },
+    "visual-properties-mode-b-render-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-mode-b-render-n3.log",
+      "sha256": "e103c2ea63f0dcc79a30731d901436e6f9361511d998340306302b5fdba08beb",
+      "bytes": 2402
+    }
+  },
+  "static_HTTP_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\visual-properties-static-http-n1.json",
+    "sha256": "ea899c25bdde953e4e59f3e18e9cd98c46cd2219df0dc47b19b59a97742ef248",
+    "bytes": 6475
+  }
+}

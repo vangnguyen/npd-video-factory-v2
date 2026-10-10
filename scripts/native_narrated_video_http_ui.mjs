@@ -18,9 +18,21 @@ const speed=await edit(source.clip_id,'set_clip_properties',{speed:2});const sho
 const duplicate=await edit(source.clip_id,'duplicate',{start:source.timeline_start+shortened.duration});const added=primary(duplicate).clips.at(-1);assert.notEqual(added.clip_id,source.clip_id);
 const reordered=await edit(added.clip_id,'reorder',{index:1});assert.equal(primary(reordered).clips[1].clip_id,added.clip_id);
 const deleted=await edit(added.clip_id,'delete');assert.equal(primary(deleted).clips.length,primary(reordered).clips.length-1);await controller.restore('undo');const undo=saved();assert.equal(undo.timeline_sha256,reordered.timeline_sha256);
-await controller.restore('redo');const redo=saved();assert.equal(redo.timeline_sha256,deleted.timeline_sha256);await controller.restore('undo');const final=saved();assert.equal(final.timeline_sha256,reordered.timeline_sha256);
+await controller.restore('redo');const redo=saved();assert.equal(redo.timeline_sha256,deleted.timeline_sha256);await controller.restore('undo');let final=saved();assert.equal(final.timeline_sha256,reordered.timeline_sha256);
+let layout=null;
+if(context.visual_properties===true){
+  const before=saved();field('clip').value=source.clip_id;field('clip').listeners.change[0]();const v=controller.visualProperties;
+  for(const [key,value] of [['crop_x',10],['crop_y',10],['crop_width',80],['crop_height',80],['x',2],['scale',110],['rotation_degrees',8],['opacity',92]]){v.controls[key].value=String(value);v.controls[key].listeners.input[0]();}
+  await v.save();const changed=saved(),actual=primary(changed).clips.find(c=>c.clip_id===source.clip_id);
+  assert.equal(changed.timeline_version,before.timeline_version+1,JSON.stringify(messages));assert.deepEqual(actual.crop,{x:.1,y:.1,width:.8,height:.8});
+  assert.deepEqual(actual.transform,{x:.02,y:0,scale:1.1,rotation_degrees:8});assert.equal(actual.opacity,.92);
+  await controller.restore('undo');const layoutUndo=saved();assert.equal(layoutUndo.timeline_sha256,before.timeline_sha256);
+  await controller.restore('redo');final=saved();assert.equal(final.timeline_sha256,changed.timeline_sha256);
+  assert.deepEqual(final.snapshot.tracks.filter(t=>t.type!=='video'),before.snapshot.tracks.filter(t=>t.type!=='video'));
+  layout={before,changed,undo:layoutUndo,redo:final,clip_id:source.clip_id,actual_shared_visual_widget:true,other_tracks_unchanged:true};
+}
 const initialVoice=initial.snapshot.tracks.filter(t=>t.type==='audio');assert.deepEqual(final.snapshot.tracks.filter(t=>t.type==='audio'),initialVoice);assert.equal(final.duration_seconds,initial.duration_seconds);
 await controller.load();const reopened=saved();assert.deepEqual(reopened,final);
 console.log(JSON.stringify({schema_version:'native-narrated-video-controller-proof-v1',fixture_human:true,fake_DOM:true,actual_signed_HTTP:true,
   synthetic_tones_not_speech:true,browser_rendered:false,owner_UAT:false,provider_calls:0,paid_calls:0,actual_video_UI_operations:true,
-  undo_redo_exact_snapshot:true,measured_audio_tracks_unchanged:true,actual_graph_drag_controller:true,requests,messages,initial,split,dragged,speed,duplicate,reordered,deleted,undo,redo,final,reopened}));
+  undo_redo_exact_snapshot:true,measured_audio_tracks_unchanged:true,actual_graph_drag_controller:true,...(layout?{visual_properties:layout}:{}),requests,messages,initial,split,dragged,speed,duplicate,reordered,deleted,undo,redo,final,reopened}));

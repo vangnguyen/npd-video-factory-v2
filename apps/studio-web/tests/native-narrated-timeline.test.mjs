@@ -104,3 +104,26 @@ test('timeline graph shares measured uploaded waveform zoom and playhead with es
   const page=copy(fixture.preSettings),t=page.snapshot.tracks.find(t=>t.kind==='voice'&&t.track_id!=='trk_narrated_measured_voice');t.clips[0].label='<svg onload="NEVER">';const html=narratedTimelineMarkup(page,2,1);
   assert.ok(html.includes('&lt;svg onload=&quot;NEVER&quot;&gt;'));assert.ok(!html.includes('<svg onload='));assert.ok(html.includes('Biên độ âm thanh đo từ nguồn'));assert.ok(html.includes('left:68px'));assert.ok(html.includes('narrated-playhead'));
 });
+
+test('narrated visual widget routes crop transform and opacity through the same canonical edit binding',async()=>{
+  const page=copy(video.final),h=harness(page);let answer;
+  h.respond(async(path,body)=>{if(!body)return copy(page);answer=copy(page);answer.revision++;answer.timeline_version++;answer.timeline_sha256='b'.repeat(64);
+    Object.assign(answer.snapshot.tracks[0].clips[0],Object.fromEntries(Object.entries(body.operations[0]).filter(([k])=>!['type','clip_id'].includes(k))));
+    answer.history.push({version:answer.timeline_version,revision:answer.revision,sha256:answer.timeline_sha256,same_preparation:true,mutation:{type:'edit'}});return answer;});
+  await h.controller.load();const id=page.snapshot.tracks[0].clips[0].clip_id;h.field('clip').value=id;h.field('clip').listeners.change[0]();const visual=h.controller.visualProperties;
+  for(const [key,value] of [['crop_x',10],['crop_width',80],['scale',110],['rotation_degrees',9],['opacity',95]]){visual.controls[key].value=String(value);visual.controls[key].listeners.input[0]();}
+  assert.equal(h.field('save-clip').disabled,true);assert.equal(h.field('save-settings').disabled,true);await h.controller.editClip();await h.controller.configure();assert.equal(h.calls.length,1);
+  await visual.save();assert.equal(h.saved.length,1,JSON.stringify(h.messages));assert.equal(h.calls[1].body.timeline_sha256,page.timeline_sha256);
+  assert.deepEqual(h.calls[1].body.operations,[{type:'set_clip_properties',clip_id:id,crop:{x:.1,y:0,width:.8,height:1},transform:{x:0,y:0,scale:1.1,rotation_degrees:9},opacity:.95}]);
+  assert.deepEqual(answer.snapshot.tracks.filter(t=>t.type==='audio'),page.snapshot.tracks.filter(t=>t.type==='audio'));assert.equal(visual.isDirty(),false);assert.equal(h.state.dirty,false);
+});
+test('the narrated parent discard restores shared visual draft instead of applying it',async()=>{
+  const h=harness(video.final);await h.controller.load();const id=video.final.snapshot.tracks[0].clips[0].clip_id;h.field('clip').value=id;h.field('clip').listeners.change[0]();const v=h.controller.visualProperties;
+  v.controls.rotation_degrees.value='15';v.controls.rotation_degrees.listeners.input[0]();assert.equal(v.isDirty(),true);h.field('discard').listeners.click[0]();
+  assert.equal(v.controls.rotation_degrees.value,'0');assert.equal(v.isDirty(),false);assert.equal(h.state.dirty,false);assert.equal(h.calls.length,1);
+});
+test('a clip or mix draft blocks shared visual save without losing either form',async()=>{
+  for(const kind of ['clip','settings']){const h=harness(video.final);await h.controller.load();h.field('clip').value=video.final.snapshot.tracks[0].clips[0].clip_id;h.field('clip').listeners.change[0]();
+    h.field(kind==='clip'?'start':'keywords').listeners.input[0]();const v=h.controller.visualProperties;assert.equal(v.controls.scale.disabled,true);
+    v.controls.scale.value='120';v.controls.scale.listeners.input[0]();await v.save();assert.equal(h.calls.length,1);assert.equal(h.state.dirty,true);}
+});

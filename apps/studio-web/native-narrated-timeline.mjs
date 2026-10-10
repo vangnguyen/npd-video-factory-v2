@@ -1,6 +1,7 @@
 import {pixelsPerSecond,clipStyle,snapTime} from './studio-utils.mjs';
 import {waveformPath} from './waveform.mjs';
 import {timelineHistory} from './timeline-history.mjs';
+import {initializeVisualProperties} from './native-visual-properties.mjs';
 const PART='narrated_timeline',sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),finite=v=>typeof v==='number'&&Number.isFinite(v),integer=v=>Number.isSafeInteger(v)&&v>=1;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 const ready=s=>s?.project?.document?.prepared_narration&&s.project.document.canonical_timeline&&!s.project.document.canonical_timeline.snapshot?.metadata?.native_auto_edit_schema;
@@ -41,7 +42,8 @@ export function initializeNarratedTimeline({api,getState,root=document,onWorking
   const saveClip=button('Lưu thao tác clip','save-clip');card.append(saveClip);
   const voiceNorm=field('Chuẩn hóa track lời đọc','voice-normalize','checkbox',false),musicNorm=field('Chuẩn hóa nhạc','music-normalize','checkbox',false),duck=field('Hạ nhạc khi có lời','duck','checkbox',true),ratio=field('Mức hạ nhạc (2–20)','duck-ratio','number',8),threshold=field('Ngưỡng hạ nhạc (0,001–0,2)','duck-threshold','number',.015);
   const template=field('Mẫu phụ đề','template','select'),keywords=field('Từ nổi bật · ngăn cách bằng dấu phẩy','keywords','text',''),saveSettings=button('Lưu mix & mẫu phụ đề','save-settings');card.append(saveSettings);
-  let value=null,loadedKey=null,working=false,dirty=false,dirtyKind=null,context=null;
+  const visualRoot=node('section','','visual');card.append(visualRoot);
+  let value=null,loadedKey=null,working=false,dirty=false,dirtyKind=null,context=null,visual=null;
   const binding=()=>({revision:value.revision,expected_version:value.timeline_version,timeline_sha256:value.timeline_sha256});
   const currentTrack=()=>value?.snapshot.tracks.find(t=>t.track_id===track.value),currentClip=()=>value?.snapshot.tracks.flatMap(t=>t.clips.map(c=>({track:t,clip:c}))).find(x=>x.clip.clip_id===clip.value);
   const blocked=()=>!value||loadedKey!==key(getState())||working||getState().canEdit===false||getState().busy||getState().active||getState().project?.archived||(getState().dirty&&getState().dirtyPart!==PART);
@@ -56,8 +58,9 @@ export function initializeNarratedTimeline({api,getState,root=document,onWorking
     if(generated&&!['disable','set_clip_properties'].includes(op))saveClip.disabled=true;
     if(c?.track.type==='text'&&op==='set_clip_properties')saveClip.disabled=true;
     saveSettings.disabled=stop||value?.snapshot.tracks.some(t=>t.locked&&(t.type==='audio'||t.kind==='subtitles'));
-    if(dirtyKind==='settings'){saveClip.disabled=true;for(const n of[start,sourceStart,sourceEnd,volume,speed,index,imageDuration])n.disabled=true;}
-    if(dirtyKind==='clip'){saveSettings.disabled=true;for(const n of[voiceNorm,musicNorm,duck,ratio,threshold,template,keywords])n.disabled=true;}
+    if(dirtyKind==='settings'||dirtyKind==='visual'){saveClip.disabled=true;for(const n of[start,sourceStart,sourceEnd,volume,speed,index,imageDuration])n.disabled=true;}
+    if(dirtyKind==='clip'||dirtyKind==='visual'){saveSettings.disabled=true;for(const n of[voiceNorm,musicNorm,duck,ratio,threshold,template,keywords])n.disabled=true;}
+    visual?.sync();
   }
   function renderGraph(){if(value)graph.innerHTML=narratedTimelineMarkup(value,Number(zoom.value),Number(playhead.value));}
   function clear(){value=null;loadedKey=null;graph.replaceChildren();graph.innerHTML='';for(const n of[track,clip,template])n.replaceChildren();keywords.value='';status.textContent='Đọc lại timeline hiện tại trước khi chỉnh sửa.';dirty=false;dirtyKind=null;onDirty(false);}
@@ -75,16 +78,16 @@ export function initializeNarratedTimeline({api,getState,root=document,onWorking
     validateNarratedTimeline(p,getState());install(p,getState());}catch(e){clear();onMessage(e.message,true);}finally{working=false;onWorking(false);sync();}}
   async function write(action,payload){if(blocked()||value?.voice_input_current===false&&action!=='restore')return;const s=getState(),k=key(s),body={...binding(),...payload};working=true;onWorking(true);controls();try{const p=await api(`/api/projects/${s.project.id}/narrated-timeline/${action}`,body);if(k!==key(getState())){clear();return;}validateNarratedTimeline(p,s,{revision:body.revision+1,version:body.expected_version+1});dirty=false;onDirty(false);value=null;loadedKey=null;await onSaved(p);if(getState().project?.id!==s.project.id||getState().workspace_id!==s.workspace_id){clear();return;}install(p,getState());onMessage('Đã lưu cùng timeline chuẩn. Tạo preview và kiểm tra lại trước khi duyệt.');}catch(e){clear();onMessage(`${e.message} Đọc lại dữ liệu đã lưu trước khi thử thao tác tiếp.`,true);}finally{working=false;onWorking(false);sync();}}
   const changed=kind=>{if(blocked()||dirtyKind&&dirtyKind!==kind)return;dirty=true;dirtyKind=kind;onDirty(true);controls();};
-  async function editClip(){const c=currentClip();if(!c||blocked()||c.track.locked||dirtyKind==='settings')return;const op={type:operation.value,clip_id:c.clip.clip_id};
+  async function editClip(){const c=currentClip();if(!c||blocked()||c.track.locked||dirtyKind==='settings'||dirtyKind==='visual')return;const op={type:operation.value,clip_id:c.clip.clip_id};
     if(['move','duplicate'].includes(op.type))op.timeline_start=snapTime(Number(start.value),snap.checked);
     if(op.type==='trim')Object.assign(op,c.clip.kind==='image'?{duration:Number(imageDuration.value),timeline_start:snapTime(Number(start.value),snap.checked)}:{source_start:Number(sourceStart.value),source_end:Number(sourceEnd.value),timeline_start:snapTime(Number(start.value),snap.checked)});
     if(op.type==='split')op.at_seconds=snapTime(Number(playhead.value),snap.checked);if(op.type==='disable')op.disabled=!c.clip.disabled;if(op.type==='reorder')op.target_index=Number(index.value);
     if(op.type==='set_clip_properties'){if(c.track.type==='audio')op.volume=Number(volume.value);if(c.clip.kind==='image')op.duration=Number(imageDuration.value);else if(!c.clip.metadata.narrated_generated_voice)op.speed=Number(speed.value);}return write('edit',{operations:[op]});}
   async function trackState(name){const t=currentTrack();if(!t||dirty)return;return write('edit',{operations:[{type:'set_track_state',track_id:t.track_id,[name]:!t[name]}]});}
   async function restore(direction){const target=historyTarget(direction);if(!target||dirty)return;return write('restore',{restore_revision:target.revision,restore_timeline_sha256:target.sha256});}
-  async function configure(){if(blocked()||dirtyKind==='clip')return;return write('configure',{audio_processing:{...(value.snapshot.metadata.source_audio_processing??{}),normalize_original_audio:voiceNorm.checked,normalize_music:musicNorm.checked,duck_music:duck.checked,duck_ratio:Number(ratio.value),duck_threshold:Number(threshold.value)},subtitle_template_ref:template.value,keywords:keywords.value.split(',').map(x=>x.trim()).filter(Boolean)});}
+  async function configure(){if(blocked()||dirtyKind==='clip'||dirtyKind==='visual')return;return write('configure',{audio_processing:{...(value.snapshot.metadata.source_audio_processing??{}),normalize_original_audio:voiceNorm.checked,normalize_music:musicNorm.checked,duck_music:duck.checked,duck_ratio:Number(ratio.value),duck_threshold:Number(threshold.value)},subtitle_template_ref:template.value,keywords:keywords.value.split(',').map(x=>x.trim()).filter(Boolean)});}
   function sync(){const s=getState(),k=key(s);card.hidden=!ready(s);if(context!==k){context=k;clear();}controls();}
-  read.addEventListener('click',load);undo.addEventListener('click',()=>restore('undo'));redo.addEventListener('click',()=>restore('redo'));discard.addEventListener('click',()=>{if(working)return;dirty=false;onDirty(false);if(value)install(value,getState());controls();});
+  read.addEventListener('click',load);undo.addEventListener('click',()=>restore('undo'));redo.addEventListener('click',()=>restore('redo'));discard.addEventListener('click',()=>{if(working)return;visual?.discardDraft();dirty=false;onDirty(false);if(value)install(value,getState());controls();});
   track.addEventListener('change',controls);clip.addEventListener('change',selectClip);operation.addEventListener('change',controls);lock.addEventListener('click',()=>trackState('locked'));mute.addEventListener('click',()=>trackState('muted'));disable.addEventListener('click',()=>trackState('disabled'));saveClip.addEventListener('click',editClip);saveSettings.addEventListener('click',configure);
   for(const n of[start,sourceStart,sourceEnd,volume,speed,index,imageDuration])n.addEventListener('input',()=>changed('clip'));
   for(const n of[voiceNorm,musicNorm,duck,ratio,threshold,template,keywords])n.addEventListener(n.type==='checkbox'||n.tagName==='SELECT'?'change':'input',()=>changed('settings'));
@@ -107,5 +110,10 @@ export function initializeNarratedTimeline({api,getState,root=document,onWorking
     const at=snapTime(Math.max(0,(event.clientX-left-move.offset)/pixelsPerSecond(Number(zoom.value))),snap.checked);
     if(!Number.isFinite(at)||at+selected.clip.duration>value.duration_seconds+.000001){onMessage('Vị trí mới vượt thời lượng lời đọc; chọn mốc khác hoặc chỉnh độ dài clip.',true);return;}
     await write('edit',{operations:[{type:'move',clip_id:move.clip_id,timeline_start:at}]});});
-  sync();return {load,editClip,trackState,restore,configure,sync,isWorking:()=>working,currentBinding:()=>value};
+  visual=initializeVisualProperties({root:visualRoot,dom:root,getState:()=>({...getState(),timeline:value?{version:value.timeline_version,sha256:value.timeline_sha256}:null,
+    selected:currentClip(),busy:working||getState().busy,dirty:getState().dirty||dirty,dirtyPart:dirtyKind==='visual'?'visual':getState().dirtyPart,
+    voice_input_current:value?.voice_input_current}),onDirty:v=>{if(v){dirty=true;dirtyKind='visual';onDirty(true);}else if(dirtyKind==='visual'){dirty=false;dirtyKind=null;onDirty(false);}controls();},onMessage,
+    onSave:async(values,binding)=>{await write('edit',{operations:[{type:'set_clip_properties',clip_id:binding.clip_id,...values}]});
+      return value?.project_id===binding.project_id&&value.revision===binding.revision+1&&value.timeline_version===binding.timeline_version+1&&value.workspace_id===binding.workspace_id;}});
+  sync();return {load,editClip,trackState,restore,configure,sync,isWorking:()=>working,currentBinding:()=>value,visualProperties:visual};
 }
