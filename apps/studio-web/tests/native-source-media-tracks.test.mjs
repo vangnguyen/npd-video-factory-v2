@@ -3,6 +3,7 @@ import{initializeSourceMediaTracks,validateSourceMediaTracks}from'../native-sour
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/native-source-media-tracks.json',import.meta.url),'utf8')),copy=v=>structuredClone(v);
 const narratedFixture=JSON.parse(readFileSync(new URL('./fixtures/native-narrated-media-tracks.json',import.meta.url),'utf8'));
 const mappedFixture=JSON.parse(readFileSync(new URL('./fixtures/native-source-caption-mapping.json',import.meta.url),'utf8'));
+const retimingFixture=JSON.parse(readFileSync(new URL('./fixtures/native-source-caption-retiming.json',import.meta.url),'utf8'));
 function harness(page=fixture.initial){
   class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.listeners={};this.value='';this.checked=false;}
     append(...v){this.children.push(...v);}replaceChildren(...v){this.children=v;}addEventListener(k,fn){(this.listeners[k]??=[]).push(fn);}}
@@ -14,6 +15,36 @@ function harness(page=fixture.initial){
   const node=n=>root.getElementById('native-source-media-tracks-'+n);
   return{card,state,controller,calls,saved,messages,dirty,node,respond:fn=>{respond=fn;}};
 }
+
+test('actual Source caption/video API fixture validates all layouts without claiming browser or provider acceptance',()=>{
+  assert.equal(retimingFixture.actual_signed_HTTP,true);assert.equal(retimingFixture.source_video_mutations_use_API_not_shot_UI,true);
+  assert.equal(retimingFixture.saved_ASR_fixture,true);assert.equal(retimingFixture.browser_rendered,false);assert.equal(retimingFixture.owner_UAT,false);
+  assert.equal(retimingFixture.real_provider_calls,0);
+  for(const name of['initial','imported','split','duplicate','reordered','edited','manual','remapped','reopened']){
+    const p=retimingFixture[name];assert.equal(p.timeline_mode,'source');assert.equal(validateSourceMediaTracks(p,{workspace_id:p.workspace_id,project:{id:p.project_id,revision:p.revision}}),p);
+  }
+  assert.deepEqual(retimingFixture.manual.captions,retimingFixture.edited.captions);
+  assert.equal(retimingFixture.remapped.duration_seconds,3.75);assert.equal(retimingFixture.remapped.captions_total,5);
+});
+
+test('Source clock requires the loaded source video selection and binds both immutable media hashes',async()=>{
+  const h=harness(retimingFixture.initial);h.respond(async(path,body)=>copy(body?retimingFixture.imported:retimingFixture.initial));await h.controller.load();
+  h.node('timebase').value='source';for(const f of h.node('timebase').listeners.change)f();assert.equal(h.node('source-video').hidden,false);
+  assert.equal(h.node('save-subtitle').disabled,true);await h.controller.applySubtitles();assert.equal(h.calls.length,1);
+  const video=retimingFixture.initial.source_video_assets[0];h.node('source-video').value=video.asset_id;for(const f of h.node('source-video').listeners.change)f();
+  await h.controller.applySubtitles();assert.equal(h.saved.length,1,JSON.stringify(h.messages));assert.equal(h.calls[1].body.source_video_asset_id,video.asset_id);
+  assert.equal(h.calls[1].body.source_video_asset_sha256,video.asset_sha256);assert.equal(h.calls[1].body.timeline_sha256,retimingFixture.initial.timeline_sha256);
+  assert.ok(h.controller.currentBinding().captions.every(c=>c.source_video_mapping_mode==='follow_video'&&!c.has_word_timing));
+});
+
+test('Source explicit SRT reimport resets the manual layout over the current video windows only after a saved receipt',async()=>{
+  const h=harness(retimingFixture.manual);h.respond(async(path,body)=>copy(body?retimingFixture.remapped:retimingFixture.manual));await h.controller.load();
+  assert.ok(h.controller.currentBinding().captions.every(c=>c.source_video_mapping_mode==='human_layout'));
+  h.node('timebase').value='source';for(const f of h.node('timebase').listeners.change)f();h.node('source-video').value=retimingFixture.manual.source_video_assets[0].asset_id;
+  for(const f of h.node('source-video').listeners.change)f();await h.controller.applySubtitles();assert.equal(h.saved.length,1,JSON.stringify(h.messages));
+  assert.ok(h.controller.currentBinding().captions.every(c=>c.source_video_mapping_mode==='follow_video'));
+  assert.equal(h.controller.currentBinding().duration_seconds,3.75);assert.equal(h.controller.currentBinding().imports_total,2);
+});
 test('actual signed HTTP fixtures retain honest local/media/mock qualification and validate all stages',()=>{
   assert.equal(fixture.fixture_human,true);assert.equal(fixture.saved_ASR_fixture,true);assert.equal(fixture.actual_local_media_waveform,true);assert.equal(fixture.real_provider_calls,0);assert.equal(fixture.owner_UAT,false);assert.equal(fixture.browser_rendered,false);
   for(const name of['initial','audio','subtitles','edited','reopened']){const p=fixture[name];assert.equal(validateSourceMediaTracks(p,{workspace_id:p.workspace_id,project:{id:p.project_id,revision:p.revision}}),p);}

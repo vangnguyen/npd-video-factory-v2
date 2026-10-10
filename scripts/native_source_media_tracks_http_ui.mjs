@@ -16,13 +16,13 @@ const node=n=>root.getElementById('native-source-media-tracks-'+n),emit=(n,event
 assert.equal(requests.length,0);await controller.load();assert.equal(controller.currentBinding().assets.length,3,JSON.stringify(messages));
 const initial=structuredClone(controller.currentBinding()),narrated=initial.timeline_mode==='narrated',mapped=Boolean(input.source_video_asset_id);
 if(narrated){assert.equal(initial.pending_generated_tracks,true);assert.equal(node('timebase').disabled,!initial.source_video_mapping_available);assert.equal(node('timebase').value,'timeline');}
-if(mapped){assert.equal(narrated,true);assert.equal(initial.source_video_mapping_available,true);assert.equal(initial.source_video_assets.find(a=>a.asset_id===input.source_video_asset_id)?.asset_sha256,input.source_video_asset_sha256);}
+if(mapped){assert.equal(initial.source_video_mapping_available,true);assert.equal(initial.source_video_assets.find(a=>a.asset_id===input.source_video_asset_id)?.asset_sha256,input.source_video_asset_sha256);}
 node('timeline-start').value='.5';emit(node('timeline-start'),'input');await controller.applyAudio();assert.equal(saved.length,1,JSON.stringify(messages));
 const music=controller.currentBinding().assets.find(a=>a.role==='music');node('audio').value=music.asset_id;emit(node('audio'),'change');node('role').value='music';emit(node('role'),'change');
 node('loop').checked=true;emit(node('loop'),'change');node('repeat-until').value='3';node('crossfade').value='.2';node('fade-in').value='.1';node('fade-out').value='.1';
 await controller.applyAudio();assert.equal(saved.length,2,JSON.stringify(messages));assert.equal(saved[1].mutation.clip_ids.length,2);
 if(mapped){node('timebase').value='source';emit(node('timebase'),'change');assert.equal(node('source-video').hidden,false);assert.equal(node('save-subtitle').disabled,true);node('source-video').value=input.source_video_asset_id;emit(node('source-video'),'change');}
-await controller.applySubtitles();assert.equal(saved.length,3,JSON.stringify(messages));assert.equal(controller.currentBinding().captions_total,mapped?4:2);
+await controller.applySubtitles();assert.equal(saved.length,3,JSON.stringify(messages));assert.equal(controller.currentBinding().captions_total,mapped&&narrated?4:2);
 if(mapped){assert.equal(saved[2].mutation.source_video_asset_id,input.source_video_asset_id);assert.equal(saved[2].mutation.source_video_asset_sha256,input.source_video_asset_sha256);assert.ok(saved[2].captions.every(c=>c.source_video_mapping_mode==='follow_video'));}
 const caption=[...controller.fields.values()][0];caption.text.value='Vinhomes Cần Giờ · chữ Việt đã chỉnh qua Studio';caption.start.value='.2';caption.duration.value='.7';emit(caption.text,'input');
 await controller.saveCaptionEdits();assert.equal(saved.length,4,JSON.stringify(messages));assert.equal(state.dirty,false);assert.equal(controller.currentBinding().captions[0].text,caption.text.value);

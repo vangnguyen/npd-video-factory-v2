@@ -60,7 +60,7 @@ def catalog(store,project_id,workspace_id,*,caption_page=1):
             'transcript_id':current.transcript_id if current else None,'transcript_version':current.version if current else None,
             'analysis_sha256':analysis_sha,'word_timing_available':bool(current and any(s.words for s in current.segments))})
     tracks=[{k:copy.deepcopy(t[k]) for k in ('track_id','type','kind','label','locked','muted','disabled')} for t in (snapshot or {}).get('tracks',[])]
-    from .source_caption_mapping import video_assets
+    from .source_caption_mapping import video_assets,human_layout
     source_videos=video_assets(document,TimelineSnapshot.model_validate(snapshot)) if snapshot else []
     video_choices=[{'asset_id':v['id'],'asset_sha256':v['sha256'],'filename':v['filename'],'duration_seconds':v['duration_seconds']} for v in source_videos]
     captions=[{'track_id':t['track_id'],'track_locked':t['locked'],'track_disabled':t['disabled'],
@@ -68,7 +68,7 @@ def catalog(store,project_id,workspace_id,*,caption_page=1):
         'timeline_start':c['timeline_start'],'duration':c['duration'],'disabled':c['disabled'],
         'import_id':c['metadata'].get('native_media_import_id'),'native_asset_id':c['metadata'].get('native_asset_id'),
         'source_video_asset_id':c['metadata'].get('source_video_mapping',{}).get('video_reference',{}).get('asset_id'),
-        'source_video_mapping_mode':('disabled' if t['disabled'] or c['disabled'] else 'human_layout' if t['track_id'] in (snapshot or {}).get('metadata',{}).get('narrated_caption_edited_tracks',[]) or any(v['metadata'].get('human_caption_edit') for v in t['clips']) else 'follow_video') if c['metadata'].get('source_video_mapping') else None,
+        'source_video_mapping_mode':('disabled' if t['disabled'] or c['disabled'] else 'human_layout' if human_layout(snapshot,t) else 'follow_video') if c['metadata'].get('source_video_mapping') else None,
         'has_word_timing':bool(c['metadata'].get('measured_source_words'))} for t in (snapshot or {}).get('tracks',[])
         if t['type']=='text' and t['kind']=='subtitles' for c in t['clips'] if c['kind']=='subtitle']
     captions.sort(key=lambda c:(c['timeline_start'],c['clip_id']));start=(caption_page-1)*PAGE_SIZE
@@ -283,16 +283,15 @@ def add_subtitles(store,project_id,body,*,actor_ref):
         _style(snapshot,payload.subtitle_template_ref);track=_track(snapshot,payload.replace_track_id,'subtitles',replace=True)
         identifier='smi_'+uuid.uuid4().hex[:24];clipped=0;dropped=0;mapped=0
         if payload.source_video_asset_id is not None:
-            if is_auto_edit(project['document']):raise WorkflowError('SOURCE_CAPTION_EXPLICIT_VIDEO_MAPPING_REQUIRES_NARRATED_MODE',400)
-            from .source_caption_mapping import reference,verify_reference,clips
+            from .source_caption_mapping import reference,verify_reference,clips,edited_field
             ref=reference(project['document'],snapshot,payload.source_video_asset_id,payload.source_video_asset_sha256)
             verify_reference(project['document'],ref,root=store.root)
             track.clips,detail=clips(snapshot,cues,ref,identifier,asset,_request(payload))
             if not track.clips:raise WorkflowError('SOURCE_MEDIA_TRACK_NO_CAPTIONS_IN_WINDOW',400)
             # An explicit full source import replaces the manual layout decision
             # of this track; old snapshots and import records remain immutable.
-            edited=snapshot.metadata.get('narrated_caption_edited_tracks',[])
-            if track.track_id in edited:snapshot.metadata['narrated_caption_edited_tracks']=[v for v in edited if v!=track.track_id]
+            field=edited_field(snapshot);edited=snapshot.metadata.get(field,[])
+            if track.track_id in edited:snapshot.metadata[field]=[v for v in edited if v!=track.track_id]
             _check_captions(snapshot)
             result={'_import_id':identifier,'track_id':track.track_id,'clip_ids':[c.clip_id for c in track.clips],**detail}
             return _save_import(store,con,project,snapshot,payload,'subtitles',asset,result,cue_source_sha256=digest(cues),source_video_reference=ref,actor_ref=actor_ref)

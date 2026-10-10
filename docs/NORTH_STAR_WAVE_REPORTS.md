@@ -3450,3 +3450,20 @@ REGRESSIONS: related checks PASS; old accepted artifact/live-source hashes are f
 EXTERNAL BLOCKERS: unchanged genuine provider credentials/authorization, browser/client, rights and final Owner/production acceptance. No external blocker stops remaining safe work.
 OWNER ACTION REQUIRED: none for implementation; listening/Owner UAT remains deferred at Owner request.
 NEXT WAVE: continue generic storyboard video operations, Meta analytics and every original remaining safe North Star gap; keep full final A/B/C requirements and all acceptance gates.
+
+
+## 2026-10-11 — Wave 3/6: Mode B source caption retiming
+
+WAVE: 3/6 component increment; full waves remain PARTIAL.
+STATUS: IMPLEMENTED + LOCAL_REAL_TESTED + MOCK_TESTED; full browser/provider/Owner/Mode A/B acceptance remains separate.
+HEAD SHA: source parent d8426915cea2fc25b70057182fb509f4bb0ac79b; committed SHA is recorded in external source-caption-retiming preservation/program-state records.
+CAPABILITIES COMPLETED: imported/manual/empty caption preservation, transcript-edit protection, explicit Source video ID/SHA selection, canonical source-window reflow through split/duplicate/reorder/speed, explicit reimport reset, canvas binding, atomic locks, immutable import lineage and cold recovery.
+CAPABILITIES PARTIAL: all full original Mode A/B and remaining North Star groups; 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED = 59 unclosed.
+TESTS: Native related 261 PASS / 38 modules / 431.855s; Studio 688 PASS, including 3 new tests; renderer related 15 PASS / 3 files. New Native 14 are included in the related count; do not add overlapping focused runs.
+REAL PROVIDER TESTS: none; real/paid/new ASR/TTS calls 0.
+MOCK TESTS: owned moving video and tones, saved ASR/word/human fixtures, fake DOM and actual signed HTTP; captions use shipped Studio controller, video operations use existing Source API.
+EVIDENCE: NATIVE_SOURCE_CAPTION_RETIMING.md; north-star/source-caption-retiming-evidence.json; recovery/20261007/native-source-caption-retiming-n2; source-caption-retiming-cold-recovery-n2.json; source-caption-retiming-frame-clock-n2. Canonical 3.75s, actual media 3.819s/1080x1920/30fps, 17 controller/API requests, five cues, FullQC, preview/final PCM parity, 3 independent frame-clock samples and cold history/undo/redo.
+REGRESSIONS: related checks PASS; preservation seal rechecks old accepted artifacts and live source. No overwrite, main merge, production deployment, paid operation or external publication. First restore cleanup failed MAX_PATH; new short-root restore passes. Automatic review rejected deletion of the earlier leftover (blocked by policy); it remains and no bypass/retry occurred.
+EXTERNAL BLOCKERS: unchanged genuine provider authorization/credentials, browser/client, rights and Owner/production acceptance. No blocker stops remaining safe work.
+OWNER ACTION REQUIRED: none for implementation; Owner listening/UAT remains deferred.
+NEXT WAVE: generic Mode A video operations, full Mode B UI and Meta analytics, followed by every original remaining Master Spec gap and full A/B/C acceptance. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

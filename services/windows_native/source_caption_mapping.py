@@ -8,6 +8,51 @@ from .source_media_track_origins import binding
 SCHEMA='native-source-video-caption-mapping-v1'
 FIELDS=('clip_id','asset_id','source_start','source_end','timeline_start','duration','speed')
 
+def edited_field(snapshot):
+    metadata=snapshot.metadata if hasattr(snapshot,'metadata') else snapshot['metadata']
+    return 'source_caption_edited_tracks' if metadata.get('native_auto_edit_schema')=='native-auto-edit-timeline-v1' else 'narrated_caption_edited_tracks'
+
+def human_layout(snapshot,track):
+    metadata=snapshot.metadata if hasattr(snapshot,'metadata') else snapshot['metadata']
+    identifier=track.track_id if hasattr(track,'track_id') else track['track_id']
+    clips=track.clips if hasattr(track,'clips') else track['clips']
+    return identifier in metadata.get(edited_field(snapshot),[]) or any((c.metadata if hasattr(c,'metadata') else c['metadata']).get('human_caption_edit') for c in clips)
+
+def mark_source_caption_edit(snapshot,operations):
+    for operation in operations:
+        track=next((t for t in snapshot.tracks if any(c.clip_id==operation.clip_id for c in t.clips)),None)
+        if track is None or track.type!='text' or track.kind!='subtitles' or operation.type=='set_track_state':continue
+        ids=set(snapshot.metadata.get('source_caption_edited_tracks',[]));ids.add(track.track_id)
+        if operation.target_track_id:ids.add(operation.target_track_id)
+        snapshot.metadata['source_caption_edited_tracks']=sorted(ids)
+        for caption in track.clips:
+            caption.metadata['human_caption_edit']=True
+            if operation.type in {'move','trim','split','duplicate'}:caption.metadata.update(measured_source_words=[],timing_source='human_timeline_edit_no_word_alignment')
+
+def validate_source_decisions(snapshot):
+    ids=snapshot.metadata.get('source_caption_edited_tracks',[])
+    if not isinstance(ids,list) or len(ids)>32 or any(not isinstance(v,str) for v in ids) or len(set(ids))!=len(ids) or any(
+        not any(t.track_id==v and t.type=='text' and t.kind=='subtitles' for t in snapshot.tracks) for v in ids):
+        raise WorkflowError('SOURCE_CAPTION_OVERRIDE_TRACK_INVALID')
+
+def preserve_source(document,snapshot):
+    """Only derived source captions follow source edits; explicit layouts stay."""
+    validate_source_decisions(snapshot)
+    derived=[t for t in snapshot.tracks if t.type=='text' and t.kind=='subtitles' and not t.disabled and not human_layout(snapshot,t)
+        and any(c.metadata.get('source_video_mapping') for c in t.clips)]
+    if not derived:return snapshot
+    excluded={t.track_id for t in derived}
+    snapshot=snapshot.model_copy(deep=True)
+    # Old derived captions must not hold the canvas open after a video speed/cut.
+    snapshot.duration_seconds=max(.1,round(max((c.timeline_start+c.duration for t in snapshot.tracks if t.track_id not in excluded and not t.disabled
+        for c in t.clips if not c.disabled),default=.1),6))
+    for index,track in enumerate(snapshot.tracks):
+        if track.track_id not in excluded:continue
+        updated=reflow(document,snapshot,track)
+        if track.locked and updated.model_dump(mode='json')!=track.model_dump(mode='json'):raise WorkflowError('SOURCE_CAPTION_MAPPING_TRACK_LOCKED',400)
+        snapshot.tracks[index]=updated
+    return snapshot
+
 def video_assets(document,snapshot):
     used={c.metadata.get('native_asset_id') for t in snapshot.tracks if t.type=='video' and t.kind=='source' and not t.disabled
         for c in t.clips if c.kind=='source' and not c.disabled}
@@ -63,7 +108,7 @@ def reflow(document,snapshot,track,*,manual=False):
     """Derived placements follow video; explicit human layout stays reviewable."""
     mapped=[c for c in track.clips if c.metadata.get('source_video_mapping')]
     if not mapped:return track
-    if track.disabled or manual or any(c.metadata.get('human_caption_edit') for c in track.clips):return track
+    if track.disabled or manual or human_layout(snapshot,track):return track
     identifiers={c.metadata['native_media_import_id'] for c in mapped}
     if len(identifiers)!=1 or len(mapped)!=len(track.clips):raise WorkflowError('SOURCE_CAPTION_MAPPING_TRACK_MIX_REVIEW_REQUIRED',400)
     from .source_media_track_origins import records
@@ -103,7 +148,7 @@ def validate(document,row,clip,snapshot,*,cache=None):
     # Human overrides are explicit canonical decisions; retain their original
     # source/video evidence without claiming that new timing follows the video.
     track=next(t for t in snapshot['tracks'] if any(c['clip_id']==clip['clip_id'] for c in t['clips']))
-    overridden=track['disabled'] or clip['disabled'] or track['track_id'] in snapshot['metadata'].get('narrated_caption_edited_tracks',[]) or any(c['metadata'].get('human_caption_edit') for c in track['clips'])
+    overridden=track['disabled'] or clip['disabled'] or human_layout(snapshot,track)
     if overridden:return
     from app.timeline_models import TimelineSnapshot
     cache={} if cache is None else cache

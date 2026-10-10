@@ -99,6 +99,8 @@ def validate_document(document):
     if selected_channel is not None and state['snapshot']['metadata'].get('channel_selection_sha256')!=selected_channel['selection_sha256']:
         raise WorkflowError('CHANNEL_PROFILE_TIMELINE_BINDING_CHANGED')
     snapshot = TimelineSnapshot.model_validate(state['snapshot'])
+    from .source_caption_mapping import validate_source_decisions
+    validate_source_decisions(snapshot)
     from .scene_selection import validate_timeline
     validate_timeline(document)
     from .source_reframe_vision import validate_timeline as validate_reframe
@@ -150,6 +152,8 @@ def _save(store, con, project, snapshot, action, *, restored_from_version=None):
     previous = project['document'].get('canonical_timeline')
     document = copy.deepcopy(project['document'])
     snapshot.metadata['native_auto_edit_schema'] = SCHEMA
+    from .source_caption_mapping import preserve_source
+    snapshot=preserve_source(document,snapshot)
     document['canonical_timeline'] = {'version': (previous['version'] if previous else 0) + 1,
         'snapshot': snapshot.model_dump(mode='json'), 'sha256': digest(snapshot.model_dump(mode='json'))}
     document['source_timeline_mutations']=document.get('source_timeline_mutations',[])+[{
@@ -234,7 +238,11 @@ def edit(store, project_id, revision, body):
     with store.transaction() as con:
         project = store.editable(con, project_id, revision)
         state = _cas(project, payload.expected_version)
-        try:snapshot = apply_operations(TimelineSnapshot.model_validate(state['snapshot']), payload.operations)
+        try:
+            from .source_caption_mapping import mark_source_caption_edit
+            snapshot=TimelineSnapshot.model_validate(state['snapshot'])
+            mark_source_caption_edit(snapshot,payload.operations)
+            snapshot = apply_operations(snapshot, payload.operations)
         except (TimelineEditError, ValueError):raise WorkflowError('AUTO_EDIT_TIMELINE_OPERATION_INVALID', 400) from None
         _save(store, con, project, snapshot, 'auto_edit_canonical_timeline_edited')
     return view(store, project_id)
@@ -307,7 +315,9 @@ def sync_transcript(document, base, derived):
         raise WorkflowError('AUTO_EDIT_TRANSCRIPT_BASE_DIFFERS_FROM_TIMELINE')
     mapping = {old.segment_id: new for old,new in zip(base.segments, derived.segments, strict=True)}
     changed = set(derived.provenance['changed_segment_ids'])
+    from .source_caption_mapping import human_layout
     for track in snapshot['tracks']:
+        if track['kind']=='subtitles' and human_layout(snapshot,track):continue
         for clip in track['clips']:
             metadata = clip['metadata']
             segment_id = metadata.get('segment_id')

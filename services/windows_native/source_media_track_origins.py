@@ -97,9 +97,9 @@ def inherit(document,source_id,target_id,revision):
             if new:meta.update(native_media_import_id=new['import_id'],native_media_import_sha256=new['sha256'])
     if any(r.get('source_video_reference') for r in changed):
         from app.timeline_models import TimelineSnapshot
-        from .source_caption_mapping import reflow
+        from .source_caption_mapping import reflow,human_layout
         snapshot=TimelineSnapshot.model_validate(document['canonical_timeline']['snapshot'])
         for index,track in enumerate(snapshot.tracks):
             if track.type=='text' and track.kind=='subtitles':
-                snapshot.tracks[index]=reflow(document,snapshot,track,manual=track.track_id in snapshot.metadata.get('narrated_caption_edited_tracks',[]))
+                snapshot.tracks[index]=reflow(document,snapshot,track,manual=human_layout(snapshot,track))
         document['canonical_timeline']['snapshot']=snapshot.model_dump(mode='json')

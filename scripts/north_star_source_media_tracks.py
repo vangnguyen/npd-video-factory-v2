@@ -43,6 +43,7 @@ def files(root):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--evidence-dir', type=Path, required=True)
+    parser.add_argument('--source-caption-retiming', action='store_true')
     args = parser.parse_args()
     out = args.evidence_dir.resolve()
     if out.exists() or out == REPO or REPO in out.parents:
@@ -62,16 +63,23 @@ def main():
         thread.start()
         current = case.store.get(case.project['id'])
         context = case.owned / 'signed-controller-context.json'
-        durable_json(context, {'fixture_human': True,
+        context_body = {'fixture_human': True,
             'origin': 'http://127.0.0.1:' + str(server.server_port), 'workspace_id': case.workspace,
             'project': {'id': current['id'], 'revision': current['revision']},
-            'cookie': cookie, 'csrf': session.csrf})
+            'cookie': cookie, 'csrf': session.csrf}
+        controller_script = 'native_source_media_tracks_http_ui.mjs'
+        if args.source_caption_retiming:
+            context_body.update(source_video_asset_id=case.video['id'],source_video_asset_sha256=case.video['sha256'])
+            controller_script = 'native_source_caption_retiming_http_ui.mjs'
+        durable_json(context, context_body)
         result = subprocess.run([r'C:\Program Files\nodejs\node.exe',
-            str(REPO / 'scripts/native_source_media_tracks_http_ui.mjs'), str(context)],
+            str(REPO / 'scripts' / controller_script), str(context)],
             capture_output=True, timeout=60, check=True)
         controller = json.loads(result.stdout)
-        if len(controller['requests']) != 6 or len(controller['imports']) != 3:
+        if not args.source_caption_retiming and (len(controller['requests']) != 6 or len(controller['imports']) != 3):
             raise AssertionError('Expected four explicit Studio mutations and two reads')
+        if args.source_caption_retiming and (controller['reopened']['imports_total']!=2 or controller['reopened']['duration_seconds']!=3.75):
+            raise AssertionError('Source follow/manual/reimport path differs')
         durable_json(out / 'signed-controller.json', controller)
         server.shutdown()
         server.server_close()
@@ -153,18 +161,32 @@ def main():
                 'SELECT * FROM events WHERE project_id=? ORDER BY id', (current['id'],))]
         durable_json(out / 'job-events.json', events)
         imports = json.loads((out / 'source-media-imports.json').read_bytes())
-        if len(imports['imports']) != 3 or len(imports['verified_active_source_sha256']) != 3:
+        expected_imports = 2 if args.source_caption_retiming else 3
+        if len(imports['imports']) != expected_imports or len(imports['verified_active_source_sha256']) != expected_imports:
             raise AssertionError('Every active uploaded voice/music/SRT origin must be verified')
         checkpoint = json.loads((out / 'checkpoint-render.json').read_bytes())
         if 'source-media-imports.json' not in {item['path'] for item in checkpoint['artifacts']}:
             raise AssertionError('Checkpoint must bind imported source evidence')
         for name in ('preview', 'final'):
+            sample_seconds=.35
+            if args.source_caption_retiming:
+                first=controller['reopened']['captions'][0]
+                sample_seconds=first['timeline_start']+first['duration']/2
             subprocess.run([str(case.config.ffmpeg_bin / 'ffmpeg.exe'), '-v', 'error', '-nostdin', '-n',
-                '-ss', '0.35', '-i', str(out / (name + '.mp4')), '-frames:v', '1',
+                '-ss', str(sample_seconds), '-i', str(out / (name + '.mp4')), '-frames:v', '1',
                 str(out / (name + '-caption-frame.png'))], check=True, capture_output=True, timeout=30)
         manager.close()
         manager = None
         source_page = catalog(case.store, current['id'], case.workspace)
+        if args.source_caption_retiming:
+            from services.windows_native.auto_edit_timeline import view
+            durable_json(out/'timeline-editor.json',view(case.store,current['id']))
+            with case.store.transaction() as con:
+                saved_history=[{'revision':row['revision'],'canonical_timeline':json.loads(row['document']).get('canonical_timeline')}
+                    for row in con.execute('SELECT revision,document FROM project_versions WHERE project_id=? ORDER BY revision',(current['id'],))
+                    if json.loads(row['document']).get('canonical_timeline')]
+            durable_json(out/'timeline-history.json',saved_history)
+            durable_json(out/'media-tracks.json',source_page)
         backup = create_backup(case.config, out / 'backup.zip')
         destination = case.owned / 'restore'
         restore = restore_backup(backup['backup_path'], destination, expected_sha256=backup['sha256'])
@@ -180,11 +202,11 @@ def main():
             'catalog_equal': True, 'physical_origins_resolved_after_restore': True,
             'temporary_original_and_restore_removed_after_export': True})
         balance = render['result']['qc']['measured_audio_balance']
-        receipt = {'schema_version': 'native-source-media-tracks-render-proof-v1',
+        receipt = {'schema_version': 'native-source-caption-retiming-render-proof-v1' if args.source_caption_retiming else 'native-source-media-tracks-render-proof-v1',
             'explicit_synthetic_media': True, 'synthetic_tones_not_speech': True,
             'saved_ASR_fixture': True, 'signed_human_fixture': True, 'fake_DOM': True,
             'project_id': current['id'], 'job_id': job['id'], 'actual_uploads': 4,
-            'signed_controller_requests': len(controller['requests']), 'imports': 3,
+            'signed_controller_requests': len(controller['requests']), 'imports': expected_imports,
             'timeline_version': before['canonical_timeline']['version'],
             'actual_waveform_measurement': True, 'actual_preview_render_and_full_QC': True,
             'audio_balance_status': balance['status'], 'matching_preview_final_effects': matching_effects,
@@ -198,6 +220,10 @@ def main():
             'complete_artifact_A_acceptance': False, 'owned_temporary_data_cleaned_after_export': True,
             'exports': {str(path.relative_to(out)).replace('\\', '/'): file_sha(path)
                 for path in out.rglob('*') if path.is_file()}}
+        if args.source_caption_retiming:
+            receipt.update(source_caption_retiming=True,source_video_mutations_use_API_not_shot_UI=True,
+                explicit_manual_caption_layout_preserved=True,explicit_reimport_returns_to_follow_video=True,
+                duration_seconds=3.75,caption_count=len(source_page['captions']))
         durable_json(out / 'evidence.json', receipt)
         print(json.dumps({key: value for key, value in receipt.items() if key != 'exports'}, ensure_ascii=False))
     finally:

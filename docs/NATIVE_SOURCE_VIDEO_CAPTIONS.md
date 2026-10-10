@@ -4,6 +4,8 @@ Ngày kiểm chứng: 2026-10-11. Nguồn gốc: `a8f1225d2d5fe76a60863d0222024f
 
 Studio giữ giao diện shot mặc định. Trong Assets → Audio & phụ đề, người dùng chọn SRT/VTT đã tải lên, mốc **Video nguồn** và video đang dùng trong shot. File phụ đề và video đều được gắn ID/SHA vào yêu cầu và provenance. Mốc **Timeline hiện tại** và luồng video nguồn Mode B giữ payload/idempotency lịch sử.
 
+Bổ sung tiếp theo: [NATIVE_SOURCE_CAPTION_RETIMING.md](NATIVE_SOURCE_CAPTION_RETIMING.md) mở lựa chọn video tường minh cho Mode B, giữ bố cục caption nhập/sửa tay khi linked edit và sửa transcript, và kiểm chứng reflow theo cửa sổ video thực. Request Source cũ không có cặp video ID/SHA vẫn giữ hash và bố cục đã nhập; bằng chứng Mode A dưới đây giữ nguyên phạm vi lịch sử.
+
 ## Hành vi
 
 - Chỉ video thực sự được dùng bởi clip nguồn đang bật mới được chọn. Không suy ra video từ tên file, hình ảnh, audio hay project khác. Thiếu cặp ID/SHA, bytes thay đổi hoặc payload không hợp lệ bị chặn.

@@ -85,8 +85,10 @@ def apply(snapshot,operation,document):
         if any(assets.get(clip.metadata.get('native_asset_id'),{}).get('has_audio') for clip in main.clips):
             raise WorkflowError('AUTO_EDIT_LINKED_AUDIO_DIVERGED',400)
         audio=None
-    captions=next((track for track in snapshot.tracks if track.kind=='subtitles'),None)
-    if any(track and track.locked for track in (main,audio,captions)):
+    from .source_caption_mapping import human_layout
+    captions=[track for track in snapshot.tracks if track.kind=='subtitles' and not human_layout(snapshot,track)
+        and not any(clip.metadata.get('native_media_import_id') for clip in track.clips)]
+    if any(track and track.locked for track in (main,audio,*captions)):
         raise WorkflowError('AUTO_EDIT_LINKED_TRACK_LOCKED',400)
     transcript=transcript_for(document,snapshot)
     if operation.type=='trim':
@@ -138,14 +140,15 @@ def apply(snapshot,operation,document):
                 'source_start':clip.source_start,'source_end':clip.source_end,'timeline_start':clip.timeline_start,
                 'duration':clip.duration,'speed':clip.speed,'disabled':clip.disabled,
                 'metadata':{**copy.deepcopy(original.metadata),'native_linked_source_clip_id':clip.clip_id}}))
-    if captions:
-        output=next(track for track in changed.tracks if track.track_id==captions.track_id)
+    for track in captions:
+        output=next(t for t in changed.tracks if t.track_id==track.track_id)
         output.clips=_captions(changed_main.clips,transcript)
     for clip in changed_main.clips:clip.metadata.pop('native_link_origin',None)
     changed.duration_seconds=max(.1,round(max((clip.timeline_start+clip.duration for track in changed.tracks
         if not track.disabled for clip in track.clips if not clip.disabled),default=.1),6))
     changed.metadata['linked_source_edit']={'operation':operation.model_dump(mode='json'),
-        'captions_retimed_from_saved_transcript':transcript is not None,'source_audio_synchronized':audio is not None,
+        'captions_retimed_from_saved_transcript':bool(captions and transcript is not None),'source_audio_synchronized':audio is not None,
+        'imported_and_human_caption_layouts_preserved':True,
         **({'source_move_behavior':'ripple_reorder'} if operation.type=='move' else {}),
         'other_tracks_preserved':True,'broll_placement_review_required':True,'provider_calls':0}
     return TimelineSnapshot.model_validate(changed.model_dump(mode='json'))
