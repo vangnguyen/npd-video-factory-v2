@@ -1,0 +1,121 @@
+{
+  "schema_version": "north-star-native-google-analytics-selection-evidence-v1",
+  "status": "PASS_COMPONENT_VERIFICATION",
+  "base_head": "12f008bdad6806eae0f4a8606b4f24acf1e7f22a",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-native-regression-n1.log",
+      "sha256": "8694e81caf27dd38a2f4aa09d83ecf707384b3b4340f3ceb0256a453a6bbc1c2",
+      "bytes": 59895,
+      "passed": 257,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-current-contract-n2.log",
+      "sha256": "3e87aabfee6f9c31ed1c6fba52e9db9264764b20b84399c8a5c50366f2e02adf",
+      "bytes": 13854,
+      "passed": 58,
+      "status": "PASS"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-studio-regression-n1.log",
+      "sha256": "f389fa716013711bd9c5b3df138c63af968a3e28b09df4f8e682c8aca0c32878",
+      "bytes": 56632,
+      "passed": 555,
+      "status": "PASS"
+    }
+  ],
+  "test_scope": "Related legacy account/collector/finite refresh/OAuth/access/backup suites at their start checkpoint; latest analytics18/collector8/HTTP6 and publishing18/HTTP6/worker2 contracts cover final policy-entry/private-margin/backup-busy checks; full Studio555. Current58 overlaps legacy publishing contracts; do not sum as unique tests. Not a full-current-Native/media/browser/provider/Owner/production claim.",
+  "new_native_cases": 32,
+  "new_studio_cases": 12,
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-flow-n1\\evidence.json",
+    "sha256": "096ebddf217a61b770f6b3ed84625ca338a37ca9d6cede4de276a6eac14eeb5c",
+    "bytes": 639
+  },
+  "new_process_keyless_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-flow-n1\\new-process-replay-final.json",
+    "sha256": "4c2aa8f4335acf42a5a18b801ee402ecaeee62b95965b533d0f1ae8518aeb976",
+    "bytes": 267
+  },
+  "legacy_publishing_keyless_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-oauth-selection-flow-n1\\new-process-replay-analytics-extension.json",
+    "sha256": "4c2aa8f4335acf42a5a18b801ee402ecaeee62b95965b533d0f1ae8518aeb976",
+    "bytes": 267
+  },
+  "public_backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-flow-n1\\public-selection-history.zip",
+    "sha256": "11318beb7d7da48bcb2305cdf4bfffb150f4db2f7a2c8e5735cc8e47868ad4cf",
+    "bytes": 358443
+  },
+  "studio_fixture": {
+    "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-google-analytics-selection-v1.json",
+    "sha256": "b25e9a56a3b7393848eda5dd24618088d00f52e101c087ed191c85a6d3bb84ff",
+    "bytes": 26547
+  },
+  "fixture_kind": "explicit_protocol_mock_not_owner_or_real_provider_acceptance",
+  "mock_token_requests": 2,
+  "same_grant_mock_channel_requests": 2,
+  "journal_tables_exact": 27,
+  "local_real": [
+    "DPAPI private custody",
+    "SQLite",
+    "backup",
+    "restore",
+    "fresh process"
+  ],
+  "collector_fixture": "Existing receipt-bound collector uses exactly the selected Bearer on channels/videos/reports; nonplayable publication/rights/QC/Owner and audience metrics are explicit mocks. Null/zero/history, separate consent, readonly/revenue scopes, revocation/expiry/private-load/refresh and finite backoff checked.",
+  "initial_failed_logs_preserved": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-http-n1.log",
+      "sha256": "14bf959f1810ad7569c18748eb9631b11da199832da168f529680b350577ff30",
+      "bytes": 3827
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-collector-n1.log",
+      "sha256": "ea33e7d1dbe63507d07e1379481e5c93049d6eb1f3823bd0ee39c7f3fb84b467",
+      "bytes": 13101
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-collector-n2.log",
+      "sha256": "c99c4fdc33b324478fda1fae9002eecf2c91f4bf20bb2e8c650024506577f992",
+      "bytes": 4168
+    }
+  ],
+  "source_checkpoints": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-source-checkpoint-n1.zip",
+      "sha256": "8c51e166897b5c8b1320cbde50e6bb68dc0a9fb1694b2436121f8f793f41c3b7",
+      "bytes": 46362
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-source-checkpoint-n2.zip",
+      "sha256": "2e0f0c61cffa6171b3b69b20cf435386df4aef65d757a7877e1fd62023b144c9",
+      "bytes": 48940
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\google-analytics-selection-source-checkpoint-n3.zip",
+      "sha256": "f07e6556d81530f56ebf66c8959dc779886ea3ed1763b9abd12e8195446cc104",
+      "bytes": 105909
+    }
+  ],
+  "real_provider_tested": false,
+  "external_calls": 0,
+  "paid_operations": 0,
+  "publishing_enabled_by_selection": false,
+  "automatic_refresh": false,
+  "automatic_selection": false,
+  "automatic_analytics_sync": false,
+  "owner_uat": false,
+  "browser_acceptance": false,
+  "implementation_complete": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "remaining": [
+    "Native official TikTok/Meta execution and other platform analytics",
+    "genuine scoped credentials/account/audience/provider acceptance",
+    "production custody/ACL/TLS and browser/Owner review",
+    "Windows retention/quota/recovery/soak and isolated Docker",
+    "full original Mode A/B and A/B/C acceptance"
+  ]
+}

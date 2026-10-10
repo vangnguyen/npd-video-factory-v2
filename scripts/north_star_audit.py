@@ -35,10 +35,14 @@ def main():
     assert set(crosswalk) == {n for n, _ in sections}
     for ids in crosswalk.values():
         assert ids and all(1 <= i <= 64 for i in ids)
+    classifications = Counter(r['status'] for r in rows)
+    classification_summary = ' / '.join(f'{classifications[s]} {s}' for s in ('IMPLEMENTED_REAL','IMPLEMENTED_MOCK_ONLY','PARTIAL','INTERFACE_ONLY','MISSING','NOT_VERIFIED','BLOCKED_EXTERNAL') if classifications[s])
     text = ['# North Star capability matrix', '',
         'Authority: `CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md`, sections 0–89, plus VF-NORTH-STAR-COMPLETION-PROGRAM-01.', '',
         'Audit baseline: `2ced7bc81f9402368fb22c9e7aca242e740531af`. This matrix describes inspected source and its remaining behavior. IMPLEMENTED_REAL means executable non-fixture behavior exists; it does not certify real-provider acceptance or production deployment. Historical acceptance is preserved separately. Source hashes are in `docs/north-star/source-inventory.json`.', '',
         'The Native Studio and PostgreSQL Studio are separate implementations. Their existing analysis, media, publishing and analytics paths are not automatically available in the accepted Native workflow. This integration gap is P0. No phase report alone proves a requirement.', '',
+        f'Tổng quan: {len(rows)} nhóm yêu cầu / {len(sections)} mục Master Spec. Phân loại hiện tại: {classification_summary}.', '',
+        f'Còn {len(rows)-classifications["IMPLEMENTED_REAL"]} nhóm ngoài IMPLEMENTED_REAL. Đây là nhóm yêu cầu rộng, không phải số việc nhỏ hay phần trăm hoàn thành. IMPLEMENTED_REAL không đồng nghĩa đã nghiệm thu provider/Owner hoặc triển khai production.', '',
         '## Capability audit', '',
         '| ID / requirement | Classification | Current source / behavior | Missing behavior | Severity / dependency / wave | Acceptance |',
         '| --- | --- | --- | --- | --- | --- |']

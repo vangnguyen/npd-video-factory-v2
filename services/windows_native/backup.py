@@ -124,12 +124,14 @@ def database_status(path):
                 busy+=con.execute("SELECT count(*) FROM native_analytics_syncs WHERE status IN ('queued','scheduled','retry_scheduled')").fetchone()[0]
             for name in ('native_official_account_checks','native_official_account_events'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
-            for name in ('native_google_oauth_authorizations','native_google_oauth_operations','native_google_oauth_events','native_google_oauth_selections'):
+            for name in ('native_google_oauth_authorizations','native_google_oauth_operations','native_google_oauth_events','native_google_oauth_selections','native_google_analytics_selections'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_google_oauth_operations' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_google_oauth_operations WHERE status='claimed'").fetchone()[0]
             if 'native_google_oauth_selections' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_google_oauth_selections WHERE status='claimed'").fetchone()[0]
+            if 'native_google_analytics_selections' in tables:
+                busy+=con.execute("SELECT count(*) FROM native_google_analytics_selections WHERE status='claimed'").fetchone()[0]
             for name in ('native_official_vision_intents','native_official_vision_responses','native_official_vision_events'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_official_vision_intents' in tables:

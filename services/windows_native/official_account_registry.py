@@ -33,11 +33,29 @@ class Account(StrictModel):
         if self.publishing_enabled is not False:raise ValueError('Publishing remains disabled')
         return self
 
+class OAuthAccount(StrictModel):
+    account_ref:str=Field(pattern=r'^npac_[a-f0-9]{32}$')
+    target:PublishingTargetBinding
+    credential_alias:str=Field(pattern=r'^[a-z][a-z0-9-]{3,79}$')
+    credential_source:Literal['google_oauth_selection']
+    google_oauth_slot_id:str=Field(pattern=r'^ngos_[a-f0-9]{32}$')
+    read_enabled:StrictBool=False
+    publishing_enabled:Literal[False]=False
+    @field_validator('publishing_enabled',mode='before')
+    @classmethod
+    def disabled(cls,value):
+        if value is not False:raise ValueError('Publishing must remain explicitly disabled')
+        return value
+    @model_validator(mode='after')
+    def bounded(self):
+        if self.target.platform!='youtube' or self.target.provider_key!='youtube-data-api-publishing':raise ValueError('Dedicated Google analytics account required')
+        return self
+
 class Registry(StrictModel):
     schema_version:Literal['native-official-account-registry-v1']='native-official-account-registry-v1'
     version:StrictInt=Field(ge=1,le=1)
     workspace_id:str=Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
-    accounts:list[Account]=Field(default_factory=list,max_length=50)
+    accounts:list[Account|OAuthAccount]=Field(default_factory=list,max_length=50)
 
     @model_validator(mode='after')
     def unique(self):
@@ -49,14 +67,19 @@ class Registry(StrictModel):
 
 class AccountFactory:
     def __init__(self,account,root,workspace,*,owner_read_enabled=False,transport=None,resolver=None,registry_file=None,registry_sha256=None):
-        if type(owner_read_enabled) is not bool or type(account) is not Account or account.target.workspace_id!=workspace:
+        if type(owner_read_enabled) is not bool or type(account) not in (Account,OAuthAccount) or account.target.workspace_id!=workspace:
             raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
+        if type(account) is OAuthAccount:
+            from .google_analytics_selection_resolver import AnalyticsSelectionResolver
+            if resolver is not None:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_RESOLVER_INVALID',400)
+            resolver=AnalyticsSelectionResolver(account,root,workspace)
         self.account=account.model_copy(deep=True);self.root=Path(root);self.workspace=workspace
         if (registry_file is None)!=(registry_sha256 is None) or registry_sha256 is not None and (not isinstance(registry_sha256,str) or not re.fullmatch(r'[a-f0-9]{64}',registry_sha256)):
             raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         self.registry_file=protected_path(registry_file,self.root) if registry_file is not None else None
         self.registry_sha256=registry_sha256;self.frozen_registry_file=self.registry_file;self.frozen_registry_sha256=registry_sha256
-        self.path=protected_path(account.token_file,root)
+        self.path=protected_path(account.token_file,root) if type(account) is Account else None
+        self.frozen_path=self.path
         self.client=AnalyticsHTTPClient(account.target.platform,network_enabled=owner_read_enabled and account.read_enabled,transport=transport)
         if resolver is not None and not callable(resolver):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_RESOLVER_INVALID',400)
         self.resolver=resolver;self.read_enabled=owner_read_enabled and account.read_enabled
@@ -67,7 +90,12 @@ class AccountFactory:
 
     def check(self):
         try:
-            parsed=Account.model_validate(self.account.model_dump(mode='json'))
+            if type(self.account) not in (Account,OAuthAccount):raise ValueError()
+            parsed=type(self.account).model_validate(self.account.model_dump(mode='json'))
+            if type(parsed) is OAuthAccount:
+                from .google_analytics_selection_resolver import AnalyticsSelectionResolver
+                if type(self.resolver) is not AnalyticsSelectionResolver or self.resolver.binding!=parsed or self.path is not None:raise ValueError()
+                self.resolver.check()
             if (self.registry_file!=self.frozen_registry_file or self.registry_sha256!=self.frozen_registry_sha256
                 or (self.registry_file is None)!=(self.registry_sha256 is None)):raise ValueError()
             if self.registry_file is not None and (protected_path(self.registry_file,self.root)!=self.registry_file
@@ -81,12 +109,14 @@ class AccountFactory:
             or self.client.wire.transport is not self.frozen_transport or self.client.wire.network_enabled is not self.frozen_network
             or parsed.model_dump(mode='json')!=self.frozen
             or digest({**parsed.model_dump(mode='json'),**({'registry_sha256':self.registry_sha256} if self.registry_sha256 is not None else {})})!=self.sha256
-            or parsed.target.workspace_id!=self.workspace or protected_path(parsed.token_file,self.root)!=self.path
+            or parsed.target.workspace_id!=self.workspace or self.path!=self.frozen_path
+            or type(parsed) is Account and protected_path(parsed.token_file,self.root)!=self.path
             or self.client.platform!=parsed.target.platform):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
         return parsed
 
     def public(self):
-        value=self.check();mounted=self.resolver is not None or self.path.is_file() and 0<self.path.stat().st_size<=32768
+        value=self.check();mounted=self.resolver is not None or self.path is not None and self.path.is_file() and 0<self.path.stat().st_size<=32768
+        if type(value) is OAuthAccount:mounted=self.resolver.available(mock=self.client.mock)
         enabled=self.read_enabled and self.client.enabled and mounted
         return {'account_ref':value.account_ref,'target':value.target.model_dump(mode='json'),'target_binding_sha256':target_digest(value.target),
             'configuration_sha256':self.sha256,'credential_alias':value.credential_alias,
@@ -98,6 +128,7 @@ class AccountFactory:
     def credential(self,query=None,*,now=None):
         value=self.check()
         if not self.read_enabled or not self.client.enabled:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_READ_DISABLED')
+        if type(value) is OAuthAccount and not self.resolver.available(mock=self.client.mock):raise WorkflowError('NATIVE_GOOGLE_ANALYTICS_SELECTION_REQUIRED')
         resolver=self.resolver or (lambda target:token_load(self.path,self.root,target,value.credential_alias))
         credential=resolve_credential(resolver,value.target,query,now=now)
         self.check()

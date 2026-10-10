@@ -140,7 +140,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,officialPublicationUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -232,6 +232,7 @@ if (typeof document !== "undefined") {
     officialAccountsUI?.controls();
     googleOAuthUI?.controls();
     googleSelectionUI?.controls();
+    googleAnalyticsSelectionUI?.controls();
     officialPublicationUI?.controls();
     officialQueueUI?.controls();
     officialAnalyticsUI?.controls();
@@ -288,6 +289,7 @@ if (typeof document !== "undefined") {
     officialAccountsUI?.sync();
     googleOAuthUI?.sync();
     googleSelectionUI?.sync();
+    googleAnalyticsSelectionUI?.sync();
     officialPublicationUI?.sync();
     officialQueueUI?.sync();
     officialAnalyticsUI?.sync();
@@ -482,6 +484,8 @@ if (typeof document !== "undefined") {
         workspace_id:session.access.workspace_id}),onMessage:message});
       const googleSelection=await import('./native-google-oauth-selections.mjs');$('native-google-oauth-selections-card').hidden=false;
       googleSelectionUI=googleSelection.initializeNativeGoogleSelections({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message});
+      $('native-google-analytics-selections-card').hidden=false;
+      googleAnalyticsSelectionUI=googleSelection.initializeNativeGoogleAnalyticsSelections({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message});
     }
     if(session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;

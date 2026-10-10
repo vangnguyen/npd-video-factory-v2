@@ -40,6 +40,7 @@ class Runner:
         self.official_analytics_refresh = None
         self.google_oauth = None
         self.google_oauth_selections = None
+        self.google_analytics_selections = None
         self.official_vision = None
         self.render_vision = None
         self.vision = None
@@ -57,6 +58,7 @@ class Runner:
         if self.official_analytics_refresh is not None:self.official_analytics_refresh.recover()
         if self.google_oauth is not None:self.google_oauth.recover()
         if self.google_oauth_selections is not None:self.google_oauth_selections.recover()
+        if self.google_analytics_selections is not None:self.google_analytics_selections.recover()
         if self.official_vision is not None:self.official_vision.recover()
         if self.render_vision is not None:self.render_vision.recover()
         self.thread.start()
@@ -185,6 +187,7 @@ class LocalServer(ThreadingHTTPServer):
         official_analytics_enabled=False,official_analytics_refresh_enabled=False,
         google_oauth_registry=None,google_oauth_directory=None,google_oauth_enabled=False,google_oauth_slots=None,google_oauth_client=None,
         google_oauth_selection_enabled=False,google_oauth_selection_client=None,
+        google_analytics_selection_enabled=False,google_analytics_selection_client=None,
         official_vision_registry=None,official_vision_directory=None,official_vision_enabled=False,official_vision_factories=None,
         render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None,
         render_thumbnail_rights_enabled=False):
@@ -205,6 +208,10 @@ class LocalServer(ThreadingHTTPServer):
         if has_vision_config and access is None:raise WorkflowError('NATIVE_OFFICIAL_VISION_HUMAN_AUTH_REQUIRED',400)
         if type(google_oauth_enabled) is not bool:raise WorkflowError('NATIVE_GOOGLE_OAUTH_CONFIGURATION_INVALID',400)
         if type(google_oauth_selection_enabled) is not bool or google_oauth_selection_enabled and not google_oauth_enabled:raise WorkflowError('NATIVE_GOOGLE_SELECTION_CONFIGURATION_INVALID',400)
+        if type(google_analytics_selection_enabled) is not bool or google_analytics_selection_enabled and not google_oauth_enabled:raise WorkflowError('NATIVE_GOOGLE_ANALYTICS_SELECTION_CONFIGURATION_INVALID',400)
+        if google_analytics_selection_client is not None:
+            from app.analytics_official import AnalyticsHTTPClient
+            if google_oauth_slots is None or type(google_analytics_selection_client) is not AnalyticsHTTPClient or google_analytics_selection_client.platform!='youtube' or not google_analytics_selection_client.mock or google_analytics_selection_client.wire.network_enabled is not False:raise WorkflowError('NATIVE_GOOGLE_ANALYTICS_SELECTION_MOCK_INJECTION_REQUIRED',400)
         if google_oauth_selection_client is not None:
             from app.publishing_wire import OfficialHTTPClient
             if google_oauth_slots is None or type(google_oauth_selection_client) is not OfficialHTTPClient or google_oauth_selection_client.platform!='youtube' or google_oauth_selection_client.transport is None or google_oauth_selection_client.network_enabled is not False:raise WorkflowError('NATIVE_GOOGLE_SELECTION_MOCK_INJECTION_REQUIRED',400)
@@ -332,7 +339,7 @@ class LocalServer(ThreadingHTTPServer):
         from .official_publication_worker import NativeOfficialPublicationWorker
         publishing=load_publishing(official_publish_registry,self.store.root,self.publications.workspace_id,owner_enabled=official_publish_enabled) if official_publish_registry is not None else official_publish_factories
         self.official_publications=NativeOfficialPublications(self.store,self.publications,self.official_accounts,factories=publishing,identity_provider=self.official_publish_identity)
-        self.google_oauth=None;self.google_oauth_selections=None
+        self.google_oauth=None;self.google_oauth_selections=None;self.google_analytics_selections=None
         with self.store.transaction() as con:
             has_google_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_google_oauth_authorizations'").fetchone() is not None
         if loaded_google is not None or google_oauth_slots is not None or has_google_history:
@@ -351,6 +358,14 @@ class LocalServer(ThreadingHTTPServer):
             self.runner.google_oauth_selections=self.google_oauth_selections
             for factory in self.official_publications.factories.values():
                 if type(factory.binding) is OAuthBinding and factory.binding.google_oauth_slot_id in self.google_oauth.slots:factory.resolver.attach(self.google_oauth_selections)
+            from .official_account_registry import OAuthAccount
+            with self.store.transaction() as con:
+                has_analytics_selection_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_google_analytics_selections'").fetchone() is not None
+            if google_analytics_selection_enabled or google_analytics_selection_client is not None or has_analytics_selection_history or any(type(f.account) is OAuthAccount for f in self.official_accounts.factories.values()):
+                self.google_analytics_selections=NativeGoogleOAuthSelections(self.google_oauth,purpose='analytics',enabled=google_analytics_selection_enabled,client=google_analytics_selection_client)
+                self.runner.google_analytics_selections=self.google_analytics_selections
+                for factory in self.official_accounts.factories.values():
+                    if type(factory.account) is OAuthAccount and factory.account.google_oauth_slot_id in self.google_oauth.slots:factory.resolver.attach(self.google_analytics_selections)
         # Production network clients come only from the protected, explicitly enabled registry.
         self.official_publish_vault=SessionVault(self.official_publications,official_publish_session_directory)
         self.official_publish_worker=NativeOfficialPublicationWorker(self.official_publications,self.official_publish_vault)
@@ -619,7 +634,7 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/connections/official-accounts' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/account-checks(?:/nack_[a-f0-9]{32})?',path):
             from .official_account_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
-        if path in ('/api/connections/google-oauth','/api/connections/google-oauth-selections') or re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations|operations|selections)(?:/(?:ngoa_|ngop_|ngosel_)[a-f0-9]{32})?',path):
+        if path in ('/api/connections/google-oauth','/api/connections/google-oauth-selections','/api/connections/google-oauth-analytics-selections') or re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations|operations|selections|analytics-selections)(?:/(?:ngoa_|ngop_|ngosel_|ngasel_)[a-f0-9]{32})?',path):
             from .google_oauth_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-vision' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-vision(?:/nvoi_[a-f0-9]{32})?',path):
@@ -916,7 +931,7 @@ class Handler(BaseHTTPRequestHandler):
             from .render_thumbnail_rights_routes import post,owner
             principal=owner(self)
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000),principal))
-        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations(?:/ngoa_[a-f0-9]{32}/(?:authorization-url|exchange|cancel))?|refresh|selections(?:/ngosel_[a-f0-9]{32}/(?:verify|revoke))?)',self.path):
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations(?:/ngoa_[a-f0-9]{32}/(?:authorization-url|exchange|cancel))?|refresh|selections(?:/ngosel_[a-f0-9]{32}/(?:verify|revoke))?|analytics-selections(?:/ngasel_[a-f0-9]{32}/(?:verify|revoke))?)',self.path):
             from .google_oauth_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/(?:media-plans/nmp_[a-f0-9]{32}/resolve/(?:generate|search|download)|media-resolutions/nmr_[a-f0-9]{32}/import)',self.path):
@@ -1340,6 +1355,7 @@ def main():
     parser.add_argument('--google-oauth-directory',type=Path)
     parser.add_argument('--enable-google-oauth',action='store_true')
     parser.add_argument('--enable-google-oauth-selections',action='store_true')
+    parser.add_argument('--enable-google-analytics-selections',action='store_true')
     parser.add_argument('--official-vision-registry',type=Path)
     parser.add_argument('--official-vision-directory',type=Path)
     parser.add_argument('--enable-official-vision',action='store_true')
@@ -1376,7 +1392,7 @@ def main():
             generation_registry=args.generation_provider_registry,generation_api_enabled=args.enable_generation_api,
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
-            google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,google_oauth_selection_enabled=args.enable_google_oauth_selections,
+            google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,google_oauth_selection_enabled=args.enable_google_oauth_selections,google_analytics_selection_enabled=args.enable_google_analytics_selections,
             official_vision_registry=args.official_vision_registry,official_vision_directory=args.official_vision_directory,official_vision_enabled=args.enable_official_vision,
             render_vision_registry=args.render_vision_registry,render_vision_directory=args.render_vision_directory,render_vision_enabled=args.enable_render_vision,
             render_thumbnail_rights_enabled=args.enable_render_thumbnail_rights_overrides,

@@ -15,21 +15,24 @@ from services.windows_native.tests.test_google_oauth_protocol import client,TOKE
 from services.windows_native.tests.test_human_identity import fixture as human_fixture
 from app.google_oauth_protocol import GoogleOAuthTokenClient
 from app.publishing_wire import OfficialHTTPClient
+from app.analytics_official import AnalyticsHTTPClient
 from app.human_identity import HumanAuthVerifier,HumanAuthRegistry
 import httpx
 PRIVATE=[TOKEN,REFRESH,SECRET,CODE]
 def write(path,value):
     raw=json.dumps(value,ensure_ascii=False,indent=2)+'\n';assert all(s not in raw for s in PRIVATE)
     with path.open('x',encoding='utf-8',newline='\n') as f:f.write(raw)
-def owned(path,kind,fresh=False):
+def owned(path,kind,fresh=False,purpose='publishing'):
     path=path.resolve()
-    if path.parent!=Path('C:/') or not re.fullmatch('vf-native-fixture-google-oauth-selection-'+kind+r'-[0-9]{2}',path.name) or fresh and path.exists():raise ValueError('Exact fresh owned selection root required')
+    if purpose not in ('publishing','analytics'):raise ValueError('Dedicated selection purpose required')
+    stem='vf-native-fixture-google-oauth-selection-' if purpose=='publishing' else 'vf-native-fixture-google-analytics-selection-'
+    if path.parent!=Path('C:/') or not re.fullmatch(stem+kind+r'-[0-9]{2}',path.name) or fresh and path.exists():raise ValueError('Exact fresh owned selection root required')
     return path
 def replay(args):
-    output=args.output.resolve();root=owned(args.restore_root,'restore');private=owned(args.private_root,'secrets')
+    output=args.output.resolve();root=owned(args.restore_root,'restore',purpose=args.purpose);private=owned(args.private_root,'secrets',purpose=args.purpose)
     # History verification uses an absent private mount and no identity/provider.
     absent=private.with_name(private.name+'-absent');assert not absent.exists()
-    store,vault,oauth=services(root,absent);selections=NativeGoogleOAuthSelections(oauth)
+    store,vault,oauth=services(root,absent);selections=NativeGoogleOAuthSelections(oauth,purpose=args.purpose)
     expected=json.loads((output/'expected-journals.json').read_bytes());assert journals(store)==expected
     project=json.loads((output/'expected-project.json').read_bytes());assert store.get(project['id'])==project
     for value in json.loads((output/'expected-selection-history.json').read_bytes()):assert selections.get(project['id'],value['selection_id'])==value
@@ -42,12 +45,12 @@ def replay(args):
     if not re.fullmatch(r'[a-z][a-z0-9-]{1,79}\.json',name):raise ValueError('Bounded replay report filename required')
     write(output/name,result);print(json.dumps(result))
 async def run(args):
-    state=owned(args.state_root,'state',True);private=owned(args.private_root,'secrets',True);restored=owned(args.restore_root,'restore',True)
+    state=owned(args.state_root,'state',True,purpose=args.purpose);private=owned(args.private_root,'secrets',True,purpose=args.purpose);restored=owned(args.restore_root,'restore',True,purpose=args.purpose)
     out=args.output.resolve();out.mkdir(parents=True,exist_ok=False);state.mkdir()
     (state/'.vf-auth-workspace.json').write_text(json.dumps({'schema':'vf-native-workspace-binding-v1','workspace_id':WORKSPACE}),encoding='utf-8')
     raw,registry=human_fixture('owner',workspace=WORKSPACE);PRIVATE.append(raw);verifier=HumanAuthVerifier(HumanAuthRegistry.model_validate(registry),max_token_ttl_seconds=86400);principal=verifier.verify('Bearer '+raw)
     stamp=datetime.now(timezone.utc);store,vault,base=services(state,private,verifier=lambda:verifier,clock=lambda:stamp);project=store.create('Explicit retained credential selection fixture','','media')
-    c=client('publishing');receipt=vault.save_client(PrivateClient(target=c.target,purpose=c.purpose,credential_alias='explicit-retained-selection-publishing',client_id=c.client_id,scopes=sorted(c.scopes),client_secret=c.client_secret))
+    c=client(args.purpose);receipt=vault.save_client(PrivateClient(target=c.target,purpose=c.purpose,credential_alias='explicit-retained-selection-'+args.purpose,client_id=c.client_id,scopes=sorted(c.scopes),client_secret=c.client_secret))
     slot=Slot(slot_id='ngos_'+'b'*32,target=c.target,client=receipt,client_id=c.client_id,scopes=sorted(c.scopes));token_calls=[];channel_calls=[]
     def token_wire(request):
         token_calls.append({'method':request.method,'host':request.url.host,'path':request.url.path,'operation':parse_qs(request.content.decode())['grant_type'][0],'mock':True})
@@ -58,7 +61,8 @@ async def run(args):
         channel_calls.append({'method':request.method,'host':request.url.host,'path':request.url.path,'mock':True})
         return httpx.Response(200,json={'items':[{'id':c.target.target_account_id}]})
     oauth=NativeGoogleOAuthOperations(base.publications,vault,slots={slot.slot_id:slot},client=GoogleOAuthTokenClient(transport=httpx.MockTransport(token_wire)),enabled=True)
-    selections=NativeGoogleOAuthSelections(oauth,enabled=True,client=OfficialHTTPClient('youtube',transport=httpx.MockTransport(channel_wire)))
+    selection_client=(OfficialHTTPClient if args.purpose=='publishing' else AnalyticsHTTPClient)('youtube',transport=httpx.MockTransport(channel_wire))
+    selections=NativeGoogleOAuthSelections(oauth,enabled=True,client=selection_client,purpose=args.purpose)
     first,_=oauth.start(project['id'],Start(revision=1,slot_id=slot.slot_id,expected_configuration_sha256=slot.client.configuration_sha256,acknowledged_credential_operation=True,
         acknowledged_protocol_mock=True,redirect_uri='http://127.0.0.1:18047/oauth/google/callback',request_key='explicit-retained-selection-start'),principal=principal)
     flow=vault.authorization(first['snapshot']['authorization_receipt']);PRIVATE.extend([flow.state,flow.verifier])
@@ -78,7 +82,7 @@ async def run(args):
     assert next_active['status']=='active' and selections.credential(slot.slot_id,c.target).token==TOKEN+'2'
     revoked=selections.revoke(project['id'],next_active['selection_id'],Revoke(expected_snapshot_sha256=next_active['snapshot_sha256']),principal=principal)
     assert revoked['status']=='revoked' and store.get(project['id'])==project and len(token_calls)==len(channel_calls)==2
-    fixture['revoked']={**active,'status':'revoked'}
+    fixture['revoked']=selections.get(project['id'],active['selection_id'])
     history=selections.page(project['id'])['items'];write(out/'expected-selection-history.json',history);write(out/'expected-operation-history.json',oauth.page(project['id'])['items'])
     write(out/'expected-project.json',project);write(out/'expected-journals.json',journals(store));write(out/'mock-wire-summary.json',{'token':token_calls,'account':channel_calls})
     costs=selections.costs.summary(project['id']);assert costs['attempted_operations']==4 and all(not r['external_call'] and not r['paid'] and r['actual_cost'] is None for r in costs['records']);write(out/'cost.json',costs)
@@ -96,4 +100,4 @@ async def run(args):
     write(out/'evidence.json',evidence);print(json.dumps(evidence))
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--state-root',type=Path);p.add_argument('--private-root',type=Path,required=True);p.add_argument('--restore-root',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--studio-fixture',type=Path);p.add_argument('--replay',action='store_true');p.add_argument('--new-process',action='store_true');p.add_argument('--replay-output');args=p.parse_args();replay(args) if args.replay else asyncio.run(run(args))
+    p.add_argument('--studio-fixture',type=Path);p.add_argument('--purpose',choices=['publishing','analytics'],default='publishing');p.add_argument('--replay',action='store_true');p.add_argument('--new-process',action='store_true');p.add_argument('--replay-output');args=p.parse_args();replay(args) if args.replay else asyncio.run(run(args))
