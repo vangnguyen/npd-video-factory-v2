@@ -66,10 +66,14 @@ class MetaCreate(StrictModel):
     expected_configuration_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
     request_key:str=Field(min_length=16,max_length=200,pattern=r'^[A-Za-z0-9_-]+$')
 
+class MetaExecutionCreate(MetaCreate):
+    schema_version:Literal['native-official-meta-publication-request-v2']='native-official-meta-publication-request-v2'
+    expected_media_configuration_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
+
 def publication_request(value):
     if type(value) is not dict:raise ValueError('Tagged publication request required')
     schema=value.get('schema_version','native-official-publication-request-v1')
-    kind=MetaCreate if schema=='native-official-meta-publication-request-v1' else TikTokCreate if schema=='native-official-tiktok-publication-request-v1' else Create if schema=='native-official-publication-request-v1' else None
+    kind=MetaExecutionCreate if schema=='native-official-meta-publication-request-v2' else MetaCreate if schema=='native-official-meta-publication-request-v1' else TikTokCreate if schema=='native-official-tiktok-publication-request-v1' else Create if schema=='native-official-publication-request-v1' else None
     if kind is None:raise ValueError('Supported publication request required')
     return kind.model_validate(value)
 

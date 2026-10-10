@@ -1,4 +1,4 @@
-"""One explicit fenced YouTube step; no automatic/live factory activation.
+"""Explicit fenced official publication steps; no automatic factory activation.
 
 Uses existing official protocol and cost primitives with owned Native journals.
 No shared ORM, browser publishing, OAuth acquisition or remote deletion.
@@ -27,23 +27,35 @@ def retry_delay(response):
     return int(value) if isinstance(value,str) and re.fullmatch(r'[0-9]{1,4}',value) and 1<=int(value)<=3600 else 30
 
 class NativeOfficialPublicationWorker:
-    def __init__(self,journal,vault):
+    def __init__(self,journal,vault,*,media_delivery=None):
         if type(journal) is not NativeOfficialPublications or type(vault) is not SessionVault or vault.journal is not journal:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_INVALID',400)
         self.journal,self.vault=journal,vault;self.frozen_journal,self.frozen_vault=journal,vault;self.costs=CostLedger(journal.store)
+        self.meta=None
+        if media_delivery is not None:
+            from .meta_publish_worker import NativeMetaExecutor
+            self.meta=NativeMetaExecutor(self,media_delivery)
+        self.frozen_meta=self.meta
     def check(self):
-        if self.journal is not self.frozen_journal or self.vault is not self.frozen_vault or self.vault.journal is not self.journal or self.costs.store is not self.journal.store:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_CHANGED')
+        if self.journal is not self.frozen_journal or self.vault is not self.frozen_vault or self.vault.journal is not self.journal or self.costs.store is not self.journal.store or self.meta is not self.frozen_meta:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_CHANGED')
         if not self.vault.configured():raise WorkflowError('NATIVE_OFFICIAL_SESSION_NOT_CONFIGURED')
     def context(self,project,identity,version,ticket=None,*,guard=None):
         if guard is not None:guard()
         self.check()
         with self.journal.store.transaction() as con:
             value,factory,path,dispatch=self.journal.worker_admission(project,identity,con=con)
-            if value['snapshot']['target']['platform'] not in {'youtube','tiktok'}:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED')
+            is_meta=value['snapshot'].get('execution_supported') is True
+            if value['snapshot']['target']['platform'] not in {'youtube','tiktok'} and not is_meta:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_EXECUTION_NOT_IMPLEMENTED')
+            if is_meta:
+                if self.meta is None:raise WorkflowError('NATIVE_META_PUBLISH_MEDIA_NOT_CONFIGURED')
+                self.meta.check(value,dispatch['phase'])
             if dispatch['version']!=version:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_STALE')
-            if type(ticket) is ThumbnailTicket:self.journal.thumbnails.fence(con,ticket)
+            if is_meta and ticket is not None:
+                from .meta_publishing import fence
+                fence(self.journal,con,ticket,require_grant=True)
+            elif type(ticket) is ThumbnailTicket:self.journal.thumbnails.fence(con,ticket)
             elif ticket is not None:self.journal.ticket(con,ticket)
             self.journal.eligible(con,project,identity,value)
-            if dispatch['phase'] in ('prepared','init_intent'):
+            if dispatch['phase'] in ('prepared','init_intent') and not is_meta:
                 preflight(PublicationMetadata.model_validate(value['snapshot']['metadata']),dispatch['total_bytes'],factory.profile,self.journal.clock(),thumbnail_stage=thumbnail_requested(value['snapshot']),snapshot=value['snapshot'])
         if guard is not None:guard()
         return value,factory,path,dispatch
@@ -51,7 +63,7 @@ class NativeOfficialPublicationWorker:
         value,current,_,_=self.context(project,identity,version,ticket,guard=guard)
         if current is not factory or factory.credential(now=self.journal.clock())!=credential:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_CREDENTIAL_CHANGED')
         # No private URL, bearer or raw response enters SQLite/audit/cost rows.
-        cost=self.costs.begin(project_id=project,provider='official-'+value['snapshot']['target']['platform'],model=None,operation=operation+'.'+(ticket.intent_id if ticket is not None else uuid.uuid4().hex),
+        cost=self.costs.begin(project_id=project,job_id=value['snapshot']['final_job_id'] if value['snapshot'].get('execution_supported') is True else None,provider='official-'+value['snapshot']['target']['platform'],model=None,operation=operation+'.'+(ticket.intent_id if ticket is not None else uuid.uuid4().hex),
             request_sha256=digest({'publication_id':identity,'snapshot_sha256':value['snapshot_sha256'],'version':version,'operation':operation,'body_sha256':hashlib.sha256(request.body).hexdigest()}),
             external_call=not value['mock'],paid=False,estimated_cost=None)
         sent=False
@@ -74,6 +86,7 @@ class NativeOfficialPublicationWorker:
     def step(self,project,identity,expected_version,*,guard=None):
         if type(expected_version) is not int:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_VERSION_INVALID',400)
         value,factory,path,dispatch=self.context(project,identity,expected_version,guard=guard);phase=dispatch['phase'];ticket=None
+        if value['snapshot'].get('execution_supported') is True:return self.meta.step(project,identity,expected_version,guard=guard)
         if value['snapshot']['target']['platform']=='tiktok':
             from .tiktok_publish_worker import step
             return step(self,project,identity,expected_version,guard=guard)
@@ -108,6 +121,7 @@ class NativeOfficialPublicationWorker:
         return self.journal.state(project,identity)
     def poll_processing(self,project,identity,expected_version,*,guard=None):
         value,factory,_,dispatch=self.context(project,identity,expected_version,guard=guard)
+        if value['snapshot'].get('execution_supported') is True:return self.meta.step(project,identity,expected_version,guard=guard,read_only=True)
         if value['snapshot']['target']['platform']=='tiktok':
             from .tiktok_publish_worker import poll
             return poll(self,project,identity,expected_version,guard=guard)
@@ -144,9 +158,16 @@ class NativeOfficialPublicationWorker:
         """Owned startup only. Finalize unfinished costs without credential reads."""
         if self.journal is not self.frozen_journal or self.vault is not self.frozen_vault or self.costs.store is not self.journal.store:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_WORKER_CONFIGURATION_CHANGED')
         self.journal.accounts.check_workspace();result=self.journal.recover();settled=0
+        from .meta_publishing import recover as recover_meta
+        result['recovered_meta_intents']=recover_meta(self.journal,self.costs)
         with self.journal.store.transaction() as con:
             rows=con.execute("SELECT c.* FROM native_cost_operations c WHERE c.provider IN ('official-youtube','official-tiktok') AND c.paid=0 AND c.status='dispatch_intent' AND EXISTS(SELECT 1 FROM native_official_publications p WHERE p.project_id=c.project_id AND p.workspace_id=?)",(self.journal.workspace,)).fetchall()
         for row in rows:
             if not re.fullmatch(r'(publish_account_lookup|publish_creator_lookup|publish_processing_status|publish_thumbnail_set|upload_initialize|upload_chunk|upload_reconcile)\.[a-f0-9]{32}',row['operation']):continue
             self.costs.settle(row['id'],status='outcome_unknown',error_code='NATIVE_OFFICIAL_PUBLISH_RESTART_OUTCOME_UNKNOWN');settled+=1
+        with self.journal.store.transaction() as con:
+            meta_reads=con.execute("SELECT c.* FROM native_cost_operations c WHERE c.provider IN ('official-facebook','official-instagram_reels') AND c.paid=0 AND c.status='dispatch_intent' AND EXISTS(SELECT 1 FROM native_official_publications p WHERE p.project_id=c.project_id AND p.workspace_id=? AND json_extract(p.snapshot_json,'$.final_job_id')=c.job_id)",(self.journal.workspace,)).fetchall()
+        for row in meta_reads:
+            if not re.fullmatch(r'(meta_page_lookup|meta_instagram_lookup)\.[a-f0-9]{32}',row['operation']):continue
+            self.costs.settle(row['id'],status='outcome_unknown',error_code='NATIVE_META_PUBLISH_INTERRUPTED_NO_REPLAY');settled+=1
         return {**result,'unfinished_costs_marked_unknown':settled,'automatic_upload_retry':False}

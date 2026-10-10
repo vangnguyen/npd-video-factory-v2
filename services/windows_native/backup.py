@@ -136,6 +136,8 @@ def database_status(path):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_publishing_media_deliveries' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_publishing_media_deliveries WHERE status IN ('queued','running')").fetchone()[0]
+            for name in ('native_official_meta_media_bindings','native_official_meta_preflights','native_official_meta_responses'):
+                if name in tables:counts[name]=con.execute('SELECT count(*) FROM '+name).fetchone()[0]
             for name in ('native_tiktok_creator_checks','native_tiktok_creator_responses','native_tiktok_post_drafts'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_tiktok_creator_checks' in tables:

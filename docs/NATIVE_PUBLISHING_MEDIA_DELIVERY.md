@@ -1,6 +1,6 @@
 # Native immutable publishing media delivery
 
-This Wave 8/9 component prepares the exact approved final for a future official pull-URL publisher. It is implemented and verified with actual local byte streams, SQLite, Windows DPAPI and explicit S3/Meta/Owner/platform/nonplayable-media mocks. It does not implement the Meta executor, wire Native CLI/HTTP/Studio controls, enable publishing, or close the full North Star.
+This Wave 8/9 component prepares the exact approved final for a future official pull-URL publisher. It is implemented and verified with actual local byte streams, SQLite, Windows DPAPI and explicit S3/Meta/Owner/platform/nonplayable-media mocks. The separate versioned Meta executor is described in NATIVE_META_PUBLISHING.md; protected Native CLI/HTTP/Studio media controls, real-provider acceptance and the full North Star remain open.
 
 The provider-neutral implementation is `apps/api/app/publishing_media_delivery.py`; its durable Native consent/cost/private-custody producer is `services/windows_native/publishing_media_delivery.py`. Existing generic object storage and YouTube/TikTok publishing remain in place.
 
@@ -32,7 +32,7 @@ Credentials and URLs use separate DPAPI prefix/entropy domains outside the sourc
 
 Only `resolve_for_consumer` returns the private lease to an internal worker. It checks exact publication snapshot, raw consumer mock mode, current Owner/grant/configuration/canonical source, ciphertext, protected envelope, host-only signed headers, exact object/version, signed query scope and remaining lifetime. It performs no storage request. A mock lease cannot be resolved for a live consumer. Native configuration also requires the requested URL lifetime to fit inside the current credential lifetime; [AWS temporary-credential URL expiry](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html) may otherwise shorten validity.
 
-Resolving this lease does not grant publishing authority. Existing Meta-v1 reviewed snapshots remain `execution_supported=false`, and the shared worker still rejects them before Meta credentials/intents/mutation. A future executor needs a separate execution-capable versioned request and current publication intent. No public URL endpoint or automatic publish path was added.
+Resolving this lease does not grant publishing authority. Existing Meta-v1 reviewed snapshots remain `execution_supported=false`, and the shared worker still rejects them before Meta credentials/intents/mutation. The opt-in Meta-v2 executor needs a new execution-capable versioned request and current publication intent; it cannot promote a legacy v1 review. No public URL endpoint or automatic publish path was added.
 
 ## Evidence and remaining acceptance
 
@@ -43,4 +43,4 @@ Resolving this lease does not grant publishing authority. Existing Meta-v1 revie
 
 Source/evidence index: `docs/north-star/publishing-media-evidence.json`. Test and flow logs live under `C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/`. This folder name is historical; this component was validated on 2026-10-10.
 
-Still required: protected operator/runtime/HTTP/Studio wiring; genuine versioned-storage/provider/cost/permission acceptance; durable multipart delivery; Meta asynchronous create/upload/container/status/finish/receipt and shared queue; platform analytics; actual browser/Owner/media UAT; full Mode A/B and original A/B/C bundles; production isolation/Docker/soak/deployment acceptance. Real provider calls, paid operations, external posts, main merge and production deployments for this component are all zero. Counts remain 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED, with 59 broad groups unclosed.
+Still required: protected operator/runtime/HTTP/Studio wiring; genuine versioned-storage/provider/cost/permission acceptance; durable multipart delivery; protected Meta execution/runtime/Studio integration and real asynchronous provider acceptance; platform analytics; actual browser/Owner/media UAT; full Mode A/B and original A/B/C bundles; production isolation/Docker/soak/deployment acceptance. Real provider calls, paid operations, external posts, main merge and production deployments for this component are all zero. Counts remain 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED, with 59 broad groups unclosed.

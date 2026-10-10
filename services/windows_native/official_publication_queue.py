@@ -43,7 +43,8 @@ class QueueCancel(StrictModel):
     expected_policy_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
 
 class DispatchResult(StrictModel):
-    phase:Literal['prepared','init_intent','init_unconfirmed','uploading','chunk_intent','reconcile_intent','reconciliation_required','uploaded','review_required']
+    phase:Literal['prepared','init_intent','init_unconfirmed','uploading','chunk_intent','reconcile_intent','reconciliation_required','uploaded','review_required',
+        'meta_init_intent','meta_init_unconfirmed','meta_created','meta_transfer_intent','meta_transfer_unconfirmed','meta_processing','meta_finish_ready','meta_finish_intent','meta_finish_unconfirmed','meta_status_intent']
     version:StrictInt=Field(ge=1)
     total_bytes:StrictInt=Field(ge=1)
     acknowledged_bytes:StrictInt=Field(ge=0)
@@ -190,8 +191,10 @@ class NativeOfficialPublicationQueue:
                 if prior['publication_id']!=publication or prior['request_sha256']!=fingerprint:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_IDEMPOTENCY_CONFLICT')
                 value=self.read(con,prior);return {**value,'idempotent_replay':True}
             if not self.configured():raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_NOT_ENABLED')
-            self.worker.check();value,_,_,dispatch=self.journal.admission(project,publication,con=con);grant=self.journal.valid_grant(con,self.journal.row(con,project,publication));instant=self.clock()
-            if payload.expected_snapshot_sha256!=value['snapshot_sha256'] or payload.expected_dispatch_version!=dispatch['version'] or dispatch['intent_id'] is not None or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded'):
+            self.worker.check();current=self.journal.get(project,publication,con=con)
+            admit=self.journal.worker_admission if current['snapshot'].get('execution_supported') is True else self.journal.admission
+            value,_,_,dispatch=admit(project,publication,con=con);grant=self.journal.valid_grant(con,self.journal.row(con,project,publication));instant=self.clock()
+            if payload.expected_snapshot_sha256!=value['snapshot_sha256'] or payload.expected_dispatch_version!=dispatch['version'] or dispatch['intent_id'] is not None or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded','meta_created','meta_transfer_unconfirmed','meta_processing','meta_finish_ready','meta_finish_unconfirmed'):
                 raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_REVIEW_BINDING_CHANGED')
             if not instant<=utc(payload.start_at)<utc(payload.deadline)<=utc(datetime.fromisoformat(grant['expires_at'])) or utc(payload.deadline)>utc(datetime.fromisoformat(authority['expires_at'])):
                 raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_WINDOW_OUTSIDE_CONSENT')
@@ -234,7 +237,7 @@ class NativeOfficialPublicationQueue:
             try:
                 value,request,publication,dispatch=self.admission(con,row)
                 if row['step_count']>=request.max_steps:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_STEPS_EXHAUSTED')
-                if dispatch['intent_id'] is not None or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded'):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_DISPATCH_REVIEW_REQUIRED')
+                if dispatch['intent_id'] is not None or dispatch['phase'] not in ('prepared','uploading','reconciliation_required','uploaded','meta_created','meta_transfer_unconfirmed','meta_processing','meta_finish_ready','meta_finish_unconfirmed'):raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_DISPATCH_REVIEW_REQUIRED')
                 retry=self.journal.backoff_until(con,row['project_id'],row['publication_id'],publication)
                 if retry is not None and utc(datetime.fromisoformat(retry))>self.clock():
                     con.execute('UPDATE native_official_publish_queue_plans SET next_due_at=?,updated_at=? WHERE plan_id=?',(retry,self.clock().isoformat(),row['plan_id']));return None
@@ -270,7 +273,7 @@ class NativeOfficialPublicationQueue:
             if outcome.mock is not value['mock']:raise WorkflowError('NATIVE_OFFICIAL_PUBLISH_QUEUE_OUTCOME_INVALID')
             request=QueueCreate.model_validate({**value['policy']['request'],'request_key':'internal-queue-review-key'});instant=self.clock();due=instant+timedelta(seconds=request.interval_seconds)
             status='needs_attention' if outcome.failure_code else 'completed' if outcome.receipt_sha256 else 'queued'
-            if outcome.failure_code in ('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF','NATIVE_OFFICIAL_PUBLISH_BACKOFF_ACTIVE'):
+            if status=='queued' or outcome.failure_code in ('NATIVE_OFFICIAL_PUBLISH_READ_BACKOFF','NATIVE_OFFICIAL_PUBLISH_BACKOFF_ACTIVE','NATIVE_META_PUBLISH_READ_BACKOFF'):
                 publication=self.journal.read(self.journal.row(con,ticket.project_id,ticket.publication_id));retry=self.journal.backoff_until(con,ticket.project_id,ticket.publication_id,publication)
                 if retry is not None and publication['status']=='queued':status='queued';due=max(due,utc(datetime.fromisoformat(retry)))
             if status=='queued' and row['step_count']>=request.max_steps:status='exhausted'

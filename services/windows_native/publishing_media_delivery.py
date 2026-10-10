@@ -81,9 +81,12 @@ class NativeMediaDeliveryFactory:
             'estimated_operation_cost_vnd':self.estimate,'lease_directory_sha256':digest(str(self.directory)) if self.directory is not None else None}
         self.sha256=digest(self.configuration)
         self.frozen=(profile,profile.sha256,self.root,workspace,enabled,self.directory,self.credential_file,self.cipher_sha256,self.expires_at,self.estimate,self.wire,self.wire.mock,clock,self.sha256,digest(self.configuration))
-    def check(self):
+    def check_configuration(self):
+        """Immutable identities only; an existing remote job needs no S3 key."""
         if (self.profile,self.profile.sha256,self.root,self.workspace,self.enabled,self.directory,self.credential_file,self.cipher_sha256,self.expires_at,self.estimate,self.wire,self.wire.mock,self.clock,self.sha256,digest(self.configuration))!=self.frozen:
             raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_CHANGED')
+    def check(self):
+        self.check_configuration()
         if self.directory is not None and protected_path(self.directory,self.root)!=self.directory:raise WorkflowError('NATIVE_MEDIA_DELIVERY_CONFIGURATION_CHANGED')
         if self.credential_file is not None and (protected_path(self.credential_file,self.root)!=self.credential_file
             or (file_sha(self.credential_file) if self.credential_file.is_file() else None)!=self.cipher_sha256):
@@ -127,6 +130,15 @@ class Create(StrictModel):
 
 
 class NativePublishingMediaDelivery:
+    @staticmethod
+    def history(journal,project,identity,*,con):
+        """Pure existing-table reader for publication links; no schema/key/SDK init."""
+        from types import SimpleNamespace
+        if type(journal) is not NativeOfficialPublications:raise WorkflowError('NATIVE_MEDIA_DELIVERY_BINDING_INVALID')
+        reader=SimpleNamespace(journal=journal,store=journal.store,workspace=journal.workspace)
+        reader.read=lambda row:NativePublishingMediaDelivery.read(reader,row)
+        reader.row=lambda connection,p,i:NativePublishingMediaDelivery.row(reader,connection,p,i)
+        return NativePublishingMediaDelivery.get(reader,project,identity,con=con)
     def __init__(self,journal,*,factory=None):
         if type(journal) is not NativeOfficialPublications or factory is not None and (type(factory) is not NativeMediaDeliveryFactory or factory.root!=journal.store.root.absolute() or factory.workspace!=journal.workspace):
             raise WorkflowError('NATIVE_MEDIA_DELIVERY_BINDING_INVALID',400)
@@ -185,7 +197,11 @@ class NativePublishingMediaDelivery:
         from contextlib import nullcontext
         with (self.store.transaction() if con is None else nullcontext(con)) as con:
             value=self.read(self.row(con,project,identity));operations=[]
-            parent=self.journal.get(project,value['snapshot']['scope']['publication_id'],con=con)
+            parent=self.journal.read(self.journal.row(con,project,value['snapshot']['scope']['publication_id']))
+            if parent['snapshot']['target']['platform'] in {'facebook','instagram_reels'}:
+                from .meta_distribution import links
+                links(self.journal,con,parent,include_execution=False)
+            else:parent=self.journal.get(project,parent['publication_id'],con=con)
             scope=value['snapshot']['scope'];source=parent['snapshot']
             grant_row=con.execute('SELECT * FROM native_official_publish_approvals WHERE approval_id=? AND publication_id=? AND workspace_id=? AND project_id=?',
                 (value['snapshot']['approval_id'],parent['publication_id'],self.workspace,project)).fetchone()
