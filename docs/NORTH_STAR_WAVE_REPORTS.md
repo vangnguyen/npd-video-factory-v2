@@ -3495,3 +3495,17 @@ REGRESSIONS: related checks pass; static dependency transport regression discove
 EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta metric/scope content remain distinct gates.
 OWNER ACTION REQUIRED: none for safe work; listening/UAT stays deferred as requested.
 NEXT WAVE: Native Source graph drag/drop and every remaining original North Star gap. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3 / 6 / 16 — Native Source graph drag/drop component
+STATUS: component implemented and mock/local-real tested; full waves and North Star remain open.
+HEAD SHA: parent fb1cd9007d12eba6ab8095919fdb0baff70238a9; exact resulting HEAD is recorded in recovery/20261007/source-drag-drop-program-state.json after preservation seal.
+CAPABILITIES COMPLETED: same-track movement from captured local clip; scroll/grab offset,zoom,snapping; linked Source shot/audio/Source-follow-SRT reorder; independent clip absolute move; stale project/workspace/version/role/draft/lock/job/uncertain-response guards; same canonical edit/history/undo/redo.
+CAPABILITIES PARTIAL: effects/SFX authoring, renderer limits, whole Source editor/browser/non-developer/Owner and complete Mode A/B/A/B/C. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED=59 unclosed broad groups.
+TESTS: Studio718 PASS including10 new; Native18 PASS in4 related modules including3 static cases;63 imported modules verified over signed HTTP. Separate static run overlaps. Actual new preview/final/FullQC,2 independent FFmpeg/PIL ROIs and separate-process cold recovery pass. Prior broad renderer/API and visual-properties Native25 runs were not rerun or added to current counts.
+REAL PROVIDER TESTS: none; ASR/TTS/provider/paid calls0.
+MOCK TESTS: synthetic moving video/tone PCM,saved ASR,fixture human and DOM; actual shipped drag/caption controllers and signed HTTP/SQLite/FFmpeg/Remotion/QC/restore. Whole Source editor DOM/browser was not exercised.
+EVIDENCE: NATIVE_SOURCE_DRAG_DROP.md; north-star/source-drag-drop-evidence.json; native-source-drag-drop-n1; source-drag-drop-geometry-n1; source-drag-drop-cold-restore-n1.json.24 controller requests(media6+visual7+drag/caption11);canonical3s,measured3.051s,1080x1920/30fps,A/V delta0.051s,matching preview/final PCM.
+REGRESSIONS: related checks pass; preservation seal verifies15 historical accepted artifacts and clean live source. No accepted replacement/historical deletion or rejected-deletion retry; only newly owned fixtures torn down after verified export.
+EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta insights mapping remain distinct gates.
+OWNER ACTION REQUIRED: none for safe work; listening/UAT stays deferred as requested.
+NEXT WAVE: Native effects/SFX authoring and every original remaining North Star gap. SOURCE_PRESERVED=YES at sealed parent, fresh new seal required; PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

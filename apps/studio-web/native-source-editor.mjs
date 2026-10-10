@@ -7,6 +7,7 @@ import {initializeSceneReview} from './native-scene-review.mjs';
 import {initializeSourceCropReview} from './native-source-crop-review.mjs';
 import {initializeSourceThumbnailReview} from './native-source-thumbnail-review.mjs';
 import {initializeVisualProperties} from './native-visual-properties.mjs';
+import {initializeSourceDragDrop} from './native-source-drag-drop.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -61,9 +62,9 @@ export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
     <button type="button" data-source-track="${esc(track.track_id)}" data-track-state="locked">${track.locked?'Mở khóa':'Khóa'}</button>
     ${track.type==='audio'?`<button type="button" data-source-track="${esc(track.track_id)}" data-track-state="muted">${track.muted?'Bật âm':'Tắt âm'}</button>`:''}
     <button type="button" data-source-track="${esc(track.track_id)}" data-track-state="disabled">${track.disabled?'Bật track':'Tắt track'}</button></div>
-    <div class="source-lane" style="width:${width}px">${track.clips.map(clip=>{
+    <div class="source-lane" data-source-lane="${esc(track.track_id)}" style="width:${width}px">${track.clips.map(clip=>{
       const style=clipStyle(clip,track.kind,zoom),wave=waveformPath(clip);
-      return `<button type="button" class="source-timeline-clip" data-source-clip="${esc(clip.clip_id)}" aria-pressed="${clip.clip_id===selectedId}"
+      return `<button type="button" class="source-timeline-clip" data-source-clip="${esc(clip.clip_id)}" draggable="false" aria-pressed="${clip.clip_id===selectedId}"
         style="left:${style.left};width:${style.width};background:${style.color};opacity:${style.opacity}"
         title="${esc(clip.label)} · ${num(clip.timeline_start)}–${num(clip.timeline_start+clip.duration)}s">
         <span>${esc(clip.label||clip.kind)}</span>${wave?`<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Biên độ âm thanh đo từ nguồn"><path d="${wave}"/></svg>`:''}</button>`;
@@ -78,10 +79,10 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   const reviewHome=document.createElement('section');reviewHome.id='source-review-home';reviewHome.hidden=true;$('video-review-body').prepend(reviewHome);
   const reviewLabel=review.querySelector('.check'),originalReviewText=reviewLabel.lastChild.textContent;
   const toolbar=document.createElement('div');toolbar.className='source-timeline-toolbar';toolbar.hidden=true;
-  toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output>';
+  toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output><p class="hint">Kéo clip trong cùng track để đổi vị trí. Shot nguồn được sắp lại liền nhau cùng âm thanh và phụ đề; kiểm tra lại B-roll, preview và duyệt bản mới.</p>';
   $('advanced-tracks').before(toolbar);
   if(!document.querySelector('link[data-source-editor-style]')){const link=document.createElement('link');link.rel='stylesheet';link.href='/native-source-editor.css';link.dataset.sourceEditorStyle='true';document.head.append(link);}
-  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null;
+  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null;
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const visualRoot=document.createElement('section');visualRoot.id='native-source-visual';
@@ -133,7 +134,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     brollReview.sync();
     sceneReview.sync();
     cropReview.sync();
-    thumbnailReview.sync();visual.sync();
+    thumbnailReview.sync();visual.sync();dragDrop?.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -270,9 +271,16 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     if(track)void run(()=>{const saved=state().snapshot.tracks.find(t=>t.track_id===track.dataset.sourceTrack),key=track.dataset.trackState;
       return send(sourceRequest(getProject(),'edit',{operations:[{type:'set_track_state',track_id:saved.track_id,[key]:!saved[key]}]}));});
   });
+  dragDrop=initializeSourceDragDrop({root:$('advanced-tracks'),getState:()=>({...getGuards(),project:getProject(),timeline:state(),zoom,
+    snapping:toolbar.querySelector('[data-source-snap]').checked,workspace_id:getGuards().workspace_id??'wsp_native_local',
+    dirty:dirty||getGuards().dirty,busy:working||getGuards().busy||sceneReview.isWorking()||thumbnailReview.isWorking(),
+    active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))}),onMessage,
+    onMove:async(at,binding)=>{selectedId=binding.clip_id;await run(()=>send(sourceClipAction(getProject(),binding.clip_id,'move',{timeline_start:at})));
+      const p=getProject();return p?.id===binding.project_id&&p.revision===binding.revision+1&&state()?.version===binding.timeline_version+1&&
+        (getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
   for(const player of getPlayers())player.addEventListener('timeupdate',()=>{if(!isSourceProject(getProject())||player.hidden)return;playhead=player.currentTime;toolbar.querySelector('[data-source-position]').value=`${num(playhead)}s`;});
   void api('/api/auto-edit/subtitle-templates').then(value=>{catalog=value;shownKey=null;if(isSourceProject(getProject())&&!dirty)renderSelected(true);}).catch(error=>onMessage(error.message,true));
-  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking(),
+  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,dragDrop,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking(),
     readyForApproval:()=>isSourceProject(getProject())&&getPreview()?.status==='READY'&&getPreview()?.timeline_sha256===state().sha256,
     render:()=>renderSelected()};
 }

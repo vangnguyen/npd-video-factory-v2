@@ -20,3 +20,5 @@
 #native-source-inspector [data-thumbnail-images] figure { margin: 1rem 0; min-width: 0; }
 #native-source-inspector [data-thumbnail-images] img { display: block; max-width: 100%; height: auto; }
 #native-source-inspector [data-thumbnail-images] figcaption { overflow-wrap: anywhere; }
+.source-timeline-clip[draggable="true"] { cursor: grab; }
+.source-timeline-clip[draggable="true"]:active { cursor: grabbing; }

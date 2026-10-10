@@ -20,6 +20,6 @@ Mode A: 3,3 s, 1080×1920, 30 fps; Mode B: timeline 3 s, output đo 3,051 s, A/V
 
 Hai ROI cho mỗi bundle được đối chiếu bằng FFmpeg giải mã và phép biến đổi affine PIL độc lập. Bố trí canonical khớp tốt hơn các đối chứng bỏ crop, bỏ transform hoặc bỏ opacity. Đây là phép đo fixture theo ngưỡng so sánh; không phải khớp toàn khung hình tuyệt đối, QC ngữ nghĩa hay nghiệm thu chất lượng nội dung. Frame cuối đã được kiểm tra trực quan, chữ Việt và vùng brand giữ được.
 
-Không có inference ASR/TTS mới, provider/paid call, publishing hoặc deployment. Owner UAT, usability browser ở 1366/1920/2560, toàn bộ giao diện Source, Mode A/B và các bundle A/B/C đầy đủ còn mở. Native Source graph drag/drop, authoring effects/SFX và giới hạn renderer tiếp tục cần đóng; shot transition cơ bản hiện hữu được giữ.
+Không có inference ASR/TTS mới, provider/paid call, publishing hoặc deployment. Owner UAT, usability browser ở 1366/1920/2560, toàn bộ giao diện Source, Mode A/B và các bundle A/B/C đầy đủ còn mở. Authoring effects/SFX và giới hạn renderer tiếp tục cần đóng; shot transition cơ bản hiện hữu được giữ. Increment tiếp theo bổ sung [kéo/thả Source timeline](NATIVE_SOURCE_DRAG_DROP.md) với bằng chứng riêng; các số kiểm thử và bundle trên vẫn mô tả đúng checkpoint visual-properties trước đó.
 
 Dữ liệu fixture mới được xuất và xác minh backup trước teardown thông thường. Không xóa/thay artifact lịch sử hoặc đã chấp nhận; không thử lại các lệnh xóa đã bị automatic approval review từ chối. Ma trận giữ 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED, tức 59 nhóm rộng chưa đóng.

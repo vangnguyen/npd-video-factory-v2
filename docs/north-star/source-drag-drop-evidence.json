@@ -1,0 +1,233 @@
+{
+  "schema_version": "north-star-native-source-drag-drop-v1",
+  "recorded_at": "2026-10-10T23:31:04.615913+00:00",
+  "source_parent": "fb1cd9007d12eba6ab8095919fdb0baff70238a9",
+  "authority": "CODEX_MASTER_SPEC_VIDEO_FACTORY_V2.md sections 39-40; original Wave3I/6/16",
+  "tests": {
+    "Studio": 718,
+    "new_Studio_drag_drop": 10,
+    "Native_related": 18,
+    "Native_modules": 4,
+    "Static_HTTP": 3,
+    "static_imported_modules": 63,
+    "Static_cases_included_in_Native_related": true
+  },
+  "local_real": {
+    "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1",
+    "canonical_duration_seconds": 3,
+    "timeline_version": 17,
+    "metrics": {
+      "duration_seconds": 3.051,
+      "width": 1080,
+      "height": 1920,
+      "fps": 30.0,
+      "av_sync_delta_seconds": 0.051,
+      "audio_clipping": false,
+      "black_frame_seconds": 0,
+      "freeze_frame_seconds": 0,
+      "silence_seconds": 0,
+      "status": "passed"
+    },
+    "signed_media_controller_requests": 6,
+    "visual_widget_requests": 7,
+    "drag_caption_controller_requests": 11,
+    "total_signed_controller_requests": 24,
+    "preview_final_PCM_sha256": "236ee70b9cfd7c708fd8e17ae8f4d0ac4c89f0f3bbed20fe710a389d5cb937a2",
+    "physical_sources_unchanged": {
+      "assets/7dbadb15630a4f2a93855b590fbf267c.music.wav": "b21c8452c6b8b790886fabc8ea496c048c3c05e5b304dada09737b4bfb677084",
+      "assets/af6510e18df84fdca60df6a720df7c16.subtitle.srt": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+      "assets/c9513690b097450da02cb09b5c008890.mp4": "c6c6aa527deadf2280aedcf08b80ccc772a76df7f6d52ac91a8098fa03a2e28e",
+      "assets/c9513690b097450da02cb09b5c008890.thumb.jpg": "673fb4b9edb1f43e02e728b0acd151b42430a2b997d1a73a2ed325a77c30e899",
+      "assets/e01f5283fe7e48198b765e1000e9a527.music.wav": "b21c8452c6b8b790886fabc8ea496c048c3c05e5b304dada09737b4bfb677084",
+      "originals/7dbadb15630a4f2a93855b590fbf267c.wav": "ede205dd7ba2e16a9ee1f1fecbc0be20f249c1caa52954112d8a7c41e6cd4be8",
+      "originals/af6510e18df84fdca60df6a720df7c16.srt": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+      "originals/c9513690b097450da02cb09b5c008890.mp4": "c6c6aa527deadf2280aedcf08b80ccc772a76df7f6d52ac91a8098fa03a2e28e",
+      "originals/e01f5283fe7e48198b765e1000e9a527.wav": "ede205dd7ba2e16a9ee1f1fecbc0be20f249c1caa52954112d8a7c41e6cd4be8"
+    },
+    "verified_export_files": 53,
+    "files": {
+      "evidence.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\evidence.json",
+        "sha256": "acbd3d95b1d92bb6020829e302380499edb1b407c7193b6c68df1fe1e1e36473",
+        "bytes": 7338
+      },
+      "drag-controller.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\drag-controller.json",
+        "sha256": "da837e417f882faa3ed0ef353ec331f517b247d1c849dbcb1af6366230766557",
+        "bytes": 978468
+      },
+      "visual-controller.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\visual-controller.json",
+        "sha256": "63fe09c14e0b6e71f370a8fe43ddb2c9fc1c4c57fb116feb53175a3e7c4cf3c6",
+        "bytes": 675223
+      },
+      "timeline.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\timeline.json",
+        "sha256": "13a0c67cb44e6428020e1d4b766caffa40f2e334f6210548be649b0d881b7351",
+        "bytes": 44166
+      },
+      "project.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\project.json",
+        "sha256": "e03741335dbfa1e5c2d6fe3c63d22d8ac8f1ec72e5937c4308fa169bc5de339f",
+        "bytes": 190388
+      },
+      "preview.mp4": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\preview.mp4",
+        "sha256": "21fc0c9fec08f3c855da2741edb99deef807168f76afcc3df9a8da2d1836dfcc",
+        "bytes": 298788
+      },
+      "final.mp4": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\final.mp4",
+        "sha256": "1f2107b73ea0db35c084a8265dc19509ddc8934f5c32683246e4036de80f4fef",
+        "bytes": 752079
+      },
+      "qc.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\qc.json",
+        "sha256": "6ff67badc80867ad9e86ea541d5e88215a37dd4d90751966a87977a1f858bc50",
+        "bytes": 15475
+      },
+      "backup.zip": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\backup.zip",
+        "sha256": "e301ee6b6de02664e8ec7c400b5de8c6e89900f30a2cd55ca9ae3ead0c3252cc",
+        "bytes": 18878681
+      },
+      "source-media-imports.json": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\source-media-imports.json",
+        "sha256": "89856f482e1bd49c43f317c300214240d43489de115f107a832807a2f40b1499",
+        "bytes": 14148
+      },
+      "final-caption-frame.png": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-drag-drop-n1\\final-caption-frame.png",
+        "sha256": "1e0c19322767c27cb3c73f8705b9a8f2ed8663d062cb2737d8233268567f6386",
+        "bytes": 256156
+      }
+    },
+    "independent_geometry": {
+      "receipt": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-geometry-n1\\evidence.json",
+        "sha256": "47182530d79a45dab5c7051935e3b74dab0065efa104bbb0b6759b5c4c5ade91",
+        "bytes": 2247
+      },
+      "measurements": [
+        {
+          "MAE_8bit": {
+            "canonical": 6.182176,
+            "wrong_no_crop": 8.787213,
+            "wrong_no_transform": 21.895099,
+            "wrong_opaque": 13.29103
+          },
+          "ROI": {
+            "height": 768,
+            "width": 594,
+            "x": 248,
+            "y": 480
+          },
+          "frame": 6,
+          "source_seconds": 1.7,
+          "timeline_seconds": 0.2
+        },
+        {
+          "MAE_8bit": {
+            "canonical": 6.182187,
+            "wrong_no_crop": 8.051888,
+            "wrong_no_transform": 21.895088,
+            "wrong_opaque": 13.291045
+          },
+          "ROI": {
+            "height": 768,
+            "width": 594,
+            "x": 248,
+            "y": 480
+          },
+          "frame": 9,
+          "source_seconds": 1.8,
+          "timeline_seconds": 0.3
+        }
+      ],
+      "canonical_layout_beats_all_wrong_controls": true,
+      "whole_frame_or_semantic_quality_accepted": false
+    },
+    "cold_restore": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-cold-restore-n1.json",
+      "sha256": "52b7967ed14cbf6fe8fa81666834054584e362dc655e4274177b89579fa53f28",
+      "bytes": 4946
+    },
+    "whole_source_editor_DOM_exercised": false
+  },
+  "controller_acceptance": {
+    "source_ripple_order_and_original_audio_windows_equal": true,
+    "source_SRT_follow_reflow": true,
+    "independent_voice_placement_preserves_primary": true,
+    "undo_redo_exact_snapshot": true,
+    "actual_shipped_caption_import_controller": true,
+    "actual_shipped_drag_drop_controller": true,
+    "actual_signed_HTTP": true
+  },
+  "qualifications": {
+    "implemented": true,
+    "mock_tested": true,
+    "local_real_tested": true,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "provider_calls": 0,
+    "paid_calls": 0,
+    "new_ASR_or_TTS_calls": 0,
+    "fake_DOM": true,
+    "fixture_human": true,
+    "synthetic_moving_video_and_tones": true,
+    "saved_ASR_fixture": true,
+    "browser_rendered": false,
+    "owner_UAT": false,
+    "whole_source_editor_DOM_exercised": false,
+    "complete_Mode_A_acceptance": false,
+    "complete_Mode_B_acceptance": false,
+    "complete_artifact_A_acceptance": false,
+    "complete_artifact_B_acceptance": false,
+    "complete_artifact_C_acceptance": false,
+    "publishing_enabled": false
+  },
+  "remaining": [
+    "Native effects/SFX authoring and existing renderer/layer/transition limits",
+    "whole Source editor/browser/non-developer/Owner acceptance at 1366/1920/2560",
+    "genuine speech/provider/rights acceptance",
+    "every original broad North Star gap and full A/B/C"
+  ],
+  "regression_limits": {
+    "prior_sealed_visual_properties_head": "fb1cd9007d12eba6ab8095919fdb0baff70238a9",
+    "prior_Native_25_not_claimed_rerun": true,
+    "prior_Renderer_40_and_API_34_not_repeated": true,
+    "actual_renderer_and_full_QC_used_in_new_bundle": true
+  },
+  "retention": {
+    "new_owned_fixtures_cleaned_after_verified_export": true,
+    "historical_or_accepted_artifact_deleted_or_replaced": false,
+    "rejected_deletion_retried": false
+  },
+  "logs": {
+    "source-drag-drop-studio-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-studio-n1.log",
+      "sha256": "5dc7c45b5ac830734db81f7baeade54ff20572cf4adb931e1acde9b950e716f1",
+      "bytes": 74152
+    },
+    "source-drag-drop-native-related-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-native-related-n1.log",
+      "sha256": "81e1c47bb4b2d1649a6a51e63837ab979efe1fe593958087af0412d51b6b5297",
+      "bytes": 123
+    },
+    "source-drag-drop-static-http-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-static-http-n1.log",
+      "sha256": "f34f6c87335106d06e18c4b8e7ab0be40a830fd26b8d4b70d00f2d14a2af2d4b",
+      "bytes": 106
+    },
+    "source-drag-drop-render-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-render-n1.log",
+      "sha256": "d99620786b75cc00861b3d89f333f307d20c50fc4512976781b10b29a49f98a8",
+      "bytes": 2478
+    }
+  },
+  "static_HTTP_receipt": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-drag-drop-static-http-n1.json",
+    "sha256": "3da6fd198ba18d2b0b4e5b4ba08d9a72cdf3e4efa3e19997c4d0a43d0b28a0a0",
+    "bytes": 6579
+  }
+}

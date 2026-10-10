@@ -362,3 +362,11 @@ NEXT WAVE: remaining canonical Mode A video editing and full Mode B UI, Meta ana
 ## Shared Native visual properties increment
 
 [NATIVE_VISUAL_PROPERTIES.md](NATIVE_VISUAL_PROPERTIES.md) closes the numeric crop/transform/opacity control gap for canonical narrated/Source clips, including preserved automatic crop paths on transform-only edits. Browser module transport omissions were fixed and 62 dependencies resolved through HTTP. Two fixture media bundles render/QC/restore and favor independent geometry controls. This does not close full Wave 3 or original Mode A/B. Matrix remains 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED = 59 unclosed broad groups. Next safe work: Native Source graph drag/drop, effects/SFX authoring, remaining complete UI/media/provider/analytics and original hardening/E2E gaps. Meta metric/scopes remain unverified while official content is inaccessible; no mappings or acceptance were invented. Owner UAT remains deferred; no new permission needed for safe work.
+
+## Native Source graph drag/drop increment
+
+Source advanced graph now moves existing clips in the same track through the existing canonical linked/generic edit paths. Source shots remain packed with their original audio and explicit Source-follow captions; independent voice/music/text/B-roll use bounded absolute positions. Context/role/draft/lock/busy/uncertain-response guards remain enforced.
+
+Component evidence: NATIVE_SOURCE_DRAG_DROP.md and north-star/source-drag-drop-evidence.json; Studio718/Native18 PASS,63 static imported modules,24 signed fixture controller requests, actual preview/final/FullQC,2 independent ROI comparisons and separate-process cold recovery. Parent Source DOM/browser/non-developer/Owner and real provider acceptance remain open. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED remains59 unclosed groups.
+
+NEXT WAVE: Native effects/SFX authoring and render parity, Meta analytics and every original remaining safe Mode A/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C gap. Owner listening/UAT remains deferred; no main merge, real publishing or production deployment.

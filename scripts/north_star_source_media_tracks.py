@@ -45,7 +45,10 @@ def main():
     parser.add_argument('--evidence-dir', type=Path, required=True)
     parser.add_argument('--source-caption-retiming', action='store_true')
     parser.add_argument('--visual-properties', action='store_true')
+    parser.add_argument('--source-drag-drop', action='store_true')
     args = parser.parse_args()
+    if args.source_drag_drop and (not args.visual_properties or args.source_caption_retiming):
+        parser.error('--source-drag-drop requires --visual-properties and uses its own source caption fixture')
     out = args.evidence_dir.resolve()
     if out.exists() or out == REPO or REPO in out.parents:
         raise ValueError('A fresh external evidence directory is required')
@@ -69,8 +72,9 @@ def main():
             'project': {'id': current['id'], 'revision': current['revision']},
             'cookie': cookie, 'csrf': session.csrf}
         controller_script = 'native_source_media_tracks_http_ui.mjs'
-        if args.source_caption_retiming:
+        if args.source_caption_retiming or args.source_drag_drop:
             context_body.update(source_video_asset_id=case.video['id'],source_video_asset_sha256=case.video['sha256'])
+        if args.source_caption_retiming:
             controller_script = 'native_source_caption_retiming_http_ui.mjs'
         durable_json(context, context_body)
         result = subprocess.run([r'C:\Program Files\nodejs\node.exe',
@@ -93,6 +97,16 @@ def main():
                 raise AssertionError(visual_run.stderr.decode('utf-8',errors='replace')[:6000])
             visual_controller = json.loads(visual_run.stdout)
             durable_json(out/'visual-controller.json',visual_controller)
+        drag_controller = None
+        if args.source_drag_drop:
+            context_body['project'] = case.store.get(current['id'])
+            durable_json(context,context_body)
+            drag_run = subprocess.run([r'C:\Program Files\nodejs\node.exe',
+                str(REPO/'scripts/native_source_drag_drop_http_ui.mjs'),str(context)],capture_output=True,timeout=90)
+            if drag_run.returncode:
+                raise AssertionError(drag_run.stderr.decode('utf-8',errors='replace')[:6000])
+            drag_controller=json.loads(drag_run.stdout)
+            durable_json(out/'drag-controller.json',drag_controller)
         server.shutdown()
         server.server_close()
         thread.join()
@@ -173,7 +187,7 @@ def main():
                 'SELECT * FROM events WHERE project_id=? ORDER BY id', (current['id'],))]
         durable_json(out / 'job-events.json', events)
         imports = json.loads((out / 'source-media-imports.json').read_bytes())
-        expected_imports = 2 if args.source_caption_retiming else 3
+        expected_imports = 4 if args.source_drag_drop else 2 if args.source_caption_retiming else 3
         if len(imports['imports']) != expected_imports or len(imports['verified_active_source_sha256']) != expected_imports:
             raise AssertionError('Every active uploaded voice/music/SRT origin must be verified')
         checkpoint = json.loads((out / 'checkpoint-render.json').read_bytes())
@@ -232,6 +246,8 @@ def main():
             'complete_artifact_A_acceptance': False, 'owned_temporary_data_cleaned_after_export': True,
             'actual_shared_visual_properties_widget': args.visual_properties,
             'visual_widget_requests': len(visual_controller['requests']) if visual_controller else 0,
+            'actual_source_drag_drop_controller': args.source_drag_drop,
+            'drag_controller_requests': len(drag_controller['requests']) if drag_controller else 0,
             'whole_source_editor_DOM_exercised': False,
             'exports': {str(path.relative_to(out)).replace('\\', '/'): file_sha(path)
                 for path in out.rglob('*') if path.is_file()}}
