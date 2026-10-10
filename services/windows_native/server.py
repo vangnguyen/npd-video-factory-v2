@@ -183,9 +183,12 @@ class LocalServer(ThreadingHTTPServer):
         official_analytics_enabled=False,official_analytics_refresh_enabled=False,
         google_oauth_registry=None,google_oauth_directory=None,google_oauth_enabled=False,google_oauth_slots=None,google_oauth_client=None,
         official_vision_registry=None,official_vision_directory=None,official_vision_enabled=False,official_vision_factories=None,
-        render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None):
+        render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None,
+        render_thumbnail_rights_enabled=False):
         config.validate_data_root()
         if type(render_vision_enabled) is not bool:raise WorkflowError('NATIVE_RENDER_VISION_RUNTIME_INVALID',400)
+        if type(render_thumbnail_rights_enabled) is not bool:raise WorkflowError('NATIVE_THUMBNAIL_RIGHTS_CONFIGURATION_INVALID',400)
+        if render_thumbnail_rights_enabled and access is None:raise WorkflowError('NATIVE_THUMBNAIL_RIGHTS_AUTH_REGISTRY_REQUIRED',503)
         if render_vision_registry is not None and render_vision_factories is not None:raise WorkflowError('NATIVE_RENDER_VISION_CONFIGURATION_CONFLICT',400)
         has_render_vision=render_vision_registry is not None or render_vision_factories is not None
         if has_render_vision!=(render_vision_directory is not None) or render_vision_enabled and not has_render_vision:
@@ -380,6 +383,8 @@ class LocalServer(ThreadingHTTPServer):
             self.runner.render_vision=self.render_vision
         from .render_thumbnails import NativeRenderThumbnails
         self.render_thumbnails=NativeRenderThumbnails(self.store,config,workspace_id=self.publications.workspace_id,render_vision=self.render_vision)
+        from .render_thumbnail_rights import NativeRenderThumbnailRights
+        self.render_thumbnail_rights=NativeRenderThumbnailRights(self.render_thumbnails,enabled=render_thumbnail_rights_enabled,identity_provider=self.official_publish_identity)
         from .source_variants import SourceVariants
         self.variants=SourceVariants(self.store,workspace_id=self.publications.workspace_id)
         from .narrated_variants import NativeNarratedVariants
@@ -618,6 +623,9 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails/ast_rthumb_[a-f0-9]{32}/image',path):
             from .render_thumbnail_routes import image
             return image(self,path)
+        if path=='/api/connections/render-thumbnail-rights' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnail-rights(?:/nrto_[a-f0-9]{32}|/input/ast_rthumb_[a-f0-9]{32})?',path):
+            from .render_thumbnail_rights_routes import get
+            return self.reply(get(self,path))
         if path=='/api/connections/official-analytics-refresh' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-analytics-refresh(?:/noap_[a-f0-9]{32})?',path):
             from .official_analytics_refresh_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -722,7 +730,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -815,6 +823,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-vision.mjs'] = 'native-official-vision.mjs'
         static['/native-render-vision.mjs'] = 'native-render-vision.mjs'
         static['/native-render-thumbnail.mjs'] = 'native-render-thumbnail.mjs'
+        static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-scene-review.mjs'] = 'native-scene-review.mjs'
         static['/native-source-crop-review.mjs'] = 'native-source-crop-review.mjs'
@@ -888,6 +897,10 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails',self.path):
             from .render_thumbnail_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)))
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnail-rights',self.path):
+            from .render_thumbnail_rights_routes import post,owner
+            principal=owner(self)
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000),principal))
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations(?:/ngoa_[a-f0-9]{32}/(?:authorization-url|exchange|cancel))?|refresh)',self.path):
             from .google_oauth_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
@@ -1317,6 +1330,7 @@ def main():
     parser.add_argument('--render-vision-registry',type=Path)
     parser.add_argument('--render-vision-directory',type=Path)
     parser.add_argument('--enable-render-vision',action='store_true')
+    parser.add_argument('--enable-render-thumbnail-rights-overrides',action='store_true')
     parser.add_argument('--official-publish-registry',type=Path)
     parser.add_argument('--official-publish-session-directory',type=Path)
     parser.add_argument('--enable-official-publishing',action='store_true')
@@ -1349,6 +1363,7 @@ def main():
             google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,
             official_vision_registry=args.official_vision_registry,official_vision_directory=args.official_vision_directory,official_vision_enabled=args.enable_official_vision,
             render_vision_registry=args.render_vision_registry,render_vision_directory=args.render_vision_directory,render_vision_enabled=args.enable_render_vision,
+            render_thumbnail_rights_enabled=args.enable_render_thumbnail_rights_overrides,
             official_publish_registry=args.official_publish_registry,official_publish_session_directory=args.official_publish_session_directory,official_publish_enabled=args.enable_official_publishing,official_publish_queue_enabled=args.enable_official_publish_queue,
             trend_feed_registry=args.trend_feed_registry,trend_feed_enabled=args.enable_trend_feeds) as server:
             print(f"Video Factory: http://127.0.0.1:{server.server_port}", flush=True)

@@ -42,6 +42,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/official-vision(?:/nvoi_'+ID+r'/(process|cancel))?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/render-vision(?:/nrvi_'+ID+r'/(process|cancel))?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/render-thumbnails',path):return 'edit'
+    if re.fullmatch(r'/api/projects/'+ID+r'/render-thumbnail-rights',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-winners',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-learning',path):return 'manage'
     if path in ('/api/trends/collections','/api/trends/learning','/api/trends/learning/qualified') or re.fullmatch(r'/api/trends/collections/'+ID+'/cancel',path):return 'manage'

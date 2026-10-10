@@ -26,3 +26,10 @@
 #native-render-vision-history-list{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
 #native-render-vision-card>label input[type=checkbox]{width:16px;height:16px;margin:2px 0;flex:0 0 auto}
 #native-render-vision-card>button{margin:6px 4px 6px 0}
+
+#native-render-thumbnail-rights-card>label{display:grid;gap:6px;margin:12px 0;min-width:0}
+#native-render-thumbnail-rights-card>label:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:8px}
+#native-render-thumbnail-rights-card input:not([type=checkbox]),#native-render-thumbnail-rights-card textarea{max-width:100%;min-width:0}
+#native-render-thumbnail-rights-card input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0}
+#native-render-thumbnail-rights-card>button{margin:6px 4px 6px 0}
+#native-render-thumbnail-rights-list{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}

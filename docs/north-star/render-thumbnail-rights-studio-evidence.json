@@ -1,0 +1,89 @@
+{
+  "schema_version": "north-star-render-thumbnail-rights-studio-evidence-v1",
+  "tests": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-http-regression-n1.log",
+      "sha256": "3f7e0a78e7dab6a3ae1141ed775f5688638441df6421ae2eac57c274a0660df0",
+      "bytes": 11399,
+      "passed": 47,
+      "new_cases": 6,
+      "seconds": 181.541
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-studio-regression-n2.log",
+      "sha256": "e639c1c3e9df0b4699fd1776e07f0afd5c484f78d94ad8959210b1eb8fdaa4e1",
+      "bytes": 52694,
+      "passed": 515,
+      "new_cases": 22,
+      "milliseconds": 1822.7453
+    }
+  ],
+  "retained_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-studio-flow-n2\\evidence.json",
+    "sha256": "279b1332cd64ef7df67e300a1460d77325c44a41873b65ced4ef563c4eac1a23",
+    "bytes": 3251
+  },
+  "new_process_replay": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-studio-flow-n2\\new-process-replay.json",
+    "sha256": "57e8f1aaae4a7f915caf459f504b912bb1f0b75209752421454b42d672b4531f",
+    "bytes": 334
+  },
+  "browser_observations": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-studio-browser-n1\\observations.json",
+    "sha256": "e8d07114b8704ef6e652962348c402c6e917687a2f6016260a277457f6ef49bd",
+    "bytes": 2560
+  },
+  "browser_readonly_integrity": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\render-thumbnail-rights-studio-browser-n1\\readonly-integrity.json",
+    "sha256": "610ce86ba587d74cf256d2536882d4f12c85e76752119532721c497d39908d86",
+    "bytes": 440
+  },
+  "source_sha256": {
+    "services/windows_native/server.py": "55e3cb437c90442cfc96d75c4806abc2b8da375f2b7fa35a16bed81363a8fcc1",
+    "services/windows_native/access.py": "c8bad991e51c7007f318cd321d3c9272a34d35438acdfdc1a8b1df96fd65b24d",
+    "services/windows_native/render_thumbnail_rights_routes.py": "7ded6421a37755448fcfbed742bcd038c7cdd5e4d9827dcab87b8b4fa557580f",
+    "services/windows_native/tests/test_render_thumbnail_rights_http.py": "e7e07b74eae5a8a2f685235812fc80e36df3057eb509fb9561da7a2b0aaca248",
+    "services/windows_native/tests/test_phase10_http.py": "d2008a9a82f55b50d18d4f3c2dae075a8b5f9fb4009a0158362ae4e69196a40d",
+    "apps/studio-web/native-render-thumbnail-rights.mjs": "9dd8675ef52f49d3d17e4e233657ad60c22aa773f34841cb8c1b45c93ba6ecb1",
+    "apps/studio-web/native-render-thumbnail.mjs": "e97d976c041effe8780d9c85ddcea14afee317877179042695481b9a1bc6dd37",
+    "apps/studio-web/native.mjs": "35d52cb6ee5f6be0885789013ad2f0cd115ec195085a769baa69ff214d3ede7a",
+    "apps/studio-web/native.html": "4c742c1f3cde0e3dec3da624779d12deb55371495cbbd683d63a67bcf074f83c",
+    "apps/studio-web/native.css": "fa0bb15da5dc5dbfea53d4b9f900e6047980c5b685c828777d3ef513e0e9ed31",
+    "apps/studio-web/shot-studio.mjs": "3082358bff932bcb944e65bf82acdf5ef7586cc6436a9f2c97977fcabf7ffa76",
+    "apps/studio-web/tests/native-render-thumbnail-rights.test.mjs": "6ef3bd6f6033f68949d7ac553aef7d247239cabd3a2486124fa416ef05f16a00",
+    "apps/studio-web/tests/fixtures/native-render-thumbnail-rights-v1.json": "6afd11214313e7736b9b4d4791cf3826b1504b7f43850550cc4b276dd7b2fdc2",
+    "scripts/north_star_render_thumbnail_rights_studio.py": "d79b963db2851ff2c061a7e4112bc20fcc04556e3e94851f3b704ab744c153ce",
+    "scripts/north_star_render_thumbnail_rights_studio.mjs": "178fec0aaf536a273f4120c0eb930195b4e601300504433fdfd54d5a93361b3a"
+  },
+  "public_backup_sha256": "439ad417ea5494ffcdacb5f8c611e52d63e40c343d9aa15bdd7b561cf720ee8b",
+  "http_and_studio_integrated": true,
+  "signed_http_requests": 20,
+  "all_synthetic_rights_records": 7,
+  "new_synthetic_grants": 2,
+  "new_synthetic_revocations": 1,
+  "original_thumbnail_selections": 6,
+  "original_vision_histories": 11,
+  "keyless_new_process_application_recovery_exact": true,
+  "exceptions_automatically_reenabled": false,
+  "actual_browser_readonly_tested": true,
+  "responsive_dom_widths": [
+    1366,
+    1920,
+    2560
+  ],
+  "default_operator_enabled": false,
+  "thumbnail_publication_transport_bound": false,
+  "rights_status": "unknown",
+  "license": null,
+  "rights_independently_verified": false,
+  "source_asset_rights_granted": false,
+  "publishing_authorized": false,
+  "real_owner_legal_override": false,
+  "new_media_copies": 0,
+  "new_renders": 0,
+  "new_provider_calls": 0,
+  "new_paid_operations": 0,
+  "owner_uat_accepted": false,
+  "real_provider_tested": false,
+  "production_deployed": false
+}

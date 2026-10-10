@@ -1,6 +1,6 @@
 # Ngoại lệ quyền thumbnail có thời hạn
 
-`NativeRenderThumbnailRights` lưu ngoại lệ do Owner hiện hành xác nhận cho đúng thumbnail/render gốc trong bảng riêng. Mặc định `enabled=false`. Mốc này là primitive lưu/kiểm tra quyền, chưa nối HTTP, Studio hoặc publishing transport. Không bật cấu hình của ứng dụng đang dùng.
+`NativeRenderThumbnailRights` lưu ngoại lệ do Owner hiện hành xác nhận cho đúng thumbnail/render gốc trong bảng riêng. Mặc định `enabled=false`. Bằng chứng trong tài liệu này mô tả mốc primitive ban đầu. HTTP/Studio được nối ở mốc tiếp theo trong [Quyền sử dụng thumbnail trong Studio](NATIVE_RENDER_THUMBNAIL_RIGHTS_STUDIO.md); publishing transport vẫn cần hoàn thiện. Không bật cấu hình của ứng dụng đang dùng.
 
 Request ghi đúng phiên bản dự án, thumbnail ID, SHA256 snapshot lựa chọn, SHA256 input quyền, lý do, tham chiếu bằng chứng và hai ACK raw riêng: ngoại lệ thumbnail và chưa phải xác minh license độc lập. Grant có thời hạn1–30 ngày, lựa chọn cho phép chuẩn bị kiểm tra xuất bản riêng. Tham chiếu chỉ là bằng chứng người cung cấp; không fetch URL, nhận xét pháp lý, gọi provider hoặc coi đó là license đã kiểm chứng. Không nhận thông tin đăng nhập qua URI/query/fragment.
 
