@@ -1,0 +1,123 @@
+{
+  "schema_version": "north-star-native-tiktok-creator-evidence-v1",
+  "recorded_at": "2026-10-10T06:37:16.375362+00:00",
+  "audit_head_before_commit": "f3b06990e8050a025d2bd35819da07fda495e76e",
+  "fixture_kind": "explicit_protocol_mock_not_owner_or_real_provider_acceptance",
+  "implementation": {
+    "dedicated_dpapi_registry": true,
+    "same_grant_open_id_and_creator": true,
+    "signed_owner_csrf": true,
+    "structured_options": true,
+    "studio_explicit_choices": true,
+    "current_approved_final_drafts": true,
+    "append_only_response_cost_proofs": true,
+    "keyless_recovery": true
+  },
+  "tests": {
+    "native_related": {
+      "status": "PASS",
+      "tests": 212,
+      "seconds": 293.639,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-native-regression-n3.log",
+        "sha256": "0c9e53b9285aeca789d08f83e58d16d0d9d9be506095426895da4f28917926fc",
+        "bytes": 48817
+      }
+    },
+    "new_native_cases_in_related_suite": 31,
+    "studio": {
+      "status": "PASS",
+      "tests": 570,
+      "new_tiktok_cases": 15,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-studio-regression-n2.log",
+        "sha256": "865d406e09f291995bfc35a906458d85d12f92b574e65ba12f8e20602d561b2a",
+        "bytes": 58011
+      }
+    },
+    "shared_tiktok_contracts": {
+      "status": "PASS",
+      "tests": 81,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-shared-contract-n1.log",
+        "sha256": "2e94416720398c727a36636618963389bf18120203f816af5962692868f21bd5",
+        "bytes": 182
+      }
+    },
+    "counts_overlap_and_are_not_added": true
+  },
+  "retained_flow": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1",
+    "mock_provider_requests": 2,
+    "checks": 2,
+    "drafts": 1,
+    "cost_operations": 3,
+    "journal_tables": 26,
+    "public_backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1\\public-tiktok-creator-history.zip",
+      "sha256": "7c4942d5d09738d9e1edfbbbcbb60b9ff692bdb6706194abb9762852d11001d2",
+      "bytes": 319241
+    },
+    "backup_receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1\\backup.json",
+      "sha256": "4775b888da1abb5911da5e58319dfb90b2224426b910cc5852d38a5c3f612862",
+      "bytes": 1664
+    },
+    "restore_receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1\\restore.json",
+      "sha256": "586c2f9300ae589429899bb0aabd0c328ec47be2f33f703101c2f725784818f8",
+      "bytes": 2053
+    },
+    "fresh_process_replay": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1\\new-process-replay.json",
+      "sha256": "6326ec7de35b555c4f2b1c07fb8fe985d47a17c44ae3468082217cf0e3bbdacf",
+      "bytes": 328
+    },
+    "source_integrity": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1\\source-integrity.json",
+      "sha256": "9ffcb6f6d4a85d234643598bb0f3d5e01d382aae4b57b9c30ee84556f88ecf7c",
+      "bytes": 257
+    },
+    "studio_fixture": {
+      "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-tiktok-creator-v1.json",
+      "sha256": "1cac38e54a19c62689261f4d4561f0a2d0d0c85ab0868441ad1f3dea11fcb2f7",
+      "bytes": 28329
+    },
+    "private_cipher_receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\tiktok-creator-flow-n1\\private-cipher-receipt.json",
+      "sha256": "0a1f06570dfdb600d0a49ddf1bcd84068f66cee65ac0b509a53720ad8a4e81ea",
+      "bytes": 723
+    },
+    "private_excluded_from_backup": true,
+    "canonical_project_unchanged": true,
+    "ambiguous_claim_recovered_without_replay": true,
+    "draft_history_survives_local_cancel": true
+  },
+  "earlier_failures": {
+    "native_regression_n1": "New test incorrectly tried a full editor operation on deliberately thin nonplayable publication fixture; corrected to explicit hostile document/version fixture drift.",
+    "current_n4": "The prior-final gate raised established STALE_VERSION_RELOAD before the new draft gate; assertion now accepts that valid denial.",
+    "native_regression_n2": "Superseded run stopped after correcting its already-loaded assertion; never counted as passing.",
+    "retainer_n1": "Corrected backup receipt key and resumed only verified restore of the existing public evidence; no provider replay.",
+    "studio_n1": "Added the actual publishing-target-v1 schema field to the strict target validator."
+  },
+  "readiness": {
+    "publishing_enabled": false,
+    "publication_dispatch_supported": false,
+    "real_provider_tests": 0,
+    "paid_operations": 0,
+    "actual_browser_acceptance": false,
+    "owner_uat_accepted": false,
+    "production_deployed": false,
+    "implementation_complete": false,
+    "real_provider_acceptance_complete": false,
+    "video_factory_north_star_ready": false
+  },
+  "remaining": [
+    "Native TikTok admission into existing approval/queue/session/worker/receipt engine",
+    "Meta Native execution and other platform analytics",
+    "Actual TikTok app eligibility/audit, credentials and genuine provider acceptance",
+    "Complete original Mode A/B/C and browser/non-developer/Owner acceptance",
+    "Production hardening, Docker/GPU external configuration and approved deployment"
+  ],
+  "source_preservation": "Post-commit SHA, remote/live/15-artifact checks and incremental recovery pair are recorded at recovery/20261007/tiktok-creator-preservation.json and tiktok-creator-recovery-pair.json; retained full base is north-star-google-analytics-selection.bundle."
+}

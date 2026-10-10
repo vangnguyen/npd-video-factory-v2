@@ -41,6 +41,7 @@ class Runner:
         self.google_oauth = None
         self.google_oauth_selections = None
         self.google_analytics_selections = None
+        self.tiktok_creators = None
         self.official_vision = None
         self.render_vision = None
         self.vision = None
@@ -59,6 +60,7 @@ class Runner:
         if self.google_oauth is not None:self.google_oauth.recover()
         if self.google_oauth_selections is not None:self.google_oauth_selections.recover()
         if self.google_analytics_selections is not None:self.google_analytics_selections.recover()
+        if self.tiktok_creators is not None:self.tiktok_creators.recover()
         if self.official_vision is not None:self.official_vision.recover()
         if self.render_vision is not None:self.render_vision.recover()
         self.thread.start()
@@ -188,10 +190,22 @@ class LocalServer(ThreadingHTTPServer):
         google_oauth_registry=None,google_oauth_directory=None,google_oauth_enabled=False,google_oauth_slots=None,google_oauth_client=None,
         google_oauth_selection_enabled=False,google_oauth_selection_client=None,
         google_analytics_selection_enabled=False,google_analytics_selection_client=None,
+        tiktok_publishing_registry=None,tiktok_creator_reads_enabled=False,tiktok_creator_factories=None,
         official_vision_registry=None,official_vision_directory=None,official_vision_enabled=False,official_vision_factories=None,
         render_vision_registry=None,render_vision_directory=None,render_vision_enabled=False,render_vision_factories=None,
         render_thumbnail_rights_enabled=False):
         config.validate_data_root()
+        if type(tiktok_creator_reads_enabled) is not bool:raise WorkflowError('NATIVE_TIKTOK_CREATOR_CONFIGURATION_INVALID',400)
+        if tiktok_publishing_registry is not None and tiktok_creator_factories is not None:raise WorkflowError('NATIVE_TIKTOK_CREATOR_CONFIGURATION_CONFLICT',400)
+        if (tiktok_publishing_registry is not None or tiktok_creator_factories is not None or tiktok_creator_reads_enabled) and access is None:raise WorkflowError('NATIVE_TIKTOK_CREATOR_HUMAN_AUTH_REQUIRED',400)
+        if tiktok_creator_reads_enabled and tiktok_publishing_registry is None and tiktok_creator_factories is None:raise WorkflowError('NATIVE_TIKTOK_CREATOR_PROTECTED_REGISTRY_REQUIRED',400)
+        if tiktok_creator_factories is not None:
+            import httpx
+            from .tiktok_connection import NativeTikTokFactory
+            if type(tiktok_creator_factories) is not dict or len(tiktok_creator_factories)>50 or any(type(f) is not NativeTikTokFactory or k!=f.profile.target.profile_id
+                or f.root!=config.data_root.absolute() or f.workspace!=access.workspace_id or type(f.client.transport) is not httpx.MockTransport or f.client.network_enabled is not False for k,f in tiktok_creator_factories.items()):
+                raise WorkflowError('NATIVE_TIKTOK_CREATOR_MOCK_INJECTION_REQUIRED',400)
+            for factory in tiktok_creator_factories.values():factory.check()
         if type(render_vision_enabled) is not bool:raise WorkflowError('NATIVE_RENDER_VISION_RUNTIME_INVALID',400)
         if type(render_thumbnail_rights_enabled) is not bool:raise WorkflowError('NATIVE_THUMBNAIL_RIGHTS_CONFIGURATION_INVALID',400)
         if render_thumbnail_rights_enabled and access is None:raise WorkflowError('NATIVE_THUMBNAIL_RIGHTS_AUTH_REGISTRY_REQUIRED',503)
@@ -339,6 +353,15 @@ class LocalServer(ThreadingHTTPServer):
         from .official_publication_worker import NativeOfficialPublicationWorker
         publishing=load_publishing(official_publish_registry,self.store.root,self.publications.workspace_id,owner_enabled=official_publish_enabled) if official_publish_registry is not None else official_publish_factories
         self.official_publications=NativeOfficialPublications(self.store,self.publications,self.official_accounts,factories=publishing,identity_provider=self.official_publish_identity)
+        self.tiktok_creators=None
+        with self.store.transaction() as con:
+            has_tiktok_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_tiktok_creator_checks'").fetchone() is not None
+        if tiktok_publishing_registry is not None or tiktok_creator_factories is not None or has_tiktok_history:
+            from .tiktok_connection import load as load_tiktok
+            from .tiktok_creators import NativeTikTokCreators
+            factories=load_tiktok(tiktok_publishing_registry,self.store.root,self.publications.workspace_id,owner_read_enabled=tiktok_creator_reads_enabled) if tiktok_publishing_registry is not None else tiktok_creator_factories
+            self.tiktok_creators=NativeTikTokCreators(self.official_publications,factories=factories,enabled=tiktok_creator_reads_enabled)
+            self.runner.tiktok_creators=self.tiktok_creators
         self.google_oauth=None;self.google_oauth_selections=None;self.google_analytics_selections=None
         with self.store.transaction() as con:
             has_google_history=con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='native_google_oauth_authorizations'").fetchone() is not None
@@ -637,6 +660,9 @@ class Handler(BaseHTTPRequestHandler):
         if path in ('/api/connections/google-oauth','/api/connections/google-oauth-selections','/api/connections/google-oauth-analytics-selections') or re.fullmatch(r'/api/projects/[a-f0-9]{32}/google-oauth/(?:authorizations|operations|selections|analytics-selections)(?:/(?:ngoa_|ngop_|ngosel_|ngasel_)[a-f0-9]{32})?',path):
             from .google_oauth_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if path=='/api/connections/tiktok-creators' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/tiktok-creators/(?:checks|drafts)(?:/(?:ntcr_|ntpd_)[a-f0-9]{32})?',path):
+            from .tiktok_creator_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if path=='/api/connections/official-vision' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-vision(?:/nvoi_[a-f0-9]{32})?',path):
             from .official_vision_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -871,6 +897,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-accounts.mjs'] = 'native-official-accounts.mjs'
         static['/native-google-oauth.mjs'] = 'native-google-oauth.mjs'
         static['/native-google-oauth-selections.mjs'] = 'native-google-oauth-selections.mjs'
+        static['/native-tiktok-creators.mjs'] = 'native-tiktok-creators.mjs'
         static['/native-official-publications.mjs'] = 'native-official-publications.mjs'
         static['/native-official-publication-queue.mjs'] = 'native-official-publication-queue.mjs'
         static['/native-official-analytics.mjs'] = 'native-official-analytics.mjs'
@@ -918,6 +945,10 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/tiktok-creators/(?:checks(?:/ntcr_[a-f0-9]{32}/(?:fetch|cancel))?|drafts)',self.path):
+            from .tiktok_creator_routes import post,owner
+            principal=owner(self)
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000),principal),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/official-vision(?:/nvoi_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .official_vision_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
@@ -1356,6 +1387,8 @@ def main():
     parser.add_argument('--enable-google-oauth',action='store_true')
     parser.add_argument('--enable-google-oauth-selections',action='store_true')
     parser.add_argument('--enable-google-analytics-selections',action='store_true')
+    parser.add_argument('--tiktok-publishing-registry',type=Path)
+    parser.add_argument('--enable-tiktok-creator-reads',action='store_true')
     parser.add_argument('--official-vision-registry',type=Path)
     parser.add_argument('--official-vision-directory',type=Path)
     parser.add_argument('--enable-official-vision',action='store_true')
@@ -1393,6 +1426,7 @@ def main():
             official_account_registry=args.official_account_registry,official_account_read_enabled=args.enable_official_account_reads,
             official_analytics_enabled=args.enable_official_analytics,official_analytics_refresh_enabled=args.enable_official_analytics_refresh,
             google_oauth_registry=args.google_oauth_registry,google_oauth_directory=args.google_oauth_directory,google_oauth_enabled=args.enable_google_oauth,google_oauth_selection_enabled=args.enable_google_oauth_selections,google_analytics_selection_enabled=args.enable_google_analytics_selections,
+            tiktok_publishing_registry=args.tiktok_publishing_registry,tiktok_creator_reads_enabled=args.enable_tiktok_creator_reads,
             official_vision_registry=args.official_vision_registry,official_vision_directory=args.official_vision_directory,official_vision_enabled=args.enable_official_vision,
             render_vision_registry=args.render_vision_registry,render_vision_directory=args.render_vision_directory,render_vision_enabled=args.enable_render_vision,
             render_thumbnail_rights_enabled=args.enable_render_thumbnail_rights_overrides,

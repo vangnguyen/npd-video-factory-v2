@@ -1,0 +1,701 @@
+{
+  "fixture_kind": "explicit_protocol_mock_not_owner_or_real_provider_acceptance",
+  "runtime": {
+    "schema_version": "native-tiktok-creator-runtime-v1",
+    "workspace_id": "wsp_tiktok_creator_retained_fixture",
+    "enabled": true,
+    "default_enabled": false,
+    "factories": [
+      {
+        "schema_version": "native-tiktok-publishing-factory-v1",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_tiktok_creator_retained_fixture",
+          "profile_id": "ppf_retained_tiktok_creator",
+          "profile_version": 1,
+          "platform": "tiktok",
+          "provider_key": "tiktok-content-posting-api",
+          "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+        "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+        "credential_alias": "retained-tiktok-publisher",
+        "credential_present": true,
+        "credential_verified": false,
+        "status": "READ_CONFIGURED",
+        "mock": true,
+        "creator_reads_enabled": true,
+        "profile": {
+          "schema_version": "native-tiktok-publishing-profile-v1",
+          "target": {
+            "schema_version": "publishing-target-v1",
+            "workspace_id": "wsp_tiktok_creator_retained_fixture",
+            "profile_id": "ppf_retained_tiktok_creator",
+            "profile_version": 1,
+            "platform": "tiktok",
+            "provider_key": "tiktok-content-posting-api",
+            "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "api_client_audited": false,
+          "media_location": "user_device",
+          "chunk_size": 8388608
+        },
+        "token_returned": false,
+        "publishing_enabled": false,
+        "publication_dispatch_supported": false,
+        "real_provider_tested": false
+      }
+    ],
+    "token_returned": false,
+    "publishing_enabled": false,
+    "publication_dispatch_supported": false,
+    "automatic_retry": false,
+    "real_provider_tested": false
+  },
+  "project": {
+    "id": "f619a869803b40e3ab8497ed2ae269c9",
+    "revision": 2,
+    "document": {
+      "name": "EXPLICIT SYNTHETIC PUBLICATION FIXTURE",
+      "prompt": "",
+      "input_kind": "media",
+      "proposal": null,
+      "asset": null,
+      "assets": [
+        {
+          "id": "explicit_fixture.mp4",
+          "kind": "video",
+          "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+          "rights_confirmed": true,
+          "rights_status": "owned",
+          "license": "explicit-owned-fixture-license"
+        }
+      ],
+      "scene_media": [],
+      "documents": [],
+      "canonical_timeline": {
+        "snapshot": {
+          "metadata": {
+            "native_auto_edit_schema": "native-auto-edit-timeline-v1"
+          },
+          "tracks": [
+            {
+              "disabled": false,
+              "clips": [
+                {
+                  "disabled": false,
+                  "asset_id": "ast_explicit_fixture",
+                  "metadata": {
+                    "native_asset_id": "explicit_fixture.mp4"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "approval": {
+      "revision": 2,
+      "reviewer": "EXPLICIT SYNTHETIC REVIEW — NOT OWNER UAT",
+      "acknowledged": true
+    },
+    "created_at": "2026-10-10T06:16:08.724073+00:00",
+    "updated_at": "2026-10-10T06:16:08.724073+00:00",
+    "input": {
+      "schema_version": "project-input-v1",
+      "version": 2,
+      "source": "local_user_intake",
+      "text_inputs": [],
+      "image_assets": [],
+      "video_assets": [
+        {
+          "id": "explicit_fixture.mp4",
+          "kind": "video",
+          "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+          "rights_confirmed": true,
+          "rights_status": "owned",
+          "license": "explicit-owned-fixture-license",
+          "illustration": false
+        }
+      ],
+      "document_assets": [],
+      "metadata": {
+        "workflow": "MEDIA_REQUIRES_BRIEF",
+        "mixed": false,
+        "untranscribed_video_audio": false,
+        "media_analysis": []
+      },
+      "hash": "77b1867b737b039552e5b677bb6f1abe8050d1ce8bab755c3b18a37a7876ca25"
+    },
+    "archived": false,
+    "jobs": [
+      {
+        "id": "6718bae5884040a781ff704e40445a0f",
+        "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+        "revision": 2,
+        "kind": "render",
+        "status": "succeeded",
+        "stage": "succeeded",
+        "request_key": "1b56f16c31dc40b0bb2a61441730e7c9",
+        "request_sha": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+        "snapshot": {
+          "document": {
+            "name": "EXPLICIT SYNTHETIC PUBLICATION FIXTURE",
+            "prompt": "",
+            "input_kind": "media",
+            "proposal": null,
+            "asset": null,
+            "assets": [
+              {
+                "id": "explicit_fixture.mp4",
+                "kind": "video",
+                "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+                "rights_confirmed": true,
+                "rights_status": "owned",
+                "license": "explicit-owned-fixture-license"
+              }
+            ],
+            "scene_media": [],
+            "documents": [],
+            "canonical_timeline": {
+              "snapshot": {
+                "metadata": {
+                  "native_auto_edit_schema": "native-auto-edit-timeline-v1"
+                },
+                "tracks": [
+                  {
+                    "disabled": false,
+                    "clips": [
+                      {
+                        "disabled": false,
+                        "asset_id": "ast_explicit_fixture",
+                        "metadata": {
+                          "native_asset_id": "explicit_fixture.mp4"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "approval": {
+            "revision": 2,
+            "reviewer": "EXPLICIT SYNTHETIC REVIEW — NOT OWNER UAT",
+            "acknowledged": true
+          }
+        },
+        "error": null,
+        "result": {
+          "qc": {
+            "passed": true,
+            "width": 1080,
+            "height": 1920,
+            "duration_seconds": 3,
+            "video_codec": "h264",
+            "audio_codec": "aac",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "fixture": true,
+            "full_media_qc": false
+          },
+          "review_required": true,
+          "output_directory": "C:\\vf-native-fixture-tiktok-creator-state-01\\jobs\\6718bae5884040a781ff704e40445a0f",
+          "provider_calls": 0
+        },
+        "created_at": "2026-10-10T06:16:08.733200+00:00",
+        "updated_at": "2026-10-10T06:16:08.752327+00:00",
+        "lifecycle": "SUCCEEDED",
+        "retry_count": 0,
+        "resume_count": 0,
+        "failure": null,
+        "final_review": {
+          "id": 1,
+          "job_id": "6718bae5884040a781ff704e40445a0f",
+          "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+          "revision": 2,
+          "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "decision": "approve",
+          "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+          "note": "",
+          "created_at": "2026-10-10T06:16:08.768051+00:00"
+        }
+      }
+    ]
+  },
+  "job": {
+    "id": "6718bae5884040a781ff704e40445a0f",
+    "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+    "revision": 2,
+    "kind": "render",
+    "status": "succeeded",
+    "stage": "succeeded",
+    "request_key": "1b56f16c31dc40b0bb2a61441730e7c9",
+    "request_sha": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+    "snapshot": {
+      "document": {
+        "name": "EXPLICIT SYNTHETIC PUBLICATION FIXTURE",
+        "prompt": "",
+        "input_kind": "media",
+        "proposal": null,
+        "asset": null,
+        "assets": [
+          {
+            "id": "explicit_fixture.mp4",
+            "kind": "video",
+            "filename": "EXPLICIT OWNED RIGHTS FIXTURE",
+            "rights_confirmed": true,
+            "rights_status": "owned",
+            "license": "explicit-owned-fixture-license"
+          }
+        ],
+        "scene_media": [],
+        "documents": [],
+        "canonical_timeline": {
+          "snapshot": {
+            "metadata": {
+              "native_auto_edit_schema": "native-auto-edit-timeline-v1"
+            },
+            "tracks": [
+              {
+                "disabled": false,
+                "clips": [
+                  {
+                    "disabled": false,
+                    "asset_id": "ast_explicit_fixture",
+                    "metadata": {
+                      "native_asset_id": "explicit_fixture.mp4"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "approval": {
+        "revision": 2,
+        "reviewer": "EXPLICIT SYNTHETIC REVIEW — NOT OWNER UAT",
+        "acknowledged": true
+      }
+    },
+    "error": null,
+    "result": {
+      "qc": {
+        "passed": true,
+        "width": 1080,
+        "height": 1920,
+        "duration_seconds": 3,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "fixture": true,
+        "full_media_qc": false
+      },
+      "review_required": true,
+      "output_directory": "C:\\vf-native-fixture-tiktok-creator-state-01\\jobs\\6718bae5884040a781ff704e40445a0f",
+      "provider_calls": 0
+    },
+    "created_at": "2026-10-10T06:16:08.733200+00:00",
+    "updated_at": "2026-10-10T06:16:08.752327+00:00",
+    "lifecycle": "SUCCEEDED",
+    "retry_count": 0,
+    "resume_count": 0,
+    "failure": null,
+    "final_review": {
+      "id": 1,
+      "job_id": "6718bae5884040a781ff704e40445a0f",
+      "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+      "revision": 2,
+      "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+      "snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+      "decision": "approve",
+      "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+      "note": "",
+      "created_at": "2026-10-10T06:16:08.768051+00:00"
+    }
+  },
+  "pending": {
+    "check_id": "ntcr_ccb7ab3c253a470f9539a158ea952eba",
+    "workspace_id": "wsp_tiktok_creator_retained_fixture",
+    "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+    "request_sha256": "9774ab1496b493da867aceb8998b6477bce06747c947de6ea765599839c4015c",
+    "snapshot_sha256": "8e78fdc59330650475dec20f1a38ebaa640403dd32d3e86dd2480def6f2170d7",
+    "status": "pending",
+    "result_sha256": null,
+    "failure_code": null,
+    "created_at": "2026-10-10T06:16:08.621973+00:00",
+    "updated_at": "2026-10-10T06:16:08.621973+00:00",
+    "snapshot": {
+      "schema_version": "native-tiktok-creator-snapshot-v1",
+      "workspace_id": "wsp_tiktok_creator_retained_fixture",
+      "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+      "request": {
+        "revision": 2,
+        "profile_id": "ppf_retained_tiktok_creator",
+        "expected_configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+        "acknowledged_creator_read": true,
+        "acknowledged_protocol_mock": true,
+        "valid_for_seconds": 600
+      },
+      "factory": {
+        "schema_version": "native-tiktok-publishing-factory-v1",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_tiktok_creator_retained_fixture",
+          "profile_id": "ppf_retained_tiktok_creator",
+          "profile_version": 1,
+          "platform": "tiktok",
+          "provider_key": "tiktok-content-posting-api",
+          "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+        "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+        "credential_alias": "retained-tiktok-publisher",
+        "credential_present": true,
+        "credential_verified": false,
+        "status": "READ_CONFIGURED",
+        "mock": true,
+        "creator_reads_enabled": true,
+        "profile": {
+          "schema_version": "native-tiktok-publishing-profile-v1",
+          "target": {
+            "schema_version": "publishing-target-v1",
+            "workspace_id": "wsp_tiktok_creator_retained_fixture",
+            "profile_id": "ppf_retained_tiktok_creator",
+            "profile_version": 1,
+            "platform": "tiktok",
+            "provider_key": "tiktok-content-posting-api",
+            "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "api_client_audited": false,
+          "media_location": "user_device",
+          "chunk_size": 8388608
+        },
+        "token_returned": false,
+        "publishing_enabled": false,
+        "publication_dispatch_supported": false,
+        "real_provider_tested": false
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "fc6092e1c11b6b5dd410ecd99c34478ff1d3ca26344b894cb7e6be305aa3ec5c",
+        "expires_at": "2026-10-10T07:16:08.621973+00:00"
+      },
+      "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+      "cipher_sha256": "9541e94d4231a07a78cf7d7c827e02875cca521a21bf9284a34af992c7493946",
+      "consented_at": "2026-10-10T06:16:08.621973+00:00",
+      "deadline": "2026-10-10T06:26:08.621973+00:00",
+      "mock": true,
+      "token_returned": false,
+      "publishing_enabled": false
+    },
+    "result": null,
+    "token_returned": false,
+    "publishing_enabled": false
+  },
+  "succeeded": {
+    "check_id": "ntcr_ccb7ab3c253a470f9539a158ea952eba",
+    "workspace_id": "wsp_tiktok_creator_retained_fixture",
+    "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+    "request_sha256": "9774ab1496b493da867aceb8998b6477bce06747c947de6ea765599839c4015c",
+    "snapshot_sha256": "8e78fdc59330650475dec20f1a38ebaa640403dd32d3e86dd2480def6f2170d7",
+    "status": "succeeded",
+    "result_sha256": "39905770294cbf717c0c88b995c7faf3111435ecbfdcb7fbd3db675fd6fbbc90",
+    "failure_code": null,
+    "created_at": "2026-10-10T06:16:08.621973+00:00",
+    "updated_at": "2026-10-10T06:16:08.621973+00:00",
+    "snapshot": {
+      "schema_version": "native-tiktok-creator-snapshot-v1",
+      "workspace_id": "wsp_tiktok_creator_retained_fixture",
+      "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+      "request": {
+        "revision": 2,
+        "profile_id": "ppf_retained_tiktok_creator",
+        "expected_configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+        "acknowledged_creator_read": true,
+        "acknowledged_protocol_mock": true,
+        "valid_for_seconds": 600
+      },
+      "factory": {
+        "schema_version": "native-tiktok-publishing-factory-v1",
+        "target": {
+          "schema_version": "publishing-target-v1",
+          "workspace_id": "wsp_tiktok_creator_retained_fixture",
+          "profile_id": "ppf_retained_tiktok_creator",
+          "profile_version": 1,
+          "platform": "tiktok",
+          "provider_key": "tiktok-content-posting-api",
+          "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+        "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+        "credential_alias": "retained-tiktok-publisher",
+        "credential_present": true,
+        "credential_verified": false,
+        "status": "READ_CONFIGURED",
+        "mock": true,
+        "creator_reads_enabled": true,
+        "profile": {
+          "schema_version": "native-tiktok-publishing-profile-v1",
+          "target": {
+            "schema_version": "publishing-target-v1",
+            "workspace_id": "wsp_tiktok_creator_retained_fixture",
+            "profile_id": "ppf_retained_tiktok_creator",
+            "profile_version": 1,
+            "platform": "tiktok",
+            "provider_key": "tiktok-content-posting-api",
+            "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "api_client_audited": false,
+          "media_location": "user_device",
+          "chunk_size": 8388608
+        },
+        "token_returned": false,
+        "publishing_enabled": false,
+        "publication_dispatch_supported": false,
+        "real_provider_tested": false
+      },
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "fc6092e1c11b6b5dd410ecd99c34478ff1d3ca26344b894cb7e6be305aa3ec5c",
+        "expires_at": "2026-10-10T07:16:08.621973+00:00"
+      },
+      "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+      "cipher_sha256": "9541e94d4231a07a78cf7d7c827e02875cca521a21bf9284a34af992c7493946",
+      "consented_at": "2026-10-10T06:16:08.621973+00:00",
+      "deadline": "2026-10-10T06:26:08.621973+00:00",
+      "mock": true,
+      "token_returned": false,
+      "publishing_enabled": false
+    },
+    "result": {
+      "schema_version": "native-tiktok-creator-result-v1",
+      "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+      "account": {
+        "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+        "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+        "source": "tiktok.user.info.open_id",
+        "account_match": true
+      },
+      "creator": {
+        "username": "retained_fixture_creator",
+        "privacy_options": [
+          "SELF_ONLY",
+          "PUBLIC_TO_EVERYONE"
+        ],
+        "comment_disabled": false,
+        "duet_disabled": true,
+        "stitch_disabled": false,
+        "max_duration_sec": 180,
+        "nickname": "Creator mô phỏng được giữ làm bằng chứng"
+      },
+      "account_response_sha256": "6bb1c6272504750dfaa0937e671cf51907408e03f8d2d500f5508079cc3d0a10",
+      "creator_response_sha256": "d35317859be9c595d5517ef57bef7461a2cd925a67b3fe53d051c66ef1183f53",
+      "mock": true,
+      "token_returned": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false
+    },
+    "token_returned": false,
+    "publishing_enabled": false
+  },
+  "draft": {
+    "draft_id": "ntpd_d2c9a22b011c4f7b856ed9b2a2fbeb1b",
+    "workspace_id": "wsp_tiktok_creator_retained_fixture",
+    "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+    "request_sha256": "91c3e6b7dca9c7b497862d9632f9f1476b31bccaea97c276ae3116afe4518108",
+    "snapshot_sha256": "0f1038ffd164f73b758ebee5fbc575c556e2ac2d72a49f89f70c7b5680d45645",
+    "created_at": "2026-10-10T06:16:08.621973+00:00",
+    "snapshot": {
+      "schema_version": "native-tiktok-post-draft-v1",
+      "workspace_id": "wsp_tiktok_creator_retained_fixture",
+      "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+      "request": {
+        "revision": 2,
+        "creator_check_id": "ntcr_ccb7ab3c253a470f9539a158ea952eba",
+        "expected_creator_result_sha256": "39905770294cbf717c0c88b995c7faf3111435ecbfdcb7fbd3db675fd6fbbc90",
+        "final_job_id": "6718bae5884040a781ff704e40445a0f",
+        "expected_final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "metadata": {
+          "title": "Bản nháp TikTok mô phỏng",
+          "description": "",
+          "caption": "",
+          "hashtags": [
+            "tiktok",
+            "fixture"
+          ],
+          "thumbnail_asset_id": null,
+          "privacy": "private",
+          "scheduled_at": null
+        },
+        "choices": {
+          "privacy_level": "SELF_ONLY",
+          "disable_comment": true,
+          "disable_duet": true,
+          "disable_stitch": true,
+          "brand_content_toggle": false,
+          "brand_organic_toggle": false,
+          "is_aigc": true,
+          "music_usage_confirmed": true,
+          "branded_content_policy_confirmed": null,
+          "video_cover_timestamp_ms": null
+        },
+        "acknowledged_video_selection": true,
+        "acknowledged_ai_disclosure": true
+      },
+      "creator_check": {
+        "check_id": "ntcr_ccb7ab3c253a470f9539a158ea952eba",
+        "workspace_id": "wsp_tiktok_creator_retained_fixture",
+        "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+        "request_sha256": "9774ab1496b493da867aceb8998b6477bce06747c947de6ea765599839c4015c",
+        "snapshot_sha256": "8e78fdc59330650475dec20f1a38ebaa640403dd32d3e86dd2480def6f2170d7",
+        "status": "succeeded",
+        "result_sha256": "39905770294cbf717c0c88b995c7faf3111435ecbfdcb7fbd3db675fd6fbbc90",
+        "failure_code": null,
+        "created_at": "2026-10-10T06:16:08.621973+00:00",
+        "updated_at": "2026-10-10T06:16:08.621973+00:00",
+        "snapshot": {
+          "schema_version": "native-tiktok-creator-snapshot-v1",
+          "workspace_id": "wsp_tiktok_creator_retained_fixture",
+          "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+          "request": {
+            "revision": 2,
+            "profile_id": "ppf_retained_tiktok_creator",
+            "expected_configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+            "acknowledged_creator_read": true,
+            "acknowledged_protocol_mock": true,
+            "valid_for_seconds": 600
+          },
+          "factory": {
+            "schema_version": "native-tiktok-publishing-factory-v1",
+            "target": {
+              "schema_version": "publishing-target-v1",
+              "workspace_id": "wsp_tiktok_creator_retained_fixture",
+              "profile_id": "ppf_retained_tiktok_creator",
+              "profile_version": 1,
+              "platform": "tiktok",
+              "provider_key": "tiktok-content-posting-api",
+              "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "configuration_sha256": "2f767c931d2baf5f7298595d070e91cb803e91038cbd052a114ed193fbf5ca40",
+            "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+            "credential_alias": "retained-tiktok-publisher",
+            "credential_present": true,
+            "credential_verified": false,
+            "status": "READ_CONFIGURED",
+            "mock": true,
+            "creator_reads_enabled": true,
+            "profile": {
+              "schema_version": "native-tiktok-publishing-profile-v1",
+              "target": {
+                "schema_version": "publishing-target-v1",
+                "workspace_id": "wsp_tiktok_creator_retained_fixture",
+                "profile_id": "ppf_retained_tiktok_creator",
+                "profile_version": 1,
+                "platform": "tiktok",
+                "provider_key": "tiktok-content-posting-api",
+                "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+                "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "api_client_audited": false,
+              "media_location": "user_device",
+              "chunk_size": 8388608
+            },
+            "token_returned": false,
+            "publishing_enabled": false,
+            "publication_dispatch_supported": false,
+            "real_provider_tested": false
+          },
+          "authority": {
+            "token_id": "explicit-fixture",
+            "subject": "usr:explicit-fixture",
+            "identity_revision_sha256": "fc6092e1c11b6b5dd410ecd99c34478ff1d3ca26344b894cb7e6be305aa3ec5c",
+            "expires_at": "2026-10-10T07:16:08.621973+00:00"
+          },
+          "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+          "cipher_sha256": "9541e94d4231a07a78cf7d7c827e02875cca521a21bf9284a34af992c7493946",
+          "consented_at": "2026-10-10T06:16:08.621973+00:00",
+          "deadline": "2026-10-10T06:26:08.621973+00:00",
+          "mock": true,
+          "token_returned": false,
+          "publishing_enabled": false
+        },
+        "result": {
+          "schema_version": "native-tiktok-creator-result-v1",
+          "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+          "account": {
+            "target_account_id": "EXPLICIT_RETAINED_OPEN_ID",
+            "target_binding_sha256": "84f25154cbb83e3fc94a2316fd8a8d76eb83f8cc7f3a88ad33fca976406c9b53",
+            "source": "tiktok.user.info.open_id",
+            "account_match": true
+          },
+          "creator": {
+            "username": "retained_fixture_creator",
+            "privacy_options": [
+              "SELF_ONLY",
+              "PUBLIC_TO_EVERYONE"
+            ],
+            "comment_disabled": false,
+            "duet_disabled": true,
+            "stitch_disabled": false,
+            "max_duration_sec": 180,
+            "nickname": "Creator mô phỏng được giữ làm bằng chứng"
+          },
+          "account_response_sha256": "6bb1c6272504750dfaa0937e671cf51907408e03f8d2d500f5508079cc3d0a10",
+          "creator_response_sha256": "d35317859be9c595d5517ef57bef7461a2cd925a67b3fe53d051c66ef1183f53",
+          "mock": true,
+          "token_returned": false,
+          "publishing_enabled": false,
+          "real_provider_tested": false
+        },
+        "token_returned": false,
+        "publishing_enabled": false
+      },
+      "source": {
+        "final_job_id": "6718bae5884040a781ff704e40445a0f",
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "final_bytes": 59,
+        "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+        "job_result_sha256": "2b12b3b913710b4641d3f0b56fda1811542ba897f60c137fb9b30decfd75709a",
+        "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+        "final_review": {
+          "id": 1,
+          "job_id": "6718bae5884040a781ff704e40445a0f",
+          "project_id": "f619a869803b40e3ab8497ed2ae269c9",
+          "revision": 2,
+          "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "decision": "approve",
+          "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+          "note": "",
+          "created_at": "2026-10-10T06:16:08.768051+00:00"
+        },
+        "duration_sec": 3
+      },
+      "prepared_at": "2026-10-10T06:16:08.621973+00:00",
+      "authority": {
+        "token_id": "explicit-fixture",
+        "subject": "usr:explicit-fixture",
+        "identity_revision_sha256": "fc6092e1c11b6b5dd410ecd99c34478ff1d3ca26344b894cb7e6be305aa3ec5c",
+        "expires_at": "2026-10-10T07:16:08.621973+00:00"
+      },
+      "token_returned": false,
+      "publishing_enabled": false,
+      "publish_approval_required": true
+    },
+    "token_returned": false,
+    "publishing_enabled": false,
+    "publish_approval_required": true
+  }
+}

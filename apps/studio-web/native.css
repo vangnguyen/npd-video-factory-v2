@@ -33,3 +33,5 @@
 #native-render-thumbnail-rights-card input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0}
 #native-render-thumbnail-rights-card>button{margin:6px 4px 6px 0}
 #native-render-thumbnail-rights-list{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+
+#native-tiktok-creators-card .review-player{display:block;width:min(100%,390px);max-height:65vh;aspect-ratio:9/16;object-fit:contain;background:#101614;border-radius:12px;margin:16px auto}#native-tiktok-creators-card button{margin:5px 5px 5px 0}
