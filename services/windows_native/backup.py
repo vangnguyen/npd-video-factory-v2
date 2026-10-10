@@ -132,6 +132,10 @@ def database_status(path):
                 busy+=con.execute("SELECT count(*) FROM native_google_oauth_selections WHERE status='claimed'").fetchone()[0]
             if 'native_google_analytics_selections' in tables:
                 busy+=con.execute("SELECT count(*) FROM native_google_analytics_selections WHERE status='claimed'").fetchone()[0]
+            for name in ('native_publishing_media_deliveries','native_publishing_media_operations'):
+                if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
+            if 'native_publishing_media_deliveries' in tables:
+                busy+=con.execute("SELECT count(*) FROM native_publishing_media_deliveries WHERE status IN ('queued','running')").fetchone()[0]
             for name in ('native_tiktok_creator_checks','native_tiktok_creator_responses','native_tiktok_post_drafts'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_tiktok_creator_checks' in tables:

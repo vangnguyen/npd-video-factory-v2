@@ -1,6 +1,6 @@
 {
-  "head": "a03d4e34cba81738898e32bf239f70d27349f11e",
-  "audited_at": "2026-10-10T11:40:01.799685+00:00",
+  "head": "37fe5d284e634c76b0e5291f7afa1cb0346fb0a2",
+  "audited_at": "2026-10-10T12:33:52.126303+00:00",
   "sha256": {
     "docs/ARCHITECTURE.md": "e7b5a93f44b32b79d9ba733958b5a7b32fe61769f040a48153c28edc7dc954f1",
     "apps/api/app/main.py": "4e28c68d99a1c9745887e99f537fdaa62e4deb95e613e8e166eba0ab063d7b02",
@@ -16,7 +16,7 @@
     "services/windows_native/shot_preview.py": "b272f45e84c3f7b2927ca5a7cc167d012041883d9a359c6c4ebffe8d0abfbfc7",
     "services/windows_native/server.py": "4ab792078c85e32bec258dfb8064ec7bc650182beb60a4a178e36b343adb684b",
     "services/windows_native/observability.py": "df37d852fea8a9a87aa1913cd67e3f3b56698fd5a6e6d184d4a396c315648095",
-    "services/windows_native/backup.py": "0782257fe6b9bd4c7d6ec3b013f6cc009016e3b4fa1beeb586454ca0ddde9334",
+    "services/windows_native/backup.py": "35de49d6491b5564255b36460fe9ad9c672198e4cb9ca98e0aa5a3f95207802a",
     "services/windows_native/tests/test_bridge.py": "c8ffb7468dd2af12e2610883ced088d39ac01c6ef8693bc512af1c35a1b3efbc",
     "services/windows_native/tests/test_bridge_http.py": "8f59da19806c469b8d2c8a853564580911a9c45317e195f930328db6d918f289",
     "scripts/north_star_native_bridge.py": "7f6829f1d4edd0d2c2bcb9d417ae2ce34bae7f6aaab63d82b5b0b9b26c7fe762",
@@ -1182,6 +1182,14 @@
     "services/windows_native/tests/test_meta_distribution_http.py": "8bbae6c0618f644ea955c4054b8b8d09e70af8237b632313ef5db834f1ca15bb",
     "scripts/north_star_meta_admission.py": "8c5d1be926f143ae9b53c64fff30fd9035dd39420ad145d6d599d1ead985439e",
     "docs/NATIVE_META_DISTRIBUTION_ADMISSION.md": "27c5b57f87b1aa8f61c01c2ad096b748fd84b51a667404fd3988bf246643d0b4",
-    "docs/north-star/meta-admission-evidence.json": "b5cb023ef32cd075a606206878a97fbf3695f7391d2c03b39e5e00fa1b8eacea"
+    "docs/north-star/meta-admission-evidence.json": "b5cb023ef32cd075a606206878a97fbf3695f7391d2c03b39e5e00fa1b8eacea",
+    "apps/api/app/publishing_media_delivery.py": "bfc0502e276eaaa073443461cf845a5e5eef96173a7161e4a9f28ca1a22a921e",
+    "apps/api/tests/test_publishing_media_delivery.py": "a2d003cd9a2707f21768c40c0eebc57ecfaab49596b525daaaaccfb599ebafc0",
+    "services/windows_native/publishing_media_delivery.py": "600c1d165df198d99fbc4a0957ef74e7c0967161ac21117aa876f5432a1b4e44",
+    "services/windows_native/tests/media_delivery_fixture.py": "790251deddd9e63d31018fb3f6b8199023d7bbb02c944a52ab6302fa377758c9",
+    "services/windows_native/tests/test_publishing_media_delivery.py": "77fa2abad9097f97809e2cac9b87201b418cebb09b776bef2a39cc6a50fd2782",
+    "scripts/north_star_native_publishing_media_delivery.py": "11d05cd183005093e797cc340450f3bbe89f3715a0c0360008fcf10bb040aae7",
+    "docs/NATIVE_PUBLISHING_MEDIA_DELIVERY.md": "a5a332ef9b471c4ab2576544d3b44a203897b2f53de394ce345ed1ffe614018a",
+    "docs/north-star/publishing-media-evidence.json": "c318838af46baa99d88afa8caa6e99f7880455e3d68307c68082e7f2137346ae"
   }
 }

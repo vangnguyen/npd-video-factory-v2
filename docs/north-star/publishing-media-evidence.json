@@ -1,0 +1,193 @@
+{
+  "schema_version": "north-star-native-publishing-media-evidence-v1",
+  "recorded_at": "2026-10-10T12:32:00.656332+00:00",
+  "audit_head_before_commit": "37fe5d284e634c76b0e5291f7afa1cb0346fb0a2",
+  "scope": "direct_component_actual_local_byte_streams_dpapi_sqlite_separate_process_recovery_and_explicit_s3_meta_owner_platform_nonplayable_media_mocks_plus_offline_boto_sdk_stubs",
+  "implementation": {
+    "default_disabled_root_workspace_profile_cipher_expiry_mode_configuration_binding": true,
+    "strict_separate_media_disclosure_owner_consent": true,
+    "current_canonical_rights_platform_approved_final_and_owner_grant_binding": true,
+    "conditional_stream_upload_and_pinned_full_sha256_readback": true,
+    "version_pinned_private_presigned_lease_with_strict_host_query_scope": true,
+    "two_additive_intent_response_journals_and_existing_cost_ledger": true,
+    "nullable_actual_cost_and_separate_finite_estimated_cost_ceiling": true,
+    "known_response_preserved_before_cost_settlement": true,
+    "no_automatic_mutation_replay_explicit_readonly_reconciliation": true,
+    "separate_dpapi_credential_and_lease_domains_outside_public_state": true,
+    "private_consumer_mode_scope_lifetime_current_owner_and_cipher_checks": true,
+    "keyless_history_and_original_grant_source_cost_links": true,
+    "public_backup_queued_running_fence_and_separate_process_restore": true,
+    "legacy_meta_execution_false_unchanged": true
+  },
+  "limits": {
+    "single_conditional_put_max_bytes": 5368709120,
+    "versioned_object_required_for_lease": true,
+    "multipart_delivery_implemented": false,
+    "lease_ttl_seconds": [
+      60,
+      86400
+    ],
+    "media_consent_seconds": [
+      60,
+      3600
+    ],
+    "live_url_lifetime_must_fit_configured_credential_expiry": true
+  },
+  "tests": {
+    "native_related": {
+      "status": "PASS",
+      "tests": 127,
+      "seconds": 124.87,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-native-regression-n1.log",
+        "bytes": 28662,
+        "sha256": "3a8dcfd958cf34a20d6cf6118f3e5266803c497a0899f9238e344db6ea872b97"
+      }
+    },
+    "native_final_after_state_root_binding": {
+      "status": "PASS",
+      "tests": 16,
+      "seconds": 15.59,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-native-final-n1.log",
+        "bytes": 4015,
+        "sha256": "462789c552d9be685d26476a759428b721e4ea4ec975d3afe996a9e4f89fc125"
+      }
+    },
+    "protocol_final": {
+      "status": "PASS",
+      "tests": 23,
+      "seconds": 1.09,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-protocol-final-n1.log",
+        "bytes": 101,
+        "sha256": "67de47e22ae46671b8649585fd2fa5dd5b26ef3e7124d6e926b692a57d535e52"
+      }
+    }
+  },
+  "retained_flow": {
+    "summary": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\summary.json",
+      "bytes": 1364,
+      "sha256": "03be661eed182d67969bb77a096bc6b140163f4ac3a733ba72a446352cc1859c"
+    },
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2.log",
+      "bytes": 240,
+      "sha256": "3276774af5a1e9a4563e4d5d7db5dea8b5cedc908727bbdfb39cb20cff5d467f"
+    },
+    "files": [
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\backup.json",
+        "bytes": 1660,
+        "sha256": "7ca45bd2d6ad1b4bb2cfe9a280d4bc500a67b9465a79ee2142e4b6a70eb0335c"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\cold-recovery.json",
+        "bytes": 3471,
+        "sha256": "b9c1bb7a0584240593db3af4d6bb1a52693b7784df63ff300b6a65ff535263a2"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\fixture-capabilities.json",
+        "bytes": 1810,
+        "sha256": "4b5b2cd72a03237a03849c51edfa15b17a36ed511b4aa6638c8951c15e72bb9f"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\flow.json",
+        "bytes": 68822,
+        "sha256": "f67ee9de29ee1cf6d53c46d2f42bdefdc5331ead43746da95e79f80f0679d0f5"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\public-state.zip",
+        "bytes": 356125,
+        "sha256": "6afe23887f38b59920e10f27079a8002010ace80ae7491e2acd96c06a7de73f7"
+      },
+      {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-flow-n2\\summary.json",
+        "bytes": 1364,
+        "sha256": "03be661eed182d67969bb77a096bc6b140163f4ac3a733ba72a446352cc1859c"
+      }
+    ],
+    "direct_component_requests": 2,
+    "storage_mock_operations": 6,
+    "conditional_puts": 1,
+    "storage_nullable_costs": 6,
+    "database_journal_counts": {
+      "events": 21,
+      "jobs": 1,
+      "project_versions": 2,
+      "projects": 1,
+      "native_cost_operations": 8,
+      "native_publications": 1,
+      "native_publication_events": 3,
+      "native_official_account_checks": 1,
+      "native_official_account_events": 2,
+      "native_publishing_media_deliveries": 2,
+      "native_publishing_media_operations": 6,
+      "native_official_publications": 1,
+      "native_official_publish_approvals": 1,
+      "native_official_publish_events": 3,
+      "native_official_publish_dispatches": 1,
+      "native_official_publish_intents": 0,
+      "native_official_publish_responses": 0,
+      "native_official_publish_processing": 0,
+      "native_official_publish_receipts": 0,
+      "native_official_publish_renewals": 0,
+      "native_official_publish_read_backoffs": 0,
+      "native_official_publish_thumbnails": 0
+    },
+    "separate_default_off_keyless_process_recovery": "PASS",
+    "native_http_requests": 0,
+    "private_url_in_public_backup": false
+  },
+  "not_completed": {
+    "protected_operator_runtime_cli_http_studio_wiring": true,
+    "meta_async_executor_and_shared_queue": true,
+    "durable_multipart": true,
+    "genuine_versioned_storage_permissions_compatibility_billing_acceptance": true,
+    "real_provider_acceptance": true,
+    "actual_browser_owner_and_media_uat": true,
+    "full_original_mode_a_b_and_a_b_c": true,
+    "production_isolation_docker_soak_deployment": true
+  },
+  "prior_component": {
+    "evidence": "docs/north-star/meta-admission-evidence.json",
+    "head": "37fe5d284e634c76b0e5291f7afa1cb0346fb0a2",
+    "historical_related_native_tests": 333,
+    "historical_studio_tests": 600,
+    "historical_provider_protocol_tests": 75,
+    "studio_and_prior_protocol_not_rerun_this_component": true
+  },
+  "initial_ambient_pytest_fixture_error": {
+    "log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-protocol-n1.log",
+      "bytes": 123650,
+      "sha256": "a3436efa5c5448d6138dda2590cd2496690a44759643ac09a8331749532d689c"
+    },
+    "passed": 1,
+    "fixture_errors": 15,
+    "reason": "Ambient pytest temp root was inaccessible. Subsequent runs used fresh exclusively owned test directories; no ambient ACL or historical data was changed."
+  },
+  "regression_modules": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\publishing-media-native-regression-modules-n1.json",
+    "bytes": 772,
+    "sha256": "ab95c1aab48a19a09cb9bc4c730dc63fc4d8249446b07529df9e14893c61feef"
+  },
+  "regressions": "none observed in final related scope; whole frontend/media/production acceptance not inferred",
+  "owner_action_required_for_safe_work": false,
+  "real_provider_calls": 0,
+  "paid_operations": 0,
+  "published": false,
+  "publishing_authority": false,
+  "main_merged": false,
+  "production_deployed": false,
+  "manual_old_data_deleted": false,
+  "capability_counts": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed_groups": 59
+  },
+  "source_preservation": "final source SHA and accepted artifacts in publishing-media-preservation.json; full base plus incremental recovery pair remains outside checkout",
+  "next_safe_work": "Separate execution-capable durable Meta create/upload/container/status/finish/receipt, protected runtime/queue/Studio and platform analytics; every remaining original Master Spec requirement remains in scope"
+}

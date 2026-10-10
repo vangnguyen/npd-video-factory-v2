@@ -3212,3 +3212,28 @@ EXTERNAL BLOCKERS: genuine Meta credentials/permissions/app eligibility/current 
 OWNER ACTION REQUIRED: none for safe implementation; previously deferred listening/Phase10 UAT remains pending and is not self-accepted. No real publish/deploy request is made.
 
 NEXT WAVE: continue Wave9 durable Meta execution, protected runtime/queue/Studio and platform analytics, then every remaining original Master Spec gap and full A/B/C acceptance. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+WAVE: 8/9 — immutable publishing media delivery dependency
+
+STATUS: COMPONENT_IMPLEMENTED_LOCAL_MOCK_OFFLINE_SDK_VERIFIED; WAVE_INCOMPLETE
+
+HEAD SHA: audit parent `37fe5d284e634c76b0e5291f7afa1cb0346fb0a2`; final commit is sealed in `publishing-media-preservation.json`.
+
+CAPABILITIES COMPLETED: exact current Owner/approved physical final/rights/platform binding; separate finite media disclosure/cost consent; conditional streamed S3 upload; pinned byte/version readback; private DPAPI credential/lease custody; worker-only mode/scope/expiry retrieval; existing per-operation nullable cost ledger; explicit read-only reconciliation/cancel/no mutation replay; original known-response interrupted-cost recovery; public backup and separate-process keyless history/cost/project recovery.
+
+CAPABILITIES PARTIAL: protected runtime/CLI/HTTP/Studio; Meta create/upload/container/status/finish/receipt/shared queue; durable multipart over 5 GiB; genuine versioned storage/provider/permissions/cost acceptance; all original remaining requirements. Counts5 REAL/58 PARTIAL/1 NOT_VERIFIED;59 broad groups unclosed.
+
+TESTS: related Native127 PASS (124.870s); final Native16 PASS (15.590s) after State-root configuration binding; offline provider23 PASS (1.09s). Native focused cases are included in the related suite. No full frontend/native/media/Docker regression claim. Initial ambient pytest temp permission fixture errors are retained; fresh owned temp reruns pass without ACL changes.
+
+REAL PROVIDER TESTS:0. MOCK TESTS: explicit S3/Meta/Owner/platform/nonplayable media; actual local streams/DPAPI/SQLite; installed boto3/botocore Stubber/local signing without network. Two delivery requests/one deliberately unconfirmed conditional upload/new read-only recovery/six nullable storage costs/public backup/keyless separate-process recovery. No newly accepted video artifact.
+
+EVIDENCE: `NATIVE_PUBLISHING_MEDIA_DELIVERY.md`, `north-star/publishing-media-evidence.json`, `publishing-media-flow-n2`, test logs and source preservation receipt.
+
+REGRESSIONS: none observed in final related scope; accepted artifacts are retained and freshly verified by the seal. Existing generic storage and YouTube/TikTok components remain. No old-data deletion/main merge/production mutation.
+
+EXTERNAL BLOCKERS: genuine storage/Meta credentials, versioning/permissions/API/application eligibility/billing and separate Owner publishing enablement/rights; browser/Owner/genuine media, isolated Docker/production acceptance. These do not block remaining safe implementation.
+
+OWNER ACTION REQUIRED: none for safe work. Deferred speech/Phase10 Owner UAT remains pending. No real publish/deploy/paid approval request is made.
+
+NEXT WAVE: durable execution-capable Meta dispatch/queue/runtime/Studio/platform analytics, then every remaining original Master Spec gap and A/B/C acceptance. SOURCE_PRESERVED is sealed separately; PHASE10_TECHNICALLY_READY=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
