@@ -156,13 +156,19 @@ def validate(directory,expected,*,duration,document_sha256,manifest_name,referen
 
 def validate_qc(directory,qc,document_sha256,*,video_name='final.mp4'):
     source='measured_audio_balance' in qc
-    expected=qc.get('measured_audio_balance') if source else ((qc.get('full_quality') or {}).get('full_production_qc') or {}).get('measured_audio_balance')
+    full=((qc.get('full_quality') or {}).get('full_production_qc') or {})
+    expected=qc.get('measured_audio_balance') if source else full.get('measured_audio_balance')
     if expected is None:
         if (Path(directory)/REPORT).exists():raise WorkflowError('AUDIO_BALANCE_EVIDENCE_CHANGED')
         return None  # Historical accepted checkpoints retain their original contract.
     try:
+        stem_sha=full.get('canonical_audio_stem_manifest_sha256')
+        narrated=(Path(directory)/'narrated-media-mix.json').is_file()
+        if not source and (stem_sha is not None or narrated):
+            if (not isinstance(stem_sha,str) or len(stem_sha)!=64 or
+                file_sha(guard(Path(directory)/'audio-stem-manifest.json',exists=True))!=stem_sha):raise ValueError()
         return validate(directory,expected,duration=expected['samples']['final']['analyzed_frames']/RATE,
-            document_sha256=document_sha256,manifest_name='audio-stem-manifest.json' if source else 'render-manifest.json',
+            document_sha256=document_sha256,manifest_name='audio-stem-manifest.json' if source or stem_sha is not None else 'render-manifest.json',
             reference_role=expected['reference_role'],video_name=video_name)
     except (OSError,ValueError,KeyError,TypeError):raise WorkflowError('AUDIO_BALANCE_EVIDENCE_CHANGED') from None
 
@@ -194,7 +200,7 @@ def narrated_stems(config,directory,*,duration,voice_file,music_file,voice_filte
     if file_sha(video)!=before or hashes!=[file_sha(source) for source in sources]:raise WorkflowError('AUDIO_BALANCE_SOURCE_CHANGED')
     return {role:file_sha(directory/('audio-'+role+'-filter.txt')) for role in graphs}
 
-def source_stems(config,snapshot,assets,directory):
+def source_stems(config,snapshot,assets,directory,*,packet_alignment=False):
     """Replay the exact canonical DSP on the already staged input bytes, no remix."""
     from app.timeline_audio_processing import build_processed_audio_graph
     staged={}
@@ -202,7 +208,7 @@ def source_stems(config,snapshot,assets,directory):
         original=guard(directory/'media'/(identifier+path.suffix.lower()),exists=True)
         if file_sha(original)!=asset.checksum_sha256:raise WorkflowError('AUDIO_BALANCE_SOURCE_CHANGED')
         staged[identifier]=(asset,original)
-    graph=build_processed_audio_graph(snapshot,staged,first_input_index=0,processing=snapshot.metadata.get('source_audio_processing'),stem_outputs=True)
+    graph=build_processed_audio_graph(snapshot,staged,first_input_index=0,processing=snapshot.metadata.get('source_audio_processing'),stem_outputs=True,packet_alignment=packet_alignment)
     reference_role='canonical_original_audio' if 'reference' in graph.stems else 'no_reference'
     for role,components in graph.stem_graphs.items():
         filters=guard(directory/('audio-'+role+'-filter.txt'));filters.write_text(';'.join(components),encoding='utf-8')

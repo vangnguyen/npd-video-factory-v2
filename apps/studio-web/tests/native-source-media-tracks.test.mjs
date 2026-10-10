@@ -1,6 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import{readFileSync}from'node:fs';
 import{initializeSourceMediaTracks,validateSourceMediaTracks}from'../native-source-media-tracks.mjs';
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/native-source-media-tracks.json',import.meta.url),'utf8')),copy=v=>structuredClone(v);
+const narratedFixture=JSON.parse(readFileSync(new URL('./fixtures/native-narrated-media-tracks.json',import.meta.url),'utf8'));
 function harness(page=fixture.initial){
   class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.listeners={};this.value='';this.checked=false;}
     append(...v){this.children.push(...v);}replaceChildren(...v){this.children=v;}addEventListener(k,fn){(this.listeners[k]??=[]).push(fn);}}
@@ -57,4 +58,21 @@ test('wrong source or receipt interval cannot reload the project as a successful
 test('caption pagination is an explicit read and out-of-range input cannot dispatch',async()=>{
   const h=harness();await h.controller.load();const p={...copy(fixture.initial),caption_page:2,captions:[],captions_has_next:false};h.respond(async()=>p);await h.controller.load(2);
   assert.match(h.calls[1].path,/\?caption_page=2$/);assert.equal(h.controller.fields.size,0);await assert.rejects(h.controller.load(0));assert.equal(h.calls.length,2);
+});
+test('measured storyboard signed HTTP fixtures remain distinct from ASR, provider, browser and Owner acceptance',()=>{
+  assert.equal(narratedFixture.synthetic_measured_narration_fixture,true);assert.equal(narratedFixture.saved_ASR_fixture,false);assert.equal(narratedFixture.owner_UAT,false);assert.equal(narratedFixture.real_provider_calls,0);
+  for(const name of['initial','audio','subtitles','edited','reopened']){const p=narratedFixture[name];assert.equal(p.timeline_mode,'narrated');assert.equal(validateSourceMediaTracks(p,{workspace_id:p.workspace_id,project:{id:p.project_id,revision:p.revision}}),p);}
+});
+test('storyboard projection reads measured captions and audio placement seeds through the same canonical CAS',async()=>{
+  const h=harness(narratedFixture.initial);h.respond(async(path,body)=>copy(body?narratedFixture.audio:narratedFixture.initial));await h.controller.load();
+  assert.equal(h.controller.currentBinding().pending_generated_tracks,true);assert.equal(h.node('timebase').value,'timeline');assert.equal(h.node('timebase').disabled,true);
+  assert.match(h.node('status').textContent,/PCM đã đo/);assert.equal(h.controller.fields.size,2);assert.equal(h.calls.length,1);
+  h.node('timeline-start').value='.5';await h.controller.applyAudio();assert.equal(h.saved.length,1,JSON.stringify(h.messages));assert.equal(h.controller.currentBinding().pending_generated_tracks,false);
+  assert.equal(h.calls[1].body.timeline_sha256,narratedFixture.initial.timeline_sha256);assert.equal(h.calls[1].body.expected_version,narratedFixture.initial.timeline_version);
+});
+test('storyboard imported caption edit keeps Vietnamese text and cannot manufacture word alignment',async()=>{
+  const h=harness(narratedFixture.subtitles);h.respond(async(path,body)=>copy(body?narratedFixture.edited:narratedFixture.subtitles));await h.controller.load();
+  const f=[...h.controller.fields.values()][0];f.text.value=narratedFixture.edited.captions[0].text;f.start.value='.2';f.duration.value='.7';f.text.listeners.input[0]();
+  await h.controller.saveCaptionEdits();assert.equal(h.saved.length,1,JSON.stringify(h.messages));assert.equal(h.controller.currentBinding().captions[0].has_word_timing,false);assert.equal(h.state.dirty,false);
+  for(const v of['external','mode-a-ready']){const bad=copy(narratedFixture.initial);bad.timeline_mode=v;assert.throws(()=>validateSourceMediaTracks(bad,h.state));}
 });

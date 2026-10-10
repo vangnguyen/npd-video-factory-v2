@@ -4,7 +4,7 @@ from .contracts import WorkflowError,digest
 from .store import now
 from .media import _verify_library_record
 from .source_assets import canonical_assets
-from .auto_edit_timeline import _cas,_save,is_auto_edit
+from .auto_edit_timeline import is_auto_edit
 from .auto_edit_analysis import asset_reference
 from .source_media_track_models import Audio,Subtitles,EditCaptions
 from .source_media_track_origins import SCHEMA,LIMIT,binding,records,verify_physical
@@ -15,11 +15,36 @@ from app.subtitle_templates import load_templates,template_catalog
 
 PAGE_SIZE=50
 
+def _cas(project,expected_version,*,store=None,con=None,seed_tracks=False):
+    if is_auto_edit(project['document']):
+        from .auto_edit_timeline import _cas as source_cas
+        state=source_cas(project,expected_version)
+        return state,TimelineSnapshot.model_validate(state['snapshot'])
+    from .narrated_media_timeline import cas
+    return cas(store,con,project,expected_version,seed_tracks=seed_tracks)
+
+def _save(store,con,project,snapshot,action):
+    if is_auto_edit(project['document']):
+        from .auto_edit_timeline import _save as source_save
+        return source_save(store,con,project,snapshot,action)
+    from .narrated_media_timeline import save
+    return save(store,con,project,snapshot,action)
+
 def catalog(store,project_id,workspace_id,*,caption_page=1):
     if type(caption_page) is not int or not 1<=caption_page<=1000:raise WorkflowError('SOURCE_MEDIA_TRACK_PAGE_INVALID',400)
-    project=store.get(project_id);document=project['document'];ready=is_auto_edit(document)
-    state=_cas(project,document['canonical_timeline']['version']) if ready else None
-    snapshot=state['snapshot'] if state else None
+    project=store.get(project_id);document=project['document']
+    from .narrated_media_timeline import ready as narrated_ready
+    source_mode=is_auto_edit(document);ready=source_mode or narrated_ready(document)
+    pending=False
+    if ready and not source_mode:
+        from .narrated_media_timeline import enabled
+        pending=not enabled(document)
+        with store.transaction() as con:
+            state,projection=_cas(project,document['canonical_timeline']['version'],store=store,con=con,seed_tracks=pending)
+        snapshot=projection.model_dump(mode='json')
+    else:
+        state=_cas(project,document['canonical_timeline']['version'])[0] if ready else None
+        snapshot=state['snapshot'] if state else None
     assets=[]
     for asset in canonical_assets(document):
         if asset['kind'] not in {'audio','subtitle'}:continue
@@ -44,7 +69,8 @@ def catalog(store,project_id,workspace_id,*,caption_page=1):
     captions.sort(key=lambda c:(c['timeline_start'],c['clip_id']));start=(caption_page-1)*PAGE_SIZE
     history=list(records(document).values())
     return {'schema_version':'native-source-media-tracks-v1','workspace_id':workspace_id,'project_id':project_id,'revision':project['revision'],
-        'timeline_available':ready,'timeline_version':state['version'] if state else None,'timeline_sha256':state['sha256'] if state else None,
+        'timeline_available':ready,'timeline_mode':'source' if source_mode else 'narrated' if ready else None,'pending_generated_tracks':pending,
+        'timeline_version':state['version'] if state else None,'timeline_sha256':state['sha256'] if state else None,
         'duration_seconds':snapshot['duration_seconds'] if snapshot else None,'assets':assets[:200],'assets_total':len(assets),'assets_truncated':len(assets)>200,
         'tracks':tracks,'captions':captions[start:start+PAGE_SIZE],'caption_page':caption_page,'caption_page_size':PAGE_SIZE,
         'captions_total':len(captions),'captions_has_next':start+PAGE_SIZE<len(captions),
@@ -161,9 +187,9 @@ def _prior(document,payload,operation):
             'asset_sha256':row['asset_sha256'],'request_sha256':row['request_sha256'],**copy.deepcopy(row['result'])}
 
 def _snapshot(store,con,project_id,payload):
-    project=store.editable(con,project_id,payload.revision);state=_cas(project,payload.expected_version)
+    project=store.editable(con,project_id,payload.revision);state,snapshot=_cas(project,payload.expected_version,store=store,con=con,seed_tracks=True)
     if state['sha256']!=payload.timeline_sha256:raise WorkflowError('SOURCE_MEDIA_TRACK_TIMELINE_CHANGED')
-    return project,TimelineSnapshot.model_validate(state['snapshot'])
+    return project,snapshot
 
 def add_audio(store,project_id,body,*,actor_ref,config=None):
     payload=_parse(Audio,body)
@@ -229,6 +255,8 @@ def add_subtitles(store,project_id,body,*,actor_ref):
         prior=_prior(store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())['document'],payload,'subtitles')
         if prior:return prior
         project,snapshot=_snapshot(store,con,project_id,payload);asset,path=_asset(store,project['document'],payload,'subtitle')
+        if not is_auto_edit(project['document']) and payload.timebase=='source':
+            raise WorkflowError('NARRATED_MEDIA_SOURCE_TIME_REQUIRES_EXPLICIT_VIDEO_MAPPING',400)
         from .multipart_ingestion import subtitle_cues,CHUNK_BYTES
         if path.stat().st_size>CHUNK_BYTES:raise WorkflowError('SOURCE_MEDIA_TRACK_SUBTITLE_SIZE_INVALID',400)
         cues=subtitle_cues(path.read_bytes(),asset['source_mime'])

@@ -106,10 +106,13 @@ def apply(store,project_id,job_id,payload):
         if [v['shot_id'] for v in values]!=[i['shot_id'] for i in plan['items']]:raise WorkflowError('NARRATION_CANONICAL_SHOTS_CHANGED')
         for shot,item in zip(values,plan['items']):
             shot['duration']=item['recommended_duration_seconds'];shot['requested_duration']=item['recommended_duration_seconds'];_check_shot(shot,_assets(doc))
-        updated=project_projection(doc,values);timeline=snapshot_from_shots(values,updated,canvas=state['snapshot'])
-        updated['canonical_timeline']={'version':state['version']+1,'snapshot':timeline,'sha256':digest(timeline)}
+        updated=project_projection(doc,values)
         updated['prepared_narration']={'schema_version':SCHEMA,'job_id':job_id,'plan_sha256':result['plan_sha256'],'voice_input_sha256':plan['voice_input_sha256'],
             'voice_audio_sha256':plan['voice_audio_sha256'],'applied_from_revision':project['revision'],'review_required':True,'automatic_render':False}
+        from .narrated_media_timeline import rebind_canvas
+        canvas=rebind_canvas(state['snapshot'],result['plan_sha256'],plan['items'])
+        timeline=snapshot_from_shots(values,updated,canvas=canvas)
+        updated['canonical_timeline']={'version':state['version']+1,'snapshot':timeline,'sha256':digest(timeline)}
         validate_document(updated)
         con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(project['revision']+1,json.dumps(updated,ensure_ascii=False),now(),project_id));store.version(con,project_id)
         store.event(con,project_id,'narration_measured_timing_applied_approval_invalidated',{'job_id':job_id,'plan_sha256':result['plan_sha256'],'revision':project['revision']+1,

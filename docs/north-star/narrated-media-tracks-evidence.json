@@ -1,0 +1,157 @@
+{
+  "schema_version": "north-star-native-narrated-media-tracks-evidence-v1",
+  "recorded_at": "2026-10-10T19:42:50.194543+00:00",
+  "base_head": "c2b1d48f4a955bf8b01ff245a00b220e762df867",
+  "capabilities": [
+    "inert measured storyboard projection",
+    "canonical uploaded voice/music and SRT/caption editor",
+    "measured source reference and immutable import provenance",
+    "shot subtitle/visual edits with track/shortening guards",
+    "legacy music control compatibility",
+    "narration rebind and six variant reuse",
+    "canonical DSP/libass/full-QC/checkpoint/replay/review",
+    "real signed loopback HTTP controller and backup/restore"
+  ],
+  "tests": {
+    "native_related_final": {
+      "passed": 226,
+      "seconds": 417.121,
+      "modules": 27,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-media-tracks-native-final-n1.log",
+        "sha256": "8cb70d0cf286adcdd9e97921b0c3b5b52f7f4b8e0c4cacd3589f7b084108c575",
+        "bytes": 51128
+      }
+    },
+    "studio_full_final": {
+      "passed": 664,
+      "seconds": 2.1094514,
+      "files": 81,
+      "log": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-media-tracks-studio-final-n1.log",
+        "sha256": "16cbabe32fb6c19b15ff7b303db126f10c1aab81ea384c40716b0cf1a6fe86dc",
+        "bytes": 67712
+      }
+    },
+    "new_native_included": 18,
+    "new_Studio_included": 3,
+    "overlapping_runs_are_not_added": true
+  },
+  "qualification": {
+    "implemented": true,
+    "actual_local_media_HTTP_renderer_QC_backup_restore": true,
+    "signed_human_and_DOM_are_fixtures": true,
+    "synthetic_narration_and_words_are_fixtures": true,
+    "saved_ASR_fixture_in_current_flow": false,
+    "external_provider_calls": 0,
+    "new_ASR_or_TTS_calls": 0,
+    "paid_calls": 0,
+    "genuine_speech_quality_accepted": false,
+    "browser_rendered": false,
+    "Owner_UAT": false,
+    "production_deployed": false,
+    "publishing_enabled": false,
+    "complete_artifact_B_acceptance": false,
+    "manual_historical_data_deleted": false,
+    "owned_new_temporary_fixture_cleanup_after_source_and_backup_export": true
+  },
+  "signed_HTTP_DTO_fixture": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-media-tracks-http-n1.json",
+    "sha256": "33077b55dc5f1d8b3f53c768e152d58cc6cf507cfb1b4ae81c24acb6678070db",
+    "bytes": 52679
+  },
+  "signed_controller_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-media-tracks-controller-n1.json",
+    "sha256": "9d93862d3607a724df8083a4f1000613e431b92de85f93689c8d9ddec5c79e54",
+    "bytes": 4933
+  },
+  "actual_render_bundle": {
+    "directory": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-media-tracks-n1",
+    "evidence": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-media-tracks-n1\\evidence.json",
+      "sha256": "7391d0a15d0462045756b532590aedd8b9c7528d11b3f8a75c9bd22f5018dcec",
+      "bytes": 7878
+    },
+    "export_files": 62,
+    "total_bytes_including_receipt": 51243931,
+    "final_sha256": "d88a588c6fa0847829427f425e0ca554085417bc61d7bb946ed166438ece546f",
+    "preview_sha256": "d88a588c6fa0847829427f425e0ca554085417bc61d7bb946ed166438ece546f",
+    "PCM_sha256": "daffc5f3a14a697a43f25e95ac726167beb84d1d0305708d934a36ba8ba272b6",
+    "ASS_sha256": "998558db1b17850fd4d4e32c46849bb4c2d6fff1f9ad8c11dee0a3cef1fcc7fc",
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-media-tracks-n1\\backup.zip",
+      "sha256": "0c4409d1191da1f54fa2791b73b0f7bd4d611cece2e8846f4fb8370e1cd66a2b",
+      "bytes": 41044526
+    },
+    "preview_final_movie_bytes_identical": true,
+    "caption_frame_visually_inspected": true,
+    "original_sources_verified": 9
+  },
+  "font_legal_provenance": {
+    "path": "C:\\vfns01\\services\\windows_native\\fonts\\manifest.json",
+    "sha256": "afce17a8e7d6ed513b2e0b3a843a4f026c743c53ee0ac762f4251afd85be7fe7",
+    "bytes": 1508
+  },
+  "repairs": [
+    "required zero timeline_start for generated voice",
+    "audio QC uses bound canonical stem manifest after preview/render copy",
+    "bounded packet-aligned sidechain tail before final trim fixes preview/final PCM parity",
+    "copy approved font directory before checkpoint publication",
+    "shot subtitle overrides cannot be silently ignored",
+    "legacy music/locked tracks remain explicit and guarded"
+  ],
+  "remaining": [
+    "full original Mode A/B UI and A/B/C acceptance",
+    "explicit selected-video source-time SRT mapping for Mode A",
+    "full advanced narrated track editing and undo/redo",
+    "long caption/QC limits and UI DSP controls",
+    "genuine speech/alignment/provider/browser/non-developer/Owner acceptance",
+    "Meta analytics and all remaining original capabilities",
+    "Docker, production isolation/soak/deployment acceptance"
+  ],
+  "source_sha256": {
+    "apps/api/app/timeline_audio_processing.py": "5acf103c6130ca5a59c49043277235040ad2c9f1984088e238d19c7bd9708fa0",
+    "apps/studio-web/native-source-media-tracks.mjs": "c3bf7e0ad6baf6eef37a77b350c60eabe08db3ce609fb997a460c676be7cbebb",
+    "apps/studio-web/tests/fixtures/native-narrated-media-tracks.json": "33077b55dc5f1d8b3f53c768e152d58cc6cf507cfb1b4ae81c24acb6678070db",
+    "apps/studio-web/tests/native-source-media-tracks.test.mjs": "7d0d9f54d726ad355641bb767a45f85cb88429bc86f3182061b66e90d430f5f7",
+    "docs/NATIVE_NARRATED_MEDIA_TRACKS.md": "5adfa269d53aa11e2da9b71b85aa442c4b96298d3d48416636a27db99cdc2f1a",
+    "scripts/native_source_media_tracks_http_ui.mjs": "fc87aceb45bac8897abfe26b02464a138237728d53ed6472b92d0ddb25b885eb",
+    "scripts/north_star_narrated_media_tracks.py": "764683f5660fba1419b9a6f2ea7654d9af447adebc8a9e0f4db7b65e91b8fb0f",
+    "services/windows_native/audio_balance.py": "68364d34e415e70ac974fec1da50b1c1bb7421bc998abf1a43bee29f880bb54f",
+    "services/windows_native/fonts/NotoSans-OFL.txt": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+    "services/windows_native/fonts/NotoSans.ttf": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+    "services/windows_native/fonts/NotoSansDisplay-OFL.txt": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6",
+    "services/windows_native/fonts/NotoSansDisplay.ttf": "deaa68141fa5ad21bd17d7c11fa79183ceda19b32e40ff5c33874d42f3636dde",
+    "services/windows_native/fonts/manifest.json": "afce17a8e7d6ed513b2e0b3a843a4f026c743c53ee0ac762f4251afd85be7fe7",
+    "services/windows_native/narrated_media_captions.py": "66e67048d0ef45dedfc6fc82a192a7fffe9908258a06e3902eceb35cf4be54df",
+    "services/windows_native/narrated_media_mix.py": "acb8fe9dd2519222a24cee14fdc65c78110b02a20f58ed6f2be3f4cd914c3b35",
+    "services/windows_native/narrated_media_timeline.py": "3a3befc8daf32b392f932b750553ef77f7a895bd5ad94a2c8e3704ba98bcac7c",
+    "services/windows_native/narrated_variants.py": "a6ce709b943df6ac1433b64af4fa306298d534228d90998fe198003292a1bd64",
+    "services/windows_native/narration.py": "c8b6198f3196d4af4109063c8b931bc45a8a0206aa980c65f286fb0939b41baf",
+    "services/windows_native/narration_preview.py": "ef505f06c2801ef3d38fd524cdb2f802874e036e84ee6c2c7761994fa23510a3",
+    "services/windows_native/pipeline.py": "4eb5cccd40925f7f985053aebb28eaa1b20cd6d9871a60d9883f3b4dae262ed5",
+    "services/windows_native/shot_adapter.py": "4811cd964217c3c864294df0399ebde38552bb1aa22aaf55637a7a9ef8f158af",
+    "services/windows_native/source_media_tracks.py": "fba784ed32bd20d2f0011f403f8d0d203604bb69f15416cb7690fb7eacbc01be",
+    "services/windows_native/store.py": "0430fcad8e258f5b7e5567e993ba55351a4519e7a8d9dc34a7ed36cf3597b604",
+    "services/windows_native/storyboard_qc.py": "348b89b7a7359bef66fd06df36f310317d172258b0bdda6ce2c3749f93f8afdb",
+    "services/windows_native/tests/test_narrated_media_captions.py": "9b063396328559562ac15926d1cd13dca71258ff57cda6c0d1e772518d3e46f0",
+    "services/windows_native/tests/test_narrated_media_tracks.py": "f2c574d0d2b34c1fad2caa95b7abd62ff690fd8e26ebfd409f12180af599ef20",
+    "services/windows_native/tests/test_narrated_media_tracks_http.py": "1edf46d9202d2951aff795d1df4ed1a55395ff367df80f01b5b59a945130ab30"
+  },
+  "matrix": {
+    "groups": 64,
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1,
+    "unclosed_groups": 59
+  },
+  "states": {
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES",
+    "PHASE10_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+  }
+}

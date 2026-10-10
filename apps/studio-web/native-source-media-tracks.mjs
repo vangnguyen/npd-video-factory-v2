@@ -5,6 +5,7 @@ const track=v=>typeof v==='string'&&/^trk_[A-Za-z0-9_-]{4,60}$/.test(v),clip=v=>
 const finite=v=>typeof v==='number'&&Number.isFinite(v),bool=v=>typeof v==='boolean';
 const PART='source_media_tracks';
 export function validateSourceMediaTracks(v,s,{revision=s.project?.revision,version=null,page=1}={}){
+  if(v?.timeline_mode!==undefined&&!['source','narrated',null].includes(v.timeline_mode)||v?.pending_generated_tracks!==undefined&&!bool(v.pending_generated_tracks))throw Error('Chế độ track không hợp lệ.');
   if(v?.schema_version!=='native-source-media-tracks-v1'||v.workspace_id!==s.workspace_id||v.project_id!==s.project?.id||v.revision!==revision
     ||!bool(v.timeline_available)||v.provider_calls!==0||v.publishing_enabled!==false||v.human_review_required!==true||v.source_media_mutated!==false)throw Error('Track không đúng dự án hoặc phiên bản.');
   if(v.timeline_available){if(!integer(v.timeline_version)||v.timeline_version<1||!sha(v.timeline_sha256)||!finite(v.duration_seconds)||v.duration_seconds<=0||v.duration_seconds>600||version!==null&&v.timeline_version!==version)throw Error('Timeline chưa khớp dữ liệu đã đọc.');}
@@ -36,7 +37,7 @@ export function initializeSourceMediaTracks({api,getState,root=document,onWorkin
   const controlsList=[],choice=(parent,text,id)=>{const n=node('select',null,id),l=node('label',text);l.append(n);parent.append(l);controlsList.push(n);return n;};
   const number=(parent,text,id,value,min=0,max=600)=>{const n=node('input',null,id);Object.assign(n,{type:'number',value:String(value),min:String(min),max:String(max),step:'any'});const l=node('label',text);l.append(n);parent.append(l);controlsList.push(n);return n;};
   const check=(parent,text,id)=>{const n=node('input',null,id);n.type='checkbox';n.checked=false;const l=node('label',text);l.className='check';l.append(n);parent.append(l);controlsList.push(n);return n;};
-  const read=button('Đọc track và tư liệu đã lưu','read'),status=node('p','Tạo bản dựng từ video nguồn rồi đọc tư liệu để đặt audio/phụ đề.','status');
+  const read=button('Đọc track và tư liệu đã lưu','read'),status=node('p','Tạo bản dựng video nguồn, hoặc áp dụng lời đọc đã đo cho storyboard, rồi đọc tư liệu.','status');
   const audioBox=node('fieldset'),subtitleBox=node('fieldset'),captionBox=node('fieldset');audioBox.className=subtitleBox.className='scene-grid';
   audioBox.append(node('legend','Đặt audio vào bản dựng'));
   const audio=choice(audioBox,'Audio đã tải lên','audio'),role=choice(audioBox,'Vai trò','role'),audioTrack=choice(audioBox,'Track đích','audio-track'),replace=check(audioBox,'Thay toàn bộ clip của track đã chọn · giữ lịch sử','replace-audio');
@@ -62,6 +63,7 @@ export function initializeSourceMediaTracks({api,getState,root=document,onWorkin
     replace.disabled=!editable||!audioTrack.value;loop.disabled=!editable||role.value!=='music';until.disabled=crossfade.disabled=!editable||role.value!=='music'||!loop.checked;
     withCaptions.disabled=!editable||role.value!=='voice'||!audioAsset()?.transcript_id;
     audioCaptionTrack.disabled=audioTemplate.disabled=!editable||!withCaptions.checked||withCaptions.disabled;
+    timebase.disabled=!editable||value?.timeline_mode==='narrated';
     for(const f of fields.values())for(const input of[f.text,f.start,f.duration])input.disabled=!editable||f.source.track_locked;
   }
   function clear(){value=null;fields.clear();pending.clear();controlsList.splice(staticControls);captionRows.replaceChildren();for(const s of[audio,subtitle,audioTrack,audioCaptionTrack,subtitleTrack])s.replaceChildren();audioBox.hidden=subtitleBox.hidden=captionBox.hidden=true;if(ownDirty){ownDirty=false;onDirty(false);}}
@@ -77,7 +79,9 @@ export function initializeSourceMediaTracks({api,getState,root=document,onWorkin
     fields.clear();controlsList.splice(staticControls);captionRows.replaceChildren();for(const c of value.captions){const box=node('section'),text=node('textarea');text.value=c.text;text.maxLength=4000;text.rows=2;const label=node('label',c.track_locked?'Caption · track đã khóa':'Caption');label.append(text);box.append(label);
       const start=number(box,'Vị trí timeline (s)',null,c.timeline_start),duration=number(box,'Thời lượng hiển thị (s)',null,c.duration,.05,600);captionRows.append(box);fields.set(c.clip_id,{source:c,text,start,duration});
       for(const n of[text,start,duration])n.addEventListener('input',changed);}
-    status.textContent=value.timeline_available?`Timeline bản ${value.timeline_version} · ${value.assets_total} tư liệu audio/phụ đề · ${value.captions_total} caption, trang ${value.caption_page}. Lưu một thao tác rồi kiểm tra preview.`:'Chưa có bản dựng video nguồn; tải và phân tích video, chọn Tạo bản dựng trước.';controls();}
+    if(value.timeline_mode==='narrated')timebase.value='timeline';
+    for(const option of timebase.children)if(option.value==='source')option.disabled=value.timeline_mode==='narrated';
+    status.textContent=value.timeline_available?`Timeline bản ${value.timeline_version} · ${value.assets_total} tư liệu audio/phụ đề · ${value.captions_total} caption, trang ${value.caption_page}. ${value.pending_generated_tracks?'Track lời đọc/caption là projection từ PCM đã đo; chọn Lưu sẽ gắn vào timeline. ':''}Lưu một thao tác rồi kiểm tra preview.`:'Chưa có timeline phù hợp; phân tích video nguồn và tạo bản dựng, hoặc áp dụng lời đọc đã đo cho storyboard.';controls();}
   async function run(fn){sync();const s=getState();if(working||s.busy||!s.project)return;const expected=context(),ticket=++generation;working=true;onWorking(true);controls();const accept=()=>expected===context()&&ticket===generation;
     try{await fn(s,accept);}catch(e){if(accept())onMessage(e.message,true);}finally{working=false;onWorking(false);sync();}}
   const path=s=>'/api/projects/'+s.project.id+'/auto-edit/media-tracks';

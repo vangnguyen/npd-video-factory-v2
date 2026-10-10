@@ -62,8 +62,9 @@ def _diagnostic_graphs(snapshot,base,clip_filters,config):
     return stems,graphs
 
 
-def build_processed_audio_graph(snapshot,assets,*,first_input_index,processing=None,stem_outputs=False):
+def build_processed_audio_graph(snapshot,assets,*,first_input_index,processing=None,stem_outputs=False,packet_alignment=False):
     if type(stem_outputs) is not bool:raise ValueError('AUDIO_STEM_OUTPUTS_INVALID')
+    if type(packet_alignment) is not bool:raise ValueError('AUDIO_PACKET_ALIGNMENT_INVALID')
     base=build_timeline_audio_graph(snapshot,assets,first_input_index=first_input_index)
     config=AudioProcessing.model_validate(processing or {})
     receipt={'schema':'canonical-audio-processing-v1','configuration':config.model_dump(mode='json'),
@@ -103,8 +104,13 @@ def build_processed_audio_graph(snapshot,assets,*,first_input_index,processing=N
         filters.append(''.join(clips)+f'amix=inputs={len(clips)}:duration=longest:dropout_transition=0:normalize=0,'
             f'apad,atrim=duration={snapshot.duration_seconds:.9f}[{name}]')
     if config.duck_music and 'original' in labels and 'music' in labels:
-        filters.append(labels['original']+'asplit=2[original_out][sidechain]')
-        filters.append(labels['music']+f'[sidechain]sidechaincompress=threshold={config.duck_threshold:.9f}:'
+        if packet_alignment:
+            filters.append(labels['original']+'apad=pad_dur=0.25,asetnsamples=n=1024:p=1,asplit=2[original_out][sidechain]')
+            filters.append(labels['music']+'apad=pad_dur=0.25,asetnsamples=n=1024:p=1[aligned_music]');music_label='[aligned_music]'
+            receipt['canonical_mix_packet_alignment']={'samples':1024,'tail_padding_seconds':.25,'final_duration_trimmed':True}
+        else:
+            filters.append(labels['original']+'asplit=2[original_out][sidechain]');music_label=labels['music']
+        filters.append(music_label+f'[sidechain]sidechaincompress=threshold={config.duck_threshold:.9f}:'
             f'ratio={config.duck_ratio:.6f}:attack={config.duck_attack_ms:.6f}:'
             f'release={config.duck_release_ms:.6f}:makeup=1[ducked_music]')
         labels.update(original='[original_out]',music='[ducked_music]');receipt['music_ducking']=True

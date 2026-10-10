@@ -341,6 +341,15 @@ class Store:
                 doc['prepared_narration_origin']={'source_project_id':identifier,'source_reference_sha256':digest(doc.pop('prepared_narration')),'new_preparation_required':True}
             if doc.get('narration_rights_exceptions'):
                 doc['narration_rights_origin']={'source_project_id':identifier,'history_sha256':digest(doc.pop('narration_rights_exceptions')),'new_review_required':True}
+            if not source:
+                from .narrated_media_timeline import enabled
+                if enabled(doc):
+                    from .source_media_track_origins import inherit
+                    doc['canonical_timeline']['snapshot']['metadata']['native_project_id']=copy_id
+                    inherit(doc,identifier,copy_id,revision)
+                    doc['canonical_timeline']['sha256']=digest(doc['canonical_timeline']['snapshot'])
+                    from .shot_adapter import validate_document
+                    validate_document(doc)
             con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",(copy_id,1,json.dumps(doc,ensure_ascii=False),None,stamp,stamp))
             self.version(con,copy_id)
             self.event(con,copy_id,"project_duplicated_unapproved",{"source_project":identifier,"source_revision":revision})
@@ -381,6 +390,9 @@ class Store:
             raise WorkflowError("RENDER_ARTIFACT_CHANGED")
         from .audio_balance import validate_qc
         validate_qc(self.root/'jobs'/identifier,job['result']['qc'],digest(job['snapshot']['document']))
+        from .narrated_media_mix import validate_bundle
+        from types import SimpleNamespace
+        validate_bundle(SimpleNamespace(data_root=self.root),job['snapshot']['document'],self.root/'jobs'/identifier,store=self,con=con)
         return job, actual
 
     def review_render(self, identifier, revision, reviewer, acknowledged, decision, note=""):

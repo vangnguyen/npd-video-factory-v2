@@ -1,0 +1,32 @@
+{
+  "schema_version": "native-approved-subtitle-fonts-v1",
+  "observed_at": "2026-10-10T19:00:59.854958+00:00",
+  "files": {
+    "NotoSans.ttf": {
+      "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "bytes": 2049096,
+      "upstream_git_blob_sha1": "75575046c015ff623a848096a15779867ba71453",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf"
+    },
+    "NotoSans-OFL.txt": {
+      "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "bytes": 4396,
+      "upstream_git_blob_sha1": "6843f31878c9945e1e71e1baa275546b4eefead8",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/OFL.txt"
+    },
+    "NotoSansDisplay.ttf": {
+      "sha256": "deaa68141fa5ad21bd17d7c11fa79183ceda19b32e40ff5c33874d42f3636dde",
+      "bytes": 1544512,
+      "upstream_git_blob_sha1": "1eb0eb1a7c009ab340990102a256f09d95741a34",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdisplay/NotoSansDisplay%5Bwdth%2Cwght%5D.ttf"
+    },
+    "NotoSansDisplay-OFL.txt": {
+      "sha256": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6",
+      "bytes": 4350,
+      "upstream_git_blob_sha1": "94d1bf7b52481343e2983fb7751e8b7abe1ea07b",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdisplay/OFL.txt"
+    }
+  },
+  "license": "SIL Open Font License 1.1",
+  "new_paid_calls": 0
+}

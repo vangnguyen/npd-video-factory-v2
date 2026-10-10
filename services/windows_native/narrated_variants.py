@@ -123,6 +123,8 @@ class NativeNarratedVariants:
             verify_selected_files(SimpleNamespace(data_root=self.store.root),document)
             from .narrated_music import verify_source
             verify_source(SimpleNamespace(data_root=self.store.root),document)
+            from .narrated_media_mix import verify as verify_media_tracks
+            verify_media_tracks(SimpleNamespace(data_root=self.store.root),document,store=self.store,con=con)
             available=catalog();profiles={v['profile_ref']:v for v in available['profiles']}
             if any(ref not in profiles for ref in payload.profile_refs):raise WorkflowError('NARRATED_VARIANT_PROFILE_UNKNOWN',400)
             if con.execute('SELECT COUNT(*) FROM native_narrated_variant_batches WHERE workspace_id=? AND master_project_id=?',(self.workspace,project_id)).fetchone()[0]>=50:
@@ -160,6 +162,16 @@ class NativeNarratedVariants:
                 child['prepared_narration']={'schema_version':NARRATION_SCHEMA,'job_id':source['id'],'plan_sha256':source_result['plan_sha256'],
                     'voice_input_sha256':identity(child),'voice_audio_sha256':source_result['plan']['voice_audio_sha256'],
                     'review_required':True,'automatic_render':False,'derivation':derivation}
+                from .narrated_media_timeline import enabled as media_enabled
+                if media_enabled(child):
+                    from .source_media_track_origins import inherit
+                    from .narrated_media_timeline import rebind_canvas
+                    canvas=rebind_canvas(timeline,source_result['plan_sha256'],source_result['plan']['items'])
+                    canvas['metadata']['native_project_id']=child_id
+                    child['canonical_timeline']['snapshot']=canvas
+                    inherit(child,project_id,child_id,master['revision'])
+                    timeline=snapshot_from_shots(shots(document),child,canvas=child['canonical_timeline']['snapshot'])
+                    child['canonical_timeline']={'version':1,'snapshot':timeline,'sha256':digest(timeline)}
                 child['name']=document['name'][:100]+' · '+profile['label'][:45]
                 child['narrated_variant']={'schema_version':SCHEMA,'batch_id':batch_id,'master_project_id':project_id,'master_revision':master['revision'],
                     'profile':profile,'request_fingerprint':fp,'crop_needs_attention':True,'subject_tracking_confidence':None,

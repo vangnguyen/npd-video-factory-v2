@@ -52,8 +52,13 @@ def subtitle_evidence(config,directory,manifest,duration,width,height):
         if first>last:failures.append({'cue_index':index,'reason':'caption_has_no_visible_output_frame'});continue
         stamp=(first+last)//2/30
         if time.monotonic()-started>90:raise WorkflowError('STORYBOARD_QC_SUBTITLE_TIMEOUT')
+        approved_fonts=manifest.get('approved_subtitle_font_sha256')
+        if approved_fonts is not None:
+            from .narrated_media_captions import FONT_SHA
+            if approved_fonts!=FONT_SHA or any(file_sha(guard(directory/'fonts'/name,exists=True))!=sha for name,sha in FONT_SHA.items()):
+                raise WorkflowError('NARRATED_SUBTITLE_FONT_CHANGED')
         command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-v','error','-f','lavfi','-i',f'color=c=black@0.0:s={width}x{height}:r=30,format=rgba',
-            '-vf',f'setpts=PTS+{stamp:.9f}/TB,ass=subtitles.ass:alpha=1','-frames:v','1','-fps_mode','passthrough','-f','image2pipe','-c:v','png','pipe:1']
+            '-vf',f"setpts=PTS+{stamp:.9f}/TB,ass=subtitles.ass:alpha=1{':fontsdir=fonts' if approved_fonts is not None else ''}",'-frames:v','1','-fps_mode','passthrough','-f','image2pipe','-c:v','png','pipe:1']
         try:result=subprocess.run(command,cwd=directory,capture_output=True,timeout=20,check=True)
         except (subprocess.SubprocessError,OSError):raise WorkflowError('STORYBOARD_QC_SUBTITLE_MASK_FAILED') from None
         if len(result.stdout)>16*1024*1024:raise WorkflowError('STORYBOARD_QC_SUBTITLE_MASK_FAILED')
@@ -95,8 +100,13 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         voice=manifest.get('voice_audio_file')
         if voice not in {'voice.wav','render-voice.wav'} or file_sha(guard(directory/voice,exists=True))!=manifest.get('voice_sha256'):raise WorkflowError('STORYBOARD_QC_VOICE_CHANGED')
         timeline=timeline_evidence(config,document,manifest,duration);subtitle=subtitle_evidence(config,directory,manifest,duration,width,height)
-        from .narrated_music import verify_bundle
-        music_loop=verify_bundle(config,document,directory,manifest)
+        from .narrated_media_timeline import enabled as media_enabled
+        if media_enabled(document):
+            from .narrated_media_mix import validate_bundle
+            validate_bundle(config,document,directory);music_loop=None
+        else:
+            from .narrated_music import verify_bundle
+            music_loop=verify_bundle(config,document,directory,manifest)
         full=asyncio.run(FullProductionQC(ffprobe_path=str(config.ffmpeg_bin/'ffprobe.exe'),ffmpeg_path=str(config.ffmpeg_bin/'ffmpeg.exe')).inspect(directory/'final.mp4',
             expected_duration=duration,expected_width=width,expected_height=height,expected_fps=30,subtitle_qc=subtitle,timeline_qc=timeline))
         # Shared measurements contain interval tuples; freeze the exact JSON shape
@@ -109,10 +119,13 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         full['measured_audio_loudness']=measure(config,directory/'final.mp4')
         from .audio_balance import inspect as inspect_audio_balance
         full['measured_audio_balance']=inspect_audio_balance(config,directory,duration=duration,document_sha256=binding['document_sha256'],
-            manifest_name='render-manifest.json',reference_role='narrated_voice')
+            manifest_name='audio-stem-manifest.json' if media_enabled(document) else 'render-manifest.json',
+            reference_role=manifest['canonical_media_mix']['reference_role'] if media_enabled(document) else 'narrated_voice')
+        if media_enabled(document):full['canonical_audio_stem_manifest_sha256']=file_sha(directory/'audio-stem-manifest.json')
         if music_loop is not None:full['canonical_music_loop']=music_loop
         if (file_sha(manifest_path)!=binding['render_manifest_sha256'] or file_sha(directory/'final.mp4')!=binding['final_sha256'] or full['checksum_sha256']!=binding['final_sha256']):raise WorkflowError('STORYBOARD_QC_RENDER_BINDING_INVALID')
         verify_selected_files(config,document)
+        if media_enabled(document):validate_bundle(config,document,directory)
         report={**binding,'status':'passed','full_production_qc':full,'subtitle_bounds':subtitle,'timeline':timeline}
         write_json(directory/'full-qc-report.json',report)
         combined={**legacy_report,'checks':{**legacy_report['checks'],'full_production_qc':True},'full_quality':report,'passed':True}

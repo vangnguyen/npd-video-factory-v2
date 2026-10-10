@@ -14,6 +14,8 @@ const controller=initializeSourceMediaTracks({root,getState:()=>state,requestKey
   onWorking:v=>{state.busy=v;},onDirty:v=>{state.dirty=v;state.dirtyPart=v?'source_media_tracks':null;},onSaved:async v=>{saved.push(v);state.project.revision=v.revision;},onMessage:(...v)=>messages.push(v)});
 const node=n=>root.getElementById('native-source-media-tracks-'+n),emit=(n,event)=>{for(const f of n.listeners[event]??[])f();};
 assert.equal(requests.length,0);await controller.load();assert.equal(controller.currentBinding().assets.length,3,JSON.stringify(messages));
+const narrated=controller.currentBinding().timeline_mode==='narrated';
+if(narrated){assert.equal(controller.currentBinding().pending_generated_tracks,true);assert.equal(node('timebase').disabled,true);assert.equal(node('timebase').value,'timeline');}
 node('timeline-start').value='.5';emit(node('timeline-start'),'input');await controller.applyAudio();assert.equal(saved.length,1,JSON.stringify(messages));
 const music=controller.currentBinding().assets.find(a=>a.role==='music');node('audio').value=music.asset_id;emit(node('audio'),'change');node('role').value='music';emit(node('role'),'change');
 node('loop').checked=true;emit(node('loop'),'change');node('repeat-until').value='3';node('crossfade').value='.2';node('fade-in').value='.1';node('fade-out').value='.1';
@@ -24,5 +26,6 @@ await controller.saveCaptionEdits();assert.equal(saved.length,4,JSON.stringify(m
 await controller.load();assert.equal(requests.length,6);assert.equal(controller.currentBinding().imports_total,3);
 process.stdout.write(JSON.stringify({schema_version:'native-source-media-tracks-signed-controller-proof-v1',requests,
   revision:controller.currentBinding().revision,timeline_version:controller.currentBinding().timeline_version,imports:controller.currentBinding().imports,
-  captions:controller.currentBinding().captions,fixture_human:true,fake_DOM:true,saved_ASR_fixture:true,actual_local_media_and_HTTP:true,
+  captions:controller.currentBinding().captions,fixture_human:true,fake_DOM:true,saved_ASR_fixture:!narrated,actual_local_media_and_HTTP:true,
+  ...(narrated?{timeline_mode:'narrated',synthetic_measured_narration_fixture:true,genuine_speech_quality_accepted:false}:{}),
   original_sources_preserved:true,ASR_or_TTS_dispatch_from_controller:0,real_provider_calls:0,paid_calls:0,browser_rendered:false,owner_UAT:false,publishing_enabled:false})+'\n');

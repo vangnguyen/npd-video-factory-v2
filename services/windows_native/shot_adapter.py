@@ -189,6 +189,8 @@ def snapshot_from_shots(shots, doc, *, canvas=None):
     if music is not None:
         value['tracks'].append(music)
         value['metadata']['narrated_music_loop']=decision_metadata(doc,value['duration_seconds'])
+    from .narrated_media_timeline import preserve
+    value=preserve(value,doc,canvas)
     return TimelineSnapshot.model_validate(value).model_dump(mode="json")
 
 
@@ -258,6 +260,8 @@ def validate_document(doc):
         _error("SHOT_TIMELINE_STATE_INVALID")
     if state["sha256"] != digest(state["snapshot"]):
         _error("SHOT_TIMELINE_CHANGED")
+    from .narrated_media_timeline import validate as validate_media_tracks
+    validate_media_tracks(doc)
     shots = shots_from_snapshot(state["snapshot"])
     if digest(snapshot_from_shots(shots, doc, canvas=state["snapshot"])) != state["sha256"]:
         _error("SHOT_TIMELINE_SOURCE_OR_CLIPS_CHANGED")

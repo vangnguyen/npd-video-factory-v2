@@ -1,0 +1,1638 @@
+{
+  "schema_version": "native-narrated-media-tracks-signed-fixture-v1",
+  "fixture_human": true,
+  "synthetic_measured_narration_fixture": true,
+  "saved_ASR_fixture": false,
+  "actual_local_media_waveform": true,
+  "actual_HTTP": true,
+  "real_provider_calls": 0,
+  "browser_rendered": false,
+  "owner_UAT": false,
+  "initial": {
+    "schema_version": "native-source-media-tracks-v1",
+    "workspace_id": "wsp_narrated_media_tracks_fixture",
+    "project_id": "18ed77dca559427c9ac094f4c6c4aa81",
+    "revision": 13,
+    "timeline_available": true,
+    "timeline_mode": "narrated",
+    "pending_generated_tracks": true,
+    "timeline_version": 7,
+    "timeline_sha256": "f477db65fc5500d453c3e8694fbe2207faacf4f27bae72400c2bd9c2ea324ca9",
+    "duration_seconds": 3.3,
+    "assets": [
+      {
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "audio",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "d9c9d825595145039a0a047e109fecd3.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "music",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "kind": "subtitle",
+        "role": "subtitle",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.2,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": 2,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      }
+    ],
+    "assets_total": 3,
+    "assets_truncated": false,
+    "tracks": [
+      {
+        "track_id": "trk_native_video",
+        "type": "video",
+        "kind": "source",
+        "label": "Shots",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_voice",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "type": "text",
+        "kind": "subtitles",
+        "label": "Caption lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      }
+    ],
+    "captions": [
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_28755ded3f5da4a660eda22d",
+        "text": "Xin chào.",
+        "timeline_start": 1.11,
+        "duration": 0.58,
+        "disabled": false,
+        "import_id": null,
+        "native_asset_id": null,
+        "has_word_timing": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_917ffd0580e448db8441b902",
+        "text": "Cảm ơn.",
+        "timeline_start": 1.71,
+        "duration": 0.58,
+        "disabled": false,
+        "import_id": null,
+        "native_asset_id": null,
+        "has_word_timing": false
+      }
+    ],
+    "caption_page": 1,
+    "caption_page_size": 50,
+    "captions_total": 2,
+    "captions_has_next": false,
+    "imports": [],
+    "imports_total": 0,
+    "imports_truncated": false,
+    "subtitle_templates": {
+      "version": "1.0",
+      "render_contract_version": "2.3",
+      "templates": [
+        {
+          "template_ref": "sentence-clean@v1",
+          "name": "Theo câu",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "none",
+            "template_ref": "sentence-clean@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "word-focus@v1",
+          "name": "Từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 64,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_by_word",
+            "template_ref": "word-focus@v1",
+            "keywords": [],
+            "max_lines": 2,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "karaoke-gold@v1",
+          "name": "Karaoke",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "karaoke",
+            "template_ref": "karaoke-gold@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "keyword-accent@v1",
+          "name": "Nhấn từ khóa",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#17B9A6",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "keyword_highlight",
+            "template_ref": "keyword-accent@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-pop@v1",
+          "name": "Chữ bật",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 52,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "pop",
+            "template_ref": "animated-pop@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-fade@v1",
+          "name": "Chữ hiện dần",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "fade",
+            "template_ref": "animated-fade@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "aligned-highlight@v1",
+          "name": "Highlight từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_highlight",
+            "template_ref": "aligned-highlight@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        }
+      ]
+    },
+    "selected_subtitle_template_ref": "sentence-clean@v1",
+    "provider_calls": 0,
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "source_media_mutated": false
+  },
+  "audio": {
+    "schema_version": "native-source-media-tracks-v1",
+    "workspace_id": "wsp_narrated_media_tracks_fixture",
+    "project_id": "18ed77dca559427c9ac094f4c6c4aa81",
+    "revision": 14,
+    "timeline_available": true,
+    "timeline_mode": "narrated",
+    "pending_generated_tracks": false,
+    "timeline_version": 8,
+    "timeline_sha256": "f23b2906326ab50b9e8da63f2410451940953a0c17665f6dcf4bc23d18631745",
+    "duration_seconds": 3.3,
+    "assets": [
+      {
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "audio",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "d9c9d825595145039a0a047e109fecd3.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "music",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "kind": "subtitle",
+        "role": "subtitle",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.2,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": 2,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      }
+    ],
+    "assets_total": 3,
+    "assets_truncated": false,
+    "tracks": [
+      {
+        "track_id": "trk_native_video",
+        "type": "video",
+        "kind": "source",
+        "label": "Shots",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_voice",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "type": "text",
+        "kind": "subtitles",
+        "label": "Caption lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_41a5161b75d34943a9279d55",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Giọng nói tải lên",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      }
+    ],
+    "captions": [
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_28755ded3f5da4a660eda22d",
+        "text": "Xin chào.",
+        "timeline_start": 1.11,
+        "duration": 0.58,
+        "disabled": false,
+        "import_id": null,
+        "native_asset_id": null,
+        "has_word_timing": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_917ffd0580e448db8441b902",
+        "text": "Cảm ơn.",
+        "timeline_start": 1.71,
+        "duration": 0.58,
+        "disabled": false,
+        "import_id": null,
+        "native_asset_id": null,
+        "has_word_timing": false
+      }
+    ],
+    "caption_page": 1,
+    "caption_page_size": 50,
+    "captions_total": 2,
+    "captions_has_next": false,
+    "imports": [
+      {
+        "import_id": "smi_73affcba036643048b87d32c",
+        "operation": "audio",
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "result": {
+          "track_id": "trk_41a5161b75d34943a9279d55",
+          "clip_ids": [
+            "clip_ebb00df730a14f6c8c50604e"
+          ],
+          "caption_track_id": null,
+          "caption_count": 0,
+          "source_window": [
+            0.0,
+            2.0
+          ],
+          "timeline_window": [
+            0.5,
+            2.5
+          ],
+          "speech_boundary_verified": false
+        },
+        "created_at": "2026-10-10T19:26:17.712807+00:00",
+        "inherited": false
+      }
+    ],
+    "imports_total": 1,
+    "imports_truncated": false,
+    "subtitle_templates": {
+      "version": "1.0",
+      "render_contract_version": "2.3",
+      "templates": [
+        {
+          "template_ref": "sentence-clean@v1",
+          "name": "Theo câu",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "none",
+            "template_ref": "sentence-clean@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "word-focus@v1",
+          "name": "Từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 64,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_by_word",
+            "template_ref": "word-focus@v1",
+            "keywords": [],
+            "max_lines": 2,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "karaoke-gold@v1",
+          "name": "Karaoke",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "karaoke",
+            "template_ref": "karaoke-gold@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "keyword-accent@v1",
+          "name": "Nhấn từ khóa",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#17B9A6",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "keyword_highlight",
+            "template_ref": "keyword-accent@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-pop@v1",
+          "name": "Chữ bật",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 52,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "pop",
+            "template_ref": "animated-pop@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-fade@v1",
+          "name": "Chữ hiện dần",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "fade",
+            "template_ref": "animated-fade@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "aligned-highlight@v1",
+          "name": "Highlight từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_highlight",
+            "template_ref": "aligned-highlight@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        }
+      ]
+    },
+    "selected_subtitle_template_ref": "sentence-clean@v1",
+    "provider_calls": 0,
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "mutation": {
+      "import_id": "smi_73affcba036643048b87d32c",
+      "operation": "audio",
+      "replayed": false,
+      "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+      "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+      "request_sha256": "94b8a95d559918da038b3940c0e65064a78b2d7a8ec01b919d3084b9c92f543c",
+      "track_id": "trk_41a5161b75d34943a9279d55",
+      "clip_ids": [
+        "clip_ebb00df730a14f6c8c50604e"
+      ],
+      "caption_track_id": null,
+      "caption_count": 0,
+      "source_window": [
+        0.0,
+        2.0
+      ],
+      "timeline_window": [
+        0.5,
+        2.5
+      ],
+      "speech_boundary_verified": false
+    }
+  },
+  "subtitles": {
+    "schema_version": "native-source-media-tracks-v1",
+    "workspace_id": "wsp_narrated_media_tracks_fixture",
+    "project_id": "18ed77dca559427c9ac094f4c6c4aa81",
+    "revision": 15,
+    "timeline_available": true,
+    "timeline_mode": "narrated",
+    "pending_generated_tracks": false,
+    "timeline_version": 9,
+    "timeline_sha256": "a948ddc3ed5ea6e0270d9a13490a5370abf3ec20d39dee67a78c3890c52a7d59",
+    "duration_seconds": 3.3,
+    "assets": [
+      {
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "audio",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "d9c9d825595145039a0a047e109fecd3.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "music",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "kind": "subtitle",
+        "role": "subtitle",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.2,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": 2,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      }
+    ],
+    "assets_total": 3,
+    "assets_truncated": false,
+    "tracks": [
+      {
+        "track_id": "trk_native_video",
+        "type": "video",
+        "kind": "source",
+        "label": "Shots",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_voice",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "type": "text",
+        "kind": "subtitles",
+        "label": "Caption lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_41a5161b75d34943a9279d55",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Giọng nói tải lên",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      }
+    ],
+    "captions": [
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_63a603fcc903422e93f7c59a",
+        "text": "Vinhomes Cần Giờ",
+        "timeline_start": 0.1,
+        "duration": 0.9,
+        "disabled": false,
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "native_asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "has_word_timing": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_894e55b7b3ed463fa9f8c08b",
+        "text": "Vang Nguyễn giới thiệu",
+        "timeline_start": 1.3,
+        "duration": 0.9,
+        "disabled": false,
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "native_asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "has_word_timing": false
+      }
+    ],
+    "caption_page": 1,
+    "caption_page_size": 50,
+    "captions_total": 2,
+    "captions_has_next": false,
+    "imports": [
+      {
+        "import_id": "smi_73affcba036643048b87d32c",
+        "operation": "audio",
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "result": {
+          "track_id": "trk_41a5161b75d34943a9279d55",
+          "clip_ids": [
+            "clip_ebb00df730a14f6c8c50604e"
+          ],
+          "caption_track_id": null,
+          "caption_count": 0,
+          "source_window": [
+            0.0,
+            2.0
+          ],
+          "timeline_window": [
+            0.5,
+            2.5
+          ],
+          "speech_boundary_verified": false
+        },
+        "created_at": "2026-10-10T19:26:17.712807+00:00",
+        "inherited": false
+      },
+      {
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "operation": "subtitles",
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "result": {
+          "track_id": "trk_narrated_measured_captions",
+          "clip_ids": [
+            "clip_63a603fcc903422e93f7c59a",
+            "clip_894e55b7b3ed463fa9f8c08b"
+          ],
+          "caption_count": 2,
+          "source_cue_count": 2,
+          "clipped_intervals": 0,
+          "dropped_intervals": 0,
+          "timebase": "timeline"
+        },
+        "created_at": "2026-10-10T19:26:17.814752+00:00",
+        "inherited": false
+      }
+    ],
+    "imports_total": 2,
+    "imports_truncated": false,
+    "subtitle_templates": {
+      "version": "1.0",
+      "render_contract_version": "2.3",
+      "templates": [
+        {
+          "template_ref": "sentence-clean@v1",
+          "name": "Theo câu",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "none",
+            "template_ref": "sentence-clean@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "word-focus@v1",
+          "name": "Từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 64,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_by_word",
+            "template_ref": "word-focus@v1",
+            "keywords": [],
+            "max_lines": 2,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "karaoke-gold@v1",
+          "name": "Karaoke",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "karaoke",
+            "template_ref": "karaoke-gold@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "keyword-accent@v1",
+          "name": "Nhấn từ khóa",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#17B9A6",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "keyword_highlight",
+            "template_ref": "keyword-accent@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-pop@v1",
+          "name": "Chữ bật",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 52,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "pop",
+            "template_ref": "animated-pop@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-fade@v1",
+          "name": "Chữ hiện dần",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "fade",
+            "template_ref": "animated-fade@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "aligned-highlight@v1",
+          "name": "Highlight từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_highlight",
+            "template_ref": "aligned-highlight@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        }
+      ]
+    },
+    "selected_subtitle_template_ref": "sentence-clean@v1",
+    "provider_calls": 0,
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "mutation": {
+      "import_id": "smi_305d0f339a434e90b874724b",
+      "operation": "subtitles",
+      "replayed": false,
+      "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+      "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+      "request_sha256": "b27aec36a775127e8d69f8d1e4a13199f2c542a99bc80c2ca6eab3bdcb9443af",
+      "track_id": "trk_narrated_measured_captions",
+      "clip_ids": [
+        "clip_63a603fcc903422e93f7c59a",
+        "clip_894e55b7b3ed463fa9f8c08b"
+      ],
+      "caption_count": 2,
+      "source_cue_count": 2,
+      "clipped_intervals": 0,
+      "dropped_intervals": 0,
+      "timebase": "timeline"
+    }
+  },
+  "edited": {
+    "schema_version": "native-source-media-tracks-v1",
+    "workspace_id": "wsp_narrated_media_tracks_fixture",
+    "project_id": "18ed77dca559427c9ac094f4c6c4aa81",
+    "revision": 16,
+    "timeline_available": true,
+    "timeline_mode": "narrated",
+    "pending_generated_tracks": false,
+    "timeline_version": 10,
+    "timeline_sha256": "3199a8ff1e43d3c0d907169064aeb1c4f4b9d7947140ea7e2b341fc476ac3af3",
+    "duration_seconds": 3.3,
+    "assets": [
+      {
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "audio",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "d9c9d825595145039a0a047e109fecd3.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "music",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "kind": "subtitle",
+        "role": "subtitle",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.2,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": 2,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      }
+    ],
+    "assets_total": 3,
+    "assets_truncated": false,
+    "tracks": [
+      {
+        "track_id": "trk_native_video",
+        "type": "video",
+        "kind": "source",
+        "label": "Shots",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_voice",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "type": "text",
+        "kind": "subtitles",
+        "label": "Caption lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_41a5161b75d34943a9279d55",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Giọng nói tải lên",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      }
+    ],
+    "captions": [
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_63a603fcc903422e93f7c59a",
+        "text": "Chữ Việt đã sửa trên timeline",
+        "timeline_start": 0.2,
+        "duration": 0.7,
+        "disabled": false,
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "native_asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "has_word_timing": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_894e55b7b3ed463fa9f8c08b",
+        "text": "Vang Nguyễn giới thiệu",
+        "timeline_start": 1.3,
+        "duration": 0.9,
+        "disabled": false,
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "native_asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "has_word_timing": false
+      }
+    ],
+    "caption_page": 1,
+    "caption_page_size": 50,
+    "captions_total": 2,
+    "captions_has_next": false,
+    "imports": [
+      {
+        "import_id": "smi_73affcba036643048b87d32c",
+        "operation": "audio",
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "result": {
+          "track_id": "trk_41a5161b75d34943a9279d55",
+          "clip_ids": [
+            "clip_ebb00df730a14f6c8c50604e"
+          ],
+          "caption_track_id": null,
+          "caption_count": 0,
+          "source_window": [
+            0.0,
+            2.0
+          ],
+          "timeline_window": [
+            0.5,
+            2.5
+          ],
+          "speech_boundary_verified": false
+        },
+        "created_at": "2026-10-10T19:26:17.712807+00:00",
+        "inherited": false
+      },
+      {
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "operation": "subtitles",
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "result": {
+          "track_id": "trk_narrated_measured_captions",
+          "clip_ids": [
+            "clip_63a603fcc903422e93f7c59a",
+            "clip_894e55b7b3ed463fa9f8c08b"
+          ],
+          "caption_count": 2,
+          "source_cue_count": 2,
+          "clipped_intervals": 0,
+          "dropped_intervals": 0,
+          "timebase": "timeline"
+        },
+        "created_at": "2026-10-10T19:26:17.814752+00:00",
+        "inherited": false
+      }
+    ],
+    "imports_total": 2,
+    "imports_truncated": false,
+    "subtitle_templates": {
+      "version": "1.0",
+      "render_contract_version": "2.3",
+      "templates": [
+        {
+          "template_ref": "sentence-clean@v1",
+          "name": "Theo câu",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "none",
+            "template_ref": "sentence-clean@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "word-focus@v1",
+          "name": "Từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 64,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_by_word",
+            "template_ref": "word-focus@v1",
+            "keywords": [],
+            "max_lines": 2,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "karaoke-gold@v1",
+          "name": "Karaoke",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "karaoke",
+            "template_ref": "karaoke-gold@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "keyword-accent@v1",
+          "name": "Nhấn từ khóa",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#17B9A6",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "keyword_highlight",
+            "template_ref": "keyword-accent@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-pop@v1",
+          "name": "Chữ bật",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 52,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "pop",
+            "template_ref": "animated-pop@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-fade@v1",
+          "name": "Chữ hiện dần",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "fade",
+            "template_ref": "animated-fade@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "aligned-highlight@v1",
+          "name": "Highlight từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_highlight",
+            "template_ref": "aligned-highlight@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        }
+      ]
+    },
+    "selected_subtitle_template_ref": "sentence-clean@v1",
+    "provider_calls": 0,
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "mutation": {
+      "changed": true,
+      "clip_ids": [
+        "clip_63a603fcc903422e93f7c59a"
+      ]
+    }
+  },
+  "reopened": {
+    "schema_version": "native-source-media-tracks-v1",
+    "workspace_id": "wsp_narrated_media_tracks_fixture",
+    "project_id": "18ed77dca559427c9ac094f4c6c4aa81",
+    "revision": 16,
+    "timeline_available": true,
+    "timeline_mode": "narrated",
+    "pending_generated_tracks": false,
+    "timeline_version": 10,
+    "timeline_sha256": "3199a8ff1e43d3c0d907169064aeb1c4f4b9d7947140ea7e2b341fc476ac3af3",
+    "duration_seconds": 3.3,
+    "assets": [
+      {
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "audio",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "d9c9d825595145039a0a047e109fecd3.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "kind": "audio",
+        "role": "music",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.0,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": null,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      },
+      {
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "kind": "subtitle",
+        "role": "subtitle",
+        "filename": "Owned bytes with untrusted extension.bin",
+        "duration_seconds": 2.2,
+        "rights_status": "unknown",
+        "license": null,
+        "cue_count": 2,
+        "transcript_id": null,
+        "transcript_version": null,
+        "analysis_sha256": null,
+        "word_timing_available": false
+      }
+    ],
+    "assets_total": 3,
+    "assets_truncated": false,
+    "tracks": [
+      {
+        "track_id": "trk_native_video",
+        "type": "video",
+        "kind": "source",
+        "label": "Shots",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_voice",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "type": "text",
+        "kind": "subtitles",
+        "label": "Caption lời đọc đã đo",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      },
+      {
+        "track_id": "trk_41a5161b75d34943a9279d55",
+        "type": "audio",
+        "kind": "voice",
+        "label": "Giọng nói tải lên",
+        "locked": false,
+        "muted": false,
+        "disabled": false
+      }
+    ],
+    "captions": [
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_63a603fcc903422e93f7c59a",
+        "text": "Chữ Việt đã sửa trên timeline",
+        "timeline_start": 0.2,
+        "duration": 0.7,
+        "disabled": false,
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "native_asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "has_word_timing": false
+      },
+      {
+        "track_id": "trk_narrated_measured_captions",
+        "track_locked": false,
+        "track_disabled": false,
+        "clip_id": "clip_894e55b7b3ed463fa9f8c08b",
+        "text": "Vang Nguyễn giới thiệu",
+        "timeline_start": 1.3,
+        "duration": 0.9,
+        "disabled": false,
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "native_asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "has_word_timing": false
+      }
+    ],
+    "caption_page": 1,
+    "caption_page_size": 50,
+    "captions_total": 2,
+    "captions_has_next": false,
+    "imports": [
+      {
+        "import_id": "smi_73affcba036643048b87d32c",
+        "operation": "audio",
+        "asset_id": "1f97b8f11dcc4f0292fd0abb379633a9.music.wav",
+        "asset_sha256": "e846890209765bc29170b9b2a46a9fefd7c2129b43a456ca98f78f8502fa81e1",
+        "result": {
+          "track_id": "trk_41a5161b75d34943a9279d55",
+          "clip_ids": [
+            "clip_ebb00df730a14f6c8c50604e"
+          ],
+          "caption_track_id": null,
+          "caption_count": 0,
+          "source_window": [
+            0.0,
+            2.0
+          ],
+          "timeline_window": [
+            0.5,
+            2.5
+          ],
+          "speech_boundary_verified": false
+        },
+        "created_at": "2026-10-10T19:26:17.712807+00:00",
+        "inherited": false
+      },
+      {
+        "import_id": "smi_305d0f339a434e90b874724b",
+        "operation": "subtitles",
+        "asset_id": "ff65991408fc41a7b4ed236cff1d4c6a.subtitle.srt",
+        "asset_sha256": "52d57695ef1e38be28ff51cb8e2cd8cdfea07e79bcb56fc2d3d69b3c77ae9c2b",
+        "result": {
+          "track_id": "trk_narrated_measured_captions",
+          "clip_ids": [
+            "clip_63a603fcc903422e93f7c59a",
+            "clip_894e55b7b3ed463fa9f8c08b"
+          ],
+          "caption_count": 2,
+          "source_cue_count": 2,
+          "clipped_intervals": 0,
+          "dropped_intervals": 0,
+          "timebase": "timeline"
+        },
+        "created_at": "2026-10-10T19:26:17.814752+00:00",
+        "inherited": false
+      }
+    ],
+    "imports_total": 2,
+    "imports_truncated": false,
+    "subtitle_templates": {
+      "version": "1.0",
+      "render_contract_version": "2.3",
+      "templates": [
+        {
+          "template_ref": "sentence-clean@v1",
+          "name": "Theo câu",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "none",
+            "template_ref": "sentence-clean@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "word-focus@v1",
+          "name": "Từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 64,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_by_word",
+            "template_ref": "word-focus@v1",
+            "keywords": [],
+            "max_lines": 2,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "karaoke-gold@v1",
+          "name": "Karaoke",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "karaoke",
+            "template_ref": "karaoke-gold@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        },
+        {
+          "template_ref": "keyword-accent@v1",
+          "name": "Nhấn từ khóa",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#17B9A6",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "keyword_highlight",
+            "template_ref": "keyword-accent@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-pop@v1",
+          "name": "Chữ bật",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 52,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "pop",
+            "template_ref": "animated-pop@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "animated-fade@v1",
+          "name": "Chữ hiện dần",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "fade",
+            "template_ref": "animated-fade@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": false
+        },
+        {
+          "template_ref": "aligned-highlight@v1",
+          "name": "Highlight từng từ",
+          "style": {
+            "font_family": "Noto Sans",
+            "font_size": 48,
+            "font_weight": 800,
+            "text_color": "#FFFFFF",
+            "highlight_color": "#F5C451",
+            "background_color": "#000000",
+            "background_opacity": 0.58,
+            "position": "bottom",
+            "animation": "word_highlight",
+            "template_ref": "aligned-highlight@v1",
+            "keywords": [],
+            "max_lines": 3,
+            "safe_margin_percent": 7.0
+          },
+          "requires_word_timestamps": true
+        }
+      ]
+    },
+    "selected_subtitle_template_ref": "sentence-clean@v1",
+    "provider_calls": 0,
+    "publishing_enabled": false,
+    "human_review_required": true,
+    "source_media_mutated": false
+  }
+}

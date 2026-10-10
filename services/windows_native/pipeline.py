@@ -412,6 +412,8 @@ def render(config, snapshot, out, *, preview_only=False):
     import numpy as np
 
     doc = snapshot["document"]
+    from .narrated_media_timeline import enabled as media_tracks_enabled,VOICE_TRACK
+    canonical_media=media_tracks_enabled(doc)
     if preview_only:
         from .narration_preview import validate_context
         validate_context(config,snapshot)
@@ -440,7 +442,10 @@ def render(config, snapshot, out, *, preview_only=False):
     voice_placement=retimed['voice_placement'] if retimed else voice_placement_diagnostics(meta,duration,intro=intro)
     from .north_star_quality import resolve_policy as production_policy, evaluate_speech_placement, validate_render_profile
     strict_quality=production_policy(doc)
-    speech_qc=evaluate_speech_placement(voice_placement,duration,strict_quality) if strict_quality else None
+    generated_voice_active=not canonical_media or any(t['track_id']==VOICE_TRACK and not t['disabled'] and not t['muted'] and
+        any(c['metadata'].get('narrated_generated_voice') and not c['disabled'] and c['volume']>0 for c in t['clips'])
+        for t in doc['canonical_timeline']['snapshot']['tracks'])
+    speech_qc=evaluate_speech_placement(voice_placement,duration,strict_quality) if strict_quality and generated_voice_active else None
     if speech_qc and (not speech_qc['no_narration_dead_air'] or not speech_qc['no_excessive_speech_gaps']):
         raise WorkflowError('NARRATION_DEAD_AIR_REVIEW_DURATION_REQUIRED')
     if duration > 180:
@@ -575,7 +580,10 @@ def render(config, snapshot, out, *, preview_only=False):
                 finish=cursor+(end-start)*weight/sum(weights)
                 captions.append({'start':cursor,'end':finish,'text':phrase,'timing_source':'canonical_custom_subtitle_shot_estimate'})
                 cursor=finish
-    if not retimed and normalize(" ".join(c["text"] for c in captions)) != normalize(proposal.narration):
+    if canonical_media:
+        from .narrated_media_captions import render as canonical_captions
+        captions=canonical_captions(doc,out,width,height,[safe_left,safe_top,width-safe_right,height-safe_bottom])
+    if not canonical_media and not retimed and normalize(" ".join(c["text"] for c in captions)) != normalize(proposal.narration):
         raise WorkflowError("SUBTITLE_COVERAGE_MISMATCH")
     header = """[Script Info]
 ScriptType: v4.00+
@@ -598,7 +606,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     for cue in captions:
         text = "\\N".join(ass_escape(line) for line in cue["text"].splitlines())
         events.append(f"Dialogue: 0,{ass_time(cue['start'])},{ass_time(cue['end'])},Subtitle,,0,0,0,,{{\\pos({(safe_left+width-safe_right)//2 if edit_plan else 540},{caption_y if edit_plan else 1610})}}{text}")
-    (out / "subtitles.ass").write_text(header + "\n".join(events) + "\n", encoding="utf-8")
+    if not canonical_media:(out / "subtitles.ass").write_text(header + "\n".join(events) + "\n", encoding="utf-8")
     concat = "ffconcat version 1.0\n" + "".join(f"file {f['file']}\n" for f in frames)
     (out / "frames.txt").write_text(concat, encoding="ascii")
     voice_file='render-voice.wav' if retimed else 'voice.wav'
@@ -609,11 +617,15 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         raise WorkflowError("VOICE_SIGNAL_INVALID_OR_SILENT")
     gain = min(10 ** (-19 / 20) / rms, .90 / peak)
     audio_filters=f"[1:a]volume={gain:.8f},adelay={0 if retimed else 1100},apad,atrim=duration={duration:.4f}[a]"
-    filters = f"[0:v]fps=30,ass=subtitles.ass,format=yuv420p[v];"+audio_filters
+    canonical_mix=None
+    if canonical_media:
+        from .narrated_media_mix import prepare as canonical_audio
+        canonical_mix=canonical_audio(config,doc,out,voice_file,gain)
+    filters = f"[0:v]fps=30,ass=subtitles.ass{':fontsdir=fonts' if canonical_media else ''},format=yuv420p[v];"+('[1:a]anull[a]' if canonical_media else audio_filters)
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
-           "-i", voice_file]
-    music=doc.get("music") if doc.get("music_enabled",True) else None
-    capture_audio_stems=bool(strict_quality or preview_only)
+            "-i", 'narrated-mix.wav' if canonical_media else voice_file]
+    music=doc.get("music") if doc.get("music_enabled",True) and not canonical_media else None
+    capture_audio_stems=bool(strict_quality or preview_only or canonical_media)
     music_loop=None
     if music:
         music_source=media_path(config,music["id"])
@@ -634,7 +646,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         raise WorkflowError("FFMPEG_RENDER_FAILED")
     # Diagnostic taps use an independent audio-only pass. Multiple asplit sinks
     # can change FFmpeg's end-of-stream scheduling; never add them to final.mp4.
-    if capture_audio_stems:
+    if capture_audio_stems and not canonical_media:
         from .audio_balance import narrated_stems
         diagnostic=narrated_stems(config,out,duration=duration,voice_file=voice_file,
             music_file=music_source if music else None,voice_filters=audio_filters,
@@ -651,7 +663,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         **({'audio_balance_inputs':{'reference_role':'narrated_voice','reference_sha256':file_sha(out/'audio-reference.f32le'),
             'music_sha256':file_sha(out/'audio-music.f32le') if music else None,
             'filter_graph_sha256':digest(diagnostic),'diagnostic_filter_threads':1,
-            'diagnostic_pass':'independent_audio_only_same_source_and_dsp'}} if capture_audio_stems else {}),
+            'diagnostic_pass':'independent_audio_only_same_source_and_dsp'}} if capture_audio_stems and not canonical_media else {}),
+        **({'canonical_media_mix':{'schema_version':canonical_mix['schema_version'],'mix_sha256':canonical_mix['audio']['mix_sha256'],
+            'reference_role':canonical_mix['reference_role'],'generated_voice_active':canonical_mix['generated_voice_active']},
+            'canonical_subtitle_style':doc['canonical_timeline']['snapshot']['metadata']['subtitle_style'],
+            'approved_subtitle_font_sha256':__import__('services.windows_native.narrated_media_captions',fromlist=['FONT_SHA']).FONT_SHA} if canonical_media else {}),
         **({'render_purpose':'narration_preview','preview_authorization':snapshot['preview_authorization']} if preview_only else {}),
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
@@ -664,7 +680,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
             'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})
     report=qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality)
-    if strict_quality or preview_only:
+    if strict_quality or preview_only or canonical_media:
         from .storyboard_qc import inspect
         return inspect(config,snapshot,out,report,preview_only=preview_only)
     return report
@@ -804,6 +820,8 @@ class Pipeline:
         if checkpoint:
             from .audio_balance import validate_qc
             validate_qc(out,checkpoint['result']['qc'],digest(job['snapshot']['document']))
+            from .narrated_media_mix import validate_bundle
+            validate_bundle(self.config,job['snapshot']['document'],out)
             stage("resuming_verified_render")
             return checkpoint["result"]
         if job['kind']=='render':
@@ -866,6 +884,11 @@ class Pipeline:
                   "output_directory": str(out), "review_required": True,
                   "render_version": digest({"snapshot": job["snapshot"], "job_id": job["id"], "final_sha256": report["final_sha256"]})}
         render_files=("final.mp4", "qc-report.json", "ffprobe.json", "render-manifest.json", "subtitles.ass", "timeline.json")
+        from .narrated_media_mix import artifact_names as media_artifact_names
+        render_files+=media_artifact_names(attempt)
+        if (attempt/'subtitles.json').is_file():
+            artifacts.path('fonts').mkdir(exist_ok=True)
+            render_files+=('subtitles.json',*[p.relative_to(attempt).as_posix() for p in sorted((attempt/'fonts').glob('*.ttf'))])
         if (attempt/'full-qc-report.json').is_file():
             artifacts.path('subtitle-qc').mkdir(exist_ok=True)
             render_files+=('transport-qc-report.json','full-qc-report.json')
@@ -888,6 +911,8 @@ class Pipeline:
         if (attempt/'audio-balance.json').is_file():
             from .audio_balance import validate_qc
             validate_qc(out,report,digest(job['snapshot']['document']))
+        from .narrated_media_mix import validate_bundle
+        validate_bundle(self.config,job['snapshot']['document'],out)
         retry_io(lambda: artifacts.commit("render", paths, result), stage, "storage_render_checkpoint")
         return result
 
