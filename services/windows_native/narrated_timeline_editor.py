@@ -1,6 +1,6 @@
-"""Bounded canonical audio/text editing and same-preparation history restoration.
+"""Bounded canonical video/audio/text edits and same-preparation restoration.
 
-Storyboard video remains in the shot editor. Restores copy only editing fields;
+The default shot view and advanced video/audio/text share canonical state. Restores copy only editing fields;
 uploads, rights, provider/cost journals, jobs and approval authority never rewind.
 """
 import copy,json,math
@@ -16,20 +16,21 @@ from . import narrated_media_timeline as media
 SCHEMA='native-narrated-timeline-editor-v1'
 SHA=r'^[a-f0-9]{64}$'
 ALLOWED={
-    'move':{'clip_id','timeline_start','target_track_id'},'trim':{'clip_id','source_start','source_end','timeline_start'},
+    'move':{'clip_id','timeline_start','target_track_id'},'trim':{'clip_id','source_start','source_end','timeline_start','duration'},
     'split':{'clip_id','at_seconds'},'delete':{'clip_id'},'reorder':{'clip_id','target_index'},
     'disable':{'clip_id','disabled'},'duplicate':{'clip_id','timeline_start','target_track_id'},
-    'set_clip_properties':{'clip_id','volume','speed'},'set_track_state':{'track_id','locked','muted','disabled'}}
+    'set_clip_properties':{'clip_id','volume','speed','duration','crop','transform','opacity'},'set_track_state':{'track_id','locked','muted','disabled'}}
 
 def numbers(value):
     if isinstance(value,dict):
         for key,v in value.items():
-            if key in {'timeline_start','source_start','source_end','at_seconds','volume','speed','original_target_lufs',
+            if key in {'timeline_start','source_start','source_end','at_seconds','volume','speed','duration','opacity','x','y','width','height','scale','rotation_degrees','original_target_lufs',
                     'music_target_lufs','duck_threshold','duck_ratio','duck_attack_ms','duck_release_ms'}:
                 if type(v) not in (int,float) or not math.isfinite(v):raise ValueError('finite numeric decision required')
             elif key=='target_index' and type(v) is not int:raise ValueError('integer index required')
             elif key in {'locked','muted','disabled','normalize_original_audio','normalize_music','duck_music'} and type(v) is not bool:
                 raise ValueError('boolean decision required')
+            elif isinstance(v,dict):numbers(v)
 
 class Binding(StrictModel):
     revision:StrictInt=Field(ge=1)
@@ -127,10 +128,17 @@ def edit(store,project_id,body,workspace_id):
             for op in payload.operations:
                 track=next((t for t in snapshot.tracks if t.track_id==op.track_id),None) if op.type=='set_track_state' else next((t for t in snapshot.tracks if any(c.clip_id==op.clip_id for c in t.clips)),None)
                 if track is None:raise WorkflowError('NARRATED_TIMELINE_SELECTION_NOT_FOUND',404)
-                if track.type not in {'audio','text'}:raise WorkflowError('NARRATED_TIMELINE_USE_SHOT_EDITOR',400)
+                if track.type not in {'video','audio','text'}:raise WorkflowError('NARRATED_TIMELINE_TRACK_INVALID',400)
+                if track.type=='video':
+                    from .narrated_video_timeline import enable
+                    enable(snapshot)
                 clip=next((c for c in track.clips if c.clip_id==op.clip_id),None)
-                if clip and clip.metadata.get('narrated_generated_voice') and not (op.type=='disable' or op.type=='set_clip_properties' and op.volume is not None and op.speed is None):
+                if clip and clip.metadata.get('narrated_generated_voice') and not (op.type=='disable' or op.type=='set_clip_properties' and
+                        op.volume is not None and all(getattr(op,key) is None for key in ('speed','duration','crop','transform','opacity'))):
                     raise WorkflowError('NARRATED_TIMELINE_MEASURED_VOICE_TIMING_PROTECTED',400)
+                if op.type=='set_clip_properties' and (track.type=='video' and op.volume is not None or
+                        track.type=='audio' and any(getattr(op,key) is not None for key in ('duration','crop','transform','opacity'))):
+                    raise WorkflowError('NARRATED_TIMELINE_CLIP_PROPERTIES_ROLE_MISMATCH',400)
                 if op.target_track_id:
                     target=next((t for t in snapshot.tracks if t.track_id==op.target_track_id),None)
                     if target is None or target.kind!=track.kind:raise WorkflowError('NARRATED_TIMELINE_TRACK_ROLE_MISMATCH',400)
@@ -144,6 +152,12 @@ def edit(store,project_id,body,workspace_id):
                         if op.type in {'move','trim','split','duplicate'}:
                             caption.metadata.update(measured_source_words=[],timing_source='human_timeline_edit_no_word_alignment')
                 snapshot=_bounds(apply_operations(snapshot,[op]),duration)
+                if track.type=='video' and op.type=='reorder':
+                    primary=next(t for t in snapshot.tracks if t.track_id==track.track_id);cursor=0.
+                    for c in primary.clips:c.timeline_start=round(cursor,6);cursor+=c.duration
+                    snapshot=_bounds(snapshot,duration)
+            from .narrated_video_timeline import reflow_captions
+            snapshot=reflow_captions(project['document'],snapshot)
             _word_cuts(project['document'],snapshot)
             candidate=_candidate(project,snapshot);_physical(store,con,project_id,candidate)
         except (TimelineEditError,ValueError):raise WorkflowError('NARRATED_TIMELINE_OPERATION_INVALID',400) from None
@@ -221,4 +235,4 @@ def view(store,project_id,workspace_id):
         'timeline_version':state['version'],'timeline_sha256':state['sha256'],'duration_seconds':snapshot.duration_seconds,
         'snapshot':snapshot.model_dump(mode='json'),'projection_pending':not media.enabled(document),'projection_sha256':digest(snapshot.model_dump(mode='json')),'voice_input_current':voice_current,
         'history':history,'history_truncated':len(rows)>200 or len(versions)>100,'subtitle_templates':template_catalog(),
-        'provider_calls':0,'publishing_enabled':False,'human_review_required':True,'source_media_mutated':False}
+        'provider_calls':0,'publishing_enabled':False,'human_review_required':True,'source_media_mutated':False,'video_editing_available':True}

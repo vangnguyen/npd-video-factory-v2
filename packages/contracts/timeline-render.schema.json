@@ -71,7 +71,8 @@
   },
   "allOf": [
     {"if":{"properties":{"version":{"enum":["2.0","2.1","2.2"]}}},
-     "then":{"properties":{"metadata":{"properties":{"duration_seconds":{"maximum":180},"language":{"const":"vi"}}},"subtitles":{"minItems":1}}}},
+     "then":{"properties":{"metadata":{"properties":{"duration_seconds":{"maximum":180},"language":{"const":"vi"}}},"subtitles":{"minItems":1},
+       "visual_clips":{"items":{"not":{"required":["viewport"]}}}}}},
     {"if":{"properties":{"version":{"enum":["2.2","2.3"]}}},
      "then":{"properties":{"metadata":{"oneOf":[
        {"properties":{"width":{"const":540},"height":{"const":960}}},
@@ -143,6 +144,7 @@
         "fit": {"enum": ["cover", "contain"]},
         "transition_in": {"type":"object","additionalProperties":false,"required":["kind","duration_seconds"],"properties":{"kind":{"enum":["cut","fade","dissolve","crossfade"]},"duration_seconds":{"type":"number","minimum":0,"maximum":3}}},
         "crop": {"$ref": "#/$defs/crop"},
+        "viewport": {"$ref": "#/$defs/crop"},
         "crop_keyframes":{"type":"array","minItems":1,"maxItems":2000,"items":{"$ref":"#/$defs/crop_keyframe"}},
         "transform": {"$ref": "#/$defs/transform"},
         "opacity": {"type": "number", "minimum": 0, "maximum": 1}

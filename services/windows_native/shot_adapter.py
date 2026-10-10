@@ -189,12 +189,16 @@ def snapshot_from_shots(shots, doc, *, canvas=None):
     if music is not None:
         value['tracks'].append(music)
         value['metadata']['narrated_music_loop']=decision_metadata(doc,value['duration_seconds'])
+    from .narrated_video_timeline import preserve as preserve_video
+    value=preserve_video(value,doc,canvas)
     from .narrated_media_timeline import preserve
     value=preserve(value,doc,canvas)
     return TimelineSnapshot.model_validate(value).model_dump(mode="json")
 
 
 def shots_from_snapshot(snapshot):
+    from .narrated_video_timeline import enabled,semantic_shots
+    if enabled(snapshot):return semantic_shots(snapshot)
     if snapshot.get('metadata', {}).get('native_auto_edit_schema'):
         from .auto_edit_timeline import source_shots, SCHEMA as source_schema
         if snapshot['metadata']['native_auto_edit_schema'] != source_schema:
@@ -262,6 +266,8 @@ def validate_document(doc):
         _error("SHOT_TIMELINE_CHANGED")
     from .narrated_media_timeline import validate as validate_media_tracks
     validate_media_tracks(doc)
+    from .narrated_video_timeline import validate as validate_video
+    validate_video(doc)
     shots = shots_from_snapshot(state["snapshot"])
     if digest(snapshot_from_shots(shots, doc, canvas=state["snapshot"])) != state["sha256"]:
         _error("SHOT_TIMELINE_SOURCE_OR_CLIPS_CHANGED")
@@ -298,10 +304,14 @@ def view(store, project):
     shots = []
     for ordinal, shot in enumerate(shots_from_snapshot(state["snapshot"]), 1):
         asset = assets.get(shot["asset_id"])
+        from .narrated_video_timeline import enabled as visual_enabled
+        windows=[{k:c[k] for k in ('clip_id','timeline_start','duration','source_start','source_end','speed','disabled','opacity')}
+            for t in state['snapshot']['tracks'] if t['track_id']=='trk_native_video' for c in t['clips'] if c['metadata'].get('shot_id')==shot['shot_id']]
         shots.append({**shot, "id": shot["shot_id"], "scene": ordinal, "number": ordinal,
             "prompt": shot["visual"], "duration_requested": shot["requested_duration"],
             "asset_type": asset["kind"] if asset else None, "asset": copy.deepcopy(asset),
-            "status": "MEDIA_READY" if asset else "NEEDS_MEDIA", "timing_measured": False})
+            "status": "MEDIA_READY" if asset else "NEEDS_MEDIA", "timing_measured": False,
+            **({'advanced_visual_windows':windows} if visual_enabled(state['snapshot']) else {})})
     return {**project, "shot_timeline": {**state, "shots": shots, "persisted": persisted,
         "preview_valid": False, "scope": {"full_render_requested": False, "provider_calls": 0}}}
 

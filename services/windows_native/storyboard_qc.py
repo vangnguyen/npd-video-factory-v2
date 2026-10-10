@@ -15,6 +15,12 @@ MAX_CAPTIONS=128
 def number(value):return type(value) in (int,float) and math.isfinite(value)
 
 def timeline_evidence(config,document,manifest,duration):
+    from .narrated_video_timeline import enabled,coverage
+    if document.get('canonical_timeline') and enabled(document['canonical_timeline']['snapshot']):
+        result=coverage(document)
+        if result['status']!='passed':raise WorkflowError('NARRATED_VIDEO_VISUAL_GAPS_REVIEW_REQUIRED')
+        return {**result,'missing_assets':[],'intentional_audio_silence':False,'canonical_timeline':manifest.get('canonical_timeline'),
+            'word_alignment_claimed':False,'semantic_vision_used':False}
     assets=verify_selected_files(config,document);scenes=manifest.get('scenes');cursor=0.;stills=[]
     if not isinstance(scenes,list) or not 1<=len(scenes)<=20 or any(not isinstance(scene,dict) for scene in scenes):raise WorkflowError('STORYBOARD_QC_SCENE_LAYOUT_INVALID')
     for ordinal,scene in enumerate(scenes,1):

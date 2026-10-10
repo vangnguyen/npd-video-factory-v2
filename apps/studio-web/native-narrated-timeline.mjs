@@ -6,6 +6,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const ready=s=>s?.project?.document?.prepared_narration&&s.project.document.canonical_timeline&&!s.project.document.canonical_timeline.snapshot?.metadata?.native_auto_edit_schema;
 const key=s=>JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.project?.archived===true,s.canEdit!==false]);
 export function validateNarratedTimeline(v,s,{revision=s.project?.revision,version=null}={}){
+  if(v?.video_editing_available!==undefined&&typeof v.video_editing_available!=='boolean')throw Error('Trạng thái chỉnh video không hợp lệ.');
   if(v?.voice_input_current!==undefined&&typeof v.voice_input_current!=='boolean')throw Error('Trạng thái lời đọc không hợp lệ.');
   if(v?.schema_version!=='native-narrated-timeline-editor-v1'||v.workspace_id!==s.workspace_id||v.project_id!==s.project?.id||v.revision!==revision||!integer(v.timeline_version)||version!==null&&v.timeline_version!==version||!sha(v.timeline_sha256)||!sha(v.projection_sha256)
     ||v.provider_calls!==0||v.source_media_mutated!==false||v.publishing_enabled!==false||v.human_review_required!==true||typeof v.projection_pending!=='boolean'||typeof v.history_truncated!=='boolean')throw Error('Timeline không đúng dự án hoặc phiên bản.');
@@ -20,22 +21,23 @@ export function validateNarratedTimeline(v,s,{revision=s.project?.revision,versi
 }
 export function narratedTimelineMarkup(value,zoom=1,position=0){
   const width=Math.max(350,value.duration_seconds*pixelsPerSecond(zoom)),x=Math.min(value.duration_seconds,Math.max(0,position))*pixelsPerSecond(zoom);
-  return value.snapshot.tracks.map(t=>`<section class="narrated-track"><strong>${esc(t.label)}${t.locked?' · đã khóa':''}${t.muted?' · tắt âm':''}${t.disabled?' · tắt track':''}</strong><div class="narrated-lane" style="width:${width}px"><i class="narrated-playhead" style="left:${x}px"></i>${t.clips.map(c=>{const style=clipStyle(c,t.kind,zoom),wave=waveformPath(c);return `<span class="narrated-clip" style="left:${style.left};width:${style.width};background:${style.color};opacity:${style.opacity}" title="${esc(c.label)} · ${c.timeline_start.toFixed(2)}–${(c.timeline_start+c.duration).toFixed(2)}s">${esc(c.label)}${wave?`<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Biên độ âm thanh đo từ nguồn"><path d="${wave}"/></svg>`:''}</span>`;}).join('')}</div></section>`).join('');
+  return value.snapshot.tracks.map(t=>`<section class="narrated-track"><strong>${esc(t.label)}${t.locked?' · đã khóa':''}${t.muted?' · tắt âm':''}${t.disabled?' · tắt track':''}</strong><div class="narrated-lane" data-track="${esc(t.track_id)}" style="width:${width}px"><i class="narrated-playhead" style="left:${x}px"></i>${t.clips.map(c=>{const style=clipStyle(c,t.kind,zoom),wave=waveformPath(c);return `<span class="narrated-clip" data-clip="${esc(c.clip_id)}" tabindex="0" role="button" draggable="${!t.locked&&!c.metadata.narrated_generated_voice&&value.voice_input_current!==false}" style="left:${style.left};width:${style.width};background:${style.color};opacity:${style.opacity}" title="${esc(c.label)} · ${c.timeline_start.toFixed(2)}–${(c.timeline_start+c.duration).toFixed(2)}s">${esc(c.label)}${wave?`<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Biên độ âm thanh đo từ nguồn"><path d="${wave}"/></svg>`:''}</span>`;}).join('')}</div></section>`).join('');
 }
 export function initializeNarratedTimeline({api,getState,root=document,onWorking=()=>{},onDirty=()=>{},onSaved=async()=>{},onRefresh=async()=>{},onMessage=()=>{},getPlayers=()=>[]}){
   const card=root.getElementById('native-narrated-timeline-card');card.replaceChildren();
   const controlsList=[],node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-narrated-timeline-'+id;return n;};
   const button=(text,id)=>{const n=node('button',text,id);n.type='button';n.className='secondary';controlsList.push(n);return n;};
   const field=(label,id,type,value)=>{const n=node(type==='select'?'select':'input','',id);if(type!=='select')n.type=type;if(type==='checkbox')n.checked=value;else n.value=String(value??'');if(type==='number'){n.step='any';}controlsList.push(n);const wrap=node('label',label);wrap.append(n);card.append(wrap);return n;};
-  card.append(node('summary','Timeline audio & phụ đề · nâng cao'));
-  const status=node('p','Đọc timeline để chỉnh âm thanh, phụ đề hoặc hoàn tác thay đổi đã lưu.','status');status.className='hint';card.append(status);
+  card.append(node('summary','Timeline video, audio & phụ đề · nâng cao'));
+  const status=node('p','Đọc timeline để chỉnh tư liệu, âm thanh, phụ đề hoặc hoàn tác thay đổi đã lưu.','status');status.className='hint';card.append(status);
   const read=button('Đọc timeline','read'),undo=button('Hoàn tác','undo'),redo=button('Làm lại','redo'),discard=button('Bỏ chỉnh sửa','discard');card.append(read,undo,redo,discard);
   const zoom=field('Zoom','zoom','range',1);zoom.min='.5';zoom.max='4';zoom.step='.25';const snap=field('Bám mốc 0,25s','snap','checkbox',true),playhead=field('Vị trí xem (s)','playhead','number',0);
   const graph=node('div','','graph');graph.className='narrated-timeline-scroll';card.append(graph);
-  const track=field('Track audio hoặc phụ đề','track','select'),lock=button('Khóa / mở khóa','lock'),mute=button('Tắt / bật âm','mute'),disable=button('Tắt / bật track','disable');card.append(lock,mute,disable);
-  const clip=field('Clip audio hoặc phụ đề','clip','select'),operation=field('Thao tác clip','operation','select');
+  const track=field('Track tư liệu, audio hoặc phụ đề','track','select'),lock=button('Khóa / mở khóa','lock'),mute=button('Tắt / bật âm','mute'),disable=button('Tắt / bật track','disable');card.append(lock,mute,disable);
+  const clip=field('Clip tư liệu, audio hoặc phụ đề','clip','select'),operation=field('Thao tác clip','operation','select');
   for(const[k,label]of[['move','Di chuyển'],['trim','Cắt đầu / cuối'],['split','Chia tại playhead'],['duplicate','Nhân bản'],['delete','Xóa khỏi bản dựng'],['disable','Tắt / bật clip'],['reorder','Đổi thứ tự trong track'],['set_clip_properties','Âm lượng / tốc độ']]){const o=node('option',label);o.value=k;operation.append(o);}operation.value='move';
   const start=field('Vị trí đặt clip (s)','start','number',0),sourceStart=field('Bắt đầu nguồn (s)','source-start','number',0),sourceEnd=field('Kết thúc nguồn (s)','source-end','number',1),volume=field('Âm lượng (0–2)','volume','number',1),speed=field('Tốc độ (0–8)','speed','number',1),index=field('Thứ tự trong track (từ 0)','index','number',0);
+  const imageDuration=field('Thời gian hiển thị ảnh (s)','image-duration','number',1);
   const saveClip=button('Lưu thao tác clip','save-clip');card.append(saveClip);
   const voiceNorm=field('Chuẩn hóa track lời đọc','voice-normalize','checkbox',false),musicNorm=field('Chuẩn hóa nhạc','music-normalize','checkbox',false),duck=field('Hạ nhạc khi có lời','duck','checkbox',true),ratio=field('Mức hạ nhạc (2–20)','duck-ratio','number',8),threshold=field('Ngưỡng hạ nhạc (0,001–0,2)','duck-threshold','number',.015);
   const template=field('Mẫu phụ đề','template','select'),keywords=field('Từ nổi bật · ngăn cách bằng dấu phẩy','keywords','text',''),saveSettings=button('Lưu mix & mẫu phụ đề','save-settings');card.append(saveSettings);
@@ -49,24 +51,25 @@ export function initializeNarratedTimeline({api,getState,root=document,onWorking
     const t=currentTrack(),c=currentClip();mute.disabled=stop||dirty||t?.type!=='audio';lock.disabled=disable.disabled=stop||dirty||!t;
     saveClip.disabled=stop||c?.track.locked||!c;for(const n of[track,clip,operation])n.disabled=stop||dirty;
     const generated=c?.clip.metadata.narrated_generated_voice===true,op=operation.value;
-    start.disabled=stop||!['move','duplicate','trim'].includes(op)||generated;sourceStart.disabled=sourceEnd.disabled=stop||op!=='trim'||generated;volume.disabled=stop||op!=='set_clip_properties'||c?.track.type!=='audio';speed.disabled=volume.disabled||generated;index.disabled=stop||op!=='reorder'||generated;
+    start.disabled=stop||!['move','duplicate','trim'].includes(op)||generated;sourceStart.disabled=sourceEnd.disabled=stop||op!=='trim'||generated||c?.clip.kind==='image';volume.disabled=stop||op!=='set_clip_properties'||c?.track.type!=='audio';speed.disabled=stop||op!=='set_clip_properties'||generated||!['audio','video'].includes(c?.track.type)||c?.clip.kind==='image';index.disabled=stop||op!=='reorder'||generated;
+    imageDuration.hidden=c?.clip.kind!=='image';imageDuration.disabled=stop||c?.clip.kind!=='image'||!['trim','set_clip_properties'].includes(op);
     if(generated&&!['disable','set_clip_properties'].includes(op))saveClip.disabled=true;
     if(c?.track.type==='text'&&op==='set_clip_properties')saveClip.disabled=true;
     saveSettings.disabled=stop||value?.snapshot.tracks.some(t=>t.locked&&(t.type==='audio'||t.kind==='subtitles'));
-    if(dirtyKind==='settings'){saveClip.disabled=true;for(const n of[start,sourceStart,sourceEnd,volume,speed,index])n.disabled=true;}
+    if(dirtyKind==='settings'){saveClip.disabled=true;for(const n of[start,sourceStart,sourceEnd,volume,speed,index,imageDuration])n.disabled=true;}
     if(dirtyKind==='clip'){saveSettings.disabled=true;for(const n of[voiceNorm,musicNorm,duck,ratio,threshold,template,keywords])n.disabled=true;}
   }
   function renderGraph(){if(value)graph.innerHTML=narratedTimelineMarkup(value,Number(zoom.value),Number(playhead.value));}
   function clear(){value=null;loadedKey=null;graph.replaceChildren();graph.innerHTML='';for(const n of[track,clip,template])n.replaceChildren();keywords.value='';status.textContent='Đọc lại timeline hiện tại trước khi chỉnh sửa.';dirty=false;dirtyKind=null;onDirty(false);}
   function choices(select,items,selected){select.replaceChildren();for(const[id,label]of items){const o=node('option',label);o.value=id;select.append(o);}select.value=items.some(x=>x[0]===selected)?selected:(items[0]?.[0]??'');}
-  function selectClip(){const c=currentClip();if(c){start.value=String(c.clip.timeline_start);sourceStart.value=String(c.clip.source_start);sourceEnd.value=String(c.clip.source_end??c.clip.source_start+c.clip.duration);volume.value=String(c.clip.volume);speed.value=String(c.clip.speed);index.value=String(c.track.clips.indexOf(c.clip));}controls();}
+  function selectClip(){const c=currentClip();if(c){start.value=String(c.clip.timeline_start);sourceStart.value=String(c.clip.source_start);sourceEnd.value=String(c.clip.source_end??c.clip.source_start+c.clip.duration);volume.value=String(c.clip.volume);speed.value=String(c.clip.speed);imageDuration.value=String(c.clip.duration);index.value=String(c.track.clips.indexOf(c.clip));}controls();}
   function install(p,s){value=p;loadedKey=key(s);context=loadedKey;dirty=false;dirtyKind=null;onDirty(false);
-    const tracks=p.snapshot.tracks.filter(t=>['audio','text'].includes(t.type));choices(track,tracks.map(t=>[t.track_id,t.label]),track.value);choices(clip,tracks.flatMap(t=>t.clips.map(c=>[c.clip_id,`${t.label} · ${c.label}`])),clip.value);
+    const tracks=p.snapshot.tracks.filter(t=>['audio','text'].includes(t.type)||p.video_editing_available&&t.type==='video');choices(track,tracks.map(t=>[t.track_id,t.label]),track.value);choices(clip,tracks.flatMap(t=>t.clips.map(c=>[c.clip_id,`${t.label} · ${c.label}`])),clip.value);
     choices(template,p.subtitle_templates.templates.map(t=>[t.template_ref,t.name??t.label??t.template_ref]),p.snapshot.metadata.subtitle_template_ref);
     const captions=p.snapshot.tracks.filter(t=>t.kind==='subtitles'&&!t.disabled).flatMap(t=>t.clips.filter(c=>!c.disabled)),words=captions.length>0&&captions.every(c=>Array.isArray(c.metadata.measured_source_words)&&c.metadata.measured_source_words.length>0);
     for(const option of template.children){const t=p.subtitle_templates.templates.find(t=>t.template_ref===option.value);option.disabled=t?.requires_word_timestamps===true&&!words;if(option.disabled)option.textContent+=' · cần thời gian từng từ';}
     const mix=p.snapshot.metadata.source_audio_processing??{};voiceNorm.checked=mix.normalize_original_audio===true;musicNorm.checked=mix.normalize_music===true;duck.checked=mix.duck_music===true;ratio.value=String(mix.duck_ratio??8);threshold.value=String(mix.duck_threshold??.015);keywords.value=(p.snapshot.metadata.subtitle_style?.keywords??[]).join(', ');
-    status.textContent=`Timeline bản ${p.timeline_version} · ${p.duration_seconds.toFixed(2)}s${p.voice_input_current===false?' · Lời đọc đã thay đổi. Khôi phục bản có lời cũ hoặc chuẩn bị lại giọng đọc trước khi chỉnh track.':p.projection_pending?' · Track lời đọc sẽ được lưu khi áp dụng thay đổi.':''}${p.history_truncated?' · Chỉ hiển thị lịch sử gần đây.':''} Hình ảnh được chỉnh trong shot; thay đổi cần preview và duyệt lại.`;selectClip();renderGraph();controls();}
+    status.textContent=`Timeline bản ${p.timeline_version} · ${p.duration_seconds.toFixed(2)}s${p.voice_input_current===false?' · Lời đọc đã thay đổi. Khôi phục bản có lời cũ hoặc chuẩn bị lại giọng đọc trước khi chỉnh track.':p.projection_pending?' · Track lời đọc sẽ được lưu khi áp dụng thay đổi.':''}${p.history_truncated?' · Chỉ hiển thị lịch sử gần đây.':''} ${p.video_editing_available?'Clip tư liệu có thể chỉnh tại đây; thời lượng lời đọc được giữ.':'Hình ảnh được chỉnh trong shot;'} thay đổi cần preview và duyệt lại.`;selectClip();renderGraph();controls();}
   async function load(){if(working||getState().busy||getState().active||getState().dirty||!ready(getState()))return;const s=getState(),k=key(s),projectId=s.project.id,workspace=s.workspace_id,canEdit=s.canEdit!==false,revision=s.project.revision;working=true;onWorking(true);controls();try{const p=await api(`/api/projects/${projectId}/narrated-timeline`);if(k!==key(getState())){clear();return;}
     if(integer(p?.revision)&&p.revision>revision&&p.project_id===projectId&&p.workspace_id===workspace){await onRefresh();if(getState().project?.id!==projectId||getState().workspace_id!==workspace||(getState().canEdit!==false)!==canEdit||getState().dirty||getState().active||getState().project?.archived){clear();return;}}
     validateNarratedTimeline(p,getState());install(p,getState());}catch(e){clear();onMessage(e.message,true);}finally{working=false;onWorking(false);sync();}}
@@ -74,17 +77,35 @@ export function initializeNarratedTimeline({api,getState,root=document,onWorking
   const changed=kind=>{if(blocked()||dirtyKind&&dirtyKind!==kind)return;dirty=true;dirtyKind=kind;onDirty(true);controls();};
   async function editClip(){const c=currentClip();if(!c||blocked()||c.track.locked||dirtyKind==='settings')return;const op={type:operation.value,clip_id:c.clip.clip_id};
     if(['move','duplicate'].includes(op.type))op.timeline_start=snapTime(Number(start.value),snap.checked);
-    if(op.type==='trim')Object.assign(op,{source_start:Number(sourceStart.value),source_end:Number(sourceEnd.value),timeline_start:snapTime(Number(start.value),snap.checked)});
+    if(op.type==='trim')Object.assign(op,c.clip.kind==='image'?{duration:Number(imageDuration.value),timeline_start:snapTime(Number(start.value),snap.checked)}:{source_start:Number(sourceStart.value),source_end:Number(sourceEnd.value),timeline_start:snapTime(Number(start.value),snap.checked)});
     if(op.type==='split')op.at_seconds=snapTime(Number(playhead.value),snap.checked);if(op.type==='disable')op.disabled=!c.clip.disabled;if(op.type==='reorder')op.target_index=Number(index.value);
-    if(op.type==='set_clip_properties'){op.volume=Number(volume.value);if(!c.clip.metadata.narrated_generated_voice)op.speed=Number(speed.value);}return write('edit',{operations:[op]});}
+    if(op.type==='set_clip_properties'){if(c.track.type==='audio')op.volume=Number(volume.value);if(c.clip.kind==='image')op.duration=Number(imageDuration.value);else if(!c.clip.metadata.narrated_generated_voice)op.speed=Number(speed.value);}return write('edit',{operations:[op]});}
   async function trackState(name){const t=currentTrack();if(!t||dirty)return;return write('edit',{operations:[{type:'set_track_state',track_id:t.track_id,[name]:!t[name]}]});}
   async function restore(direction){const target=historyTarget(direction);if(!target||dirty)return;return write('restore',{restore_revision:target.revision,restore_timeline_sha256:target.sha256});}
   async function configure(){if(blocked()||dirtyKind==='clip')return;return write('configure',{audio_processing:{...(value.snapshot.metadata.source_audio_processing??{}),normalize_original_audio:voiceNorm.checked,normalize_music:musicNorm.checked,duck_music:duck.checked,duck_ratio:Number(ratio.value),duck_threshold:Number(threshold.value)},subtitle_template_ref:template.value,keywords:keywords.value.split(',').map(x=>x.trim()).filter(Boolean)});}
   function sync(){const s=getState(),k=key(s);card.hidden=!ready(s);if(context!==k){context=k;clear();}controls();}
   read.addEventListener('click',load);undo.addEventListener('click',()=>restore('undo'));redo.addEventListener('click',()=>restore('redo'));discard.addEventListener('click',()=>{if(working)return;dirty=false;onDirty(false);if(value)install(value,getState());controls();});
   track.addEventListener('change',controls);clip.addEventListener('change',selectClip);operation.addEventListener('change',controls);lock.addEventListener('click',()=>trackState('locked'));mute.addEventListener('click',()=>trackState('muted'));disable.addEventListener('click',()=>trackState('disabled'));saveClip.addEventListener('click',editClip);saveSettings.addEventListener('click',configure);
-  for(const n of[start,sourceStart,sourceEnd,volume,speed,index])n.addEventListener('input',()=>changed('clip'));
+  for(const n of[start,sourceStart,sourceEnd,volume,speed,index,imageDuration])n.addEventListener('input',()=>changed('clip'));
   for(const n of[voiceNorm,musicNorm,duck,ratio,threshold,template,keywords])n.addEventListener(n.type==='checkbox'||n.tagName==='SELECT'?'change':'input',()=>changed('settings'));
   zoom.addEventListener('input',renderGraph);snap.addEventListener('change',controls);playhead.addEventListener('input',()=>{if(!value)return;playhead.value=String(Math.min(value.duration_seconds,snapTime(Number(playhead.value),snap.checked)));for(const player of getPlayers())if(player?.readyState>0)player.currentTime=Number(playhead.value);renderGraph();});
+  let dragging=null;
+  function graphSelection(event){const target=event.target?.closest?.('[data-clip]');if(!target||blocked()||dirty)return null;
+    const id=target.dataset?.clip;if(![...clip.children].some(o=>o.value===id))return null;clip.value=id;selectClip();return {target,item:currentClip()};}
+  graph.addEventListener('click',graphSelection);
+  graph.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();graphSelection(event);}});
+  graph.addEventListener('dragstart',event=>{const selected=graphSelection(event);
+    if(!selected||selected.item.track.locked||selected.item.clip.metadata.narrated_generated_voice||value.voice_input_current===false){event.preventDefault();return;}
+    dragging={key:key(getState()),clip_id:selected.item.clip.clip_id,binding:JSON.stringify(binding()),offset:event.clientX-(selected.target.getBoundingClientRect?.().left??event.clientX)};
+    event.dataTransfer?.setData('application/x-vf-timeline-clip',selected.item.clip.clip_id);if(event.dataTransfer)event.dataTransfer.effectAllowed='move';});
+  graph.addEventListener('dragover',event=>{if(dragging&&!blocked()&&!dirty)event.preventDefault();});
+  graph.addEventListener('dragend',()=>{dragging=null;});
+  graph.addEventListener('drop',async event=>{const move=dragging;dragging=null;const lane=event.target?.closest?.('.narrated-lane');
+    if(!move||!lane||blocked()||dirty||move.key!==key(getState())||move.binding!==JSON.stringify(binding()))return;event.preventDefault();
+    const selected=value.snapshot.tracks.flatMap(t=>t.clips.map(c=>({track:t,clip:c}))).find(x=>x.clip.clip_id===move.clip_id);
+    if(!selected||selected.track.locked||lane.dataset?.track!==selected.track.track_id)return;const left=lane.getBoundingClientRect().left;
+    const at=snapTime(Math.max(0,(event.clientX-left-move.offset)/pixelsPerSecond(Number(zoom.value))),snap.checked);
+    if(!Number.isFinite(at)||at+selected.clip.duration>value.duration_seconds+.000001){onMessage('Vị trí mới vượt thời lượng lời đọc; chọn mốc khác hoặc chỉnh độ dài clip.',true);return;}
+    await write('edit',{operations:[{type:'move',clip_id:move.clip_id,timeline_start:at}]});});
   sync();return {load,editClip,trackState,restore,configure,sync,isWorking:()=>working,currentBinding:()=>value};
 }

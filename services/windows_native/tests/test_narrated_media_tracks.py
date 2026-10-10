@@ -15,7 +15,8 @@ from services.windows_native.pipeline import Pipeline
 from services.windows_native.hardening import Artifacts
 
 def prepare(case):
-    case.temp=tempfile.TemporaryDirectory();case.owned=Path(case.temp.name);case.root=case.owned/'state'
+    case.temp=tempfile.TemporaryDirectory(dir='C:/' if getattr(case,'short_owned_root',False) else None,
+        prefix='vf-nv-' if getattr(case,'short_owned_root',False) else 'tmp');case.owned=Path(case.temp.name);case.root=case.owned/'state'
     case.config,case.store,case.project=prepared(case.root)
     case.workspace='wsp_narrated_media_tracks_fixture'
     case.project=case.store.set_brand(case.project['id'],case.project['revision'],'vang-nguyen','personal-30',duration_mode=FIT_NARRATION_POLICY)

@@ -414,6 +414,8 @@ def render(config, snapshot, out, *, preview_only=False):
     doc = snapshot["document"]
     from .narrated_media_timeline import enabled as media_tracks_enabled,VOICE_TRACK
     canonical_media=media_tracks_enabled(doc)
+    from .narrated_video_timeline import enabled as video_enabled
+    canonical_video=bool(doc.get('canonical_timeline')) and video_enabled(doc['canonical_timeline']['snapshot'])
     if preview_only:
         from .narration_preview import validate_context
         validate_context(config,snapshot)
@@ -547,16 +549,18 @@ def render(config, snapshot, out, *, preview_only=False):
                         "-map", "[v]"]
         command += ["-frames:v", str(count), "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                     "-pix_fmt", "yuv420p", "-r", "30", "-video_track_timescale", "15360", segment]
-        with (out / f"scene-{i:02}.log").open("w", encoding="utf-8") as log:
-            result = subprocess.run(command, cwd=out, stdout=log, stderr=subprocess.STDOUT, timeout=600)
-        if result.returncode:
-            raise WorkflowError("FFMPEG_SCENE_RENDER_FAILED")
-        frames.append({"scene": scene.scene, "file": segment, "start": round(start * 30) / 30,
+        if not canonical_video:
+            with (out / f"scene-{i:02}.log").open("w", encoding="utf-8") as log:
+                result = subprocess.run(command, cwd=out, stdout=log, stderr=subprocess.STDOUT, timeout=600)
+            if result.returncode:
+                raise WorkflowError("FFMPEG_SCENE_RENDER_FAILED")
+        frames.append({"scene": scene.scene, "file": 'narrated-video.mp4' if canonical_video else segment, "start": round(start * 30) / 30,
                        "end": round(end * 30) / 30, "frames": count, "asset_id": asset["id"],
                        "kind": asset["kind"], "source_sha256": asset["sha256"], "filename": asset["filename"],
-                       "short_video_policy": "selected_start_first_pass_then_wrap_source" if edit_plan and asset["kind"]=="video" else "loop_from_start" if asset["kind"]=="video" else None,
+                       "short_video_policy": 'canonical_timeline_windows' if canonical_video else "selected_start_first_pass_then_wrap_source" if edit_plan and asset["kind"]=="video" else "loop_from_start" if asset["kind"]=="video" else None,
                        "source_start":options.get("source_start",0),"crop_strategy":options.get("crop_strategy","contain"),"motion":options.get("motion","none"),
-                       "source_audio": "muted" if asset["kind"] == "video" else None})
+                       "source_audio": "muted" if asset["kind"] == "video" else None,
+                       **({'header_file':filename,'visual_windows':'canonical_timeline'} if canonical_video else {})})
         caption_offset=len(captions)
         for unit in units:
             lines = wrap_text(unit["text"], sub_font, text_width-20 if edit_plan else 900)
@@ -621,9 +625,15 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if canonical_media:
         from .narrated_media_mix import prepare as canonical_audio
         canonical_mix=canonical_audio(config,doc,out,voice_file,gain)
+    canonical_visual=None
+    if canonical_video:
+        from .narrated_video_render import render as canonical_visual_render
+        canonical_visual=canonical_visual_render(config,doc,out,frames,geometry,brand)
     filters = f"[0:v]fps=30,ass=subtitles.ass{':fontsdir=fonts' if canonical_media else ''},format=yuv420p[v];"+('[1:a]anull[a]' if canonical_media else audio_filters)
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
             "-i", 'narrated-mix.wav' if canonical_media else voice_file]
+    if canonical_video:
+        cmd=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-n','-i','narrated-video.mp4','-i','narrated-mix.wav']
     music=doc.get("music") if doc.get("music_enabled",True) and not canonical_media else None
     capture_audio_stems=bool(strict_quality or preview_only or canonical_media)
     music_loop=None
@@ -668,6 +678,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             'reference_role':canonical_mix['reference_role'],'generated_voice_active':canonical_mix['generated_voice_active']},
             'canonical_subtitle_style':doc['canonical_timeline']['snapshot']['metadata']['subtitle_style'],
             'approved_subtitle_font_sha256':__import__('services.windows_native.narrated_media_captions',fromlist=['FONT_SHA']).FONT_SHA} if canonical_media else {}),
+        **({'canonical_visual_render':{'schema_version':canonical_visual['schema_version'],'video_sha256':canonical_visual['video_sha256'],
+            'manifest_sha256':canonical_visual['manifest_sha256'],'render_record_sha256':file_sha(out/'narrated-video-render.json'),
+            'actual_canonical_visual_windows':True}} if canonical_visual else {}),
         **({'render_purpose':'narration_preview','preview_authorization':snapshot['preview_authorization']} if preview_only else {}),
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
@@ -902,6 +915,7 @@ class Pipeline:
         if (attempt/'audio-balance.json').is_file():
             from .audio_balance import artifact_names as audio_balance_artifacts
             render_files+=audio_balance_artifacts(attempt)
+        if (attempt/'narrated-video-render.json').is_file():artifacts.path('narrated-video-overlays').mkdir(exist_ok=True)
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in render_files], stage, "storage_render_publish")
         if (attempt/'full-qc-report.json').is_file():
             from .render_frame_qc import validate as validate_render_frames

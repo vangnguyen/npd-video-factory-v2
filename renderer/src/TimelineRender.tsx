@@ -66,7 +66,7 @@ const VisualLayer: React.FC<{
     opacity: clip.opacity * fade,
   };
   return (
-    <AbsoluteFill style={{overflow: "hidden"}}>
+    <AbsoluteFill style={{overflow: "hidden",...(clip.viewport?{left:`${clip.viewport.x*100}%`,top:`${clip.viewport.y*100}%`,width:`${clip.viewport.width*100}%`,height:`${clip.viewport.height*100}%`}: {})}}>
       {clip.type === "video" ? (
         <OffthreadVideo
           src={clip.uri}

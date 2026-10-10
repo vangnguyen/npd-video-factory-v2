@@ -338,6 +338,12 @@ class TimelineRenderContractValidator:
         if style.get('animation') in {'word_by_word', 'karaoke'} and any(not cue.get('words') for cue in manifest.get('subtitles', [])):
             raise ProductionContractError('WORD_ALIGNMENT_UNAVAILABLE: timed effects require measured words')
         for clip in manifest["visual_clips"]:
+            if 'viewport' in clip:
+                viewport=clip['viewport']
+                if (manifest['version']!='2.3' or not isinstance(viewport,dict) or set(viewport)!={'x','y','width','height'} or
+                    any(type(v) not in (int,float) or not math.isfinite(v) for v in viewport.values()) or
+                    viewport['x']+viewport['width']>1.000001 or viewport['y']+viewport['height']>1.000001):
+                    raise ProductionContractError('bounded visual viewport requires render contract v2.3')
             if manifest["version"] == "2.0" and (clip["source_end"] is None or "transition_in" in clip):
                 raise ProductionContractError("historical v2.0 source contract unchanged")
             if clip["type"] == "video" and (clip["source_end"] is None or clip["source_end"] <= clip["source_start"]):

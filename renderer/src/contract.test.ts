@@ -4,6 +4,17 @@ import {renderRequestSchema, timelineRenderManifestSchema, videoManifestSchema} 
 import {makeManifest, makeTimelineManifest} from "./test-fixtures";
 
 describe("renderer contracts", () => {
+  it('keeps a narrated visual viewport inside the canvas and requires v2.3',()=>{
+    const manifest=makeTimelineManifest('local.png','mix.wav');manifest.version='2.3';manifest.visual_clips[0].source_end=null;
+    manifest.visual_clips[0].viewport={x:0,y:.2,width:1,height:.6};
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(true);
+    manifest.visual_clips[0].viewport.height=.9;
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+    manifest.visual_clips[0].viewport.height=.6;manifest.visual_clips[0].viewport.x=-.1;
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+    manifest.visual_clips[0].viewport.x=0;
+    for(const version of ['2.0','2.1','2.2'] as const){manifest.version=version;expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);}
+  });
   it("accepts image display duration only in v2.1, without invented source time", () => {
     const manifest=makeTimelineManifest("data:image/png;base64,AA==");
     manifest.version="2.1";

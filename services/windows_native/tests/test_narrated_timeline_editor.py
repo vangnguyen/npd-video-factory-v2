@@ -35,11 +35,11 @@ class NarratedTimelineEditorTests(unittest.TestCase):
         moved=self.mutate([{'type':'move','clip_id':pieces[1]['clip_id'],'timeline_start':2.2}]);self.assertEqual(moved['duration_seconds'],3.3)
         disabled=self.mutate([{'type':'disable','clip_id':pieces[1]['clip_id'],'disabled':True}]);self.assertTrue(next(c for t in disabled['snapshot']['tracks'] for c in t['clips'] if c['clip_id']==pieces[1]['clip_id'])['disabled'])
         self.mutate([{'type':'delete','clip_id':pieces[1]['clip_id']}]);validate_document(self.store.get(self.project['id'])['document'])
-    def test_generated_voice_video_and_outside_bounds_protected_and_no_partial_write(self):
+    def test_generated_voice_and_outside_bounds_protected_and_no_partial_write(self):
         self.imported();before=self.store.get(self.project['id']);clip=next(c for t in self.current()['snapshot']['tracks'] if t['kind']=='music' for c in t['clips'])
         for op in [{'type':'split','clip_id':'clip_narrated_measured_voice','at_seconds':1},
             {'type':'delete','clip_id':'clip_narrated_measured_voice'}, {'type':'move','clip_id':clip['clip_id'],'timeline_start':3.3},
-            {'type':'set_track_state','track_id':'trk_native_video','disabled':True}]:
+            {'type':'move','clip_id':clip['clip_id'],'timeline_start':600}]:
             with self.assertRaises(WorkflowError):self.mutate([{'type':'set_track_state','track_id':clip['metadata'].get('no_track','trk_narrated_measured_voice'),'muted':True},op])
             self.assertEqual(before,self.store.get(self.project['id']))
         self.mutate([{'type':'set_clip_properties','clip_id':'clip_narrated_measured_voice','volume':.8}])

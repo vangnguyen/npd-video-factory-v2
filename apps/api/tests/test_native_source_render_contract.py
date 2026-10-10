@@ -34,3 +34,13 @@ def test_source_language_duration_and_optional_caption_changes_are_versioned():
     invalid=copy.deepcopy(value);invalid['metadata']['duration_seconds']=601
     with pytest.raises(ProductionContractError):validator.validate(invalid)
     with pytest.raises(ProductionContractError,match='Vietnamese or English'):manifest(language='invented')
+
+def test_narrated_visual_viewport_uses_v23_and_cannot_escape_the_canvas():
+    value=manifest();validator=TimelineRenderContractValidator(Path(__file__).resolve().parents[3]/'packages/contracts/timeline-render.schema.json')
+    value['visual_clips'][0]['viewport']={'x':0,'y':.2,'width':1,'height':.6};validator.validate(value)
+    for viewport in ({'x':0,'y':.2,'width':1,'height':.9},{'x':-.1,'y':.2,'width':1,'height':.6},
+                     {'x':0,'y':.2,'width':True,'height':.6},{'x':0,'y':.2,'width':1,'height':float('nan')}):
+        changed=copy.deepcopy(value);changed['visual_clips'][0]['viewport']=viewport
+        with pytest.raises(ProductionContractError):validator.validate(changed)
+    legacy=manifest(language='vi',duration=1);legacy['version']='2.2';legacy['visual_clips'][0]['viewport']=value['visual_clips'][0]['viewport']
+    with pytest.raises(ProductionContractError,match='viewport'):validator.validate(legacy)

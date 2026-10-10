@@ -354,3 +354,7 @@ Wave 3/6 component: Source linked edits now retain imported/manual/empty caption
 This component passes 261 related Native tests, 688 Studio tests and 15 renderer checks, owned real render/FullQC and separate-process restore. Fixture/provider/Owner scope remains explicit; video edits in the controller proof use Source API, not the shot UI. Full generic Mode A video editing, Meta analytics, original provider/media/platform/production requirements and A/B/C acceptance remain open. Matrix counts remain 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED = 59 unclosed groups, not a completion percentage. No new Owner action is required for safe implementation.
 
 NEXT WAVE: remaining canonical Mode A video editing and full Mode B UI, Meta analytics and all other original North Star gaps. Keep deferred Owner UAT and credentials/rights/publish/deployment/merge gates.
+
+## Native Mode A canonical video increment
+
+[NATIVE_NARRATED_VIDEO_TIMELINE.md](NATIVE_NARRATED_VIDEO_TIMELINE.md) closes safe video-window editing/render integration: shot and advanced views use one snapshot/history, preserve measured narration and explicit captions, and retain headers through backup/cold recovery. This is component evidence, not full Wave 3 or Modes A/B acceptance. Matrix remains 5 REAL / 58 PARTIAL / 1 NOT_VERIFIED = 59 unclosed groups. Continue browser usability, missing controls/providers/media/analytics and every original gap; credentials/UAT/deployment stay separate gates.

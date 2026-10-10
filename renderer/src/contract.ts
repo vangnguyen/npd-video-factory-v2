@@ -176,6 +176,7 @@ export const timelineRenderManifestSchema = strictObject({
     fit: z.enum(["cover", "contain"]),
     transition_in: strictObject({kind:z.enum(["cut", "fade", "dissolve", "crossfade"]), duration_seconds:z.number().nonnegative().max(3)}).optional(),
     crop: timelineCropSchema,
+    viewport: timelineCropSchema.optional(),
     crop_keyframes: z.array(strictObject({time:z.number().nonnegative(),x:z.number().min(0).max(1),y:z.number().min(0).max(1),width:z.number().positive().max(1),height:z.number().positive().max(1)})).min(1).max(2000).optional(),
     transform: timelineTransformSchema,
     opacity: z.number().min(0).max(1),
@@ -203,6 +204,11 @@ export const timelineRenderManifestSchema = strictObject({
     source_media_mutated: z.literal(false),
   }),
 }).superRefine((manifest, context) => {
+  for (const [index,clip] of manifest.visual_clips.entries()) {
+    if (clip.viewport && (manifest.version!=='2.3' || clip.viewport.x+clip.viewport.width>1.000001 || clip.viewport.y+clip.viewport.height>1.000001)) {
+      context.addIssue({code:z.ZodIssueCode.custom,path:['visual_clips',index,'viewport'],message:'bounded visual viewport requires v2.3'});
+    }
+  }
   if(manifest.version!=='2.3'&&(manifest.metadata.duration_seconds>180||manifest.metadata.language!=='vi'||manifest.subtitles.length===0)) {
     context.addIssue({code:z.ZodIssueCode.custom,path:['metadata'],message:'source duration/language/optional captions require v2.3'});
   }

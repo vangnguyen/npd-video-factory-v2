@@ -1,0 +1,185 @@
+{
+  "schema_version": "north-star-narrated-video-timeline-evidence-v1",
+  "recorded_at": "2026-10-10T22:33:45.298319+00:00",
+  "parent_head": "667a609116d30826534620d55cf799b723d9082e",
+  "implementation": {
+    "canonical_primary_video_operations": true,
+    "shot_semantics_in_same_snapshot": true,
+    "shot_title_preserves_advanced_windows": true,
+    "source_replacement_preserves_other_groups": true,
+    "measured_voice_canvas_preserved": true,
+    "visual_properties_cannot_bypass_voice_fence": true,
+    "follow_source_captions_reflow": true,
+    "manual_caption_layout_preserved": true,
+    "locked_caption_reflow_atomic": true,
+    "reversible_visual_gaps_render_gate": true,
+    "actual_canonical_visual_render": true,
+    "bounded_brand_viewport_v23": true,
+    "header_artifacts_in_checkpoint_and_backup": true,
+    "legacy_render_opt_in_only": true,
+    "image_display_without_fake_source_clock": true,
+    "original_source_SHA_unchanged": true,
+    "duplicate_and_six_variant_profiles_preserve_visual_decisions": true
+  },
+  "tests": {
+    "Native_related": 332,
+    "Native_related_seconds": 659.178,
+    "Native_related_modules": 44,
+    "Native_final_guards": 31,
+    "new_Native_final": 11,
+    "broad_run_started_before_final_role_guard": true,
+    "final_guard_run_covers_final_editor_source": true,
+    "counts_overlap_do_not_add": true,
+    "Studio": 694,
+    "new_Studio_included": 6,
+    "Renderer": 40,
+    "Renderer_modules": 7,
+    "new_Renderer_included": 1,
+    "Renderer_typecheck": true,
+    "API_related_linux": 34,
+    "API_skipped": 2,
+    "API_modules": 4,
+    "new_API_included": 1
+  },
+  "local_real": {
+    "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7",
+    "signed_media_controller_requests": 6,
+    "signed_video_controller_requests": 11,
+    "synthetic_moving_video_and_measured_tones": true,
+    "actual_uploads": 4,
+    "actual_graph_drag": true,
+    "fake_DOM": true,
+    "fixture_human": true,
+    "canonical_seconds": 3.3,
+    "actual_seconds": 3.3,
+    "width": 1080,
+    "height": 1920,
+    "fps": 30.0,
+    "av_delta_seconds": 0.0,
+    "audio_peak_db": -13.0,
+    "black_frame_seconds": 0,
+    "freeze_frame_seconds": 0,
+    "preview_final_PCM_sha256": "daffc5f3a14a697a43f25e95ac726167beb84d1d0305708d934a36ba8ba272b6",
+    "preview_final_ASS_sha256": "e013944e0358b626fd4c72ff5a1abb522b3ced3d14a2e2cd676efad94529ef8f",
+    "cold_restore": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-timeline-cold-recovery-n4.json",
+      "sha256": "3beea993bdc0043907d6a67b80e43ac320de908459306215eca9f2a7a02ee9e4",
+      "bytes": 4487
+    },
+    "independent_frame_clock": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-frame-clock-n2\\evidence.json",
+      "sha256": "24aa4b2ff24b314e0b1a37b76be2a5bf6a54bb6466a9f82ac6e38292f1441eca",
+      "bytes": 1478
+    },
+    "retained_controller_fixture_bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n6",
+    "backup_hashes_verified": true,
+    "final_download_blocked_without_final_review": true
+  },
+  "qualifications": {
+    "implemented": true,
+    "mock_tested": true,
+    "local_real_tested": true,
+    "real_provider_tested": false,
+    "production_deployed": false,
+    "provider_calls": 0,
+    "paid_calls": 0,
+    "new_ASR_or_TTS_calls": 0,
+    "browser_rendered": false,
+    "owner_UAT": false,
+    "genuine_speech_accepted": false,
+    "complete_artifact_A_acceptance": false,
+    "complete_artifact_B_acceptance": false,
+    "complete_artifact_C_acceptance": false,
+    "publishing_enabled": false
+  },
+  "remaining": [
+    "browser usability and complete non-developer original Mode A/B UI",
+    "visual crop/transform control UI and existing renderer limits",
+    "genuine configured provider/Owner/deployment acceptance",
+    "all other original North Star matrix gaps and final bundles A/B/C"
+  ],
+  "retention": {
+    "owned_new_fixture_teardown_after_verified_export": true,
+    "historical_or_accepted_artifact_deletion": false,
+    "rejected_delete_retried": false
+  },
+  "files": {
+    "evidence.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\evidence.json",
+      "sha256": "2eeb777881320bb87c14ba70ca73d73beffa7b40a2bd954a9b4cd43c0d3d601d",
+      "bytes": 9519
+    },
+    "qc.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\qc.json",
+      "sha256": "8eb09d47a459a675d173dba24ef23e1186221ac4ea758818df9b8ecaa259bd54",
+      "bytes": 19437
+    },
+    "final.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\final.mp4",
+      "sha256": "e0aaf6b9f6c3e613de9939a30c81cade4fb14d97c3d937d8d62fb86e36b82e26",
+      "bytes": 783168
+    },
+    "preview.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\preview.mp4",
+      "sha256": "e0aaf6b9f6c3e613de9939a30c81cade4fb14d97c3d937d8d62fb86e36b82e26",
+      "bytes": 783168
+    },
+    "timeline.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\timeline.json",
+      "sha256": "afec2f5fa65e087d9c4ed6eee559b8553ed6d275c0e224dd25377339b7e536a8",
+      "bytes": 6578
+    },
+    "narrated-video-render.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\narrated-video-render.json",
+      "sha256": "ca318dae36b67384c827bdfd040c7059ceaad94b89ca3fb57b5644a9c73a6e2d",
+      "bytes": 5817
+    },
+    "narrated-video-receipt.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\narrated-video-receipt.json",
+      "sha256": "10d8ba7f64ca90bb9ba7848c6225d82fe56a6b30a577fb2e3b16e28c63bf3a6d",
+      "bytes": 309
+    },
+    "narrated-video.mp4": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\narrated-video.mp4",
+      "sha256": "ba9c7963f28f5156dcbd2d43a1353b36b4da57ab7abe2a62645fdfb146eea678",
+      "bytes": 767496
+    },
+    "backup.zip": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-narrated-video-timeline-n7\\backup.zip",
+      "sha256": "0ab0c1457bd703507f069a6b42264004a3afa6d3ed3219294ad5592d66d0b46b",
+      "bytes": 53162518
+    }
+  },
+  "logs": {
+    "narrated-video-native-regression-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-native-regression-n1.log",
+      "sha256": "7562b1a3b323e1bad503f9c974784d3e66d7c56eeaab7c042a36bd1879f18ee2",
+      "bytes": 439
+    },
+    "narrated-video-final-guards-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-final-guards-n1.log",
+      "sha256": "b03cf1fd75dbc8ebe4d6996e0c441f8aae1a19e1d0bb7209f744b7780c082a3b",
+      "bytes": 137
+    },
+    "narrated-video-studio-regression-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-studio-regression-n3.log",
+      "sha256": "93851a6de085630eef37d59c9bdda985db64559721ce13ac2c3da1c5d5106cbd",
+      "bytes": 71694
+    },
+    "narrated-video-renderer-regression-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-renderer-regression-n3.log",
+      "sha256": "280e75ca8281f93ea30cb4efae27ac5da7bd55e91ffb96fcfb8fee24bd3a2542",
+      "bytes": 1023
+    },
+    "narrated-video-renderer-typecheck-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-renderer-typecheck-n2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "narrated-video-api-contract-linux-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\narrated-video-api-contract-linux-n1.log",
+      "sha256": "fba6adba58feba2cd9bba97d7df66990cc7d3b1824bc95f97bcb3a7f4a726289",
+      "bytes": 113
+    }
+  }
+}

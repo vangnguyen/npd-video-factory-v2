@@ -64,6 +64,7 @@ def render(config,store,project,folder,event):
     names=['render-manifest.json','qc-report.json','full-qc-report.json','transport-qc-report.json','subtitles.ass','timeline.json','voice.json']
     from .narrated_media_mix import artifact_names as media_artifact_names
     names+=list(media_artifact_names(attempt))
+    if (attempt/'narrated-video-render.json').is_file():published.path('narrated-video-overlays').mkdir(exist_ok=True)
     if (attempt/'subtitles.json').is_file():
         published.path('fonts').mkdir(exist_ok=True)
         names+=['subtitles.json',*[p.relative_to(attempt).as_posix() for p in sorted((attempt/'fonts').glob('*.ttf'))]]

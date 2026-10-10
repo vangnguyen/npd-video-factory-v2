@@ -3467,3 +3467,17 @@ REGRESSIONS: related checks PASS; preservation seal rechecks old accepted artifa
 EXTERNAL BLOCKERS: unchanged genuine provider authorization/credentials, browser/client, rights and Owner/production acceptance. No blocker stops remaining safe work.
 OWNER ACTION REQUIRED: none for implementation; Owner listening/UAT remains deferred.
 NEXT WAVE: generic Mode A video operations, full Mode B UI and Meta analytics, followed by every original remaining Master Spec gap and full A/B/C acceptance. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3 / 6 / 16 — Native narrated canonical video component increment
+STATUS: component implemented and mock/local-real tested; full waves and North Star remain open.
+HEAD SHA: parent 667a609116d30826534620d55cf799b723d9082e; exact resulting HEAD is in recovery/20261007/narrated-video-timeline-program-state.json after preservation seal.
+CAPABILITIES COMPLETED: canonical video trim/split/move/duplicate/delete/disable/reorder/speed, image display duration, same shot semantics/history, graph drag, measured voice fence, source-caption/manual/lock behavior, opt-in canonical visual renderer and brand viewport/header evidence, cold restore and tamper rejection.
+CAPABILITIES PARTIAL: full Mode A/B UX, browser usability, crop/transform controls, renderer limits, all remaining original groups. 59 broad groups remain unclosed.
+TESTS: Native related 332 PASS / 44 modules / 659.178s, final guards 31 PASS (overlap, includes final 11 new Native cases); Studio 694 PASS including 6 new; renderer 40 PASS / 7 modules + typecheck; Linux API related 34 PASS / 2 skipped / 4 modules.
+REAL PROVIDER TESTS: none; new ASR/TTS/provider/paid operations 0.
+MOCK TESTS: owned moving video and saved measured tone PCM, signed fixture human, shipped Studio controller in fake DOM; actual HTTP/FFmpeg/Remotion/SQLite/QC and restore verified locally.
+EVIDENCE: NATIVE_NARRATED_VIDEO_TIMELINE.md; north-star/narrated-video-timeline-evidence.json; native-narrated-video-timeline-n7, narrated-video-frame-clock-n2, narrated-video-timeline-cold-recovery-n4.json. 17 actual controller requests, 3.3s 1080x1920/30fps render, matching preview/final PCM/ASS and FullQC.
+REGRESSIONS: related checks pass; preservation seal verifies 15 historical accepted artifacts and clean live source. Earlier broad run precedes final role fence; separate final guard run covers it. No accepted replacement or historical deletion, no deletion-review retry.
+EXTERNAL BLOCKERS: genuine configured providers, browser/client restrictions, Owner and production acceptance remain separate from safe implementation.
+OWNER ACTION REQUIRED: none for safe work; listening/UAT stays deferred as requested.
+NEXT WAVE: continue remaining original Mode A/B UI/media/provider/Meta analytics and North Star gaps, then full A/B/C. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

@@ -98,6 +98,7 @@ export type TimelineRenderManifest = {
     fit: "cover" | "contain";
     transition_in?: {kind: "cut" | "fade" | "dissolve" | "crossfade"; duration_seconds: number};
     crop: {x: number; y: number; width: number; height: number};
+    viewport?: {x: number; y: number; width: number; height: number};
     crop_keyframes?: Array<{time: number; x: number; y: number; width: number; height: number}>;
     transform: {x: number; y: number; scale: number; rotation_degrees: number};
     opacity: number;

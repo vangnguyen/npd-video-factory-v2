@@ -4,7 +4,7 @@ Neither fixture speech, a signed fixture human nor fake DOM accepts Owner UAT.
 No provider is called. All temporary fixtures are owned and exported with a
 verified recovery backup before their ordinary test teardown.
 """
-import argparse,copy,json,shutil,subprocess,sys,threading,time,uuid
+import argparse,copy,json,shutil,subprocess,sys,threading,time,traceback,uuid
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
@@ -15,7 +15,7 @@ from app.human_identity import HumanAuthRegistry,HumanAuthVerifier
 from services.windows_native.access import NativeAccess
 from services.windows_native.server import LocalServer
 from services.windows_native.pipeline import Pipeline
-from services.windows_native.shot_preview import PreviewManager
+from services.windows_native.shot_preview import PreviewManager,render_narration
 from services.windows_native.backup import create_backup,restore_backup
 from services.windows_native.store import Store
 from services.windows_native.source_media_tracks import catalog
@@ -28,11 +28,11 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
     if out.exists() or out==REPO or REPO in out.parents:raise ValueError('Fresh external evidence directory required')
-    out.mkdir(parents=True);case=NarratedMediaTracksTests();server=manager=None
+    out.mkdir(parents=True);case=NarratedMediaTracksTests();case.short_owned_root=args.video_timeline;server=manager=None
     try:
-        if args.source_video_captions:
+        if args.source_video_captions or args.video_timeline:
             from services.windows_native.tests.test_source_caption_mapping import prepare as mapping_prepare
             mapping_prepare(case)
         else:prepare(case)
@@ -44,7 +44,7 @@ def main():
         context=case.owned/'narrated-signed-controller-context.json'
         durable_json(context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
             'project':{'id':current['id'],'revision':current['revision']},'cookie':cookie,'csrf':session.csrf,
-            **({'source_video_asset_id':case.video['id'],'source_video_asset_sha256':case.video['sha256']} if args.source_video_captions else {})})
+            **({'source_video_asset_id':case.video['id'],'source_video_asset_sha256':case.video['sha256']} if args.source_video_captions or args.video_timeline else {})})
         run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_source_media_tracks_http_ui.mjs'),str(context)],capture_output=True,check=True,timeout=60)
         controller=json.loads(run.stdout);durable_json(out/'signed-controller.json',controller)
         if len(controller['requests'])!=6 or controller['timeline_mode']!='narrated' or len(controller['imports'])!=3:raise AssertionError('Expected actual Mode A controller flow')
@@ -67,7 +67,14 @@ def main():
                 'before_reflow':following['document']['canonical_timeline'],'after_reflow':looped['document']['canonical_timeline'],
                 'reflow_caption_intervals':actual_captions,'import_history_unchanged':True,'audio_tracks_unchanged':True,
                 'no_word_timestamp_inference':True,'provider_calls':0,'paid_calls':0,'browser_rendered':False,'owner_UAT':False})
-        if args.timeline_editor:
+        if args.video_timeline:
+            from services.windows_native.narrated_timeline_editor import view as editor_view
+            durable_json(context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
+                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf})
+            run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_narrated_video_http_ui.mjs'),str(context)],capture_output=True,check=True,timeout=90)
+            editor_controller=json.loads(run.stdout);durable_json(out/'video-controller.json',editor_controller)
+            durable_json(out/'timeline-editor.json',editor_view(case.store,current['id'],case.workspace))
+        elif args.timeline_editor:
             from services.windows_native.narrated_timeline_editor import view as editor_view
             editor_context=case.owned/'timeline-controller-context.json'
             durable_json(editor_context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
@@ -78,11 +85,20 @@ def main():
             durable_json(out/'timeline-controller.json',editor_controller);durable_json(out/'timeline-editor.json',editor_view(case.store,current['id'],case.workspace))
         server.shutdown();server.server_close();thread.join();server=None
         current=case.store.get(current['id']);before=copy.deepcopy(current['document']);manager=PreviewManager(case.config,case.store)
-        manager.generate(current['id'],current['revision']);deadline=time.monotonic()+180
-        while time.monotonic()<deadline:
-            preview=manager.status(current['id'])
-            if preview['status'] not in {'QUEUED','RUNNING'}:break
-            time.sleep(.1)
+        def diagnosed_preview(*values):
+            try:return render_narration(*values)
+            except Exception:
+                (out/'preview-error.txt').write_text(traceback.format_exc(),encoding='utf-8')
+                folder=values[3]
+                for path in folder.rglob('*.log'):
+                    target=out/'failed-preview'/path.relative_to(folder);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(path,target)
+                raise
+        with patch('services.windows_native.shot_preview.render_narration',side_effect=diagnosed_preview):
+            manager.generate(current['id'],current['revision']);deadline=time.monotonic()+180
+            while time.monotonic()<deadline:
+                preview=manager.status(current['id'])
+                if preview['status'] not in {'QUEUED','RUNNING'}:break
+                time.sleep(.1)
         if preview['status']!='READY':raise AssertionError(preview.get('error') or preview['status'])
         current=case.store.approve(current['id'],current['revision'],'AUTOMATED SYNTHETIC FIXTURE — NOT OWNER UAT',True)
         case.store.enqueue(current['id'],current['revision'],'render',uuid.uuid4().hex);job=case.store.claim()
@@ -96,10 +112,15 @@ def main():
         preview_path=manager.video_path(current['id'],preview['timeline_version']);previewdir=preview_path.parent
         if file_sha(previewdir/'narrated-mix.wav')!=file_sha(jobdir/'narrated-mix.wav') or file_sha(previewdir/'subtitles.ass')!=file_sha(jobdir/'subtitles.ass'):raise AssertionError('Preview/final PCM or ASS differs')
         validate_bundle(case.config,before,jobdir)
-        for name in ('final.mp4','timeline.json','timeline-render.json','subtitles.json','subtitles.ass','narrated-mix.wav','narrated-media-mix.json',
+        export_names=('final.mp4','timeline.json','timeline-render.json','subtitles.json','subtitles.ass','narrated-mix.wav','narrated-media-mix.json',
                 'narrated-audio-filter.txt','audio-balance.json','audio-stem-manifest.json','audio-reference-filter.txt','audio-music-filter.txt',
                 'audio-reference.f32le','audio-music.f32le','audio-final.f32le','render-manifest.json','ffprobe.json','checkpoint-render.json',
-                'render-frame-qc.json','source-media-imports.json','full-qc-report.json','transport-qc-report.json','voice.wav','voice.json','tts-plan.json','voice-reuse.json'):
+                'render-frame-qc.json','source-media-imports.json','full-qc-report.json','transport-qc-report.json','voice.wav','voice.json','tts-plan.json','voice-reuse.json')
+        if args.video_timeline:
+            from services.windows_native.narrated_video_render import artifact_names as visual_names
+            export_names+=visual_names(jobdir)
+        for name in export_names:
+            (out/name).parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(jobdir/name,out/name)
         shutil.copyfile(jobdir/'qc-report.json',out/'qc.json');shutil.copytree(jobdir/'fonts',out/'fonts');shutil.copytree(jobdir/'render-frame-qc',out/'render-frame-qc')
         for path in (REPO/'services/windows_native/fonts').glob('*'):
@@ -118,7 +139,7 @@ def main():
         backup=create_backup(case.config,out/'backup.zip');destination=case.owned/'restored';restore=restore_backup(backup['backup_path'],destination,expected_sha256=backup['sha256'])
         restored=Store(destination);config=replace(case.config,data_root=destination)
         if catalog(restored,current['id'],case.workspace)!=page:raise AssertionError('Restored canonical editor differs')
-        if args.timeline_editor and editor_view(restored,current['id'],case.workspace)!=editor_view(case.store,current['id'],case.workspace):raise AssertionError('Restored undo/redo history differs')
+        if (args.timeline_editor or args.video_timeline) and editor_view(restored,current['id'],case.workspace)!=editor_view(case.store,current['id'],case.workspace):raise AssertionError('Restored undo/redo history differs')
         verify(config,restored.get(current['id'])['document']);validate_bundle(config,restored.get(current['id'])['document'],destination/'jobs'/job['id'])
         with restored.transaction() as con:restored.verified_render(job['id'],con)
         if files(case.root)!=original or file_sha(case.voice_out/'voice.wav')!=voice_sha:raise AssertionError('Original media or prepared voice changed')
@@ -126,7 +147,7 @@ def main():
         durable_json(out/'backup-restore.json',{'backup':backup,'restore':restore,'catalog_equal':True,'physical_origins_and_render_resolved_after_restore':True,
             'temporary_original_and_restore_removed_after_export':True})
         receipt={'schema_version':'native-narrated-media-tracks-render-proof-v1','synthetic_tones_not_speech':True,'synthetic_measured_narration_fixture':True,
-            'saved_ASR_fixture':False,'signed_human_fixture':True,'fake_DOM':True,'project_id':current['id'],'job_id':job['id'],'actual_uploads':4 if args.source_video_captions else 3,
+            'saved_ASR_fixture':False,'signed_human_fixture':True,'fake_DOM':True,'project_id':current['id'],'job_id':job['id'],'actual_uploads':4 if args.source_video_captions or args.video_timeline else 3,
             'signed_controller_requests':6,'imports':4 if args.source_video_captions else 3,'timeline_version':before['canonical_timeline']['version'],'actual_waveform_measurement':True,
             'source_video_captions':args.source_video_captions,'actual_source_trim_and_loop_reflow':args.source_video_captions,
             'actual_preview_render_and_full_QC':True,'matching_preview_final_PCM_sha256':file_sha(jobdir/'narrated-mix.wav'),
@@ -135,8 +156,10 @@ def main():
             'human_final_video_accepted':False,'real_provider_calls':0,'new_ASR_or_TTS_calls':0,'paid_calls':0,'browser_rendered':False,
             'owner_UAT':False,'genuine_speech_quality_accepted':False,'publishing_enabled':False,'production_deployed':False,
             'complete_artifact_B_acceptance':False,'owned_temporary_data_cleaned_after_export':True,
-            'canonical_editor_controller_requests':9 if args.timeline_editor else 0,'canonical_undo_redo_exact_snapshot':args.timeline_editor,
-            'canonical_editor_history_exact_after_restore':args.timeline_editor,
+            'canonical_editor_controller_requests':len(editor_controller['requests']) if args.timeline_editor or args.video_timeline else 0,
+            'canonical_undo_redo_exact_snapshot':args.timeline_editor or args.video_timeline,
+            'canonical_editor_history_exact_after_restore':args.timeline_editor or args.video_timeline,
+            'canonical_video_render':args.video_timeline,'video_editing_controller':args.video_timeline,
             'exports':{p.relative_to(out).as_posix():file_sha(p) for p in out.rglob('*') if p.is_file()}}
         durable_json(out/'evidence.json',receipt);print(json.dumps({k:v for k,v in receipt.items() if k not in {'exports','immutable_source_media'}},ensure_ascii=False))
     finally:

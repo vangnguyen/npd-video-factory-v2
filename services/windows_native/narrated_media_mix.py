@@ -90,11 +90,14 @@ def run(config,command,directory,name):
 
 def artifact_names(directory):
     if not (directory/'narrated-media-mix.json').is_file():return ()
-    return ('narrated-media-mix.json','narrated-mix.wav','timeline-render.json','source-media-imports.json','narrated-audio-filter.txt')
+    from .narrated_video_render import artifact_names as visual_names
+    return ('narrated-media-mix.json','narrated-mix.wav','timeline-render.json','source-media-imports.json','narrated-audio-filter.txt')+visual_names(directory)
 
 def validate_bundle(config,document,directory,*,store=None,con=None):
     if not enabled(document):return
     verify(config,document,store=store,con=con)
+    from .narrated_video_render import validate_bundle as validate_video
+    validate_video(config,document,directory)
     body=json.loads(guard(directory/'narrated-media-mix.json',exists=True).read_bytes())
     timeline=json.loads(guard(directory/'timeline-render.json',exists=True).read_bytes())
     if (body.get('schema_version')!='native-narrated-canonical-audio-v1' or body.get('document_sha256')!=digest(document) or
