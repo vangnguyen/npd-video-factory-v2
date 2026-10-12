@@ -3523,3 +3523,17 @@ REGRESSIONS: related prior capabilities pass. Missing ModeA n1 SFX found indepen
 EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta insights mapping remain separate.
 OWNER ACTION REQUIRED: none for safe work; listening/UAT deferred as requested.
 NEXT WAVE: Native visual effects/post-import fade/transition editing/render parity and every original remaining North Star requirement. SOURCE_PRESERVED=YES at sealed parent,new seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3I / 6 / 16 — Native canonical clip-style component
+STATUS: component implemented, mock/local-real tested; full waves/North Star remain open.
+HEAD SHA: parent92c228aeb94d9c7e814be8965b54967a7dfb8d86; resulting exact pushed HEAD recorded in recovery/20261007/clip-style-program-state.json after preservation seal.
+CAPABILITIES COMPLETED: shared bounded ordered six-effect inspector; uploaded video/audio post-import transitions/fades; typed canonical CAS/history; generated-voice/role/lock/draft guards; contract2.4 preservation; exact source/voice/crop/reframe/other-track retention; undo/redo and cold recovery.
+CAPABILITIES PARTIAL: remaining decoded-media effect/crossfade parity and renderer limits, full browser/non-developer/Owner/genuine-media original Modes A/B and A/B/C. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED=59 unclosed groups.
+TESTS: Studio728 PASS(8new);Native49 PASS in6modules(5new,Static3 included);64 served module hashes;Renderer46 PASS(6new);API17 PASS(2new). Two preview/final/FullQC, two independent pixel oracles and two separate-process restores pass. Tests are component-scoped.
+REAL PROVIDER TESTS: none; new ASR/TTS/provider/paid calls0.
+MOCK TESTS: synthetic movingvideo/tone,prepared measured narration,saved ModeB ASR,fixture human/DOM; actual shared widget/signed HTTP/SQLite/FFmpeg. Browser/Owner false.
+EVIDENCE: NATIVE_CLIP_STYLE.md;north-star/clip-style-evidence.json;native-clip-style-mode-a-n2/b-n2;clip-style-pixels-a-n1/b-n1;clip-style-cold-restore-a-n1.json/b-n1.json. A23/B12 controller requests including6 shared style per mode; exact original PCM/captions/voice preserved.
+REGRESSIONS: related suites pass. Source adapter forced2.3 discovered in B_n1 and repaired; narrated incorrect test-driver route correctly rejected in A_n1 and repaired; rejected candidates retained. New seal checks15 historical accepted artifacts/clean live source; no accepted replacement,historical deletion or rejected-deletion retry; new owned fixtures teardown only after verified export.
+EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta insights mapping remain separate gates.
+OWNER ACTION REQUIRED: none for safe work; listening/UAT remains deferred.
+NEXT WAVE: remaining effect/transition/render parity, original complete Mode A/B UI and every original remaining North Star gap. SOURCE_PRESERVED=YES at sealed parent and verified draft,new exact seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.

@@ -8,6 +8,7 @@ import {initializeSourceCropReview} from './native-source-crop-review.mjs';
 import {initializeSourceThumbnailReview} from './native-source-thumbnail-review.mjs';
 import {initializeVisualProperties} from './native-visual-properties.mjs';
 import {initializeSourceDragDrop} from './native-source-drag-drop.mjs';
+import {initializeClipStyle} from './native-clip-style.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -82,7 +83,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output><p class="hint">Kéo clip trong cùng track để đổi vị trí. Shot nguồn được sắp lại liền nhau cùng âm thanh và phụ đề; kiểm tra lại B-roll, preview và duyệt bản mới.</p>';
   $('advanced-tracks').before(toolbar);
   if(!document.querySelector('link[data-source-editor-style]')){const link=document.createElement('link');link.rel='stylesheet';link.href='/native-source-editor.css';link.dataset.sourceEditorStyle='true';document.head.append(link);}
-  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null;
+  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null,style=null;
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const visualRoot=document.createElement('section');visualRoot.id='native-source-visual';
@@ -94,6 +95,13 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
       const p=getProject();return p?.id===binding.project_id&&p.revision===binding.revision+1&&state()?.version===binding.timeline_version+1&&
         (getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
   const locked=()=>selected()?.track.locked;
+  const styleRoot=document.createElement('section');styleRoot.id='native-source-style';
+  style=initializeClipStyle({root:styleRoot,getState:()=>({...getGuards(),project:getProject(),timeline:state(),selected:selected(),
+    workspace_id:getGuards().workspace_id??'wsp_native_local',busy:working||getGuards().busy,dirty:dirty||getGuards().dirty,dirtyPart:dirtyForm,
+    active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))}),
+    onDirty:v=>{if(v){dirty=true;dirtyForm='style';onDirty(true);}else if(dirtyForm==='style'){dirty=false;dirtyForm=null;onDirty(false);}if(style)controls();},onMessage,
+    onSave:async(values,binding)=>{await run(()=>send(sourceClipAction(getProject(),binding.clip_id,'set_clip_properties',values)),{allowDirty:true});const p=getProject();
+      return p?.id===binding.project_id&&p.revision===binding.revision+1&&state()?.version===binding.timeline_version+1&&(getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
   const blocked=()=>working||sceneReview.isWorking()||thumbnailReview?.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
   const sceneRoot=document.createElement('section');
   const sceneReview=initializeSceneReview({root:sceneRoot,api,getReviewedVision,onProject,onMessage,onWorking,onDraftsCreated,
@@ -134,7 +142,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     brollReview.sync();
     sceneReview.sync();
     cropReview.sync();
-    thumbnailReview.sync();visual.sync();dragDrop?.sync();
+    thumbnailReview.sync();visual.sync();style?.sync();dragDrop?.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -163,6 +171,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
       ${['source','original_audio'].includes(track.kind)?`<label>Tốc độ phát<select data-source-speed>${[.5,.75,1,1.25,1.5,2].map(rate=>`<option value="${rate}" ${rate===clip.speed?'selected':''}>${rate}×</option>`).join('')}</select></label><button type="button" data-source-action="speed">Lưu tốc độ</button>`:''}
       ${track.type==='audio'?`<label>Âm lượng<input data-source-volume type="number" min="0" max="2" step="0.05" value="${clip.volume}"></label><button type="button" data-source-action="gain">Lưu âm lượng</button>`:''}
       ${track.type==='video'?'<div data-source-visual-host></div>':''}
+      ${['video','audio'].includes(track.type)?'<div data-source-style-host></div>':''}
       <div class="actions"><button type="button" data-source-action="split">Tách tại playhead</button><button type="button" data-source-action="duplicate">Nhân đôi</button><button type="button" data-source-action="disable">${clip.disabled?'Bật clip':'Tắt clip'}</button><button type="button" data-source-action="delete">Xóa clip</button></div>
       ${track.kind==='source'?'<div class="actions"><button type="button" data-source-action="earlier">← Trước</button><button type="button" data-source-action="later">Sau →</button></div>':''}`:'<p>Chọn shot hoặc clip trong Advanced Timeline.</p>'}
       <details><summary>Xử lý âm thanh nguồn & nhạc</summary>${[['normalize_original_audio','Cân mức âm thanh nguồn'],['normalize_music','Cân mức nhạc trước âm lượng clip'],['duck_music','Hạ nhạc theo năng lượng âm thanh nguồn']].map(([key,label])=>`<label class="check"><input type="checkbox" data-source-audio="${key}" ${state().snapshot.metadata.source_audio_processing?.[key]?'checked':''}> ${label}</label>`).join('')}<div class="scene-grid"><label>Mức nguồn (LUFS)<input type="number" data-source-audio="original_target_lufs" min="-24" max="-12" value="${state().snapshot.metadata.source_audio_processing?.original_target_lufs??-16}"></label><label>Mức nhạc (LUFS)<input type="number" data-source-audio="music_target_lufs" min="-35" max="-16" value="${state().snapshot.metadata.source_audio_processing?.music_target_lufs??-24}"></label></div><button type="button" data-source-config="audio">Lưu xử lý âm thanh</button><p class="hint">Âm lượng clip vẫn được giữ sau cân mức. Ducking theo tín hiệu nguồn, chưa nhận diện riêng giọng nói. Tạo preview mới và nghe lại sau khi đổi.</p></details>
@@ -170,6 +179,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
       <details><summary>Khung hình & phụ đề</summary><label>Định dạng<select data-source-format>${['9:16','16:9','1:1','4:5'].map(r=>`<option ${r===state().snapshot.aspect_ratio?'selected':''}>${r}</option>`).join('')}</select></label><button type="button" data-source-config="format">Lưu định dạng</button>
       <label>Mẫu phụ đề<select data-source-caption>${(catalog?.templates??[]).map(t=>`<option value="${esc(t.template_ref)}" ${t.template_ref===state().snapshot.metadata.subtitle_style?.template_ref?'selected':''}>${esc(t.name??t.label??t.template_ref)}${t.requires_word_timestamps?' · cần thời gian từng từ':''}</option>`).join('')}</select></label><label>Từ khóa nổi bật (phân cách bằng dấu phẩy)<input data-source-keywords value="${esc((state().snapshot.metadata.subtitle_style?.keywords??[]).join(', '))}" maxlength="1000"></label><button type="button" data-source-config="caption" ${catalog?'':'disabled'}>Lưu mẫu phụ đề</button><p class="hint">Sửa lời nói tại Assets. Đoạn đã sửa cần dùng phụ đề theo câu khi không còn căn chỉnh từng từ. Bản dựng nguồn hiện dùng âm thanh gốc; nhạc nền cần được thêm vào timeline riêng.</p></details>`;
     host.querySelector('[data-source-visual-host]')?.append(visualRoot);visual.sync();
+    host.querySelector('[data-source-style-host]')?.append(styleRoot);style.sync();
     host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p,{workspaceId:getGuards().workspace_id??'wsp_native_local'}));
     host.querySelector('[data-broll-review-host]').append(reviewRoot);
     host.append(sceneRoot);
@@ -199,7 +209,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   });
   host.addEventListener('submit',event=>{
     if(!event.target.matches('[data-source-reframe-form]'))return;event.preventDefault();
-    if(dirtyForm==='trim'||dirtyForm==='visual'){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi đổi đường crop.',true);return;}
+    if(dirtyForm&&dirtyForm!=='reframe'){onMessage('Lưu hoặc bỏ chỉnh sửa trước khi đổi đường crop.',true);return;}
     void run(async()=>{
       const points=[...host.querySelectorAll('[data-source-crop-point]')].map(row=>Object.fromEntries([...row.querySelectorAll('[data-crop-point]')].map(el=>[el.dataset.cropPoint,Number(el.value)/(el.dataset.cropPoint==='time'?1:100)])));
       await send(sourceReframeRequest(getProject(),{aspect_ratio:host.querySelector('[data-source-reframe-ratio]').value,mode:host.querySelector('[data-source-reframe-mode]').value,points}));
@@ -208,13 +218,13 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   host.addEventListener('click',event=>{
     const add=event.target.closest('[data-source-crop-add]'),remove=event.target.closest('[data-source-crop-remove]'),discard=event.target.closest('[data-source-reframe-discard]');
     if(!add&&!remove&&!discard)return;
-    if(blocked()||dirtyForm==='trim'||dirtyForm==='visual'){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi đổi đường crop.',true);return;}
+    if(blocked()||dirtyForm&&dirtyForm!=='reframe'){onMessage('Lưu hoặc bỏ chỉnh sửa trước khi đổi đường crop.',true);return;}
     if(discard){dirty=false;dirtyForm=null;onDirty(false);renderSelected(true);return;}
     if(add){const rows=[...host.querySelectorAll('[data-source-crop-point]')],count=rows.length;if(count>=200)return;const latest=Math.max(0,...rows.map(row=>Number(row.querySelector('[data-crop-point="time"]').value)));add.insertAdjacentHTML('beforebegin',pointMarkup({time:Math.min(Number(add.closest('[data-source-reframe-form]').dataset.sourceDurationLimit),latest+.25),x:.5,y:.5,zoom:1},count,Number(add.closest('[data-source-reframe-form]').dataset.sourceDurationLimit)));}
     else remove.closest('[data-source-crop-point]').remove();
     dirty=true;dirtyForm='reframe';onDirty(true);controls();
   });
-  host.addEventListener('submit',event=>{if(!event.target.matches('[data-source-form]'))return;event.preventDefault();if(dirtyForm==='reframe'||dirtyForm==='visual'){onMessage('Lưu hoặc bỏ chỉnh sửa crop trước khi sửa điểm cắt.',true);return;}void run(async()=>{
+  host.addEventListener('submit',event=>{if(!event.target.matches('[data-source-form]'))return;event.preventDefault();if(dirtyForm&&dirtyForm!=='trim'){onMessage('Lưu hoặc bỏ chỉnh sửa trước khi sửa điểm cắt.',true);return;}void run(async()=>{
     const p=getProject(),clip=selected().clip;
     await send(sourceClipAction(p,clip.clip_id,'trim',clip.kind==='image'?{duration:Number(host.querySelector('[data-source-duration]').value)}:{source_start:Number(host.querySelector('[data-source-start]').value),source_end:Number(host.querySelector('[data-source-end]').value)}));
   },{allowDirty:true});});
@@ -233,7 +243,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
       dirty=false;dirtyForm=null;onDirty(false);shownKey=null;historyKey=null;onProject(value,true);
       onMessage(body.action==='apply'?'Đã đặt B-roll vào bản dựng mới. Tạo preview và kiểm tra crop, âm thanh, điểm cắt.':'Đã lưu kế hoạch/lựa chọn. Timeline chỉ đổi sau khi đặt B-roll.');renderSelected(true);
     });return;}
-    const discard=event.target.closest('[data-source-discard]');if(discard){if(working||visual.isWorking())return;visual.discardDraft();dirty=false;dirtyForm=null;onDirty(false);renderSelected(true);return;}
+    const discard=event.target.closest('[data-source-discard]');if(discard){if(working||visual.isWorking()||style.isWorking())return;visual.discardDraft();style.discardDraft();dirty=false;dirtyForm=null;onDirty(false);renderSelected(true);return;}
     const action=event.target.closest('[data-source-action]'),config=event.target.closest('[data-source-config]');
     if(!action&&!config)return;
     void run(async()=>{
@@ -280,7 +290,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
         (getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
   for(const player of getPlayers())player.addEventListener('timeupdate',()=>{if(!isSourceProject(getProject())||player.hidden)return;playhead=player.currentTime;toolbar.querySelector('[data-source-position]').value=`${num(playhead)}s`;});
   void api('/api/auto-edit/subtitle-templates').then(value=>{catalog=value;shownKey=null;if(isSourceProject(getProject())&&!dirty)renderSelected(true);}).catch(error=>onMessage(error.message,true));
-  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,dragDrop,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking(),
+  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,clipStyle:style,dragDrop,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking(),
     readyForApproval:()=>isSourceProject(getProject())&&getPreview()?.status==='READY'&&getPreview()?.timeline_sha256===state().sha256,
     render:()=>renderSelected()};
 }

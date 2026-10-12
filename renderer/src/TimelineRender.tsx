@@ -46,11 +46,11 @@ export const assertSubtitleFits = (fullHeight: number, lineHeight: number, paddi
 
 const VisualLayer: React.FC<{
   clip: TimelineRenderManifest["visual_clips"][number];
-}> = ({clip}) => {
-  const {fps} = useVideoConfig();
+  previous?: TimelineRenderManifest["visual_clips"][number];
+}> = ({clip, previous}) => {
+  const {fps, width} = useVideoConfig();
   const frame = useCurrentFrame();
-  const fade = ["fade","crossfade"].includes(clip.transition_in?.kind ?? "") && (clip.transition_in?.duration_seconds ?? 0) > 0
-    ? interpolate(frame, [0, Math.max(1, Math.round(fps*(clip.transition_in?.duration_seconds ?? 0)))], [0,1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
+  const transition = visualTransitionStyle(clip, frame, fps, previous);
   const playbackRate = clip.type === "video" && clip.source_end !== null
     ? Math.max(0.05, (clip.source_end - clip.source_start) / clip.duration) : 1;
   const crop=sourceCropAt(clip,frame/fps);
@@ -63,10 +63,12 @@ const VisualLayer: React.FC<{
     objectFit: clip.fit,
     transform: `translate(${clip.transform.x * 100}%, ${clip.transform.y * 100}%) scale(${clip.transform.scale}) rotate(${clip.transform.rotation_degrees}deg)`,
     transformOrigin: "center",
-    opacity: clip.opacity * fade,
+    opacity: clip.opacity * transition.opacity,
   };
   return (
-    <AbsoluteFill style={{overflow: "hidden",...(clip.viewport?{left:`${clip.viewport.x*100}%`,top:`${clip.viewport.y*100}%`,width:`${clip.viewport.width*100}%`,height:`${clip.viewport.height*100}%`}: {})}}>
+    <AbsoluteFill style={{overflow: "hidden",filter:visualEffectCss(clip.effects,width*(clip.viewport?.width??1)),
+      ...(transition.slideXPercent?{transform:`translateX(${transition.slideXPercent}%)`}:{}),
+      ...(clip.viewport?{left:`${clip.viewport.x*100}%`,top:`${clip.viewport.y*100}%`,width:`${clip.viewport.width*100}%`,height:`${clip.viewport.height*100}%`}: {})}}>
       {clip.type === "video" ? (
         <OffthreadVideo
           src={clip.uri}
@@ -195,9 +197,10 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
           <Sequence
             key={clip.clip_id}
             from={Math.round(clip.timeline_start * fps)}
-            durationInFrames={Math.max(1, Math.round((clip.duration + crossfadeTail(clip, clips[index+1])) * fps))}
+            durationInFrames={Math.max(1, Math.round((clip.duration + crossfadeTail(clip, clips.find(next=>next.track_order===clip.track_order&&Math.abs(next.timeline_start-clip.timeline_start-clip.duration)<.001))) * fps))}
           >
-            <HeldVisual clip={clip} hold={crossfadeTail(clip, clips[index+1]) > 0} />
+            <HeldVisual clip={clip} previous={clips.find(previous=>previous.track_order===clip.track_order&&Math.abs(clip.timeline_start-previous.timeline_start-previous.duration)<.001)}
+              hold={crossfadeTail(clip, clips.find(next=>next.track_order===clip.track_order&&Math.abs(next.timeline_start-clip.timeline_start-clip.duration)<.001)) > 0} />
           </Sequence>
         ))}
 
@@ -227,17 +230,43 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
   );
 };
 
-const HeldVisual: React.FC<{clip: TimelineRenderManifest["visual_clips"][number]; hold:boolean}> = ({clip,hold}) => {
+const HeldVisual: React.FC<{clip: TimelineRenderManifest["visual_clips"][number]; previous?: TimelineRenderManifest["visual_clips"][number]; hold:boolean}> = ({clip,previous,hold}) => {
   const frame=useCurrentFrame(); const {fps}=useVideoConfig();
   const end=Math.max(1,Math.round(clip.duration*fps));
   // Do not read extra source-video frames beyond the validated source window.
-  return hold && frame>=end ? <Freeze frame={end-1}><VisualLayer clip={clip}/></Freeze> : <VisualLayer clip={clip}/>;
+  return hold && frame>=end ? <Freeze frame={end-1}><VisualLayer clip={clip} previous={previous}/></Freeze> : <VisualLayer clip={clip} previous={previous}/>;
 };
 
 export const crossfadeTail = (clip: TimelineRenderManifest["visual_clips"][number], next?: TimelineRenderManifest["visual_clips"][number]): number => {
   // Keep only contiguous same-track predecessor visible under the incoming
   // crossfade. Explicit historical fade still means fade-through-background.
-  if (!next || next.track_order !== clip.track_order || next.transition_in?.kind !== "crossfade"
+  if (!next || next.track_order !== clip.track_order || incomingVisualTransition(next,clip)?.kind !== "crossfade"
       || Math.abs(next.timeline_start-clip.timeline_start-clip.duration)>0.001) return 0;
-  return Math.min(next.duration, next.transition_in.duration_seconds);
+  return Math.min(next.duration, incomingVisualTransition(next,clip)?.duration_seconds??0);
+};
+
+type VisualClip = TimelineRenderManifest['visual_clips'][number];
+export const incomingVisualTransition = (clip:VisualClip, previous?:VisualClip):VisualClip['transition_in'] => {
+  if (previous?.transition_out?.kind==='crossfade' && previous.track_order===clip.track_order
+      && Math.abs(clip.timeline_start-previous.timeline_start-previous.duration)<.001
+      && (!clip.transition_in || ['none','cut'].includes(clip.transition_in.kind))) return previous.transition_out;
+  return clip.transition_in;
+};
+export const visualTransitionStyle = (clip:VisualClip,frame:number,fps:number,previous?:VisualClip):{opacity:number;slideXPercent:number} => {
+  const incoming=incomingVisualTransition(clip,previous),outgoing=clip.transition_out;
+  const progress=(value:number)=>Math.max(0,Math.min(1,value));
+  const inFrames=Math.max(1,Math.round((incoming?.duration_seconds??0)*fps));
+  const outFrames=Math.max(1,Math.round((outgoing?.duration_seconds??0)*fps));
+  const end=Math.max(1,Math.round(clip.duration*fps));
+  const entry=incoming?.duration_seconds?progress(frame/inFrames):1;
+  const exit=outgoing?.duration_seconds?progress((frame-(end-outFrames))/Math.max(1,outFrames-1)):0;
+  const fadeIn=['fade','crossfade','dissolve'].includes(incoming?.kind??'')?entry:1;
+  const fadeOut=['fade','dissolve'].includes(outgoing?.kind??'')?1-exit:1;
+  return {opacity:fadeIn*fadeOut,slideXPercent:(incoming?.kind==='slide'?(1-entry)*100:0)-(outgoing?.kind==='slide'?exit*100:0)};
+};
+export const visualEffectCss = (effects:VisualClip['effects'],width:number):string|undefined => {
+  if (!effects?.length) return undefined;
+  return effects.map(effect=>effect.type==='hue_rotate'?`hue-rotate(${effect.value}deg)`:
+    effect.type==='blur'?`blur(${effect.value*width}px)`:
+    `${effect.type==='saturation'?'saturate':effect.type}(${effect.value})`).join(' ');
 };

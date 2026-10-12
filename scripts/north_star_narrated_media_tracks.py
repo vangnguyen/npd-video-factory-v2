@@ -28,7 +28,8 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');parser.add_argument('--sfx',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');parser.add_argument('--sfx',action='store_true');parser.add_argument('--clip-style',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    if args.clip_style and not args.video_timeline:parser.error('--clip-style uses the canonical video fixture')
     if args.sfx and (args.timeline_editor or args.source_video_captions or args.video_timeline or args.visual_properties):parser.error('--sfx uses a separate component fixture')
     if args.visual_properties and not args.video_timeline:parser.error('--visual-properties requires --video-timeline')
     if out.exists() or out==REPO or REPO in out.parents:raise ValueError('Fresh external evidence directory required')
@@ -91,6 +92,14 @@ def main():
             editor_controller=json.loads(edit_run.stdout)
             if len(editor_controller['requests'])!=9 or not editor_controller['undo_redo_exact_snapshot']:raise AssertionError('Canonical editor controller evidence incomplete')
             durable_json(out/'timeline-controller.json',editor_controller);durable_json(out/'timeline-editor.json',editor_view(case.store,current['id'],case.workspace))
+        style_controller=None
+        if args.clip_style:
+            durable_json(context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
+                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf,'clip_style_mode':'narrated'})
+            style_run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_clip_style_http_ui.mjs'),str(context)],capture_output=True,timeout=90)
+            if style_run.returncode:raise AssertionError(style_run.stderr.decode('utf-8',errors='replace')[:6000])
+            style_controller=json.loads(style_run.stdout);durable_json(out/'style-controller.json',style_controller)
+            durable_json(out/'timeline-editor.json',editor_view(case.store,current['id'],case.workspace))
         server.shutdown();server.server_close();thread.join();server=None
         current=case.store.get(current['id']);before=copy.deepcopy(current['document']);manager=PreviewManager(case.config,case.store)
         def diagnosed_preview(*values):
@@ -169,6 +178,7 @@ def main():
             'canonical_editor_history_exact_after_restore':args.timeline_editor or args.video_timeline,
             'canonical_video_render':args.video_timeline,'video_editing_controller':args.video_timeline,
             'actual_SFX_media_card':args.sfx,'sfx_controller_requests':len(sfx_controller['requests']) if sfx_controller else 0,
+            'actual_shared_clip_style_widget':args.clip_style,'style_controller_requests':len(style_controller['requests']) if style_controller else 0,
             'actual_shared_visual_properties_widget':args.visual_properties,
             'exports':{p.relative_to(out).as_posix():file_sha(p) for p in out.rglob('*') if p.is_file()}}
         durable_json(out/'evidence.json',receipt);print(json.dumps({k:v for k,v in receipt.items() if k not in {'exports','immutable_source_media'}},ensure_ascii=False))

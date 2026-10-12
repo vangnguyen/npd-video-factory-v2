@@ -374,6 +374,21 @@ def apply_operations(
                     raise TimelineEditError("duplicate target track is not editable or compatible")
             target["clips"].append(duplicate)
         elif operation.type == "set_clip_properties":
+            if any(value is not None for value in (operation.effects, operation.transition_in, operation.transition_out)):
+                clip['metadata']['clip_style_schema'] = 'clip-style-v1'
+            if operation.effects is not None:
+                if track['type'] != 'video':
+                    raise TimelineEditError('visual effects require a visual track')
+                clip['effects'] = [effect.model_dump(mode='json') for effect in operation.effects]
+            for direction in ('in', 'out'):
+                transition = getattr(operation, 'transition_' + direction)
+                if transition is None:
+                    continue
+                if track['type'] not in {'video', 'audio'} or track['type'] == 'audio' and transition.kind == 'slide':
+                    raise TimelineEditError('transition is incompatible with selected track')
+                if transition.duration_seconds > (operation.duration or clip['duration']) + .000001:
+                    raise TimelineEditError('transition duration exceeds clip duration')
+                clip['transition_' + direction] = transition.model_dump(mode='json')
             if operation.duration is not None:
                 if clip["kind"] != "image":
                     raise TimelineEditError("display duration edits require a still image")

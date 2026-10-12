@@ -141,7 +141,7 @@ const timelineSubtitleSchema = strictObject({
 });
 
 export const timelineRenderManifestSchema = strictObject({
-  version: z.enum(["2.0", "2.1", "2.2", "2.3"]),
+  version: z.enum(["2.0", "2.1", "2.2", "2.3", "2.4"]),
   metadata: strictObject({
     title: z.string().min(1),
     project: z.string().min(1),
@@ -174,7 +174,9 @@ export const timelineRenderManifestSchema = strictObject({
     source_start: z.number().nonnegative(),
     source_end: z.number().positive().nullable(),
     fit: z.enum(["cover", "contain"]),
-    transition_in: strictObject({kind:z.enum(["cut", "fade", "dissolve", "crossfade"]), duration_seconds:z.number().nonnegative().max(3)}).optional(),
+    transition_in: strictObject({kind:z.enum(["none", "cut", "fade", "dissolve", "crossfade", "slide"]), duration_seconds:z.number().nonnegative().max(5)}).optional(),
+    transition_out: strictObject({kind:z.enum(["none", "cut", "fade", "dissolve", "crossfade", "slide"]), duration_seconds:z.number().nonnegative().max(5)}).optional(),
+    effects: z.array(strictObject({type:z.enum(["brightness", "contrast", "saturation", "hue_rotate", "grayscale", "blur"]),value:z.number().finite()})).max(6).optional(),
     crop: timelineCropSchema,
     viewport: timelineCropSchema.optional(),
     crop_keyframes: z.array(strictObject({time:z.number().nonnegative(),x:z.number().min(0).max(1),y:z.number().min(0).max(1),width:z.number().positive().max(1),height:z.number().positive().max(1)})).min(1).max(2000).optional(),
@@ -205,14 +207,14 @@ export const timelineRenderManifestSchema = strictObject({
   }),
 }).superRefine((manifest, context) => {
   for (const [index,clip] of manifest.visual_clips.entries()) {
-    if (clip.viewport && (manifest.version!=='2.3' || clip.viewport.x+clip.viewport.width>1.000001 || clip.viewport.y+clip.viewport.height>1.000001)) {
+    if (clip.viewport && (!["2.3","2.4"].includes(manifest.version) || clip.viewport.x+clip.viewport.width>1.000001 || clip.viewport.y+clip.viewport.height>1.000001)) {
       context.addIssue({code:z.ZodIssueCode.custom,path:['visual_clips',index,'viewport'],message:'bounded visual viewport requires v2.3'});
     }
   }
-  if(manifest.version!=='2.3'&&(manifest.metadata.duration_seconds>180||manifest.metadata.language!=='vi'||manifest.subtitles.length===0)) {
+  if(!["2.3","2.4"].includes(manifest.version)&&(manifest.metadata.duration_seconds>180||manifest.metadata.language!=='vi'||manifest.subtitles.length===0)) {
     context.addIssue({code:z.ZodIssueCode.custom,path:['metadata'],message:'source duration/language/optional captions require v2.3'});
   }
-  if (manifest.version !== '2.3' && (['word_by_word','karaoke','keyword_highlight'].includes(manifest.subtitle_style.animation)
+  if (!["2.3","2.4"].includes(manifest.version) && (['word_by_word','karaoke','keyword_highlight'].includes(manifest.subtitle_style.animation)
       || manifest.subtitle_style.template_ref !== undefined || manifest.subtitle_style.keywords !== undefined)) {
     context.addIssue({code:z.ZodIssueCode.custom,path:['subtitle_style'],message:'extended subtitles require v2.3'});
   }
@@ -236,14 +238,43 @@ export const timelineRenderManifestSchema = strictObject({
       message: "unsupported render profile dimensions",
     });
   }
-  if (!["2.2","2.3"].includes(manifest.version) && ![[540,960],[1080,1920],[1920,1080],[1080,1080]].some(
+  if (!["2.2","2.3","2.4"].includes(manifest.version) && ![[540,960],[1080,1920],[1920,1080],[1080,1080]].some(
     ([width,height])=>width===manifest.metadata.width && height===manifest.metadata.height)) {
     context.addIssue({code:z.ZodIssueCode.custom,path:["metadata"],message:"additional aspect profiles require v2.2"});
   }
   for (let index = 0; index < manifest.visual_clips.length; index += 1) {
     const clip = manifest.visual_clips[index];
+    if (manifest.version !== '2.4' && (clip.effects !== undefined || clip.transition_out !== undefined
+        || clip.transition_in && (['none','slide'].includes(clip.transition_in.kind) || clip.transition_in.duration_seconds > 3))) {
+      context.addIssue({code:z.ZodIssueCode.custom,path:['visual_clips',index],message:'effect/outgoing transition extension requires v2.4'});
+    }
+    if (manifest.version === '2.4') {
+      const ranges: Record<string, [number,number]> = {brightness:[0,2],contrast:[0,3],saturation:[0,3],hue_rotate:[-180,180],grayscale:[0,1],blur:[0,.025]};
+      const seen = new Set<string>();
+      for (const [effectIndex,effect] of (clip.effects??[]).entries()) {
+        const [low,high] = ranges[effect.type];
+        if (seen.has(effect.type) || effect.value < low || effect.value > high) {
+          context.addIssue({code:z.ZodIssueCode.custom,path:['visual_clips',index,'effects',effectIndex],message:'effect outside approved unique catalog bounds'});
+        }
+        seen.add(effect.type);
+      }
+      for (const name of ['transition_in','transition_out'] as const) {
+        if (clip[name] && clip[name]!.duration_seconds > clip.duration + .000001) {
+          context.addIssue({code:z.ZodIssueCode.custom,path:['visual_clips',index,name],message:'transition exceeds clip duration'});
+        }
+      }
+      if (clip.transition_out?.kind==='crossfade') {
+        const next=manifest.visual_clips.filter(next=>next.clip_id!==clip.clip_id&&next.track_order===clip.track_order
+          && Math.abs(next.timeline_start-clip.timeline_start-clip.duration)<.001);
+        if(next.length!==1||clip.transition_out.duration_seconds>next[0].duration+.000001||next[0].transition_in
+          && !['none','cut'].includes(next[0].transition_in.kind)
+          && (next[0].transition_in.kind!=='crossfade'||Math.abs(next[0].transition_in.duration_seconds-clip.transition_out.duration_seconds)>.000001)) {
+          context.addIssue({code:z.ZodIssueCode.custom,path:['visual_clips',index,'transition_out'],message:'outgoing crossfade requires one contiguous compatible next clip'});
+        }
+      }
+    }
     if (clip.crop_keyframes !== undefined) {
-      if (!["2.2","2.3"].includes(manifest.version)) context.addIssue({code:z.ZodIssueCode.custom,path:["visual_clips",index,"crop_keyframes"],message:"crop paths require v2.2"});
+      if (!["2.2","2.3","2.4"].includes(manifest.version)) context.addIssue({code:z.ZodIssueCode.custom,path:["visual_clips",index,"crop_keyframes"],message:"crop paths require v2.2"});
       let previous=-1;
       for (const keyframe of clip.crop_keyframes) {
         if (keyframe.time<=previous || keyframe.x+keyframe.width>1.000001 || keyframe.y+keyframe.height>1.000001) {

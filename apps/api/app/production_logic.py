@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from .production_models import MixConfig, SubtitleCue, SubtitleStyle, SubtitleVersionRead
-from .timeline_models import TimelineSnapshot
+from .timeline_models import TimelineSnapshot, VisualEffect
 from .subtitle_templates import extended_subtitle_style, render_subtitle_style, EXTENDED_MODES
 
 
@@ -228,6 +228,16 @@ def validate_timeline_renderability(
     }
 
 
+def render_visual_effects(effects):
+    try:
+        values = [VisualEffect.model_validate(effect) for effect in effects]
+        if len(values) > 6 or len({effect.type for effect in values}) != len(values):
+            raise ValueError('duplicate or excessive effect types')
+        return [effect.model_dump(mode='json') for effect in values]
+    except (ValueError, TypeError):
+        raise ProductionContractError('UNSUPPORTED_VISUAL_EFFECT: use the approved effect catalog') from None
+
+
 def build_timeline_render_manifest(
     *,
     snapshot: TimelineSnapshot,
@@ -251,7 +261,9 @@ def build_timeline_render_manifest(
     extended_reframe = profile in {'portrait-1080x1350','review-960x540','review-540x540','review-432x540'} or any(
         clip.metadata.get('reframe') for track in snapshot.tracks for clip in track.clips
         if track.type == 'video' and not track.disabled and not clip.disabled)
-    version = "2.3" if (extended_subtitle_style(subtitles.style) or language == 'en'
+    styled = any(c.effects or c.metadata.get('clip_style_schema') == 'clip-style-v1'
+                 for t in snapshot.tracks if t.type == 'video' for c in t.clips if not t.disabled and not c.disabled)
+    version = "2.4" if styled else "2.3" if (extended_subtitle_style(subtitles.style) or language == 'en'
         or not subtitles.cues or snapshot.duration_seconds > 180) else ("2.2" if extended_reframe else ("2.1" if snapshot.schema_version == "1.1" else "2.0"))
     visual_clips: list[dict[str, Any]] = []
     for track in sorted(snapshot.tracks, key=lambda item: item.order):
@@ -278,6 +290,9 @@ def build_timeline_render_manifest(
                     "transform": clip.transform.model_dump(mode="json"),
                     "opacity": clip.opacity,
                     **({"transition_in": clip.transition_in.model_dump(mode="json")} if snapshot.schema_version == "1.1" else {}),
+                    **({"transition_in": clip.transition_in.model_dump(mode='json'),
+                        "transition_out": clip.transition_out.model_dump(mode='json'),
+                        "effects": render_visual_effects(clip.effects)} if version == '2.4' else {}),
                 }
             )
     return {
@@ -333,14 +348,30 @@ class TimelineRenderContractValidator:
 
     def validate(self, manifest: dict[str, Any]) -> None:
         style = manifest.get('subtitle_style', {})
-        if manifest.get('version') != '2.3' and (style.get('animation') in EXTENDED_MODES or 'template_ref' in style or 'keywords' in style):
+        if manifest.get('version') not in {'2.3', '2.4'} and (style.get('animation') in EXTENDED_MODES or 'template_ref' in style or 'keywords' in style):
             raise ProductionContractError('extended subtitles require render contract v2.3')
         if style.get('animation') in {'word_by_word', 'karaoke'} and any(not cue.get('words') for cue in manifest.get('subtitles', [])):
             raise ProductionContractError('WORD_ALIGNMENT_UNAVAILABLE: timed effects require measured words')
         for clip in manifest["visual_clips"]:
+            if manifest.get('version') == '2.4':
+                render_visual_effects(clip.get('effects', []))
+                if any(clip.get(name, {}).get('duration_seconds', 0) > clip['duration'] + .000001
+                       for name in ('transition_in', 'transition_out')):
+                    raise ProductionContractError('transition exceeds clip duration')
+                outgoing = clip.get('transition_out', {})
+                if outgoing.get('kind') == 'crossfade':
+                    following = [c for c in manifest['visual_clips'] if c['clip_id'] != clip['clip_id']
+                                 and c['track_order'] == clip['track_order']
+                                 and abs(c['timeline_start'] - clip['timeline_start'] - clip['duration']) < .001]
+                    if len(following) != 1 or outgoing['duration_seconds'] > following[0]['duration'] + .000001:
+                        raise ProductionContractError('outgoing crossfade requires one contiguous next clip')
+                    incoming = following[0].get('transition_in', {'kind': 'cut', 'duration_seconds': 0})
+                    if incoming['kind'] not in {'none', 'cut'} and (incoming['kind'] != 'crossfade'
+                            or abs(incoming['duration_seconds'] - outgoing['duration_seconds']) > .000001):
+                        raise ProductionContractError('crossfade pair has conflicting incoming transition')
             if 'viewport' in clip:
                 viewport=clip['viewport']
-                if (manifest['version']!='2.3' or not isinstance(viewport,dict) or set(viewport)!={'x','y','width','height'} or
+                if (manifest['version'] not in {'2.3', '2.4'} or not isinstance(viewport,dict) or set(viewport)!={'x','y','width','height'} or
                     any(type(v) not in (int,float) or not math.isfinite(v) for v in viewport.values()) or
                     viewport['x']+viewport['width']>1.000001 or viewport['y']+viewport['height']>1.000001):
                     raise ProductionContractError('bounded visual viewport requires render contract v2.3')
@@ -351,7 +382,7 @@ class TimelineRenderContractValidator:
             if manifest["version"] != "2.0" and clip["type"] == "image" and (clip["source_end"] is not None or clip["source_start"] != 0):
                 raise ProductionContractError("still image render must not fabricate a source duration")
             if "crop_keyframes" in clip:
-                if manifest["version"] not in {"2.2", "2.3"}:
+                if manifest["version"] not in {"2.2", "2.3", "2.4"}:
                     raise ProductionContractError("crop paths require render contract v2.2")
                 previous = -1.0
                 for point in clip["crop_keyframes"]:
@@ -363,7 +394,7 @@ class TimelineRenderContractValidator:
             first = errors[0]
             location = ".".join(str(item) for item in first.path) or "$"
             raise ProductionContractError(f"timeline render manifest invalid at {location}: {first.message}")
-        if manifest['version'] == '2.3':
+        if manifest['version'] in {'2.3', '2.4'}:
             validate_subtitles([SubtitleCue.model_validate(cue) for cue in manifest['subtitles']],
                 SubtitleStyle.model_validate(manifest['subtitle_style']),manifest['metadata']['duration_seconds'])
 

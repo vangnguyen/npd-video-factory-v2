@@ -20,10 +20,40 @@ vi.mock("remotion", async () => {
   };
 });
 
-import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits, crossfadeTail} from "./TimelineRender";
+import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits, crossfadeTail, visualTransitionStyle, visualEffectCss, incomingVisualTransition} from "./TimelineRender";
 import {makeTimelineManifest} from "./test-fixtures";
 
 describe("timeline-render-v1 composition", () => {
+  it('applies fade-out within saved duration and preserves the incoming envelope',()=>{
+    const clip={...makeTimelineManifest('data:image/png;base64,AA==').visual_clips[0],duration:2,
+      transition_in:{kind:'fade' as const,duration_seconds:.5},transition_out:{kind:'fade' as const,duration_seconds:.5}};
+    expect(visualTransitionStyle(clip,0,30).opacity).toBe(0);
+    expect(visualTransitionStyle(clip,30,30).opacity).toBe(1);
+    expect(visualTransitionStyle(clip,59,30).opacity).toBe(0);
+  });
+  it('incoming/outgoing slide positions affect the clip viewport without changing its source window',()=>{
+    const clip={...makeTimelineManifest('data:image/png;base64,AA==').visual_clips[0],duration:2,
+      transition_in:{kind:'slide' as const,duration_seconds:.5},transition_out:{kind:'slide' as const,duration_seconds:.5}};
+    expect(visualTransitionStyle(clip,0,30)).toEqual({opacity:1,slideXPercent:100});
+    expect(visualTransitionStyle(clip,30,30)).toEqual({opacity:1,slideXPercent:0});
+    expect(visualTransitionStyle(clip,59,30)).toEqual({opacity:1,slideXPercent:-100});
+  });
+  it('outgoing crossfade derives a contiguous incoming blend and holds only the last allowed source frame',()=>{
+    const clip={...makeTimelineManifest('data:image/png;base64,AA==').visual_clips[0],duration:2,
+      transition_out:{kind:'crossfade' as const,duration_seconds:.5}};
+    const next={...clip,clip_id:'clip_next_visual',timeline_start:clip.timeline_start+2,transition_out:undefined};
+    expect(incomingVisualTransition(next,clip)).toEqual(clip.transition_out);
+    expect(crossfadeTail(clip,next)).toBe(.5);
+    expect(visualTransitionStyle(next,0,30,clip).opacity).toBe(0);
+    expect(visualTransitionStyle(next,15,30,clip).opacity).toBe(1);
+    expect(crossfadeTail(clip,{...next,track_order:clip.track_order+1})).toBe(0);
+  });
+  it('approved filter chain retains order and scales blur with its rendered viewport',()=>{
+    const effects=[{type:'brightness' as const,value:.8},{type:'hue_rotate' as const,value:-30},{type:'saturation' as const,value:.5},{type:'blur' as const,value:.01}];
+    expect(visualEffectCss(effects,1080)).toBe('brightness(0.8) hue-rotate(-30deg) saturate(0.5) blur(10.8px)');
+    expect(visualEffectCss([{type:'blur',value:.01}],540)).toBe('blur(5.4px)');
+    expect(visualEffectCss([],1080)).toBeUndefined();
+  });
   it("retains the predecessor only for explicit contiguous crossfade, not dark fade", () => {
     const clip=makeTimelineManifest("data:image/png;base64,AA==").visual_clips[0];
     const next={...clip,timeline_start:clip.timeline_start+clip.duration,transition_in:{kind:"crossfade" as const,duration_seconds:0.25}};

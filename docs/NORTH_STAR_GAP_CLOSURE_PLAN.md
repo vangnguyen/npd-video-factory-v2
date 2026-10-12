@@ -378,3 +378,7 @@ Shared Source/narrated audio card explicitly imports SFX with bounded window/gai
 NATIVE_MEDIA_SFX.md and north-star/media-sfx-evidence.json index Studio720/Native49/Static3/API23 PASS,7 Linux media skips,16 signed controller requests, actual render/FullQC and two cold recoveries. Fake DOM/synthetic audio does not certify genuine speech/provider/browser/Owner acceptance. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED stays59 unclosed groups.
 
 NEXT WAVE: Native visual effects/post-import transition/fade editing/render parity, Meta analytics and every original safe ModeA/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C requirement. No main merge/real publishing/deployment; listening/UAT stays deferred.
+
+## Native clip-style component
+
+Six bounded effects and post-import transition/fade decisions now use the same canonical Source/narrated timeline, shared inspector, CAS/history and render contract2.4. Two actual local preview/final/FullQC bundles, independent brightness/saturation/slide/fade pixels and cold recoveries pass. Other effects/visual crossfade have contract/unit/persistence evidence; decoded-media and complete renderer parity remain. Fixture DOM/signed HTTP do not replace browser/non-developer/Owner acceptance. Native49 includes Static3; Studio728,Renderer46,API17 pass. Full original Waves3/6/16 and all remaining Master Spec requirements remain open; matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED. Listening/UAT remains deferred. See NATIVE_CLIP_STYLE.md and north-star/clip-style-evidence.json.

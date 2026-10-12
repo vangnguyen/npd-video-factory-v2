@@ -47,6 +47,7 @@ def main():
     parser.add_argument('--visual-properties', action='store_true')
     parser.add_argument('--source-drag-drop', action='store_true')
     parser.add_argument('--sfx', action='store_true')
+    parser.add_argument('--clip-style', action='store_true')
     args = parser.parse_args()
     if args.sfx and (args.visual_properties or args.source_caption_retiming or args.source_drag_drop):
         parser.error('--sfx uses a separate component fixture')
@@ -114,6 +115,13 @@ def main():
         if args.sfx:
             from north_star_sfx_fixture import run_sfx_controller
             original,sfx_controller=run_sfx_controller(case,server,cookie,session.csrf,context,out,original)
+        style_controller = None
+        if args.clip_style:
+            current=case.store.get(current['id'])
+            durable_json(context,{**context_body,'project':current,'clip_style_mode':'source'})
+            style_run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_clip_style_http_ui.mjs'),str(context)],capture_output=True,timeout=90)
+            if style_run.returncode:raise AssertionError(style_run.stderr.decode('utf-8',errors='replace')[:6000])
+            style_controller=json.loads(style_run.stdout);durable_json(out/'style-controller.json',style_controller)
         server.shutdown()
         server.server_close()
         thread.join()
@@ -133,6 +141,10 @@ def main():
                 break
             time.sleep(.1)
         if preview['status'] != 'READY':
+            durable_json(out/'failed-preview.json',preview)
+            for diagnostic in case.root.rglob('*.log'):
+                target=out/'failed-preview-logs'/diagnostic.relative_to(case.root)
+                target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(diagnostic,target)
             raise AssertionError(preview.get('error') or preview['status'])
         current = case.store.approve(current['id'], current['revision'],
             'AUTOMATED SYNTHETIC MOCK REVIEW — NOT OWNER UAT', True)
@@ -213,7 +225,7 @@ def main():
         manager.close()
         manager = None
         source_page = catalog(case.store, current['id'], case.workspace)
-        if args.source_caption_retiming or args.visual_properties or args.sfx:
+        if args.source_caption_retiming or args.visual_properties or args.sfx or args.clip_style:
             from services.windows_native.auto_edit_timeline import view
             durable_json(out/'timeline-editor.json',view(case.store,current['id']))
             with case.store.transaction() as con:
@@ -259,6 +271,8 @@ def main():
             'drag_controller_requests': len(drag_controller['requests']) if drag_controller else 0,
             'actual_SFX_media_card': args.sfx,
             'sfx_controller_requests': len(sfx_controller['requests']) if sfx_controller else 0,
+            'actual_shared_clip_style_widget': args.clip_style,
+            'style_controller_requests': len(style_controller['requests']) if style_controller else 0,
             'whole_source_editor_DOM_exercised': False,
             'exports': {str(path.relative_to(out)).replace('\\', '/'): file_sha(path)
                 for path in out.rglob('*') if path.is_file()}}

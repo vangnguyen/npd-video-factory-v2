@@ -79,7 +79,8 @@ def render(config,document,directory,frames,geometry,brand):
     profile={(1080,1920):'vertical-1080x1920',(1920,1080):'landscape-1920x1080',(1080,1080):'square-1080x1080',(1080,1350):'portrait-1080x1350'}[(snapshot.width,snapshot.height)]
     manifest=build_timeline_render_manifest(snapshot=visual,subtitles=subtitles,mix_config=MixConfig(),mixed_audio_path=mix,asset_paths=assets,
         profile=profile,project_name=document['name'],project_slug=snapshot.metadata['native_project_id'],niche=document.get('niche','custom'),brand_name=brand.name)
-    manifest['version']='2.3';viewport={'x':0,'y':geometry['media_top']/snapshot.height,'width':1,'height':geometry['plane_height']/snapshot.height}
+    if manifest['version']!='2.4':manifest['version']='2.3'
+    viewport={'x':0,'y':geometry['media_top']/snapshot.height,'width':1,'height':geometry['plane_height']/snapshot.height}
     for clip in manifest['visual_clips']:
         clip['viewport']=viewport
         original=next(c for c in primary.clips if c.clip_id==clip['clip_id'])
@@ -128,6 +129,7 @@ def validate_bundle(config,document,directory):
     geometry=layout(profile['id'],snapshot.width,snapshot.height,profile['aspect_ratio'],brand,editable=bool(document.get('edit_plan')))
     viewport={'x':0,'y':geometry['media_top']/snapshot.height,'width':1,'height':geometry['plane_height']/snapshot.height}
     registered={a['id']:a for a in canonical_assets(document)};expected=[];sources={}
+    styled=any(c.effects or c.metadata.get('clip_style_schema')=='clip-style-v1' for c in primary.clips if not primary.disabled and not c.disabled)
     for clip in sorted(primary.clips,key=lambda c:(c.timeline_start,c.clip_id)):
         if primary.disabled or clip.disabled or clip.opacity<=0:continue
         asset=registered[clip.metadata['native_asset_id']];sources[asset['id']]=asset['sha256']
@@ -136,6 +138,9 @@ def validate_bundle(config,document,directory):
             'fit':clip.metadata['fit'],'crop':clip.crop.model_dump(mode='json'),'transform':clip.transform.model_dump(mode='json'),
             'opacity':clip.opacity,'viewport':viewport}
         if snapshot.schema_version=='1.1':item['transition_in']=clip.transition_in.model_dump(mode='json')
+        if styled:
+            from app.production_logic import render_visual_effects
+            item.update(transition_in=clip.transition_in.model_dump(mode='json'),transition_out=clip.transition_out.model_dump(mode='json'),effects=render_visual_effects(clip.effects))
         if clip.metadata.get('reframe'):item['crop_keyframes']=clip.metadata['reframe']['keyframes']
         motion_keyframes(item,clip);expected.append(item)
     cursor=0.;headers={}
@@ -146,7 +151,7 @@ def validate_bundle(config,document,directory):
             'source_start':0,'source_end':None,'fit':'contain','crop':{'x':0,'y':0,'width':1,'height':1},
             'transform':{'x':0,'y':0,'scale':1,'rotation_degrees':0},'opacity':1})
     manifest=data['manifest'];actual=[{k:v for k,v in c.items() if k!='uri'} for c in manifest.get('visual_clips',[])]
-    if (manifest.get('version')!='2.3' or actual!=expected or data.get('source_sha256')!=sources or data.get('header_sha256')!=headers or
+    if (manifest.get('version')!=('2.4' if styled else '2.3') or actual!=expected or data.get('source_sha256')!=sources or data.get('header_sha256')!=headers or
         manifest.get('safety')!={'human_approval_required':True,'publishing_allowed':False,'external_publish_requested':False,'source_media_mutated':False} or
         any(manifest.get('metadata',{}).get(k)!=v for k,v in {'width':snapshot.width,'height':snapshot.height,'fps':round(snapshot.fps),'duration_seconds':snapshot.duration_seconds}.items())):
         raise WorkflowError('NARRATED_VIDEO_CANONICAL_RENDER_CHANGED')

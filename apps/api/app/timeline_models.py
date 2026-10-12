@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime
+import math
 from typing import Any, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from .models import StrictModel
 
@@ -71,6 +72,47 @@ class TransformSpec(StrictModel):
 class TransitionSpec(StrictModel):
     kind: Literal["none", "cut", "fade", "crossfade", "slide"] = "cut"
     duration_seconds: float = Field(default=0, ge=0, le=5)
+
+
+class EditableTransition(TransitionSpec):
+    @field_validator('duration_seconds', mode='before')
+    @classmethod
+    def finite_duration(cls, value):
+        if type(value) not in (int, float) or not math.isfinite(value):
+            raise ValueError('finite transition duration required')
+        return value
+
+    @model_validator(mode='after')
+    def meaningful_duration(self):
+        if (self.kind in {'none', 'cut'} and self.duration_seconds != 0
+                or self.kind not in {'none', 'cut'} and self.duration_seconds <= 0):
+            raise ValueError('cut/none use zero duration; animated transitions require positive duration')
+        return self
+
+
+VISUAL_EFFECT_BOUNDS = {
+    'brightness': (0., 2.), 'contrast': (0., 3.), 'saturation': (0., 3.),
+    'hue_rotate': (-180., 180.), 'grayscale': (0., 1.), 'blur': (0., .025),
+}
+
+
+class VisualEffect(StrictModel):
+    type: Literal['brightness', 'contrast', 'saturation', 'hue_rotate', 'grayscale', 'blur']
+    value: float
+
+    @field_validator('value', mode='before')
+    @classmethod
+    def finite_value(cls, value):
+        if type(value) not in (int, float) or not math.isfinite(value):
+            raise ValueError('finite visual effect value required')
+        return value
+
+    @model_validator(mode='after')
+    def bounded_value(self):
+        low, high = VISUAL_EFFECT_BOUNDS[self.type]
+        if not low <= self.value <= high:
+            raise ValueError('visual effect value outside supported range')
+        return self
 
 
 class TimelineClip(StrictModel):
@@ -156,6 +198,28 @@ class TimelineSnapshot(StrictModel):
         )
         if furthest_end > self.duration_seconds + 0.05:
             raise ValueError("timeline duration must cover every enabled clip")
+        for track in self.tracks:
+            for clip in track.clips:
+                if clip.metadata.get('clip_style_schema') != 'clip-style-v1':
+                    continue
+                if track.type not in {'audio', 'video'}:
+                    raise ValueError('clip styling requires audio or visual track')
+                if track.type == 'audio' and (clip.effects or any(t.kind == 'slide' for t in (clip.transition_in, clip.transition_out))):
+                    raise ValueError('visual effects and slide require visual track')
+                effects = [VisualEffect.model_validate(effect) for effect in clip.effects]
+                if len(effects) > 6 or len({effect.type for effect in effects}) != len(effects):
+                    raise ValueError('visual effect types must be unique')
+                if any(t.duration_seconds > clip.duration + .000001 for t in (clip.transition_in, clip.transition_out)):
+                    raise ValueError('transition duration exceeds clip duration; adjust before trim/split')
+                if track.type == 'video' and clip.transition_out.kind == 'crossfade' and not track.disabled and not clip.disabled:
+                    following = [c for c in track.clips if c.clip_id != clip.clip_id and not c.disabled
+                                 and abs(c.timeline_start - clip.timeline_start - clip.duration) < .001]
+                    if len(following) != 1 or clip.transition_out.duration_seconds > following[0].duration + .000001:
+                        raise ValueError('outgoing crossfade requires one contiguous next clip')
+                    incoming = following[0].transition_in
+                    if incoming.kind not in {'none', 'cut'} and (incoming.kind != 'crossfade'
+                            or abs(incoming.duration_seconds - clip.transition_out.duration_seconds) > .000001):
+                        raise ValueError('crossfade pair has conflicting incoming transition')
         return self
 
 
@@ -201,9 +265,16 @@ class TimelineOperation(StrictModel):
     speed: float | None = Field(default=None, gt=0, le=8)
     crop: CropSpec | None = None
     transform: TransformSpec | None = None
+    transition_in: EditableTransition | None = None
+    transition_out: EditableTransition | None = None
+    effects: list[VisualEffect] | None = Field(default=None, max_length=6)
 
     @model_validator(mode="after")
     def require_operation_arguments(self) -> "TimelineOperation":
+        if any(value is not None for value in (self.transition_in, self.transition_out, self.effects)) and self.type != 'set_clip_properties':
+            raise ValueError('effects and transitions require set_clip_properties')
+        if self.effects is not None and len({effect.type for effect in self.effects}) != len(self.effects):
+            raise ValueError('visual effect types must be unique')
         if self.duration is not None and self.type not in {"trim", "set_clip_properties"}:
             raise ValueError("display duration is only valid for trim or set_clip_properties")
         clip_operations = {
@@ -228,7 +299,8 @@ class TimelineOperation(StrictModel):
                 raise ValueError("set_track_state requires locked, muted or disabled")
         if self.type == "set_clip_properties" and all(
             value is None
-            for value in (self.opacity, self.volume, self.speed, self.crop, self.transform, self.duration)
+            for value in (self.opacity, self.volume, self.speed, self.crop, self.transform, self.duration,
+                          self.transition_in, self.transition_out, self.effects)
         ):
             raise ValueError("set_clip_properties requires at least one property")
         return self

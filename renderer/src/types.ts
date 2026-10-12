@@ -63,7 +63,7 @@ export type RendererInputProps = {
 };
 
 export type TimelineRenderManifest = {
-  version: "2.0" | "2.1" | "2.2" | "2.3";
+  version: "2.0" | "2.1" | "2.2" | "2.3" | "2.4";
   metadata: {
     title: string;
     project: string;
@@ -96,7 +96,9 @@ export type TimelineRenderManifest = {
     source_start: number;
     source_end: number | null;
     fit: "cover" | "contain";
-    transition_in?: {kind: "cut" | "fade" | "dissolve" | "crossfade"; duration_seconds: number};
+    transition_in?: {kind: "none" | "cut" | "fade" | "dissolve" | "crossfade" | "slide"; duration_seconds: number};
+    transition_out?: {kind: "none" | "cut" | "fade" | "dissolve" | "crossfade" | "slide"; duration_seconds: number};
+    effects?: Array<{type: "brightness" | "contrast" | "saturation" | "hue_rotate" | "grayscale" | "blur"; value: number}>;
     crop: {x: number; y: number; width: number; height: number};
     viewport?: {x: number; y: number; width: number; height: number};
     crop_keyframes?: Array<{time: number; x: number; y: number; width: number; height: number}>;

@@ -4,6 +4,23 @@ import {renderRequestSchema, timelineRenderManifestSchema, videoManifestSchema} 
 import {makeManifest, makeTimelineManifest} from "./test-fixtures";
 
 describe("renderer contracts", () => {
+  it('version2.4 admits only bounded approved effects and refuses a version downgrade',()=>{
+    const manifest=makeTimelineManifest('local.png','mix.wav');manifest.version='2.4';const clip=manifest.visual_clips[0];clip.source_end=null;
+    clip.effects=[{type:'brightness',value:.8},{type:'blur',value:.01}];clip.transition_out={kind:'fade',duration_seconds:.25};
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(true);
+    manifest.version='2.3';expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);manifest.version='2.4';
+    clip.effects[1].value=.1;expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);clip.effects[1].value=.01;
+    clip.effects.push({type:'brightness',value:1});expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+  });
+  it('outgoing crossfade refuses a missing, foreign-track or incompatible peer',()=>{
+    const manifest=makeTimelineManifest('local.png','mix.wav');manifest.version='2.4';const clip=manifest.visual_clips[0];clip.source_end=null;
+    clip.duration=.5;clip.transition_out={kind:'crossfade',duration_seconds:.2};
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+    const next={...clip,clip_id:'clip_contiguous_peer',timeline_start:clip.timeline_start+.5,transition_out:undefined};manifest.visual_clips.push(next);
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(true);next.track_order++;
+    expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);next.track_order--;
+    next.transition_in={kind:'slide',duration_seconds:.2};expect(timelineRenderManifestSchema.safeParse(manifest).success).toBe(false);
+  });
   it('keeps a narrated visual viewport inside the canvas and requires v2.3',()=>{
     const manifest=makeTimelineManifest('local.png','mix.wav');manifest.version='2.3';manifest.visual_clips[0].source_end=null;
     manifest.visual_clips[0].viewport={x:0,y:.2,width:1,height:.6};

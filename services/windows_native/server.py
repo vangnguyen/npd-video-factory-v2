@@ -996,7 +996,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-audio-transcripts.mjs'] = 'native-audio-transcripts.mjs'
         static['/native-source-media-tracks.mjs'] = 'native-source-media-tracks.mjs'
         static.update({name:name[1:] for name in ('/native-narrated-timeline.mjs',
-            '/native-narrated-timeline.css','/native-visual-properties.mjs','/native-source-drag-drop.mjs')})
+            '/native-narrated-timeline.css','/native-visual-properties.mjs','/native-source-drag-drop.mjs','/native-clip-style.mjs')})
         static['/native-generation.mjs'] = 'native-generation.mjs'
         static['/native-media-resolution.mjs'] = 'native-media-resolution.mjs'
         static['/native-media-planner.mjs'] = 'native-media-planner.mjs'

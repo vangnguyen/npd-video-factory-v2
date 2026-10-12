@@ -119,8 +119,9 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
     manifest=build_timeline_render_manifest(snapshot=snapshot,subtitles=subtitles,mix_config=MixConfig(),
         mixed_audio_path=mixed,asset_paths=staged,profile=profile,project_name=project['document']['name'],
         project_slug=project['id'],niche=project['document'].get('niche','custom'),brand_name=brand_name,language=language)
-    # Source workflows use the expanded, strict v2.3 contract even without captions.
-    manifest['version']='2.3'
+    # Keep the style extension selected by the canonical builder.
+    # Historical Source workflows still use v2.3 without optional captions.
+    if manifest['version']!='2.4':manifest['version']='2.3'
     durable_json(directory/'timeline-render.json',manifest)
     durable_json(directory/'timeline.json',project['document']['canonical_timeline'])
     if project['document'].get('source_media_track_imports'):

@@ -19,7 +19,7 @@ ALLOWED={
     'move':{'clip_id','timeline_start','target_track_id'},'trim':{'clip_id','source_start','source_end','timeline_start','duration'},
     'split':{'clip_id','at_seconds'},'delete':{'clip_id'},'reorder':{'clip_id','target_index'},
     'disable':{'clip_id','disabled'},'duplicate':{'clip_id','timeline_start','target_track_id'},
-    'set_clip_properties':{'clip_id','volume','speed','duration','crop','transform','opacity'},'set_track_state':{'track_id','locked','muted','disabled'}}
+    'set_clip_properties':{'clip_id','volume','speed','duration','crop','transform','opacity','effects','transition_in','transition_out'},'set_track_state':{'track_id','locked','muted','disabled'}}
 
 def numbers(value):
     if isinstance(value,dict):
@@ -134,10 +134,10 @@ def edit(store,project_id,body,workspace_id):
                     enable(snapshot)
                 clip=next((c for c in track.clips if c.clip_id==op.clip_id),None)
                 if clip and clip.metadata.get('narrated_generated_voice') and not (op.type=='disable' or op.type=='set_clip_properties' and
-                        op.volume is not None and all(getattr(op,key) is None for key in ('speed','duration','crop','transform','opacity'))):
+                        op.volume is not None and all(getattr(op,key) is None for key in ('speed','duration','crop','transform','opacity','effects','transition_in','transition_out'))):
                     raise WorkflowError('NARRATED_TIMELINE_MEASURED_VOICE_TIMING_PROTECTED',400)
                 if op.type=='set_clip_properties' and (track.type=='video' and op.volume is not None or
-                        track.type=='audio' and any(getattr(op,key) is not None for key in ('duration','crop','transform','opacity'))):
+                        track.type=='audio' and any(getattr(op,key) is not None for key in ('duration','crop','transform','opacity','effects'))):
                     raise WorkflowError('NARRATED_TIMELINE_CLIP_PROPERTIES_ROLE_MISMATCH',400)
                 if op.target_track_id:
                     target=next((t for t in snapshot.tracks if t.track_id==op.target_track_id),None)
