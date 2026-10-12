@@ -170,6 +170,23 @@ class AssemblyAITranscriptionProvider:
     def __repr__(self) -> str:
         return "AssemblyAITranscriptionProvider(model='universal-3-5-pro', credential_alias=<redacted>)"
 
+    def _validated_profile(self, value):
+        return validate_assemblyai_profile(value)
+
+    def _profile_sha256(self, profile):
+        return assemblyai_profile_sha256(profile)
+
+    def _transcript_request(self, profile, upload_url):
+        return {"audio_url": upload_url, "speech_models": [self.model],
+            "language_code": self.language, "keyterms_prompt": list(profile.keyterms),
+            "prompt": profile.context_prompt}
+
+    def _result_language(self, profile, result):
+        return self.language
+
+    def _estimated_duration_cost(self, duration):
+        return (self._vnd_per_minute * Decimal(str(duration)) / Decimal("60")).quantize(Decimal("0.000001"))
+
     async def transcribe(
         self,
         path: Path,
@@ -183,8 +200,8 @@ class AssemblyAITranscriptionProvider:
     ) -> ProviderTranscript:
         trace = execution_trace or ProviderExecutionTrace(monotonic=self._monotonic)
         trace.begin()
-        profile = validate_assemblyai_profile(self.asr_prompt_profile)
-        if expected_asr_prompt_profile is not None and profile != validate_assemblyai_profile(expected_asr_prompt_profile):
+        profile = self._validated_profile(self.asr_prompt_profile)
+        if expected_asr_prompt_profile is not None and profile != self._validated_profile(expected_asr_prompt_profile):
             raise ValueError("ASSEMBLYAI_PROFILE_BINDING_MISMATCH")
         if self._upload_started or self._job_creation_started or self._transcript_id is not None:
             raise ValueError("ASSEMBLYAI_OPERATION_ALREADY_DISPATCHED")
@@ -205,7 +222,7 @@ class AssemblyAITranscriptionProvider:
             "provider": self.key,
             "model": self.model,
             "language_code": self.language,
-            "profile_sha256": assemblyai_profile_sha256(profile),
+            "profile_sha256": self._profile_sha256(profile),
             "asset_sha256": checksum_sha256,
             "asset_bytes": len(audio),
         }
@@ -231,13 +248,7 @@ class AssemblyAITranscriptionProvider:
         except Exception:
             raise ValueError("ASSEMBLYAI_UPLOAD_STATE_UNCERTAIN") from None
         upload_identity = hashlib.sha256(upload_url.encode()).hexdigest()
-        request = {
-            "audio_url": upload_url,
-            "speech_models": [self.model],
-            "language_code": self.language,
-            "keyterms_prompt": list(profile.keyterms),
-            "prompt": profile.context_prompt,
-        }
+        request = self._transcript_request(profile, upload_url)
         safe_request = {**request, "audio_url": "sha256:" + upload_identity}
         request_sha256 = hashlib.sha256(_canonical(safe_request)).hexdigest()
         self._job_creation_started = True
@@ -272,6 +283,7 @@ class AssemblyAITranscriptionProvider:
                 raise ValueError("ASSEMBLYAI_JOB_STATE_INVALID")
             await asyncio.sleep(self._poll_interval_seconds)
 
+        result_language = self._result_language(profile, result)
         text = result.get("text")
         words_payload = result.get("words")
         if not isinstance(text, str) or not text or not isinstance(words_payload, list) or not words_payload:
@@ -311,7 +323,7 @@ class AssemblyAITranscriptionProvider:
         raw_sha = hashlib.sha256(_canonical(result)).hexdigest()
         transcript_sha = hashlib.sha256(text.encode()).hexdigest()
         words_sha = hashlib.sha256(_canonical(words_payload)).hexdigest()
-        cost = (self._vnd_per_minute * Decimal(str(duration)) / Decimal("60")).quantize(Decimal("0.000001"))
+        cost = self._estimated_duration_cost(duration)
         segment = ProviderSegment(
             start_seconds=words[0].start_seconds,
             end_seconds=words[-1].end_seconds,
@@ -321,14 +333,14 @@ class AssemblyAITranscriptionProvider:
             words=tuple(words),
         )
         return ProviderTranscript(
-            language=self.language,
+            language=result_language,
             confidence=None,
             segments=(segment,),
             provenance={
                 "provider": self.key,
                 "model": self.model,
                 "profile_id": profile.profile_id,
-                "profile_sha256": assemblyai_profile_sha256(profile),
+                "profile_sha256": self._profile_sha256(profile),
                 "request_sha256": request_sha256,
                 "transcript_id": transcript_id,
                 "provider_request_id": transcript_id,
@@ -342,12 +354,12 @@ class AssemblyAITranscriptionProvider:
                 "segment_timing_source": "segment_envelope_derived_from_provider_word_bounds",
                 "provider_transcript_immutable": True,
                 "asr_prompt_profile": profile.model_dump(mode="json"),
-                "asr_prompt_profile_sha256": assemblyai_profile_sha256(profile),
+                "asr_prompt_profile_sha256": self._profile_sha256(profile),
                 "original_evidence": True,
                 "secret_recorded": False,
                 "provider_credit_debit": result.get("credit_debit"),
-                "estimated_cost_vnd": str(cost),
-                "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable",
+                "estimated_cost_vnd": str(cost) if cost is not None else None,
+                "cost_basis": "configured_rate_times_observed_duration; billed_cost_unavailable" if cost is not None else "rate_not_configured; billed_cost_unavailable",
                 "latency_ms": round((self._monotonic() - started) * 1000, 3),
             },
             actual_cost_vnd=None,

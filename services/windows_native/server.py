@@ -895,7 +895,7 @@ class Handler(BaseHTTPRequestHandler):
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
+                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
                 "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_channel_profile_admin":True,"native_local_subject_tracking":importlib.util.find_spec("numpy") is not None and importlib.util.find_spec("PIL") is not None,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
@@ -990,6 +990,7 @@ class Handler(BaseHTTPRequestHandler):
             '/native-source-broll.mjs','/native-media-frames.mjs','/native-source-thumbnail-review.mjs','/studio-utils.mjs','/waveform.mjs','/timeline-history.mjs')})
         static['/native-costs.mjs'] = 'native-costs.mjs'
         static['/native-subject-tracking.mjs'] = 'native-subject-tracking.mjs'
+        static['/native-asr-language.mjs'] = 'native-asr-language.mjs'
         static['/native-publications.mjs'] = 'native-publications.mjs'
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
         static['/native-analytics-refresh.mjs'] = 'native-analytics-refresh.mjs'
@@ -1356,7 +1357,7 @@ class Handler(BaseHTTPRequestHandler):
                 doc = self.server.store.get(identifier)["document"]
                 if pending_speech(doc) and not assemblyai_connection.status(self.server.config)["connected"]:
                     raise WorkflowError("ASR_PROVIDER_UNAVAILABLE_NO_TRANSCRIPT", 503)
-            result = self.server.store.enqueue(identifier, revision, body.get("kind"), body.get("request_key"),tracking_request=body.get('tracking_request'))
+            result = self.server.store.enqueue(identifier, revision, body.get("kind"), body.get("request_key"),tracking_request=body.get('tracking_request'),asr_request=body.get('asr_request'))
             self.server.runner.wake.set()
         return self.reply(result)
 

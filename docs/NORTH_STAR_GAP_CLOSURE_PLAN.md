@@ -396,3 +396,7 @@ The latest Wave 7 component adds workspace-scoped immutable channel versions, Ow
 ## Local temporal tracking checkpoint
 
 Wave3F/4 now adds editor-seeded local template matching using actual decoded source PTS, a bounded sample budget, fixed-template similarity/ambiguity safety and immutable frame/job provenance. Four-ratio crop paths use the canonical engine; safe fallback, negative failed_qc/final-review blocking and cold recovery are locally evidenced. Semantic/autonomous seeds, calibrated/dense all-frame/general face/person/object/scale/rotation/occlusion tracking and real footage/browser/Owner remain open. Default Windows intelligence control passes51 cases without changing runtime policy; historical diagnostic cause and production soak remain unproven. Full groups and A/B/C stay open.
+
+## Native ASR language selection component
+
+Wave 3B now has immutable general VI/EN/auto profiles, scoped UI selection, model/language validation, snapshot/idempotency/known-job resume, English normalization and versioned edits. Original VI benchmark remains sealed. Actual browser proof covers signed queue admission only on generated-tone projects with worker disabled; nullable actual detection evidence is not inferred from the request. Remaining P0: genuine speech/provider VI/EN/auto, actual completed-transcript browser flow, edited-word alignment and full original Mode A/B/A-B-C acceptance. Continue safe media/Studio/provider/platform work while real-provider budget/credential and Owner UAT gates remain separate.

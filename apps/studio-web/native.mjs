@@ -1,4 +1,5 @@
 import {newProjectQuality,narratedWorkflowGuide,usesNarratedWorkflow} from './project-quality.mjs';
+import {asrLanguageSelection,asrLanguageHint} from './native-asr-language.mjs';
 export {newProjectQuality} from './project-quality.mjs';
 export const supportsNativeCosts = session => session?.capabilities?.native_cost_ledger===true;
 export function nativeRequestBody(value){
@@ -143,6 +144,7 @@ if (typeof document !== "undefined") {
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
   let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
+  let asrLanguageEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -198,6 +200,7 @@ if (typeof document !== "undefined") {
     $("approve").disabled=!(isSourceProject(project)?shotStudio?.sourceReady():mediaReady(project?.document)&&(!usesNarratedWorkflow(project)||project?.document?.prepared_narration)&&(!project?.document?.prepared_narration||shotStudio?.narratedReady()))||blocked||dirty||Boolean(project.approval&&project.approval.approval_scope!=='narration_only');
     $("upload-media").disabled=!project||blocked||dirty;
     $("analyze-media").disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
+    if($('asr-language'))$('asr-language').disabled=!project||blocked||dirty||!mediaAnalysisPending(project.document);
     $("auto-plan").disabled=!project?.document.proposal||!mediaLibrary(project?.document).length||blocked||dirty;
     $("upload-music").disabled=!project||blocked||dirty;
     if($('music-loop-crossfade'))$('music-loop-crossfade').disabled=!project||blocked||dirty||!supportsMusicLoopProject(project,musicLoopEnabled,narratedMusicLoopEnabled);
@@ -397,6 +400,8 @@ if (typeof document !== "undefined") {
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
+    asrLanguageEnabled=session.capabilities?.native_asr_language_selection===true;
+    if($('asr-language-label'))$('asr-language-label').hidden=!asrLanguageEnabled;
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
     musicLoopEnabled=session.capabilities?.native_source_music_loop_crossfade===true;
     narratedMusicLoopEnabled=session.capabilities?.native_narrated_music_loop===true;
@@ -620,14 +625,16 @@ if (typeof document !== "undefined") {
   }));
   async function enqueue(kind,fresh=false) {
     if(dirty)throw new Error("Lưu chỉnh sửa trước khi chạy job.");
-    const key=`vf-native-${project.id}-${project.revision}-${kind}`;
+    const selection=kind==='asr'?asrLanguageSelection($('asr-language')?.value??'legacy',asrLanguageEnabled):{request:undefined,keySuffix:''};
+    const key=`vf-native-${project.id}-${project.revision}-${kind}${selection.keySuffix}`;
     let requestKey=sessionStorage.getItem(key);
     if(!requestKey||fresh){requestKey=crypto.randomUUID();sessionStorage.setItem(key,requestKey);}
-    await api(`/api/projects/${project.id}/jobs`,{revision:project.revision,kind,request_key:requestKey});
+    await api(`/api/projects/${project.id}/jobs`,{revision:project.revision,kind,request_key:requestKey,...(selection.request?{asr_request:selection.request}:{})});
     await reload(false);message(kind==="media_frames"?"Đã gửi job đo khung hình trên máy. Kiểm tra các mẫu và gợi ý thumbnail; bản dựng giữ nguyên.":kind==="auto_edit_analysis"?"Đã gửi job đo cảnh và âm thanh trên máy. Hãy kiểm tra lời nói, cảnh và điểm nổi bật.":kind==="asr"?"Đã gửi job phân tích nguồn và nhận diện lời nói. Hãy kiểm tra transcript khi hoàn tất.":kind==="content"?"Đã gửi job tạo đề xuất. Bước tiếp theo cần bạn kiểm tra và duyệt.":isSourceProject(project)?'Đã gửi job render video nguồn với âm thanh và phụ đề đã lưu.':'Đã gửi job tạo giọng đọc và render video.');
   }
   $("generate").addEventListener("click",guarded(()=>enqueue("content")));
   $("analyze-media").addEventListener("click",guarded(()=>enqueue("asr")));
+  $('asr-language')?.addEventListener('change',()=>{$('asr-language-hint').textContent=asrLanguageHint($('asr-language').value);});
   $("measure-auto-edit").addEventListener("click",guarded(()=>enqueue("auto_edit_analysis")));
   $("measure-media-frames").addEventListener("click",guarded(()=>enqueue("media_frames")));
   $("render").addEventListener("click",guarded(()=>enqueue("render")));

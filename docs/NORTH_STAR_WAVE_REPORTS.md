@@ -3593,3 +3593,31 @@ REGRESSIONS: scoped tests and positive local media pass; loss yields center fall
 EXTERNAL BLOCKERS: genuine providers/footage/browser/non-developer/Owner and isolated production remain separate. No Owner action prevents remaining safe implementation.
 OWNER ACTION REQUIRED: none for safe work; Owner listening/UAT deferred; paid/new-provider/publishing/production/main remain independently gated.
 NEXT WAVE: continue all original ModeA/B/media/profile/provider/trend/learning/bridge/production gaps. SOURCE_PRESERVED=YES after seal;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;all full readiness/implementation/real-provider/deployment/NorthStar flags remainNO.
+
+## Wave 3B / 7 / 8 / 15 — Native ASR language selection component
+
+WAVE: 3B/7/8/15 component
+
+STATUS: implemented/local/mock tested; full waves remain PARTIAL
+
+HEAD SHA: source parent 2122912eeecfe07c8977bd852554d92cb281d900; committed/pushed HEAD is recorded in the workspace asr-language-selection-program-state.json
+
+CAPABILITIES COMPLETED: general VI/EN/auto sealed profiles; explicit UI queue request; actual result language/model validation; nullable detection evidence; exact job identity/resume; original English evidence and versioned text edit; local tracking parameterized-job resume fix
+
+CAPABILITIES PARTIAL: genuine speech/provider ASR, full browser transcript workflow, edited-word alignment, full Mode A/B and original acceptance bundles
+
+TESTS: final API, Native, Studio and static counts/hashes in north-star/asr-language-selection-evidence.json
+
+REAL PROVIDER TESTS: none in this increment
+
+MOCK TESTS: provider contract/worker response fixtures; actual browser queue admission has worker disabled; source is generated tone, not speech
+
+EVIDENCE: NATIVE_ASR_LANGUAGE_SELECTION.md; asr-language-selection-evidence.json; three browser queued-job snapshots; six screenshots; cold backup/restore; preserved source checkpoint and Git recovery pair
+
+REGRESSIONS: scoped legacy benchmark/Native/Studio checks pass; historical accepted artifacts verified at preservation seal; full program regression acceptance remains separate
+
+EXTERNAL BLOCKERS: configured secrets/budget for genuine ASR acceptance; original Owner/non-developer/production acceptance
+
+OWNER ACTION REQUIRED: none for remaining safe implementation; UAT deferred; real paid/provider/deployment actions retain their own gates
+
+NEXT WAVE: continue genuine-source media understanding and full original Mode B UI/E2E gaps without shrinking the Master Spec

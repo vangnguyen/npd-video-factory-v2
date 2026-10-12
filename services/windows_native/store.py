@@ -650,7 +650,7 @@ class Store:
                 self.event(con, identifier, "human_content_approved", approval)
         return self.get(identifier)
 
-    def enqueue(self, identifier, revision, kind, request_key, *, tracking_request=None):
+    def enqueue(self, identifier, revision, kind, request_key, *, tracking_request=None, asr_request=None):
         if kind not in {"content", "render", "narration", "asr", "auto_edit_analysis", "media_frames", "source_tracking"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
             raise WorkflowError("INVALID_JOB_REQUEST", 400)
         identity = digest({"project_id": identifier, "revision": revision, "kind": kind})
@@ -662,6 +662,12 @@ class Store:
             except ValueError:raise WorkflowError('LOCAL_TRACKING_REQUEST_INVALID',400) from None
             identity=digest({'original_identity':identity,'tracking_request':tracking.model_dump(mode='json')})
         elif tracking_request is not None:raise WorkflowError('LOCAL_TRACKING_REQUEST_KIND_INVALID',400)
+        language_binding = None
+        if asr_request is not None:
+            if kind != 'asr':raise WorkflowError('ASR_LANGUAGE_REQUEST_KIND_INVALID',400)
+            from .asr_request import bind
+            language_binding = bind(asr_request)
+            identity = digest({'original_identity':identity,'asr_request':language_binding})
         with self.transaction() as con:
             existing = con.execute("SELECT * FROM jobs WHERE request_key=?", (request_key,)).fetchone()
             if existing:
@@ -726,6 +732,7 @@ class Store:
             identifier_job, stamp = uuid.uuid4().hex, now()
             snapshot = {"document": doc, "approval": approval}
             if kind=='source_tracking':snapshot['tracking_request']=tracking.model_dump(mode='json')
+            if language_binding is not None:snapshot['asr_request']=language_binding
             con.execute("INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                         (identifier_job, identifier, revision, kind, "queued", "queued", request_key, identity,
                          json.dumps(snapshot, ensure_ascii=False), None, None, stamp, stamp))
@@ -774,6 +781,8 @@ class Store:
                 self.version(con, project["id"])
             if result and job["kind"] == "asr":
                 from .asr import analysis_for_asset
+                from .asr_request import from_job
+                language_profile = from_job(job)
                 project = self.project(con.execute("SELECT * FROM projects WHERE id=?", (job["project_id"],)).fetchone())
                 if project["revision"] != job["revision"] or digest(project["document"]) != digest(job["snapshot"]["document"]):
                     raise WorkflowError("ASR_STALE_RESULT")
@@ -786,6 +795,12 @@ class Store:
                 for record in incoming:
                     if record["asset_id"] not in assets or not analysis_for_asset({"media_analysis": [record]}, assets[record["asset_id"]]):
                         raise WorkflowError("ASR_RESULT_SOURCE_BINDING_MISMATCH")
+                    if language_profile is not None and record.get('transcript') is not None:
+                        from app.assemblyai_studio_profile import studio_profile_sha256
+                        transcript=record['transcript'];proof=transcript.get('provenance',{})
+                        if (transcript.get('language') not in {'vi','en'} or language_profile.language!='auto' and transcript.get('language')!=language_profile.language
+                            or proof.get('profile_sha256')!=studio_profile_sha256(language_profile) or proof.get('requested_language')!=language_profile.language):
+                            raise WorkflowError('ASR_RESULT_LANGUAGE_BINDING_MISMATCH')
                 replaced = {r["asset_id"] for r in incoming}
                 doc["media_analysis"] = [r for r in doc.get("media_analysis", []) if r["asset_id"] not in replaced] + incoming
                 doc.pop("edit_plan",None)
@@ -837,8 +852,12 @@ class Store:
             if job["status"] not in {"failed", "failed_qc", "interrupted"}:
                 raise WorkflowError("JOB_NOT_RESUMABLE")
             project = self.editable(con, job["project_id"], job["revision"])
-            if digest({"document": project["document"], "approval": project["approval"]}) != digest(job["snapshot"]):
+            original = {key:job['snapshot'][key] for key in ('document','approval')}
+            if digest({"document": project["document"], "approval": project["approval"]}) != digest(original):
                 raise WorkflowError("STALE_RESUME_SNAPSHOT")
+            if job['kind']=='asr':
+                from .asr_request import from_job
+                from_job(job)
             if job["resume_count"] >= 3:
                 raise WorkflowError("RESUME_LIMIT_REACHED")
             resume_boundary(self.root, job)

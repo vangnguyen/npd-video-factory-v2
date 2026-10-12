@@ -8,6 +8,7 @@ from dataclasses import asdict
 import io
 import json
 import logging
+import math
 import os
 from pathlib import Path
 import re
@@ -49,7 +50,17 @@ class DurableTransport:
             import httpx2
             client_factory = httpx2.AsyncClient
         self.client_factory = client_factory
+        self.profile = assemblyai_asr_profile()
         logging.getLogger("httpx2").disabled = True
+
+    def validate_completed(self, value):
+        from app.assemblyai_studio_profile import AssemblyAIStudioProfile, studio_result_language
+        if type(self.profile) is AssemblyAIStudioProfile:
+            try:studio_result_language(self.profile,value)
+            except ValueError as error:raise WorkflowError(str(error)) from None
+        else:
+            if value.get('language_code')!='vi':raise WorkflowError('ASR_LANGUAGE_MISMATCH')
+            if value.get('speech_model_used')!=assemblyai_asr_profile().model:raise WorkflowError('ASR_MODEL_MISMATCH_NO_FALLBACK')
 
     def load(self, name):
         path = self.out / (name + ".json")
@@ -81,7 +92,7 @@ class DurableTransport:
             operation = ('upload' if path == '/v2/upload' else 'create-transcript'
                          if method == 'POST' else f'observe-{len(list(self.out.glob("observe-*.intent.json"))):04}')
             operation = f'asr-{self.binding[:24]}-{operation}'
-            cost_id = ledger.begin(**context, provider='assemblyai', model=assemblyai_asr_profile().model,
+            cost_id = ledger.begin(**context, provider='assemblyai', model=self.profile.model,
                 operation=operation, request_sha256=self.binding,
                 estimated_cost=None, paid=(method == 'POST' and path == '/v2/transcript'))
         try:
@@ -148,6 +159,7 @@ class DurableTransport:
         if complete:
             if complete.get("id") != identifier:
                 raise WorkflowError("ASR_TRANSCRIPT_ID_CHANGED")
+            self.validate_completed(complete)
             return complete
         self.stage("asr_observe_known_transcript")
         # Count dispatch intents even if the read fails before receipt persistence.
@@ -157,11 +169,7 @@ class DurableTransport:
         if value.get("id") != identifier:
             raise WorkflowError("ASR_TRANSCRIPT_ID_CHANGED")
         if value.get("status") == "completed":
-            if value.get("language_code") != "vi":
-                raise WorkflowError("ASR_LANGUAGE_MISMATCH")
-            used = value.get("speech_model_used")
-            if used != assemblyai_asr_profile().model:
-                raise WorkflowError("ASR_MODEL_MISMATCH_NO_FALLBACK")
+            self.validate_completed(value)
             self.save("provider-completed", value)
         return value
 
@@ -246,6 +254,8 @@ def extract_audio(config, asset, out, artifacts):
 
 
 def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
+    from .asr_request import from_job
+    selected_profile = from_job(job)
     document = job["snapshot"]["document"]
     assets = pending_assets(document)
     if pending_speech(document) and not connection.status(config)["connected"]:
@@ -271,16 +281,26 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
             from app.auto_edit_models import MediaMetadata
             stage("asr_extract_audio")
             audio, metadata = extract_audio(config, asset, directory, artifacts)
-            profile = assemblyai_asr_profile()
+            profile = selected_profile or assemblyai_asr_profile()
+            if selected_profile is not None:
+                from app.assemblyai_studio_profile import studio_profile_sha256
+                profile_sha256 = studio_profile_sha256(profile)
+            else:profile_sha256 = assemblyai_profile_sha256()
             transport = transport_factory(directory / "provider", digest({"snapshot": job["snapshot"],
-                "asset_id": asset["id"], "audio": metadata, "profile_sha256": assemblyai_profile_sha256()}), stage)
+                "asset_id": asset["id"], "audio": metadata, "profile_sha256": profile_sha256}), stage)
             if isinstance(transport, DurableTransport):
+                transport.profile = profile
                 from .costs import CostLedger
                 from .store import Store
                 transport.cost_ledger = CostLedger(Store(config.data_root))
                 transport.cost_context = {'project_id': job['project_id'], 'job_id': job['id']}
-            provider = AssemblyAITranscriptionProvider(model=profile.model, credential_alias=ASSEMBLYAI_CREDENTIAL_ALIAS,
-                credential_resolver=lambda _: connection.load_credential(config), profile=profile, transport=transport)
+            if selected_profile is not None:
+                from app.assemblyai_studio_transcription_provider import AssemblyAIStudioTranscriptionProvider
+                provider = AssemblyAIStudioTranscriptionProvider(profile=profile,
+                    credential_resolver=lambda _: connection.load_credential(config),transport=transport)
+            else:
+                provider = AssemblyAITranscriptionProvider(model=profile.model, credential_alias=ASSEMBLYAI_CREDENTIAL_ALIAS,
+                    credential_resolver=lambda _: connection.load_credential(config), profile=profile, transport=transport)
             async def execute():
                 return await asyncio.wait_for(provider.transcribe(audio, metadata=MediaMetadata(media_kind="audio",
                     detected_content_type="audio/wav", duration_seconds=metadata["duration_seconds"],
@@ -301,6 +321,15 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
             raw = transport.load("provider-completed")
             if raw is None or digest(raw) != value["provenance"]["raw_response_sha256"]:
                 raise WorkflowError("ASR_RAW_RESPONSE_BINDING_MISMATCH")
+            if selected_profile is not None:
+                raw_confidence = raw.get('language_confidence')
+                if raw_confidence is not None and (type(raw_confidence) not in (int,float) or not math.isfinite(raw_confidence) or not 0<=raw_confidence<=1):
+                    raise WorkflowError('ASR_LANGUAGE_CONFIDENCE_INVALID')
+                value['provenance'].update(requested_language=profile.language,
+                    language_detection_requested=profile.language=='auto',language_detection_performed=raw.get('language_detection'),language_result_source='provider_language_code',
+                    language_confidence=raw_confidence)
+                if raw.get('language_detection') is not None and type(raw['language_detection']) is not bool:
+                    raise WorkflowError('ASR_LANGUAGE_DETECTION_EVIDENCE_INVALID')
             record.update(transcript=value, audio=metadata, provider_calls=2 + len(list((directory/"provider").glob("observe-*.intent.json"))))
             if asset['kind']=='audio':
                 from .auto_edit_analysis import normalize_transcript,asset_reference

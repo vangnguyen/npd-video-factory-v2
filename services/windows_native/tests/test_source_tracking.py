@@ -42,6 +42,15 @@ class SourceTrackingTests(unittest.TestCase):
         with self.assertRaisesRegex(WorkflowError,'IDEMPOTENCY_KEY_CONFLICT'):self.store.enqueue(self.project['id'],self.project['revision'],'source_tracking',key,tracking_request=changed)
         with self.assertRaisesRegex(WorkflowError,'REQUEST_KIND_INVALID'):self.store.enqueue(self.project['id'],self.project['revision'],'media_frames',uuid.uuid4().hex,tracking_request=body)
 
+    def test_interrupted_local_job_resumes_same_request_without_changing_timeline(self):
+        self.real_source();body=self.request();before=copy.deepcopy(self.project['document']['canonical_timeline'])
+        queued=self.store.enqueue(self.project['id'],self.project['revision'],'source_tracking',uuid.uuid4().hex,tracking_request=body)
+        job=self.store.claim();self.store.finish(job,error={'code':'EXPLICIT_LOCAL_INTERRUPTION_FIXTURE'})
+        resumed=self.store.resume(queued['id']);self.assertEqual(resumed['snapshot']['tracking_request'],job['snapshot']['tracking_request'])
+        job=self.store.claim();result=Pipeline(self.config).run(job,lambda _:None);self.store.finish(job,result=result)
+        self.assertEqual(self.store.get_job(job['id'])['status'],'succeeded')
+        self.assertEqual(self.store.get(self.project['id'])['document']['canonical_timeline'],before)
+
     def test_saved_analysis_can_apply_four_ratios_and_clone_preserves_only_geometry_authority(self):
         self.real_source();result,_=self.run_tracking();record=result['source_tracking_analysis'];audio=copy.deepcopy([t for t in self.project['shot_timeline']['snapshot']['tracks'] if t['type']!='video'])
         for ratio in ('9:16','16:9','1:1','4:5'):
