@@ -1,0 +1,186 @@
+{
+  "schema_version": "north-star-source-audio-clock-v1",
+  "recorded_at": "2026-10-12T10:09:45.679781+00:00",
+  "source_parent": "a241279f56f82734c5253d5f49fca106f4d94071",
+  "wave": "3B/3D/3I/6D/8/15 component; full waves PARTIAL",
+  "tests": {
+    "Native": 43,
+    "Native_modules": 7,
+    "API": 20,
+    "Studio": 751,
+    "consumer_Native": 22,
+    "consumer_Native_modules": 4,
+    "overlapping_batches_not_unique_total": true
+  },
+  "test_logs": {
+    "source-audio-clock-native-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-clock-native-n2.log",
+      "sha256": "ee7920b3167f50e5262ac227cb6695c8ac8e54d6bf3c2d0314f13416637da8f6",
+      "bytes": 103
+    },
+    "source-audio-clock-api-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-clock-api-n1.log",
+      "sha256": "66acba1c4f017ff321467a36111c825aa05ca602dc4daea0f2139bbc40706aae",
+      "bytes": 102
+    },
+    "source-audio-clock-studio-full-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-clock-studio-full-n1.log",
+      "sha256": "6feb3d95e8ed1a505d2b68f25d4d7e86e2a73d6b25a4132327f872fcb5e33faa",
+      "bytes": 77425
+    },
+    "source-audio-clock-consumers-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-clock-consumers-n2.log",
+      "sha256": "e3744869a47ed101d2724062ab745a835d07b5f215f12938eff5ca0d5d0d117f",
+      "bytes": 103
+    },
+    "source-audio-clock-rehearsal-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-clock-rehearsal-n1.log",
+      "sha256": "a18b9c056663714d30e745a297e32d613ff1da5d80001f6a4721f0419a6e6375",
+      "bytes": 58
+    }
+  },
+  "earlier_version_assertion_failure_retained": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-clock-consumers-n1.log",
+    "sha256": "d1d4872d6ca8509bdeb375b9ea1c439494130178ac9f051663d1c28aea1954ab",
+    "bytes": 1291
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\evidence.json",
+    "sha256": "4587f71e8e323aa062ffac4bf19babcd939bafb407a9d93596003450eb996769",
+    "bytes": 1095
+  },
+  "cold": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\cold.json",
+    "sha256": "4455d56ce3f48b89fb1460586cc98612ac912eadb9d080ce6f17e106a034e3a0",
+    "bytes": 146
+  },
+  "backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\owned-source-audio-state.zip",
+    "sha256": "68bcd1f8be1f18ad63256765f45294e7f392b84f75eb2bce3cc0009e99b8cbf6",
+    "bytes": 219353
+  },
+  "exports": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\analysis.json",
+      "sha256": "e2598135df693b8978ef73df36d6dfeff066d69d3cf1abf1582d4b4dd22ea81f",
+      "bytes": 60291
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\audio-clock.json",
+      "sha256": "c74bc49f4b6114c8cea0b705733a8bb08e4a83d8de8b84b2484d18d03762ee89",
+      "bytes": 13582
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\cold.json",
+      "sha256": "4455d56ce3f48b89fb1460586cc98612ac912eadb9d080ce6f17e106a034e3a0",
+      "bytes": 146
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\evidence.json",
+      "sha256": "4587f71e8e323aa062ffac4bf19babcd939bafb407a9d93596003450eb996769",
+      "bytes": 1095
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\expected.json",
+      "sha256": "e5b90cd3368c383381914f68b9d43166cde34304bf96ca75a9613bcd253c3ad6",
+      "bytes": 143149
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\mapped-transcript.json",
+      "sha256": "820d38b226e195bc09a49d7234cb82051734ec220996a58ec1fe8469593912f1",
+      "bytes": 3612
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\owned-source-audio-state.zip",
+      "sha256": "68bcd1f8be1f18ad63256765f45294e7f392b84f75eb2bce3cc0009e99b8cbf6",
+      "bytes": 219353
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\project.json",
+      "sha256": "1cfef8811fc16151a91db401ceab06b447b409dbbe6bae69e1089c269bc8ee1d",
+      "bytes": 203457
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\provider-pcm-transcript.json",
+      "sha256": "6a3e6359b42afbb4b17fb3083b6ebab4dba64c940f2d0a090c66592f6b3b6083",
+      "bytes": 3032
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\source.mp4",
+      "sha256": "5f75e5e99a3080f31ec409ddae0620c5b2fb30c8548822d315d0728cc67c8012",
+      "bytes": 53922
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\speech-clock.log",
+      "sha256": "b4f5b5680a54adf67cbc8b6e88636741fc660824a2d657f1cec0ef66ebd5d1ed",
+      "bytes": 8243
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\speech.wav",
+      "sha256": "3940761cf427df319d576590fa8acf4d5fcd1678c8d7c96858a3f0b05285f0dc",
+      "bytes": 33516
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-clock-n1\\waveform.json",
+      "sha256": "f6f514db483591698471d76fd2737451d37683bce13ba51ed0cf30983af5ac4a",
+      "bytes": 24306
+    }
+  ],
+  "local_real_scope": [
+    "generated delayed tone container",
+    "FFmpeg mono PCM and observed ashowinfo clock",
+    "waveform v2 source origin",
+    "SQLite worker and distinct-process restore"
+  ],
+  "ASR_scope": "explicit protocol fixture; generated tone is not genuine speech",
+  "original_PCM_and_mapped_transcripts_preserved": true,
+  "known_mock_job_resume_no_repeated_upload_or_create": true,
+  "bad_noncontiguous_clock_blocks_before_upload": true,
+  "legacy_v1_waveform_v3_v4_signal_receipts_readable": true,
+  "actual_browser": false,
+  "genuine_ASR_provider": false,
+  "real_Vision": false,
+  "Owner_UAT": false,
+  "external_provider_calls": 0,
+  "paid_calls": 0,
+  "local_TTS_inferences": 0,
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  },
+  "main_merged": false,
+  "production_deployed": false,
+  "publishing_enabled": false,
+  "historical_artifacts_replaced": false,
+  "owned_rehearsal_roots_cleaned": true,
+  "remaining": [
+    "genuine VI/EN/auto speech/provider acceptance",
+    "discontinuous source audio segment mapping",
+    "full real-media audio/render/AV/QC",
+    "full original Mode A/B non-developer UI and Owner A/B/C",
+    "production/provider/Agent Hub acceptance"
+  ]
+}

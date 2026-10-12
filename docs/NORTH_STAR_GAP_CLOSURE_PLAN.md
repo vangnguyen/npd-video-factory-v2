@@ -408,3 +408,7 @@ Wave 3F/4/8/15 now has versioned new source-frame rational PTS, original job/dec
 ## Dense video-clock component
 
 Wave 3C/3E/4 now has real dense motion/shot PTS, bounded sanitized records, v4 cache/fingerprints and preserved Native v3 reads. Two generated-source/independent FFprobe/cold-restore rehearsals pass. Remaining: dense audio clock and ASR-to-source mapping, genuine semantics/tracking/providers, full original Mode A/B/UI/Owner/A-B-C and production. No broader readiness claim is made.
+
+## Continuous source audio/ASR clock component
+
+Wave 3B/3D/3I/6D/8/15 adds real continuous PCM origin/count validation, normalized silence times, waveform v2 and original-to-source ASR mapping with preserved provider evidence. Delayed generated-tone/mock-ASR resume/cold evidence passes. Remaining: genuine speech/provider, discontinuous segment mapping, real-media audio/render/AV/QC, full original Mode A/B/UI/Owner/A-B-C and production. These are not certified from a synthetic source or mock transcript.

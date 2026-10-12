@@ -55,7 +55,7 @@ def fingerprint(project_id, document, asset, *, signal_algorithm=None):
 def matches_saved_fingerprint(value,project_id,document,asset):
     selected=value.provenance.get('signal_algorithm')
     if selected is not None:
-        if selected not in {FFmpegMediaSignalProvider.algorithm_version,'scene-silence-waveform-visual-v3'}:
+        if selected not in {FFmpegMediaSignalProvider.algorithm_version,'scene-silence-waveform-visual-v3','scene-silence-waveform-visual-v4'}:
             return False
         return value.fingerprint==fingerprint(project_id,document,asset,signal_algorithm=selected)
     # Historical Native results did not expose the recipe separately. Match its

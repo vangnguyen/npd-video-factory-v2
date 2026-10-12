@@ -9,6 +9,7 @@ import io
 import json
 import logging
 import math
+import hashlib
 import os
 from pathlib import Path
 import re
@@ -29,7 +30,13 @@ def analysis_for_asset(document, asset):
     if not record or record.get("source_sha256") != asset["sha256"]:
         return None
     body = {k: v for k, v in record.items() if k != "analysis_sha256"}
-    return record if digest(body) == record.get("analysis_sha256") else None
+    if digest(body)!=record.get('analysis_sha256'):return None
+    if record.get('provider_pcm_transcript') is not None:
+        try:
+            mapped,original=source_mapped_transcript(record['provider_pcm_transcript'],record['audio'],float(record['media']['duration_seconds']))
+            if digest(mapped)!=digest(record['transcript']) or digest(original)!=digest(record['provider_pcm_transcript']):return None
+        except (KeyError,ValueError,TypeError,WorkflowError):return None
+    return record
 
 
 def pending_assets(document):
@@ -234,23 +241,51 @@ def extract_audio(config, asset, out, artifacts):
     if checkpoint:
         return path, checkpoint["result"]
     partial = out / "speech.part.wav"
-    result = subprocess.run([str(config.ffmpeg_bin / "ffmpeg.exe"), "-v", "error", "-xerror", "-nostdin", "-y",
+    result = subprocess.run([str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-xerror", "-nostdin", "-y",'-copyts','-start_at_zero',
         "-protocol_whitelist", "file,pipe", "-i", str(media_path(config, asset["id"])),
-        "-map", "0:a:0", "-vn", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", str(partial)],
+        "-map", "0:a:0", "-vn", "-ac", "1",'-af','aresample=16000,asettb=1/16000,ashowinfo', "-c:a", "pcm_s16le", str(partial)],
         capture_output=True, timeout=120)
     if result.returncode or not partial.is_file():
         raise WorkflowError("ASR_AUDIO_EXTRACTION_FAILED")
+    from app.decoded_audio_clock import parse_audio_clock,audio_clock_lines
+    clock_log=audio_clock_lines(result.stderr.decode('utf-8','strict'))
+    try:clock=parse_audio_clock(clock_log,sample_rate=16000)
+    except ValueError as error:
+        code=str(error)
+        raise WorkflowError(code if re.fullmatch(r'[A-Z0-9_]{3,120}',code) else 'ASR_AUDIO_CLOCK_INVALID') from None
     with wave.open(str(partial), "rb") as audio:
         duration = audio.getnframes()/audio.getframerate()
         if not 0 < duration <= 600 or audio.getnchannels() != 1 or audio.getframerate() != 16000:
             raise WorkflowError("ASR_EXTRACTED_AUDIO_INVALID")
+        if audio.getnframes()!=clock['pcm_samples']:raise WorkflowError('ASR_AUDIO_CLOCK_SAMPLE_COUNT_MISMATCH')
     if partial.stat().st_size > 25_000_000:
         raise WorkflowError("ASR_AUDIO_MAX_25MB")
     os.replace(partial, path)
     metadata = {"duration_seconds": duration, "sha256": file_sha(path), "bytes": path.stat().st_size,
-                "channels": 1, "sample_rate": 16000, "source_sha256": asset["sha256"]}
-    artifacts.commit("audio", [path], metadata)
+                "channels": 1, "sample_rate": 16000, "source_sha256": asset["sha256"],
+                'decoded_source_clock':clock,'clock_log_sha256':hashlib.sha256(clock_log.encode()).hexdigest()}
+    log_path=out/'speech-clock.log';log_path.write_text(clock_log,encoding='utf-8',newline='\n')
+    artifacts.commit("audio", [path,log_path], metadata)
     return path, metadata
+
+
+def source_mapped_transcript(value,metadata,source_duration):
+    """Preserve original provider PCM evidence; map only an observed affine clock."""
+    import copy
+    clock=metadata.get('decoded_source_clock')
+    if clock is None:return value,None # Historical receipt is not re-certified.
+    offset=clock['source_start_seconds'];original=copy.deepcopy(value);mapped=copy.deepcopy(value)
+    if not math.isfinite(offset) or offset<0 or clock.get('contiguous') is not True:
+        raise WorkflowError('ASR_SOURCE_CLOCK_MAPPING_INVALID')
+    for segment in mapped['segments']:
+        segment['start_seconds']+=offset;segment['end_seconds']+=offset
+        for word in segment['words']:word['start_seconds']+=offset;word['end_seconds']+=offset
+        if segment['end_seconds']>source_duration+.05:raise WorkflowError('ASR_SOURCE_CLOCK_MAPPING_OUTSIDE_MEDIA')
+    mapped['provenance'].update(source_clock_mapping={'schema_version':'native-asr-source-clock-map-v1','offset_seconds':offset,
+        'decoded_audio_clock_sha256':digest(clock),'provider_pcm_transcript_sha256':digest(original),
+        'mapping':'source_seconds = provider_pcm_seconds + observed_source_start_seconds','source_media_mutated':False,
+        'provider_pcm_evidence_mutated':False,'time_scale_changed':False})
+    return mapped,original
 
 
 def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
@@ -330,15 +365,18 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
                     language_confidence=raw_confidence)
                 if raw.get('language_detection') is not None and type(raw['language_detection']) is not bool:
                     raise WorkflowError('ASR_LANGUAGE_DETECTION_EVIDENCE_INVALID')
+            value,pcm_original=source_mapped_transcript(value,metadata,float(record['media']['duration_seconds']))
+            if pcm_original is not None:record['provider_pcm_transcript']=pcm_original
             record.update(transcript=value, audio=metadata, provider_calls=2 + len(list((directory/"provider").glob("observe-*.intent.json"))))
             if asset['kind']=='audio':
                 from .auto_edit_analysis import normalize_transcript,asset_reference
                 analysis_id='ana_'+digest(['native-audio-transcript-v1',asset['id'],asset['sha256'],value['provenance']['raw_response_sha256']])[:24]
                 normalized=normalize_transcript(value,analysis_id=analysis_id,asset_id=asset_reference(asset),
-                    duration=metadata['duration_seconds'],created_at=datetime.now(timezone.utc))
+                    duration=record['media']['duration_seconds'],created_at=datetime.now(timezone.utc))
                 record['normalized_transcript']=normalized.model_dump(mode='json')
             paths = [audio, directory/"checkpoint-audio.json", directory/"provider"/"provider-completed.json",
                      directory/"provider"/"upload-ack.json", directory/"provider"/"transcript-ack.json"]
+            if (directory/'speech-clock.log').is_file():paths.append(directory/'speech-clock.log')
         record["analysis_sha256"] = digest(record)
         durable_json(directory / "analysis.json", record)
         artifacts.commit("analysis", paths + [directory/"analysis.json"], record)

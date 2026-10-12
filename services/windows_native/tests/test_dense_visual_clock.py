@@ -26,6 +26,11 @@ class DenseVisualClockTests(unittest.TestCase):
         self.assertNotEqual(value.fingerprint,native.fingerprint(self.project['id'],self.project['document'],self.asset))
         self.assertEqual(record,before);self.assertEqual(native.pending({'media_analysis':self.project['document']['media_analysis'],'assets':[self.asset],'auto_edit_analyses':[record]},self.project['id']),[])
 
+    def test_previous_explicit_v4_recipe_remains_current_after_audio_clock_upgrade(self):
+        with patch.object(FFmpegMediaSignalProvider,'algorithm_version','scene-silence-waveform-visual-v4'):
+            record=native.make_analysis(self.project['id'],self.project['document'],self.asset,self.metadata,self.signals)
+        self.assertTrue(native.matches_saved_fingerprint(AutoEditAnalysisRead.model_validate(record['analysis']),self.project['id'],self.project['document'],self.asset))
+
     def test_actual_vfr_dense_motion_uses_source_pts_without_nominal_fps_duplicates(self):
         frame_fixture.DecodedFrameSamplingTests.vfr(self);source=media_path(self.config,self.asset['id']);before=file_sha(source)
         result=asyncio.run(measure_visual_signals(source,executable=str(self.config.ffmpeg_bin/'ffmpeg.exe'),duration_seconds=self.asset['duration_seconds']))
@@ -43,7 +48,7 @@ class DenseVisualClockTests(unittest.TestCase):
         with patch('services.windows_native.asr.analyze',side_effect=AssertionError('No new ASR call')):
             result=Pipeline(self.config).run(job,lambda _:None)
         self.store.finish(job,result=result);bundle=native.view(self.store,self.project['id']);analysis=bundle['analyses'][0]['analysis']
-        self.assertEqual(analysis['provenance']['signal_algorithm'],'scene-silence-waveform-visual-v4')
+        self.assertEqual(analysis['provenance']['signal_algorithm'],FFmpegMediaSignalProvider.algorithm_version)
         self.assertTrue(analysis['provenance']['media_signals']['visual']['decoded_pts_verified'])
         self.assertIsNone(analysis['transcript']);self.assertEqual(result['provider_calls'],0)
         self.assertEqual(self.store.get(self.project['id'])['document'].get('canonical_timeline'),before.get('canonical_timeline'))

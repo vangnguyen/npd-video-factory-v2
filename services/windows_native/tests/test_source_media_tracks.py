@@ -72,7 +72,7 @@ class SourceMediaTracksTests(unittest.TestCase):
         state=after['document']['canonical_timeline'];self.assertEqual(state['version'],before['document']['canonical_timeline']['version']+1)
         track=next(t for t in state['snapshot']['tracks'] if t['track_id']==first['track_id']);clip=track['clips'][0]
         self.assertEqual((clip['source_start'],clip['source_end'],clip['timeline_start'],clip['duration']),(0,2,.5,2))
-        wave=clip['metadata']['source_audio_waveform'];self.assertTrue(wave['measured']);self.assertEqual(wave['method'],'ffmpeg-mono-pcm-peak-rms-v1');self.assertGreater(max(b['peak'] for b in wave['bins']),.05)
+        wave=clip['metadata']['source_audio_waveform'];self.assertTrue(wave['measured']);self.assertEqual(wave['method'],'ffmpeg-mono-pcm-peak-rms-v2');self.assertTrue(wave['decoded_pts_verified']);self.assertGreater(max(b['peak'] for b in wave['bins']),.05)
         replay=media.add_audio(self.store,self.project['id'],body,actor_ref='fixture-editor');self.assertTrue(replay['replayed']);self.assertEqual(replay['clip_ids'],first['clip_ids']);self.assertEqual(self.store.get(self.project['id']),after)
         with self.assertRaisesRegex(WorkflowError,'IDEMPOTENCY_CONFLICT'):media.add_audio(self.store,self.project['id'],{**body,'volume':.7},actor_ref='fixture-editor')
         self.assertEqual({a['id']:file_sha(self.root/'assets'/a['id']) for a in before['document']['assets']},hashes)

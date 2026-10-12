@@ -362,7 +362,7 @@ class DeterministicMediaSignalProvider:
 
 class FFmpegMediaSignalProvider:
     key = "ffmpeg-media-signals"
-    algorithm_version = "scene-silence-waveform-visual-v4"
+    algorithm_version = "scene-silence-waveform-visual-v5"
     _SHOT_TIME = re.compile(r"pts_time:([0-9.]+)")
     _SILENCE_START = re.compile(r"silence_start: ([0-9.]+)")
     _SILENCE_END = re.compile(r"silence_end: ([0-9.]+).+silence_duration: ([0-9.]+)")
@@ -429,8 +429,10 @@ class FFmpegMediaSignalProvider:
                 self._run(
                     [
                         "-hide_banner",
+                        "-nostdin", "-copyts", "-start_at_zero", "-protocol_whitelist", "file,pipe",
                         "-i",
                         str(path),
+                        "-map", "0:a:0", "-vn",
                         "-af",
                         f"silencedetect=noise={silence_threshold_db}dB:d={minimum_silence_duration}",
                         "-f",
@@ -481,6 +483,7 @@ class FFmpegMediaSignalProvider:
                 "scene_decoded_stamps":[stamp.model_dump(mode='json') for stamp in stamps],
                 "silence_detector": "ffmpeg-silencedetect" if metadata.audio_codec else "no-audio-stream",
                 "silence_level_measurement": "not_measured; detector threshold is configuration",
+                "silence_timestamp_basis":"normalized_source_pts; copyts_start_at_zero" if metadata.audio_codec else None,
             },
         )
 

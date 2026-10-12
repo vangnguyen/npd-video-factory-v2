@@ -19,7 +19,7 @@ def original(document,asset):
     if value.analysis_id!=expected or value.asset_id!=asset_reference(asset) or not value.is_original_evidence or value.version!=1:
         raise WorkflowError('AUDIO_TRANSCRIPT_EVIDENCE_CHANGED')
     reconstructed=normalize_transcript(record['transcript'],analysis_id=expected,asset_id=value.asset_id,
-        duration=record['audio']['duration_seconds'],created_at=value.created_at)
+        duration=record['media']['duration_seconds'] if record.get('provider_pcm_transcript') is not None else record['audio']['duration_seconds'],created_at=value.created_at)
     if reconstructed!=value:raise WorkflowError('AUDIO_TRANSCRIPT_EVIDENCE_CHANGED')
     return value
 

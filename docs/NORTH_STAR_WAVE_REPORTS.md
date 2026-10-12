@@ -3677,3 +3677,31 @@ EXTERNAL BLOCKERS: provider budget/credentials and original Owner/non-developer/
 OWNER ACTION REQUIRED: none for remaining safe work; real paid/provider/deployment gates stay separate
 
 NEXT WAVE: dense audio and ASR/source clock mapping plus full original Mode B gaps
+
+## Wave 3B / 3D / 3I / 6D / 8 / 15 — Continuous source audio clock
+
+WAVE: 3B/3D/3I/6D/8/15 component
+
+STATUS: implemented/local-real and protocol-mock tested; full waves PARTIAL
+
+HEAD SHA: source parent a241279f56f82734c5253d5f49fca106f4d94071; final HEAD in workspace source-audio-clock-program-state.json
+
+CAPABILITIES COMPLETED: observed PCM clock/count; continuous source mapping; original provider PCM evidence; bad-clock pre-upload guard; waveform v2/v1 compatibility; v5 with v3/v4 history; known-job resume and cold recovery
+
+CAPABILITIES PARTIAL: genuine speech/ASR, discontinuous clocks, full real-media AV/audio/QC and original Mode A/B/UI/Owner/production
+
+TESTS: final Native/API/Studio/consumer counts and hashes in north-star/source-audio-clock-evidence.json
+
+REAL PROVIDER TESTS: real local FFmpeg/SQLite only, no external speech provider
+
+MOCK TESTS: transcript/known-job dispatch evidence is explicit fixture; generated tone is not speech
+
+EVIDENCE: NATIVE_SOURCE_AUDIO_CLOCK.md; source-audio-clock-evidence.json; source/WAV/clock/original/mapped transcript/analysis bundle; cold backup; source checkpoint/recovery pair
+
+REGRESSIONS: related cases checked; waveform version-name assertion updated while preserving amplitude/source checks; accepted artifacts verified at preservation
+
+EXTERNAL BLOCKERS: provider credentials/budget, genuine speech/Owner/non-developer and production acceptance
+
+OWNER ACTION REQUIRED: none for remaining safe implementation; separate real-provider/production gates remain
+
+NEXT WAVE: full original Mode B media/audio/UI/E2E gaps with unchanged North Star scope
