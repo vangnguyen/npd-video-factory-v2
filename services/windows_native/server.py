@@ -1143,6 +1143,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == '/api/logout':
             if self.server.access is None:
                 raise WorkflowError('NATIVE_AUTH_NOT_CONFIGURED', 404)
+            # A keep-alive client sends {} before navigating to /login. Consume
+            # that bounded body after the auth/CSRF boundary, never before it.
+            if self.headers.get('Content-Length','0')!='0' or self.headers.get('Transfer-Encoding'):
+                if self.read_body(max_bytes=2048):
+                    raise WorkflowError('NATIVE_AUTH_LOGOUT_FIELDS_INVALID',400)
             cookies = SimpleCookie(); cookies.load(self.headers.get('Cookie', ''))
             self.server.access.logout(cookies['vf_native_session'].value)
             return self.reply({'status': 'signed_out'}, headers={
@@ -1505,7 +1510,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.dispatch_post()
         except WorkflowError as error:
             self.refuse({"code": error.code, "failure": failure(error.code, http_status=error.http_status)}, error.status)
-        except (BrokenPipeError, ConnectionResetError):
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             self.close_connection = True
         except Exception:
             self.refuse({"code": "LOCAL_REQUEST_FAILED"}, 500)

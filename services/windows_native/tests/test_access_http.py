@@ -4,7 +4,8 @@ from http.cookies import SimpleCookie
 import json
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch,Mock
+from types import SimpleNamespace
 
 from services.windows_native.access import NativeAccess
 from app.human_identity import HumanAuthRegistry, HumanAuthVerifier
@@ -101,6 +102,45 @@ class NativeAccessHTTPTests(unittest.TestCase):
         self.cookie = cookie['vf_native_session'].value; self.csrf = value['csrf']
         self.assertEqual(self.request('POST', '/api/logout', {})[0], 200)
         self.assertEqual(self.request('GET', '/api/projects')[0], 401)
+
+    def test_logout_consumes_body_before_next_login_page_on_same_connection(self):
+        connection=http.client.HTTPConnection('127.0.0.1',self.server.server_port,timeout=5)
+        try:
+            connection.request('POST','/api/logout','{}',headers={'Content-Type':'application/json',
+                'Cookie':'vf_native_session='+self.cookie,'X-VF-CSRF':self.csrf})
+            response=connection.getresponse();self.assertEqual(response.status,200);response.read()
+            connection.request('GET','/login')
+            response=connection.getresponse();body=response.read()
+            self.assertEqual(response.status,200,body[:400])
+            self.assertIn(b'native-login-form',body)
+            self.assertEqual(self.request('GET','/api/projects')[0],401)
+        finally:connection.close()
+
+    def test_forbidden_unread_body_closes_connection_without_revoking_session(self):
+        connection=http.client.HTTPConnection('127.0.0.1',self.server.server_port,timeout=5)
+        try:
+            with patch.object(Handler,'read_body',side_effect=AssertionError('Unauthorized body consumed')):
+                connection.request('POST','/api/logout','{}',headers={'Content-Type':'application/json',
+                    'Cookie':'vf_native_session='+self.cookie,'X-VF-CSRF':'incorrect-fixture'})
+                response=connection.getresponse();self.assertEqual(response.status,403)
+                self.assertEqual(response.getheader('Connection'),'close');response.read()
+            connection.request('GET','/login')
+            response=connection.getresponse();body=response.read()
+            self.assertEqual(response.status,200,body[:400])
+            self.assertEqual(self.request('GET','/api/projects')[0],200)
+        finally:connection.close()
+
+    def test_logout_rejects_nonempty_body_without_revoking_the_current_session(self):
+        self.assertEqual(self.request('POST','/api/logout',{'unexpected':'private fixture'})[0],400)
+        self.assertEqual(self.request('GET','/api/projects')[0],200)
+
+    def test_aborted_media_connection_is_not_replied_to_or_logged_with_private_error(self):
+        handler=Handler.__new__(Handler);handler.path='/api/session';handler.connection=Mock()
+        handler.server=SimpleNamespace(observer=Mock())
+        handler.dispatch_get=Mock(side_effect=ConnectionAbortedError('PRIVATE FIXTURE ERROR'))
+        handler.refuse=Mock();handler.handle_request('GET')
+        self.assertTrue(handler.close_connection);handler.refuse.assert_not_called()
+        self.assertNotIn('PRIVATE FIXTURE ERROR',str(handler.server.observer.emit.call_args))
 
     def test_stale_global_cookie_unknown_routes_and_cross_root_controller_are_closed(self):
         self.assertEqual(self.request('GET', '/api/projects', headers={'Cookie': 'vf_native_session=' + self.server.session})[0], 401)
