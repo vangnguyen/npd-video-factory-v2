@@ -41,3 +41,12 @@
 .native-profile-dialog .scene-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .native-profile-dialog select,.native-profile-dialog textarea,.native-profile-dialog input{max-width:100%}
 @media(max-width:700px){.native-profile-dialog{width:calc(100vw - 24px);padding:16px;max-height:calc(100vh - 24px)}.native-profile-dialog .scene-grid{grid-template-columns:1fr}}
+
+#native-asr-gap-review-rows fieldset{display:grid;grid-template-columns:minmax(160px,2fr) repeat(3,minmax(120px,1fr));gap:12px;align-items:end;border:1px solid var(--border,#d5d9e2);border-radius:8px;padding:12px;margin:12px 0;min-width:0}
+#native-asr-gap-review-rows legend{font-weight:600;padding:0 6px;overflow-wrap:anywhere}
+#native-asr-gap-review-rows label{min-width:0;margin:0}
+#native-asr-gap-review-rows input{min-width:0;max-width:100%}
+#native-asr-gap-review-rows input[type=checkbox]{width:16px;height:16px;margin:8px;vertical-align:middle}
+#native-asr-gap-review-card>button{margin:6px 6px 6px 0}
+@media(max-width:1000px){#native-asr-gap-review-rows fieldset{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#native-asr-gap-review-rows fieldset{grid-template-columns:minmax(0,1fr)}}

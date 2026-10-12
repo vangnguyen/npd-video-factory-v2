@@ -21,8 +21,9 @@ export function validateAudioTranscripts(v,s,revision=s.project?.revision){
     ||v.timeline_version!==null&&!positive(v.timeline_version)||v.publishing_enabled!==false||v.human_review_required!==true||v.provider_calls!==0||v.source_media_mutated!==false||!Array.isArray(v.items)||v.items.length>50)throw Error('Lời nói không đúng dự án hoặc phiên bản.');
   const seen=new Set();for(const r of v.items){if(typeof r.asset_id!=='string'||!/^[a-f0-9]{32}(?:\.[a-z0-9]{1,16}){1,3}$/.test(r.asset_id)||seen.has(r.asset_id)||!sha(r.asset_sha256)||!sha(r.analysis_sha256)
       ||typeof r.filename!=='string'||!r.filename||r.filename.length>200||!Array.isArray(r.versions)||r.versions.length<1||r.versions.length>51)throw Error('Nguồn lời nói không hợp lệ.');seen.add(r.asset_id);
-    transcript(r.original);transcript(r.current);if(!r.original.is_original_evidence||r.original.version!==1||r.current.analysis_id!==r.original.analysis_id||r.current.asset_id!==r.original.asset_id)throw Error('Nguồn nhận diện đã thay đổi.');
-    const ids=new Set();for(const[i,t]of r.versions.entries()){transcript(t);if(t.version!==i+1||ids.has(t.transcript_id)||t.asset_id!==r.original.asset_id||t.analysis_id!==r.original.analysis_id||t.is_original_evidence!==(i===0))throw Error('Lịch sử lời nói không hợp lệ.');ids.add(t.transcript_id);}
+    transcript(r.original);transcript(r.current);const humanBase=r.original.provenance?.human_edit===true&&sha(r.original.provenance?.provider_original_candidate_sha256);
+    if(!r.original.is_original_evidence&&!humanBase||r.original.version!==1||r.current.analysis_id!==r.original.analysis_id||r.current.asset_id!==r.original.asset_id)throw Error('Nguồn nhận diện đã thay đổi.');
+    const ids=new Set();for(const[i,t]of r.versions.entries()){transcript(t);if(t.version!==i+1||ids.has(t.transcript_id)||t.asset_id!==r.original.asset_id||t.analysis_id!==r.original.analysis_id||t.is_original_evidence!==(i===0&&r.original.is_original_evidence))throw Error('Lịch sử lời nói không hợp lệ.');ids.add(t.transcript_id);}
     if(JSON.stringify(r.versions[0])!==JSON.stringify(r.original)||JSON.stringify(r.versions.at(-1))!==JSON.stringify(r.current))throw Error('Phiên bản nhận diện chưa khớp lịch sử.');
   }
   function privacy(x,depth=0){if(depth>30)throw Error('Bản nhận diện quá sâu.');if(x&&typeof x==='object')for(const[k,c]of Object.entries(x)){if(/^(token|access_token|refresh_token|token_path|credential_path|authorization|private_path)$/i.test(k))throw Error('Bản nhận diện chứa dữ liệu riêng tư.');privacy(c,depth+1);}}
@@ -32,7 +33,7 @@ export function initializeNativeAudioTranscripts({api,getState,root=document,onW
   const card=root.getElementById('native-audio-transcripts-card');card.hidden=false;card.replaceChildren();
   const node=(tag,text,name)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(name)n.id='native-audio-transcripts-'+name;return n;};
   const button=(text,name,permission)=>{const n=node('button',text,name);n.type='button';n.className='secondary';n.dataset.vfPermission=permission;return n;};
-  const read=button('Đọc lời nói đã nhận diện','read','read'),save=button('Lưu bản lời nói mới','save','edit'),restore=button('Tạo bản mới từ nhận diện gốc','restore','edit'),
+  const read=button('Đọc lời nói đã nhận diện','read','read'),save=button('Lưu bản lời nói mới','save','edit'),restore=button('Tạo bản mới từ bản nền','restore','edit'),
     selection=node('select',null,'selection'),segments=node('div',null,'segments'),status=node('p','Upload audio và bấm Phân tích nếu cần nhận diện. Đọc dữ liệu đã lưu trước khi sửa.','status');
   card.append(node('summary','Lời nói từ audio nguồn'),node('p','Nhận diện có thể sai. Sửa chữ giữ bản gốc và thời điểm của đoạn; phụ đề theo từng từ cần được căn lại cho đoạn đã sửa.'),read,selection,segments,save,restore,status);
   let working=false,scope='',generation=0,value=null,selected=null;const fields=new Map();

@@ -56,6 +56,10 @@ class Store:
                     artifact_sha256 TEXT NOT NULL, snapshot_sha256 TEXT NOT NULL,
                     decision TEXT NOT NULL, reviewer TEXT NOT NULL, note TEXT NOT NULL,
                     created_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS asr_gap_reviews (
+                    job_id TEXT NOT NULL,asset_id TEXT NOT NULL,version INTEGER NOT NULL,
+                    request_key TEXT NOT NULL,request_sha TEXT NOT NULL,receipt TEXT NOT NULL,created_at TEXT NOT NULL,
+                    PRIMARY KEY(job_id,asset_id,version),UNIQUE(job_id,asset_id,request_key));
             """)
             # Additive history starts with the current preserved document, never invented past versions.
             for row in con.execute("SELECT * FROM projects").fetchall():

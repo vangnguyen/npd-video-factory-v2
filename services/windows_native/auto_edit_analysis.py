@@ -107,11 +107,11 @@ def normalize_transcript(raw, *, analysis_id, asset_id, duration, created_at):
             "text": unicodedata.normalize("NFC", segment.text), "speaker": segment.speaker,
             "confidence": segment.confidence, "words": words})
     return TranscriptRead(transcript_id="trn_" + digest(analysis_id)[:24], analysis_id=analysis_id,
-        asset_id=asset_id, version=1, is_original_evidence=True,
+        asset_id=asset_id, version=1, is_original_evidence=not bool(value.provenance.get("human_edit")),
         provider_key=str(value.provenance.get("provider") or "saved-native-asr"),
         language=value.language, confidence=value.confidence, segments=segments,
         provenance={**value.provenance, "native_saved_receipt_reused": True,
-            "source_media_mutated": False, "remote_calls": 0, "timing_rewrite_applied": False},
+            "source_media_mutated": False, "remote_calls": 0, "timing_rewrite_applied": bool(value.provenance.get('human_edit'))},
         created_at=created_at)
 
 

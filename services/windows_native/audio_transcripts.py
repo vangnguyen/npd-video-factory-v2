@@ -16,7 +16,7 @@ def original(document,asset):
     try:value=TranscriptRead.model_validate(record['normalized_transcript'])
     except ValueError:raise WorkflowError('AUDIO_TRANSCRIPT_EVIDENCE_CHANGED') from None
     expected='ana_'+digest(['native-audio-transcript-v1',asset['id'],asset['sha256'],record['transcript']['provenance']['raw_response_sha256']])[:24]
-    if value.analysis_id!=expected or value.asset_id!=asset_reference(asset) or not value.is_original_evidence or value.version!=1:
+    if value.analysis_id!=expected or value.asset_id!=asset_reference(asset) or value.is_original_evidence!=(record.get('source_gap_review') is None) or value.version!=1:
         raise WorkflowError('AUDIO_TRANSCRIPT_EVIDENCE_CHANGED')
     reconstructed=normalize_transcript(record['transcript'],analysis_id=expected,asset_id=value.asset_id,
         duration=record['media']['duration_seconds'] if record.get('provider_pcm_transcript') is not None else record['audio']['duration_seconds'],created_at=value.created_at)

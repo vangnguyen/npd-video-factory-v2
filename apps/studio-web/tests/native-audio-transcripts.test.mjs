@@ -19,6 +19,14 @@ test('saved actual HTTP fixtures are explicit mock recognition and validate orig
   for(const page of[fixture.initial,fixture.changed,fixture.restored,fixture.reopened])assert.equal(validateAudioTranscripts(page,{workspace_id:page.workspace_id,project:{id:page.project_id,revision:page.revision}}),page);
   assert.equal(fixture.changed.items[0].current.segments[0].words.length,0);assert.equal(fixture.restored.items[0].current.segments[0].words.length,2);
 });
+
+test('human-reviewed initial audio evidence is labelled derived and retains its provider candidate reference',()=>{
+  const page=copy(fixture.initial);
+  for(const t of [page.items[0].original,page.items[0].current,page.items[0].versions[0]]){t.is_original_evidence=false;t.provenance.human_edit=true;t.provenance.provider_original_candidate_sha256='a'.repeat(64);}
+  const state={workspace_id:page.workspace_id,project:{id:page.project_id,revision:page.revision}};assert.equal(validateAudioTranscripts(page,state),page);
+  for(const t of [page.items[0].original,page.items[0].current,page.items[0].versions[0]])delete t.provenance.provider_original_candidate_sha256;
+  assert.throws(()=>validateAudioTranscripts(page,state));
+});
 test('initialization is inert and explicit read edits the actual source without rendering HTML from transcript',async()=>{
   const h=harness();assert.equal(h.calls.length,0);assert.equal(h.card.hidden,false);await h.controller.load();assert.equal(h.calls.length,1);
   assert.equal(h.controller.fields.values().next().value.value,fixture.initial.items[0].current.segments[0].text);

@@ -895,7 +895,7 @@ class Handler(BaseHTTPRequestHandler):
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,
+                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
                 "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_channel_profile_admin":True,"native_local_subject_tracking":importlib.util.find_spec("numpy") is not None and importlib.util.find_spec("PIL") is not None,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
@@ -906,6 +906,8 @@ class Handler(BaseHTTPRequestHandler):
         if upload_handles(path):return upload_dispatch(self,write=False)
         from .audio_transcript_routes import handles as audio_transcript_handles,dispatch as audio_transcript_dispatch
         if audio_transcript_handles(path):return audio_transcript_dispatch(self,write=False)
+        from .asr_gap_review_routes import handles as gap_handles,dispatch as gap_dispatch
+        if gap_handles(path):return gap_dispatch(self,write=False)
         from .source_media_track_routes import handles as media_track_handles,dispatch as media_track_dispatch
         if media_track_handles(path):return media_track_dispatch(self,write=False)
         if path == "/api/projects":
@@ -991,6 +993,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-costs.mjs'] = 'native-costs.mjs'
         static['/native-subject-tracking.mjs'] = 'native-subject-tracking.mjs'
         static['/native-asr-language.mjs'] = 'native-asr-language.mjs'
+        static['/native-asr-gap-review.mjs'] = 'native-asr-gap-review.mjs'
         static['/native-publications.mjs'] = 'native-publications.mjs'
         static['/native-analytics.mjs'] = 'native-analytics.mjs'
         static['/native-analytics-refresh.mjs'] = 'native-analytics-refresh.mjs'
@@ -1088,6 +1091,8 @@ class Handler(BaseHTTPRequestHandler):
         if upload_handles(self.path):return upload_dispatch(self,write=True)
         from .audio_transcript_routes import handles as audio_transcript_handles,dispatch as audio_transcript_dispatch
         if audio_transcript_handles(self.path):return audio_transcript_dispatch(self,write=True)
+        from .asr_gap_review_routes import handles as gap_handles,dispatch as gap_dispatch
+        if gap_handles(self.path):return gap_dispatch(self,write=True)
         from .source_media_track_routes import handles as media_track_handles,dispatch as media_track_dispatch
         if media_track_handles(self.path.partition('?')[0]):return media_track_dispatch(self,write=True)
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/tiktok-creators/(?:checks(?:/ntcr_[a-f0-9]{32}/(?:fetch|cancel))?|drafts)',self.path):

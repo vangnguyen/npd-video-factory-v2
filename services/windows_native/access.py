@@ -84,6 +84,7 @@ def permission_for(method, path):
         return 'review'
     if re.fullmatch(r'/api/projects/'+ID+r'/uploads(?:/nup_'+ID+r'/(chunks|complete|cancel))?',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/audio-transcripts/[a-f0-9]{32}(?:\.[a-z0-9]{1,16}){1,3}',path):return 'edit'
+    if re.fullmatch(r'/api/projects/'+ID+r'/asr-gap-reviews/'+ID+r'/[a-f0-9]{32}(?:\.[a-z0-9]{1,16}){1,3}',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/auto-edit/media-tracks/(audio|subtitles|captions)',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/narrated-timeline/(edit|configure|restore)',path):return 'edit'
     edit = [r'/api/projects', r'/api/projects/' + ID + '/(draft|image|jobs|auto-plan|duplicate|archive|brand-template|voice-quality|shots|preview|ai-edit|asset-association|media|documents|music)',

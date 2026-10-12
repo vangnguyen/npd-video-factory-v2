@@ -10,6 +10,7 @@ import json
 import logging
 import math
 import hashlib
+import copy
 import os
 from pathlib import Path
 import re
@@ -33,8 +34,14 @@ def analysis_for_asset(document, asset):
     if digest(body)!=record.get('analysis_sha256'):return None
     if record.get('provider_pcm_transcript') is not None:
         try:
-            mapped,original=source_mapped_transcript(record['provider_pcm_transcript'],record['audio'],float(record['media']['duration_seconds']))
-            if digest(mapped)!=digest(record['transcript']) or digest(original)!=digest(record['provider_pcm_transcript']):return None
+            if record.get('source_gap_review') is not None:
+                from .asr_gap_reviews import validate_embedded
+                reviewed=validate_embedded(record)
+                mapped,_=source_mapped_transcript(reviewed,record['audio'],float(record['media']['duration_seconds']))
+                if digest(mapped)!=digest(record['transcript']):return None
+            else:
+                mapped,original=source_mapped_transcript(record['provider_pcm_transcript'],record['audio'],float(record['media']['duration_seconds']))
+                if digest(mapped)!=digest(record['transcript']) or digest(original)!=digest(record['provider_pcm_transcript']):return None
         except (KeyError,ValueError,TypeError,WorkflowError):return None
     return record
 
@@ -302,6 +309,9 @@ def source_mapped_transcript(value,metadata,source_duration):
         'mapping':'source_seconds = provider_pcm_seconds + observed_source_start_seconds','source_media_mutated':False,
         'provider_pcm_evidence_mutated':False,'time_scale_changed':False})
     if plan:mapped['provenance']['source_clock_mapping'].update(schema_version='native-asr-source-clock-map-v2',explicit_gap_padding_sha256=digest(metadata['explicit_gap_padding']))
+    if value['provenance'].get('human_edit'):
+        proof=mapped['provenance']['source_clock_mapping'];proof['human_reviewed_pcm_transcript_sha256']=proof.pop('provider_pcm_transcript_sha256')
+        proof.update(schema_version='native-asr-reviewed-source-clock-map-v1',input_transcript_kind='human_reviewed_pcm')
     return mapped,original
 
 
@@ -310,7 +320,8 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
     selected_profile = from_job(job)
     document = job["snapshot"]["document"]
     assets = pending_assets(document)
-    if pending_speech(document) and not connection.status(config)["connected"]:
+    needs_provider=[a for a in pending_speech(document) if not Artifacts(out/"analysis"/a["id"],job).load("transcript-candidate")]
+    if needs_provider and not connection.status(config)["connected"]:
         raise WorkflowError("ASR_PROVIDER_UNAVAILABLE_NO_TRANSCRIPT", 503)
     records = []
     for asset in assets:
@@ -338,68 +349,90 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
                 from app.assemblyai_studio_profile import studio_profile_sha256
                 profile_sha256 = studio_profile_sha256(profile)
             else:profile_sha256 = assemblyai_profile_sha256()
-            transport = transport_factory(directory / "provider", digest({"snapshot": job["snapshot"],
-                "asset_id": asset["id"], "audio": metadata, "profile_sha256": profile_sha256}), stage)
-            if isinstance(transport, DurableTransport):
-                transport.profile = profile
-                from .costs import CostLedger
-                from .store import Store
-                transport.cost_ledger = CostLedger(Store(config.data_root))
-                transport.cost_context = {'project_id': job['project_id'], 'job_id': job['id']}
-            if selected_profile is not None:
-                from app.assemblyai_studio_transcription_provider import AssemblyAIStudioTranscriptionProvider
-                provider = AssemblyAIStudioTranscriptionProvider(profile=profile,
-                    credential_resolver=lambda _: connection.load_credential(config),transport=transport)
+            paths=[audio,directory/"checkpoint-audio.json",directory/"provider"/"provider-completed.json",
+                   directory/"provider"/"upload-ack.json",directory/"provider"/"transcript-ack.json"]
+            if (directory/'speech-clock.log').is_file():paths.append(directory/'speech-clock.log')
+            if metadata.get('explicit_gap_padding') is not None:paths.append(directory/'decoded-speech.wav')
+            candidate_checkpoint=artifacts.load('transcript-candidate');candidate=None
+            if candidate_checkpoint:
+                from .asr_gap_reviews import validate_candidate
+                candidate=validate_candidate(candidate_checkpoint['result'],job=job,asset=asset,audio=metadata,media=record['media'])
+                value=copy.deepcopy(candidate['provider_pcm_transcript']);provider_calls=candidate['provider_calls']
+                paths.extend([directory/'transcript-candidate.json',directory/'checkpoint-transcript-candidate.json'])
             else:
-                provider = AssemblyAITranscriptionProvider(model=profile.model, credential_alias=ASSEMBLYAI_CREDENTIAL_ALIAS,
-                    credential_resolver=lambda _: connection.load_credential(config), profile=profile, transport=transport)
-            async def execute():
-                return await asyncio.wait_for(provider.transcribe(audio, metadata=MediaMetadata(media_kind="audio",
-                    detected_content_type="audio/wav", duration_seconds=metadata["duration_seconds"],
-                    audio_channels=1, audio_sample_rate=16000), checksum_sha256=metadata["sha256"]), timeout=180)
-            try:
-                transcript = asyncio.run(execute())
-            except (TimeoutError, asyncio.TimeoutError):
-                raise WorkflowError("ASR_OBSERVATION_TIMEOUT_RESUME_KNOWN_JOB") from None
-            except (ValueError, WorkflowError) as error:
-                # Never include a provider message, response body or credential.
-                code = error.code if isinstance(error, WorkflowError) else str(error)
-                if not re.fullmatch(r"[A-Z][A-Z0-9_]{1,119}", code):
-                    code = "ASR_RESULT_VALIDATION_FAILED"
-                raise WorkflowError("ASR_" + code if not code.startswith("ASR_") else code) from None
-            value = asdict(transcript)
-            # The reused adapter's historical cost formula is an estimate, not a billed receipt.
-            value.pop("actual_cost_vnd", None)
-            raw = transport.load("provider-completed")
-            if raw is None or digest(raw) != value["provenance"]["raw_response_sha256"]:
-                raise WorkflowError("ASR_RAW_RESPONSE_BINDING_MISMATCH")
-            if selected_profile is not None:
-                raw_confidence = raw.get('language_confidence')
-                if raw_confidence is not None and (type(raw_confidence) not in (int,float) or not math.isfinite(raw_confidence) or not 0<=raw_confidence<=1):
-                    raise WorkflowError('ASR_LANGUAGE_CONFIDENCE_INVALID')
-                value['provenance'].update(requested_language=profile.language,
-                    language_detection_requested=profile.language=='auto',language_detection_performed=raw.get('language_detection'),language_result_source='provider_language_code',
-                    language_confidence=raw_confidence)
-                if raw.get('language_detection') is not None and type(raw['language_detection']) is not bool:
-                    raise WorkflowError('ASR_LANGUAGE_DETECTION_EVIDENCE_INVALID')
+                transport = transport_factory(directory / "provider", digest({"snapshot": job["snapshot"],
+                    "asset_id": asset["id"], "audio": metadata, "profile_sha256": profile_sha256}), stage)
+                if isinstance(transport, DurableTransport):
+                    transport.profile = profile
+                    from .costs import CostLedger
+                    from .store import Store
+                    transport.cost_ledger = CostLedger(Store(config.data_root))
+                    transport.cost_context = {'project_id': job['project_id'], 'job_id': job['id']}
+                if selected_profile is not None:
+                    from app.assemblyai_studio_transcription_provider import AssemblyAIStudioTranscriptionProvider
+                    provider = AssemblyAIStudioTranscriptionProvider(profile=profile,
+                        credential_resolver=lambda _: connection.load_credential(config),transport=transport)
+                else:
+                    provider = AssemblyAITranscriptionProvider(model=profile.model, credential_alias=ASSEMBLYAI_CREDENTIAL_ALIAS,
+                        credential_resolver=lambda _: connection.load_credential(config), profile=profile, transport=transport)
+                async def execute():
+                    return await asyncio.wait_for(provider.transcribe(audio, metadata=MediaMetadata(media_kind="audio",
+                        detected_content_type="audio/wav", duration_seconds=metadata["duration_seconds"],
+                        audio_channels=1, audio_sample_rate=16000), checksum_sha256=metadata["sha256"]), timeout=180)
+                try:
+                    transcript = asyncio.run(execute())
+                except (TimeoutError, asyncio.TimeoutError):
+                    raise WorkflowError("ASR_OBSERVATION_TIMEOUT_RESUME_KNOWN_JOB") from None
+                except (ValueError, WorkflowError) as error:
+                    # Never include a provider message, response body or credential.
+                    code = error.code if isinstance(error, WorkflowError) else str(error)
+                    if not re.fullmatch(r"[A-Z][A-Z0-9_]{1,119}", code):
+                        code = "ASR_RESULT_VALIDATION_FAILED"
+                    raise WorkflowError("ASR_" + code if not code.startswith("ASR_") else code) from None
+                value = asdict(transcript)
+                # The reused adapter's historical cost formula is an estimate, not a billed receipt.
+                value.pop("actual_cost_vnd", None)
+                raw = transport.load("provider-completed")
+                if raw is None or digest(raw) != value["provenance"]["raw_response_sha256"]:
+                    raise WorkflowError("ASR_RAW_RESPONSE_BINDING_MISMATCH")
+                if selected_profile is not None:
+                    raw_confidence = raw.get('language_confidence')
+                    if raw_confidence is not None and (type(raw_confidence) not in (int,float) or not math.isfinite(raw_confidence) or not 0<=raw_confidence<=1):
+                        raise WorkflowError('ASR_LANGUAGE_CONFIDENCE_INVALID')
+                    value['provenance'].update(requested_language=profile.language,
+                        language_detection_requested=profile.language=='auto',language_detection_performed=raw.get('language_detection'),language_result_source='provider_language_code',
+                        language_confidence=raw_confidence)
+                    if raw.get('language_detection') is not None and type(raw['language_detection']) is not bool:
+                        raise WorkflowError('ASR_LANGUAGE_DETECTION_EVIDENCE_INVALID')
+                provider_calls=2+len(list((directory/"provider").glob("observe-*.intent.json")))
+                if metadata.get('explicit_gap_padding') is not None:
+                    from .asr_gap_reviews import make_candidate
+                    candidate=make_candidate(job,asset,metadata,record['media'],value,provider_calls)
+                    candidate_path=directory/'transcript-candidate.json'
+                    durable_json(candidate_path,{'candidate':candidate,'media':record['media']})
+                    artifacts.commit('transcript-candidate',paths+[candidate_path],candidate)
+                    paths.extend([candidate_path,directory/'checkpoint-transcript-candidate.json'])
+            original_pcm=copy.deepcopy(value)
+            if candidate is not None:
+                from .asr_gap_reviews import latest
+                from .store import Store
+                reviewed,review=latest(Store(config.data_root),job['id'],asset['id'],candidate,metadata,record['media'])
+                if review is not None:
+                    value=reviewed;record.update(source_gap_candidate=candidate,source_gap_review=review)
             value,pcm_original=source_mapped_transcript(value,metadata,float(record['media']['duration_seconds']))
-            if pcm_original is not None:record['provider_pcm_transcript']=pcm_original
-            record.update(transcript=value, audio=metadata, provider_calls=2 + len(list((directory/"provider").glob("observe-*.intent.json"))))
+            if pcm_original is not None:record['provider_pcm_transcript']=original_pcm
+            record.update(transcript=value, audio=metadata, provider_calls=provider_calls)
             if asset['kind']=='audio':
                 from .auto_edit_analysis import normalize_transcript,asset_reference
                 analysis_id='ana_'+digest(['native-audio-transcript-v1',asset['id'],asset['sha256'],value['provenance']['raw_response_sha256']])[:24]
                 normalized=normalize_transcript(value,analysis_id=analysis_id,asset_id=asset_reference(asset),
                     duration=record['media']['duration_seconds'],created_at=datetime.now(timezone.utc))
                 record['normalized_transcript']=normalized.model_dump(mode='json')
-            paths = [audio, directory/"checkpoint-audio.json", directory/"provider"/"provider-completed.json",
-                     directory/"provider"/"upload-ack.json", directory/"provider"/"transcript-ack.json"]
-            if (directory/'speech-clock.log').is_file():paths.append(directory/'speech-clock.log')
-            if metadata.get('explicit_gap_padding') is not None:paths.append(directory/'decoded-speech.wav')
         record["analysis_sha256"] = digest(record)
         durable_json(directory / "analysis.json", record)
         artifacts.commit("analysis", paths + [directory/"analysis.json"], record)
         records.append(record)
-    result = {"media_analysis": records, "source": "measured_media_and_real_provider_transcript",
+    result = {"media_analysis": records, "source": "measured_media_and_provider_transcript",
               "provider_calls": sum(r["provider_calls"] for r in records), "human_review_required": True,
               "automatic_paid_replay": False}
     durable_json(out / "analysis-result.json", result)
@@ -415,6 +448,7 @@ def validate_resume(root, job):
             continue
         artifacts = Artifacts(directory, job)
         artifacts.load("audio")
+        artifacts.load("transcript-candidate")
         if artifacts.load("analysis"):
             continue
         provider = directory/"provider"

@@ -1,0 +1,73 @@
+{
+  "schema_version": "native-asr-gap-review-v1",
+  "workspace_id": "wsp_gap_review_fixture",
+  "project_id": "ee46623131eb4c0ca547a04dd78ac9f9",
+  "revision": 2,
+  "items": [
+    {
+      "job_id": "54a6b6b6fcc14037930c123c45499dd9",
+      "asset_id": "0774acc4ceff41d4ac13d245198ed962.mp4",
+      "filename": "Gap tone explicit fixture",
+      "source_sha256": "f11e77adeb809a6fdba652c9a356f37fafd11bb20bb0fd2891b3fec117cd802f",
+      "candidate_sha256": "44acbfbd421af17c9cbf852239350e3b90590d04d466cef109ed5ffd6cde70d8",
+      "status": "failed",
+      "original_words": [
+        {
+          "ordinal": 0,
+          "text": "Trước",
+          "start_seconds": 0.1,
+          "end_seconds": 0.2,
+          "confidence": 0.9,
+          "crosses_missing_audio": false
+        },
+        {
+          "ordinal": 1,
+          "text": "sau.",
+          "start_seconds": 0.6,
+          "end_seconds": 1.5,
+          "confidence": 0.8,
+          "crosses_missing_audio": true
+        }
+      ],
+      "gaps": [
+        {
+          "start_seconds": 0.64,
+          "end_seconds": 1.216
+        }
+      ],
+      "version": 0,
+      "history": [],
+      "current_words": [
+        {
+          "ordinal": 0,
+          "text": "Trước",
+          "start_seconds": 0.1,
+          "end_seconds": 0.2,
+          "removed": false
+        },
+        {
+          "ordinal": 1,
+          "text": "sau.",
+          "start_seconds": 0.6,
+          "end_seconds": 1.5,
+          "removed": false
+        }
+      ],
+      "editable": true,
+      "can_resume": false,
+      "source_kind": "video",
+      "source_url": "/api/projects/ee46623131eb4c0ca547a04dd78ac9f9/asr-gap-reviews/54a6b6b6fcc14037930c123c45499dd9/0774acc4ceff41d4ac13d245198ed962.mp4/source"
+    }
+  ],
+  "provider_calls": 0,
+  "publishing_enabled": false,
+  "source_media_mutated": false,
+  "human_review_required": true,
+  "fixture_scope": {
+    "generated_tone": true,
+    "ASR_transport_mock": true,
+    "fixture_human": true,
+    "Owner_UAT": false,
+    "real_provider_calls": 0
+  }
+}

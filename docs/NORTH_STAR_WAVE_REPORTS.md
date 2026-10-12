@@ -3733,3 +3733,31 @@ EXTERNAL BLOCKERS: genuine speech provider credentials/budget, deferred Owner/no
 OWNER ACTION REQUIRED: none for remaining safe implementation; separate real-provider/production gates apply
 
 NEXT WAVE: original Mode B attention/UI/audio/media/E2E gaps; preserve full North Star scope
+
+## Wave 3B / 3D / 3I / 8 / 15 — Native ASR gap word review
+
+WAVE: 3B/3D/3I/8/15 component
+
+STATUS: implemented/local-real HTTP/browser and protocol-mock tested; full waves PARTIAL
+
+HEAD SHA: source parent 705cb358565236f906336e1a6d3bf720ef4a40cb; final HEAD in workspace asr-gap-review-program-state.json
+
+CAPABILITIES COMPLETED: immutable completed candidate; versioned word corrections/removals; signed source playback/read/edit; CAS/idempotency/auth gates; explicit keyless same-job resume; distinct human/provider evidence; browser responsive form and cold recovery
+
+CAPABILITIES PARTIAL: general word realignment; genuine speech/provider; audio ingest timing and full real-media audio/render/AV/QC/original Mode A/B/A-B-C/Owner/production
+
+TESTS: Native 54 PASS; final ASR/review 16 PASS (15 overlap, one new valid-removal case); consumer/static 25 PASS; final static 3 overlapping PASS; Studio 758 PASS
+
+REAL PROVIDER TESTS: local FFmpeg/SQLite/HTTP/browser only; no external speech provider
+
+MOCK TESTS: ASR and identity are explicit fixtures, source is generated tone; no Owner or genuine speech acceptance
+
+EVIDENCE: NATIVE_ASR_GAP_REVIEW.md; asr-gap-review-evidence.json; signed controller bundle; actual browser DOM/layout/screenshots/state/backup; two cold restores and source checkpoint/recovery pair
+
+REGRESSIONS: related ASR/source/transcript/auth/static cases pass; duplicate discovery and wrong static-module invocation logs retained and corrected; accepted artifacts checked at source preservation
+
+EXTERNAL BLOCKERS: genuine provider acceptance, deferred Owner UAT and production acceptance; owned fixture cleanup rejected by execution policy (blocked by policy), verified backup/root retained without bypass
+
+OWNER ACTION REQUIRED: none for remaining safe implementation; optional manual removal of retained owned browser fixture root if desired
+
+NEXT WAVE: source audio/render/AV/QC across real missing intervals and remaining original Mode B/UI/E2E gaps
