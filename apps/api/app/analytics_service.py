@@ -115,8 +115,8 @@ class AnalyticsService:
                 raise AnalyticsBoundaryError('ANALYTICS_REAL_PUBLICATION_REQUIRED', 'Configured official analytics requires a bound publication receipt.')
             if publication.platform == 'youtube' and payload.query is None:
                 raise AnalyticsBoundaryError('ANALYTICS_QUERY_REQUIRED', 'YouTube analytics requires an explicit date interval.')
-            if publication.platform == 'tiktok' and payload.query is not None:
-                raise AnalyticsBoundaryError('ANALYTICS_QUERY_UNSUPPORTED', 'TikTok video counters are cumulative, not a date-range report.')
+            if publication.platform != 'youtube' and payload.query is not None:
+                raise AnalyticsBoundaryError('ANALYTICS_QUERY_UNSUPPORTED', 'This media profile has cumulative metrics, not a date-range report.')
         sync, replay = await self.repository.reserve_sync(
             workspace_id=publication.workspace_id,
             project_id=project_id,

@@ -1,0 +1,143 @@
+{
+  "schema_version": "north-star-meta-analytics-read-counts-v1",
+  "recorded_at": "2026-10-12T17:17:43.688029+00:00",
+  "source_parent": "e4d8f61b708bba7cb6dbad11ecd9d44c7c42cb21",
+  "wave": "10 API/backend component; full original wave PARTIAL",
+  "tests": {
+    "new_Meta_API_contract_runtime": 48,
+    "existing_analytics_wire_publication_time": 107,
+    "Native_rerun": false,
+    "Studio_rerun": false,
+    "Docker_tested": false
+  },
+  "test_logs": {
+    "meta-analytics-api-final.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-api-final.log",
+      "sha256": "8c8cb862abb6ef752d507d61c3fab048bfd0963d5bf0157ee0e38ff789257fbb",
+      "bytes": 112,
+      "passed": 48
+    },
+    "meta-analytics-legacy-regression-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-legacy-regression-n1.log",
+      "sha256": "1e409341eed455ac57db30bdb029d6b0f6ad530cb86c2dbe7d7d12743ddd3737",
+      "bytes": 194,
+      "passed": 107
+    }
+  },
+  "retained_failures": {
+    "meta-analytics-initial-test-summary.json": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-initial-test-summary.json",
+      "sha256": "0a6d1d52b7f339025836fdee56c8493504dd4438a51d434873addfdf7ffc0239",
+      "bytes": 486
+    },
+    "meta-analytics-api-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-api-n2.log",
+      "sha256": "d9353758713b126d2aea3515342228ab65b6f4aeeacad7c5a31960a01b7d5eaf",
+      "bytes": 22383
+    },
+    "meta-analytics-api-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-api-n3.log",
+      "sha256": "acf31fbdbe941f7ebb1cb8a133a198944fdc9cf035c5cfd9feb455214657dbf2",
+      "bytes": 1626
+    }
+  },
+  "primary_sources": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-primary-20261012-n1\\igmedia.py",
+      "sha256": "0aa03916e0720628c0155889613cf60f0bf3a5eb4957c1a107e01793b2e3442b",
+      "bytes": 23593,
+      "url": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/master/facebook_business/adobjects/igmedia.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-primary-20261012-n1\\instagraminsightsresult.py",
+      "sha256": "b481a928bca7bf50dd418f1f83f162c8722bd0935f183dad5d36e8a80f3b267f",
+      "bytes": 3657,
+      "url": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/master/facebook_business/adobjects/instagraminsightsresult.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-primary-20261012-n1\\advideo.py",
+      "sha256": "d41f1809df46228820fb3c54b63df4cfa088000f08645fe95a32811d71a232df",
+      "bytes": 52625,
+      "url": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/master/facebook_business/adobjects/advideo.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-primary-20261012-n1\\insightsresult.py",
+      "sha256": "dd431d4f9d732aa53bb57e9666c24a20b1aa00fc03072d93c1f024dca02a8952",
+      "bytes": 4674,
+      "url": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/master/facebook_business/adobjects/insightsresult.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-primary-20261012-n1\\page.py",
+      "sha256": "0d08e317fe078de5ad2805ab5501423fe51fea39ef90ae4a0160122a5914ee51",
+      "bytes": 222734,
+      "url": "https://raw.githubusercontent.com/facebook/facebook-python-business-sdk/master/facebook_business/adobjects/page.py"
+    }
+  ],
+  "primary_source_index": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-analytics-primary-20261012-n1\\sources.json",
+    "sha256": "e38237151053640100e48064a1dd25403db7273bfe3aeb6205e76215fb865370",
+    "bytes": 14899
+  },
+  "source_verification": {
+    "official_SDK_endpoint_and_field_names": true,
+    "real_account_permission_eligibility": false,
+    "Graph_version_live_acceptance": false,
+    "watch_time_units_verified": false,
+    "developer_docs_fetch": "429/inaccessible; SDK and official Meta Postman source used, not third-party claims"
+  },
+  "implementation": {
+    "platforms": [
+      "instagram_reels",
+      "facebook"
+    ],
+    "uses_existing_scoped_API_runtime": true,
+    "Instagram_normalized": [
+      "views",
+      "reach",
+      "likes",
+      "comments",
+      "shares",
+      "saves"
+    ],
+    "Facebook_normalized": [
+      "views",
+      "likes",
+      "comments"
+    ],
+    "missing_metrics_null": true,
+    "publication_time_null": true,
+    "request_shapes": "closed GET, explicit version, Page me and linked IG account, exact owner before metrics",
+    "queue_history_cost_backoff_mock_tested": true,
+    "repository_reopened_same_process": true,
+    "production_cold_restore_tested_this_increment": false,
+    "Native_controls_connected": false
+  },
+  "scope": {
+    "generated_publication_receipts": "explicit SQLite fixtures",
+    "provider_responses": "httpx.MockTransport",
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "real_publishing": false,
+    "production_deployed": false,
+    "Owner_UAT": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "remaining": [
+    "Native registry/token/collector/refresh/Studio integration",
+    "real account/OAuth and audience acceptance",
+    "detailed Meta metric definitions/units and Facebook video-insights coverage",
+    "qualified winner/learning calibration",
+    "original full Mode A/B/A-B-C and production acceptance"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

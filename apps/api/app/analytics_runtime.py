@@ -11,6 +11,7 @@ from .publishing_models import PublishingTargetBinding
 from .publishing_profiles import PROVIDER_KEYS
 from .db import utc_now
 from .analytics_publication_time import provider_time
+from . import analytics_meta
 
 
 class ScopedOfficialAnalyticsProvider:
@@ -39,17 +40,25 @@ class ScopedOfficialAnalyticsProvider:
         client = runtime.clients[self.platform]
         query = AnalyticsQuery.model_validate(context.query) if context.query is not None else None
         if self.platform == 'youtube' and query is None: raise AnalyticsOfficialError('ANALYTICS_QUERY_REQUIRED')
-        if self.platform == 'tiktok' and query is not None: raise AnalyticsOfficialError('ANALYTICS_QUERY_UNSUPPORTED')
+        if self.platform != 'youtube' and query is not None: raise AnalyticsOfficialError('ANALYTICS_QUERY_UNSUPPORTED')
         parent, target = await runtime.binding(context, client)
-        remote_id = video_id(self.platform, context.remote_post_id)
-        observations = []; sequence = 0
+        meta = self.platform in analytics_meta.PLATFORMS
+        remote_id = (analytics_meta.object_id if meta else video_id)(self.platform, context.remote_post_id)
+        observations = []; sequence = 0; meta_binding = None
 
         async def send(operation, build):
-            nonlocal sequence
+            nonlocal sequence, meta_binding
             # Gates, lease, receipt and account configuration are checked again for every read.
             await runtime.binding(context, client, expected_target=target)
             await runtime.repository.assert_attempt(context.sync_id, context.attempt_count)
-            credential = resolve_credential(runtime.credential_resolver, target, query, now=runtime.clock())
+            if meta:
+                credential = analytics_meta.resolve_credential(runtime.credential_resolver, target, now=runtime.clock())
+                selected = (credential.api_version, credential.page_id)
+                if credential.api_version != client.api_version or meta_binding is not None and meta_binding != selected:
+                    raise AnalyticsOfficialError('ANALYTICS_META_READ_PROFILE_CHANGED')
+                meta_binding = selected
+            else:
+                credential = resolve_credential(runtime.credential_resolver, target, query, now=runtime.clock())
             request = build(credential)
             sequence += 1
             reservation = await runtime.repository.reserve_operation(context, operation, sequence,
@@ -73,12 +82,20 @@ class ScopedOfficialAnalyticsProvider:
             return response
 
         async with asyncio.timeout(120):
-            account = confirm_account(await send('account_lookup', account_request), target)
+            if meta:
+                account_response = await send('account_lookup', analytics_meta.account_request)
+                account = analytics_meta.confirm_account(account_response, target, page_id=meta_binding[1])
+                video_response = await send('video_ownership', lambda credential: analytics_meta.ownership_request(credential, remote_id))
+                video = analytics_meta.confirm_ownership(video_response, target, remote_id)
+                metrics, evidence = analytics_meta.metrics(await send('metrics', lambda credential: analytics_meta.metrics_request(credential, remote_id)),
+                    target, remote_id, api_version=meta_binding[0])
+            else:
+                account = confirm_account(await send('account_lookup', account_request), target)
             if self.platform == 'youtube':
                 video_response = await send('video_ownership', lambda credential: youtube_video_request(credential, remote_id))
                 video = confirm_youtube_video(video_response, target, remote_id)
                 metrics, evidence = youtube_metrics(await send('metrics', lambda credential: youtube_report_request(credential, remote_id, query)), query)
-            else:
+            elif self.platform == 'tiktok':
                 video_response = await send('metrics', lambda credential: tiktok_video_request(credential, remote_id))
                 metrics, evidence = tiktok_metrics(video_response, remote_id)
                 from .analytics_official import response_object
@@ -86,13 +103,13 @@ class ScopedOfficialAnalyticsProvider:
                 video = videos[0] if videos else {}
             await runtime.binding(context, client, expected_target=target)
         collected_at = runtime.clock()
-        timestamp = provider_time(platform=self.platform, video=video, observed_at=collected_at,
+        timestamp = None if meta else provider_time(platform=self.platform, video=video, observed_at=collected_at,
             publication_id=context.publication_id, remote_id=remote_id, target_sha256=target_digest(target),
             response_sha256=response_digest(video_response), mock=client.mock, external_call=not client.mock)
         return AnalyticsCollection(provider_key=self.provider_key, source='official-api://' + self.platform + '/' + remote_id,
             source_kind='official_api', collected_at=collected_at, metrics=metrics, mock=client.mock, external_call=not client.mock,
             evidence={**evidence, **account, 'publication_receipt_id': parent.receipt.receipt_id,
-                'publication_time': timestamp.model_dump(mode='json'),
+                'publication_time': timestamp.model_dump(mode='json') if timestamp is not None else None,
                 'publication_id': context.publication_id, 'request_observations': observations,
                 'read_only': True, 'real_provider_tested': False})
 
@@ -103,7 +120,8 @@ class OfficialAnalyticsRuntime:
         self.repository, self.publishing_repository, self.settings = repository, publishing_repository, settings
         self.target_provider, self.credential_resolver, self.clock = target_provider, credential_resolver, clock
         self.clients = dict(clients or {})
-        if any(type(client) is not AnalyticsHTTPClient or platform != client.platform for platform, client in self.clients.items()):
+        if any(type(client) is not (analytics_meta.MetaAnalyticsHTTPClient if platform in analytics_meta.PLATFORMS else AnalyticsHTTPClient)
+               or platform != client.platform for platform, client in self.clients.items()):
             raise AnalyticsOfficialError('ANALYTICS_RUNTIME_CONFIGURATION_INVALID')
         if cost_policy is not None and not callable(cost_policy): raise AnalyticsOfficialError('ANALYTICS_RUNTIME_CONFIGURATION_INVALID')
         self.explicit_cost_policy = callable(cost_policy)

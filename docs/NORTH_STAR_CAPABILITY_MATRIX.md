@@ -217,3 +217,16 @@ Current component evidence: [NATIVE_MODE_B_BROWSER.md](NATIVE_MODE_B_BROWSER.md)
 | 43/60 | Analytics empty-state, exact fresh-process owned restore without another provider/render call | Observed audience metrics, production storage/database recovery and soak | P0; accounts/infrastructure | 8/10/15/16 | Real historical metrics and full original production restore/soak |
 
 Studio772 and Native access/HTTP/RBAC23 PASS; retained pre-fix logout baseline fails501. Synthetic pixels/music, three mocked ASR requests and CI reviewer approval are explicit. Owner, genuine provider, production and broad Mode A/B acceptance remain separate; no new paid/provider/TTS/publish/deploy operation occurred.
+
+
+## Meta analytics API count-reader component
+
+[META_ANALYTICS_READ_COUNTS.md](META_ANALYTICS_READ_COUNTS.md) and [evidence](north-star/meta-analytics-read-counts-evidence.json) add closed Instagram Reels lifetime and Facebook exact-video node counters through existing API scoped sync/history/cost/backoff. Page `/me`, linked professional IG target and exact media owner are checked. Missing metrics and Meta publication time remain null; no interval, watch-time unit, revenue or calibrated view semantics is inferred. Native controls and genuine provider/full original acceptance remain open. All primary statuses remain 5 IMPLEMENTED_REAL /58 PARTIAL /1 NOT_VERIFIED;59 groups unclosed.
+
+| Requirement | Current source | Remaining behavior | Severity/dependency | Wave | Acceptance |
+| --- | --- | --- | --- | --- | --- |
+| 43 Analytics | apps/api/app/analytics_meta.py; analytics_runtime.py | Native accounts/collector/Studio, additional Meta metrics, genuine account/permission/definition/audience acceptance | P0/P1; protected configuration and authorized accounts | 10/16 | Real scoped post metrics; unavailable null; no protocol mock relabelled as audience |
+| 44 Analytics sync | analytics_service.py; existing repository/processor plus Meta runtime | Native finite refresh, live rate-limit/history/operational/production acceptance | P1; Native runtime and accounts | 10/15/16 | Exact historical snapshots and cost/boundary lineage, no publishing privilege |
+| 45/46 Winner/learning | Existing consumers keep unavailable Meta timing and metrics | Qualified real cohort/calibration and full personalized opportunity flow | P1; genuine history and factor definitions | 11/12/16 | Explainable sufficient evidence; no inferred velocity/time/revenue or irreversible action |
+
+48 new Meta API/SQLite contracts and107 existing analytics/wire/time regressions PASS. Every Meta publication receipt/response here is a fixture; no paid/real-provider/publish/deploy operation or Owner UAT occurred. Repository reopening is same-process component proof, not production cold recovery.

@@ -437,3 +437,8 @@ The original deterministic CI flow A now executes one hash-pinned source through
 ## Native Mode B browser integration component
 
 The signed Studio browser now reaches actual local render/QC through the original source-edit workflow with separate CI Editor/Reviewer identities. Reviewer can play a valid saved preview without edit permission or another job; logout body consumption, source guidance, caption overlay and saved edit panels are repaired. Generated pixels/reused local-real speech/mock word intervals are explicit. Three widths, 772 Studio/23 Native access tests, exact cold restore and final approval/publishing gates pass. Continue genuine uploaded footage/ASR/Vision/tracking, full non-developer Mode A/B, real account publication/analytics and original Owner/A-B-C/production acceptance. All59 broad groups remain unclosed. See NATIVE_MODE_B_BROWSER.md.
+
+
+## Meta analytics API count-reader component
+
+The existing API sync/history/cost runtime now accepts explicit closed Meta read clients: linked Page/IG identity, exact media owner, lifetime Instagram six counts and Facebook node three counters, strict null/shape semantics, backoff and scoped operation guards.48 new API/SQLite tests plus107 existing analytics/wire/time cases pass. Native registry/token/collector/refresh/Studio, real account/permission/metric definition/unit coverage and original full Mode A/B/A-B-C/Owner/production remain open. Continue those safe implementation gaps; do not treat fixture counters as real channel feedback. See META_ANALYTICS_READ_COUNTS.md.

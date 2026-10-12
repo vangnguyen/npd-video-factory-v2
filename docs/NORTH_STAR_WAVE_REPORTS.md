@@ -3842,3 +3842,20 @@ REGRESSIONS: no role weakening, stale preview refused, invalid-CSRF body unread/
 EXTERNAL BLOCKERS: genuine provider/account/budget/rights, Owner UAT and full Docker/production acceptance remain separate
 OWNER ACTION REQUIRED: none for continued safe implementation; listening/UAT deferred; no paid/publish/deploy/main approval exercised
 NEXT WAVE: original genuine uploaded-footage/Mode A/B/UI/semantic acceptance and remaining safe North Star platform gaps
+
+
+## Wave 10 — Meta analytics scoped API count readers
+
+WAVE: 10 API/backend component
+STATUS: implemented and mock-tested API/SQLite queue/history/cost/backoff; full original wave PARTIAL
+HEAD SHA: source parent e4d8f61b708bba7cb6dbad11ecd9d44c7c42cb21; final external seal recovery/20261007/meta-analytics-read-counts-program-state.json
+CAPABILITIES COMPLETED: closed versioned GET readers; Page me/linked IG/account/media binding; lifetime IG counts and Facebook node counters; existing scoped sync/history/cost/backoff; null unavailable metrics/timing; request/query/privacy guards
+CAPABILITIES PARTIAL: Native registry/token/collector/refresh/Studio, detailed Meta units/definitions/metrics, real accounts/permission/audience/cohort/Owner/full Mode A/B/A-B-C/production;59 broad groups remain
+TESTS:48 new API contracts/runtime PASS;107 existing analytics/official wire/publication-time PASS; no Native/Studio/Docker rerun this increment
+REAL PROVIDER TESTS: none; official public SDK/documentation inspection only, no account/provider metric read
+MOCK TESTS: explicit SQLite publication receipts and httpx.MockTransport metrics; every mock flag/nullable field preserved
+EVIDENCE: META_ANALYTICS_READ_COUNTS.md; north-star/meta-analytics-read-counts-evidence.json; retained failed attempts and primary SDK hashes
+REGRESSIONS: existing strict DTO/wire contracts preserved; YouTube/TikTok/time tests pass; source seal rechecks15 historical artifacts and live source
+EXTERNAL BLOCKERS: genuine authorized accounts/OAuth, detailed version/account metric acceptance and original Owner/production gates remain separate
+OWNER ACTION REQUIRED: none for continued safe implementation; UAT deferred; no paid/publish/deploy/main approval exercised
+NEXT WAVE: connect Meta Native read registry/token/collector/finite refresh/Studio and continue all original North Star gaps
