@@ -3876,3 +3876,8 @@ REGRESSIONS: old YT/TT contracts and publishing tests pass; source seal verifies
 EXTERNAL BLOCKERS: real account/OAuth/version/permission/metric definitions and Owner/production gates remain separate
 OWNER ACTION REQUIRED: none for safe continuation; UAT deferred; no paid/publish/deploy/main approval exercised
 NEXT WAVE: signed Native HTTP/browser/cold restore and qualified Meta downstream; all original North Star gaps remain in scope
+
+
+## Wave 10 / 15 — Native Meta local E2E component
+
+The complete per-wave report, tests, limits, Owner gate and next wave are in [NATIVE_META_ANALYTICS_E2E.md](NATIVE_META_ANALYTICS_E2E.md); indexed evidence is [native-meta-analytics-e2e-evidence.json](north-star/native-meta-analytics-e2e-evidence.json). Native signed HTTP6/Studio780 pass; two cold domain restores and three actual browser rehearsals pass. No paid/real-provider/publish/deploy/main-merge acceptance.59 groups remain unclosed; final HEAD/source recovery pair is in workspace recovery/20261007/native-meta-analytics-e2e-program-state.json.

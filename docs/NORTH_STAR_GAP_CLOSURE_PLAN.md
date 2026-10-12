@@ -447,3 +447,8 @@ The existing API sync/history/cost runtime now accepts explicit closed Meta read
 ## Native Meta analytics component
 
 Protected separate read profile/token, Native v3 collector/finite refresh and Studio controllers now use the existing API count kernel and approved publication receipt.20 new Native/90 legacy/780 Studio/71 API kernel tests pass. Both domain/route DTO exports pass; native kernel no longer requires SQLAlchemy. Continue signed HTTP/browser/operator, separate-process restore, qualified Meta winner/learning/Bridge, genuine accounts/metrics and all original Mode A/B/A-B-C/Owner/production gaps. All59 groups remain unclosed. See NATIVE_META_ANALYTICS.md.
+
+
+## Native Meta local E2E verification
+
+Signed HTTP6/Studio780 pass; browser manual and finite paths pass for both platforms; the hidden finite card is now in Video review. Two separate-process domain restores pass without credentials/replay. See NATIVE_META_ANALYTICS_E2E.md. Remaining: genuine provider/metric coverage, complete time-series/comparison, qualified Meta winner/learning/Bridge calibration, production-wide restore and original full Mode A/B/A-B-C/Owner acceptance. All59 groups remain unclosed.

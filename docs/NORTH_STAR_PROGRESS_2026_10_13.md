@@ -16,3 +16,6 @@ SOURCE_PRESERVED được chứng minh bằng nhánh riêng và cặp bundle kh�
 
 
 Mốc Native Meta: [NATIVE_META_ANALYTICS.md](NATIVE_META_ANALYTICS.md) nối cấu hình/token chỉ đọc riêng, xác minh tài khoản, thu thập/lịch làm mới hữu hạn, lịch sử/chi phí và điều khiển Studio.20 ca Meta Native,90 hồi quy Native,780 Studio (gồm8 ca Meta mới) và71 API kernel đạt. Hai bundle domain/DTO/backup giả lập đạt; chưa nghiệm thu HTTP/browser/cold restore tiến trình khác hay provider/Owner/production.59 nhóm còn mở; SHA/bundle cuối ở recovery/20261007/native-meta-analytics-program-state.json.
+
+
+Mốc kiểm chứng mới: [Native Meta local E2E](NATIVE_META_ANALYTICS_E2E.md) đạt6 ca HTTP có xác thực,780 hồi quy Studio,2 ca khôi phục domain qua tiến trình mới, và đọc thủ công/lịch hai lần đọc qua trình duyệt cho cả Instagram/Facebook. Đã sửa lịch analytics bị ẩn ngoài vùng Video; kiểm tra1366/1920/2560px trong các màn này. Dữ liệu provider/publication/identity đều giả lập; không nghiệm thu video hoặc Owner.59 nhóm vẫn chưa đóng. SHA/bảo toàn nguồn mới ở recovery/20261007/native-meta-analytics-e2e-program-state.json.

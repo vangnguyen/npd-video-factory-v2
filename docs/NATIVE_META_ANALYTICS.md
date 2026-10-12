@@ -15,3 +15,6 @@ Verification includes the new Native collection/token/configuration/verification
 `scripts/north_star_native_meta_analytics.py` exports both platforms through actual Native domain/route DTOs with explicit mocked publication/metrics transports, manual collection, two finite refresh occurrences, cost records and owned-state archives. Its owned roots clean up after export. It does not certify signed HTTP, browser, a separate-process cold restore, real audience observations or Owner UAT. None of those gates is self-accepted. Earlier accepted artifacts and previously policy-blocked cleanup roots are untouched.
 
 See [evidence index](north-star/native-meta-analytics-evidence.json) and [API count-reader source basis](META_ANALYTICS_READ_COUNTS.md). Exact committed/pushed HEAD and the Git recovery pair are recorded externally in `recovery/20261007/native-meta-analytics-program-state.json`. All 59 broad groups remain unclosed; source preservation does not imply full production readiness.
+
+
+The subsequent [local E2E increment](NATIVE_META_ANALYTICS_E2E.md) now verifies signed HTTP, worker, real Studio browser controls and separate-process domain restore. The limits and unclosed genuine-provider/full-flow gates above remain.

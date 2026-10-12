@@ -242,3 +242,14 @@ Studio772 and Native access/HTTP/RBAC23 PASS; retained pre-fix logout baseline f
 | 45/46/61 Winner/learning/Bridge | New v3 Meta source remains distinct; existing YT/TT consumers preserved | Qualified downstream Meta source/cohort/event integration and real calibration | P1; source basis and genuine observations | 11/12/14/16 | No inferred velocity/time/revenue or irreversible recommendations |
 
 Native Meta20 and related legacy90, Studio780 (including8 new captured Meta controller cases), API kernel71 PASS. Domain/route DTO exports for both platforms and owned-state archives pass, with lifecycle cleanup. No actual HTTP/browser/separate-process restore, Owner, real provider or production acceptance is inferred.
+
+
+## Native Meta local HTTP/browser/recovery increment
+
+[Evidence](north-star/native-meta-analytics-e2e-evidence.json) and [scope](NATIVE_META_ANALYTICS_E2E.md):6 actual signed HTTP tests and780 Studio regressions pass; both platforms complete browser manual reads and two-occurrence finite schedules. Hidden refresh-card placement is repaired. Two fresh-process domain restores preserve exact historical data with zero provider/decryption/retry. Browser roots clean up; histories, screenshots and archives remain. No genuine audience, Owner/full Mode A/B/A-B-C, Docker or production acceptance is inferred. Primary statuses remain5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED;59 groups unclosed.
+
+| Requirement | Current source | Exact remaining behavior | Severity/dependency | Wave | Acceptance |
+| --- | --- | --- | --- | --- | --- |
+| 43/44 Analytics/sync | official_analytics.py; official_analytics_refresh.py; shot-studio.mjs; test_meta_analytics_http.py; browser/restore runners | Genuine authorized provider metrics with verified definitions/coverage; complete time-series/comparison and non-developer full flow | P1; real account/app/OAuth and metric scope | 10/16 | Real nullable observations, immutable history and consent; full operator flow |
+| 45/46/61 Feedback/Bridge | Current Meta scoped snapshots and qualified analytics outbox source | Calibrated winner/learning/cohort integration and delivery evidence for Meta | P1; qualified source basis and genuine observations | 11/12/14/16 | Explainable recommendation-only outputs; no inferred velocity/revenue or automatic media/budget action |
+| 60/64 Recovery/E2E | north_star_native_meta_analytics_restore.py; owned browser archives | Production full configuration/storage recovery; complete playable original acceptance bundles | P0/P1; production profiles and all original flow stages | 15/16 | Approved full restore simulation and A/B/C artifacts with Owner/provider gates separate |
