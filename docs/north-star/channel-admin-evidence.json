@@ -1,0 +1,166 @@
+{
+  "schema_version": "north-star-channel-admin-v1",
+  "recorded_at": "2026-10-12T05:29:25.917693+00:00",
+  "source_parent": "ce3888757a43393b741d2e9aa224aae83612c0b0",
+  "wave": "7/8/14 component; full original program remains open",
+  "implemented": [
+    "workspace immutable channel definitions and lifecycle",
+    "Owner UI/API with CAS/idempotency/role/origin/CSRF admission",
+    "frozen project and custom Trend/research/Idea/Bridge bindings",
+    "approved profile references and source DSP/subtitle defaults",
+    "backup and explicit complete-history separate-process recovery",
+    "unconfigured English narration gate after human approval"
+  ],
+  "tests": {
+    "Studio": 737,
+    "Native_related_default": 65,
+    "Native_production_default": 56,
+    "Native_intelligence_test_only_Selector": 51,
+    "successful_test_executions": 909,
+    "Native_modules": 18,
+    "Selector_policy_not_applied_to_live_runtime": true,
+    "static_signed_HTTP_modules": 65
+  },
+  "test_logs": {
+    "channel-admin-related-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-related-n2.log",
+      "sha256": "0ce484d83ff54b9e65c84b54b024de5107a36aeab47751e51bd53e118a94da68",
+      "bytes": 170
+    },
+    "channel-admin-native-production-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-native-production-n2.log",
+      "sha256": "16dd7cd512924f5ca6e7c88f69844c3829553876d32257b6be5b6f213ed3eb83",
+      "bytes": 161
+    },
+    "channel-admin-intelligence-selector-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-intelligence-selector-n1.log",
+      "sha256": "3acfe3b036a8a7a662ed6d62d15e1759eab820ff16f03850b33df2fddabb15a1",
+      "bytes": 216
+    },
+    "channel-admin-studio-full-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-studio-full-n3.log",
+      "sha256": "e4de2409f6184747524918c183d36ca5d04900d1b6fd77730cd290077b6ed8d8",
+      "bytes": 76024
+    }
+  },
+  "static_http": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-static-http-n2.json",
+    "sha256": "d243aaea85d4e9bcee51fe00db922d803b3628c0d385001fbd28198b2defdf30",
+    "bytes": 6778
+  },
+  "actual_local_rehearsal": {
+    "evidence": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-admin-n3\\evidence.json",
+      "sha256": "4f0c2e92ca2b2c555d4f7897269f84e22f53abcfb356a8ac81db9e7ccab0e239",
+      "bytes": 1476
+    },
+    "cold_process": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-admin-n3\\cold-process.json",
+      "sha256": "044729b735eca2b4c5b5525fa5c95e42b6312784f5b020a86873052b477b78a1",
+      "bytes": 181
+    },
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-channel-admin-n3\\owned-channel-admin.zip",
+      "sha256": "7eec353c9c1cc6c79f95091660032fdd0993522e201d28a261924dd0e1b2f06c",
+      "bytes": 1012658
+    },
+    "signed_requests": 23,
+    "definition_versions": 2,
+    "lifecycle_revision": 4,
+    "existing_project_unchanged": true,
+    "history_explicitly_compared": true,
+    "fixture_DOM": true,
+    "browser_rendered": false,
+    "Owner_UAT": false,
+    "new_jobs": 0
+  },
+  "failed_runs_retained": {
+    "channel-admin-api-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-api-n1.log",
+      "sha256": "4e6118240ee7a7b3c64af6ccd969ff44d454b72aeef9df59b048a04e82c9af2a",
+      "bytes": 1773
+    },
+    "channel-admin-api-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-api-n2.log",
+      "sha256": "053f6ad8d6cd6d1afc38ad6510ac9fc6d756bf8f26c895a39f33f7720f907f9d",
+      "bytes": 1724
+    },
+    "channel-admin-native-production-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-native-production-n1.log",
+      "sha256": "e6ae65e538650cb5704e05c3beb6095cc71261f1149f7c88cb5a4f844a326528",
+      "bytes": 2203
+    },
+    "channel-admin-regression-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-regression-n1.log",
+      "sha256": "85f9042550c264e1e0d2118a3c975c6c38d47cefaffd78702cfb51f5f04f3a39",
+      "bytes": 75
+    },
+    "channel-admin-learning-diagnostic-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-learning-diagnostic-n1.log",
+      "sha256": "1e2b493ce2cf830033376c55770fb5bf3298a5d37554b67845b3ae19e9442219",
+      "bytes": 1475
+    },
+    "channel-admin-regression-linux-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-regression-linux-n1.log",
+      "sha256": "76e4f453e83500b0cb95359e70b4c230f2a99d67896b7dc8fceade1b0355d7c9",
+      "bytes": 22923
+    },
+    "channel-admin-intelligence-linux-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-intelligence-linux-n2.log",
+      "sha256": "b9246a87e3b74a949a2837b4c73d71e7a956f2770fe8dcf57955089317cf98c4",
+      "bytes": 12577
+    },
+    "channel-admin-intelligence-linux-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\channel-admin-intelligence-linux-n3.log",
+      "sha256": "ce07acef783c21731c741746a02ce7a6ab07180292933769bbc67cd14a2ca5dc",
+      "bytes": 73823
+    }
+  },
+  "repair_and_limits": [
+    "Initial role/CSRF route boundary and principal serialization repaired before checkpoint.",
+    "Raw Python tuple versus JSON list comparison replaced by canonical JSON hashes; history is explicitly compared.",
+    "New capability contract and fresh no-overwrite static proof repaired.",
+    "Native default broad run interrupted before acceptance; separate diagnostic access violation at Windows asyncio Proactor socket close remains unresolved.",
+    "The 51-case Native intelligence suite passes under a test-only Selector policy; no production loop policy changed.",
+    "Linux official-session fixtures refuse dispatch on unsupported platform (51 cases,25 setup errors); these are not counted as passing acceptance.",
+    "Pillow12.3.0 installed only in isolated Linux CI environment to match existing Native dependency."
+  ],
+  "remote_provider_calls": 0,
+  "local_TTS_inferences": 0,
+  "paid_calls": 0,
+  "real_publishing": false,
+  "publishing_enabled": false,
+  "production_deployed": false,
+  "Owner_UAT": false,
+  "remaining": [
+    "all applicable original64 groups/90 sections",
+    "full brand/template/profile-family administration and account bindings",
+    "cross-version channel-history continuity",
+    "additional voice/language providers",
+    "actual browser/non-developer/Owner review",
+    "Windows default runtime diagnosis and production soak",
+    "original A/B/C",
+    "real provider/account and isolated production acceptance"
+  ],
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  }
+}

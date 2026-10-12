@@ -95,11 +95,15 @@ class FrozenSelection(StrictModel):
     catalog_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
     selection_sha256:str=Field(pattern=r'^[a-f0-9]{64}$')
 
-def resolve_profile(profile):
+def resolve_profile(profile,*,customize_content=False):
     data=profile.model_dump(mode='json');content=next((value for value in configuration()['profiles'] if value['id']==profile.content_profile_id),None)
     template=next((value for value in load_templates() if value['template_ref']==profile.source_preferences.subtitle_template_ref),None)
     if content is None or template is None:raise ValueError('Configured content/subtitle reference missing')
-    if content['target_audience']!=profile.niche_profile.target_audience or content['tone']!=profile.niche_profile.tone:raise ValueError('Configured audience/tone mismatch')
+    if customize_content:
+        content={**copy.deepcopy(content),'target_audience':profile.niche_profile.target_audience,'tone':profile.niche_profile.tone,
+                 'keywords':copy.deepcopy(profile.niche_profile.keywords),'language':profile.niche_profile.language,
+                 'locale':profile.niche_profile.locale,'country':profile.niche_profile.country}
+    elif content['target_audience']!=profile.niche_profile.target_audience or content['tone']!=profile.niche_profile.tone:raise ValueError('Configured audience/tone mismatch')
     brand=choose(profile.brand_id,profile.video_template_id,duration_mode=profile.duration_mode)
     return {'schema_version':'native-channel-selection-v1','profile':data,'profile_sha256':digest(data),
         'content_profile':copy.deepcopy(content),'content_profile_sha256':digest(content),'brand_template':brand,
@@ -112,10 +116,16 @@ def catalog():
     except (ValueError,OSError,WorkflowError):raise WorkflowError('CHANNEL_PROFILE_CATALOG_INVALID',503) from None
     return {**parsed,'sha256':digest(parsed),'selections':profiles,'external_dispatches':0,'publishing_enabled':False}
 
-def select(reference):
+def select(reference,*,store=None,workspace_id=None,con=None):
     if not isinstance(reference,str) or not re.fullmatch(REF,reference):raise WorkflowError('CHANNEL_PROFILE_NOT_FOUND',400)
+    if store is not None and workspace_id is not None:
+        from .channel_registry import select_saved
+        try:return select_saved(store,workspace_id,reference,con=con)
+        except WorkflowError as error:
+            if error.code!='CHANNEL_PROFILE_NOT_FOUND':raise
     available=catalog();selection=next((value for value in available['selections'] if value['profile']['profile_ref']==reference),None)
-    if selection is None:raise WorkflowError('CHANNEL_PROFILE_NOT_FOUND',400)
+    if selection is None:
+        raise WorkflowError('CHANNEL_PROFILE_NOT_FOUND',400)
     selection={**selection,'catalog_ref':available['catalog_ref'],'catalog_sha256':available['sha256']}
     return {**selection,'selection_sha256':digest(selection)}
 
@@ -129,6 +139,7 @@ def resolve(document):
         if value['profile_sha256']!=digest(profile.model_dump(mode='json')) or value['content_profile_sha256']!=digest(value['content_profile']):raise ValueError()
         if digest(brand.brand.model_dump())!=brand.brand_sha256 or digest(brand.template.model_dump())!=brand.template_sha256:raise ValueError()
         if brand.brand.id!=profile.brand_id or brand.template.id!=profile.video_template_id or value['content_profile']['id']!=profile.content_profile_id or document.get('niche')!=profile.niche_profile.niche:raise ValueError()
+        if value['content_profile'].get('target_audience')!=profile.niche_profile.target_audience or value['content_profile'].get('tone')!=profile.niche_profile.tone:raise ValueError()
         style=SubtitleStyle.model_validate(value['source_subtitle_style'])
         if style.template_ref!=profile.source_preferences.subtitle_template_ref or brand.template.duration_policy!=profile.duration_mode:raise ValueError()
         if value['external_dispatches']!=0 or value['paid_operations']!=0 or value['publishing_enabled'] is not False:raise ValueError()

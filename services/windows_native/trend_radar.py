@@ -158,7 +158,7 @@ class NativeTrendRadar:
 
     def refresh(self,payload,*,actor):
         if not isinstance(payload,RefreshRequest):payload=RefreshRequest.model_validate(payload)
-        selection=select(payload.channel_profile_ref);as_of=self.timestamp()
+        selection=select(payload.channel_profile_ref,store=self.analytics.store,workspace_id=self.workspace);as_of=self.timestamp()
         with self.store.transaction() as con:
             identifier,request,prior=self.replay(con,'refresh',payload)
             if prior:return prior

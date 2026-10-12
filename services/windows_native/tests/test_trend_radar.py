@@ -124,6 +124,22 @@ class RadarTests(unittest.TestCase):
         self.assertEqual(project['document']['content_intelligence']['run']['context']['trend_radar'],context)
         tampered=copy.deepcopy(context);tampered['signals'][0]['payload']['signal']['views']=999
         with self.assertRaisesRegex(WorkflowError,'LINEAGE_INVALID'):lineage(tampered)
+    def test_managed_channel_audience_tone_flow_into_frozen_research_and_ideas(self):
+        from services.windows_native.channel_registry import NativeChannelRegistry,Mutation
+        from services.windows_native.channel_profiles import catalog
+        profile=copy.deepcopy(next(p for p in catalog()['profiles'] if p['profile_ref']=='ai-education-reference@1'))
+        profile.update(profile_ref='owned-radar-ai@1',name='Owned radar channel')
+        profile['niche_profile'].update(profile_ref='owned-radar-niche@1',target_audience='Khán giả riêng mới học AI',tone='Giải thích từng ví dụ',keywords=['AI','kiểm chứng'])
+        registry=NativeChannelRegistry(self.production,'wsp_native_local')
+        registry.mutate(Mutation.model_validate({'profile_key':'owned-radar-ai','action':'save','expected_revision':0,'profile':profile,'request_key':uuid.uuid4().hex}),actor='explicit-fixture-owner')
+        self.collect();self.assertTrue(self.radar.process())
+        self.radar.refresh(RefreshRequest(channel_profile_ref='owned-radar-ai@1',request_key=uuid.uuid4().hex),actor='explicit-fixture-editor')
+        item=self.radar.page()['items'][0];handoff=self.handoff(item);bundle=self.intelligence.bundle(handoff['payload']['research_run_id'])
+        frozen=bundle['run']['context']['profile'];self.assertEqual(frozen['target_audience'],profile['niche_profile']['target_audience']);self.assertEqual(frozen['tone'],profile['niche_profile']['tone'])
+        self.assertEqual(bundle['opportunity']['target_audience'],frozen['target_audience']);self.assertEqual(bundle['run']['context']['profile_sha256'],digest(frozen))
+        for action in ('research','ideas'):
+            self.intelligence.enqueue(bundle['run']['id'],bundle['run']['version'],action,uuid.uuid4().hex);self.assertTrue(self.intelligence.run_one());bundle=self.intelligence.bundle(bundle['run']['id'])
+        self.assertEqual({v['target_audience'] for v in bundle['ideas']},{frozen['target_audience']});self.assertEqual(self.production.get(self.original['id']),self.original)
     def test_handoff_conflicts_and_failure_roll_back_research_and_opportunity(self):
         item=self.ready()
         with self.assertRaisesRegex(WorkflowError,'BINDING_CHANGED'):self.radar.handoff(HandoffRequest(assessment_id=item['id'],expected_sha256='0'*64,acknowledged=True,request_key=uuid.uuid4().hex),actor='fixture-editor')

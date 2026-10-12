@@ -35,3 +35,9 @@
 #native-render-thumbnail-rights-list{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
 
 #native-tiktok-creators-card .review-player{display:block;width:min(100%,390px);max-height:65vh;aspect-ratio:9/16;object-fit:contain;background:#101614;border-radius:12px;margin:16px auto}#native-tiktok-creators-card button{margin:5px 5px 5px 0}
+
+.native-profile-dialog{width:min(1100px,calc(100vw - 48px));max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--border,#d5d9e2);border-radius:14px;background:var(--surface,#fff);color:var(--text,#162033)}
+.native-profile-dialog::backdrop{background:rgb(12 20 35 / 55%)}
+.native-profile-dialog .scene-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.native-profile-dialog select,.native-profile-dialog textarea,.native-profile-dialog input{max-width:100%}
+@media(max-width:700px){.native-profile-dialog{width:calc(100vw - 24px);padding:16px;max-height:calc(100vh - 24px)}.native-profile-dialog .scene-grid{grid-template-columns:1fr}}

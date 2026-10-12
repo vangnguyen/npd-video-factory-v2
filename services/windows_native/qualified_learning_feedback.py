@@ -169,7 +169,7 @@ class NativeQualifiedLearningFeedback:
                 self.read(prior)
                 self.learning.winners.analytics.identity(authority=authority)
                 return prior, True
-            selection = select(payload.channel_profile_ref)
+            selection = select(payload.channel_profile_ref,store=self.learning.store,workspace_id=self.workspace)
             with self.learning.store.transaction() as source:
                 original = self.learning.read(source, self.learning.row(source, payload.project_id, payload.learning_id))
                 value = content(payload, original, selection, authority)

@@ -306,7 +306,7 @@ class NativeBridge:
             profile=None
             if request.channel_profile_ref:
                 from .channel_profiles import select
-                profile=select(request.channel_profile_ref)
+                profile=select(request.channel_profile_ref,store=self.store,workspace_id=self.workspace,con=con)
                 if profile['profile']['niche_profile']['niche']!=request.niche:raise WorkflowError('NATIVE_BRIDGE_PROFILE_NICHE_CONFLICT',400)
             project=self.store.create_in_transaction(con,request.name,request.prompt,request.input_kind,channel_profile=profile,niche=request.niche)
             row=con.execute('SELECT * FROM projects WHERE id=?',(project,)).fetchone();document=json.loads(row['document'])

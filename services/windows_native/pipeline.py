@@ -284,6 +284,10 @@ def synthesize(config, snapshot, out):
     approval, doc = snapshot["approval"], snapshot["document"]
     if not approval or approval["snapshot_sha256"] != digest(doc):
         raise WorkflowError("HUMAN_APPROVAL_REQUIRED_BEFORE_TTS")
+    if doc.get('channel_profile'):
+        from .channel_profiles import resolve as channel_selection
+        if channel_selection(doc)['profile']['niche_profile']['language']!='vi':
+            raise WorkflowError('CHANNEL_NARRATION_LANGUAGE_NOT_CONFIGURED',503)
     proposal = Proposal.model_validate(doc["proposal"])
     quality = resolve_policy(doc)
     from .north_star_quality import validate_tts_names

@@ -28,11 +28,12 @@ PROFILE_MAX_BYTES = 256 * 1024
 def permission_for(method, path):
     path = path.split('?', 1)[0]
     if method == 'GET':
-        return 'manage' if path in ('/api/runtime-status', '/settings/assemblyai') or path.startswith('/api/connections/') else 'read'
+        return 'manage' if path in ('/api/runtime-status', '/settings/assemblyai') or path.startswith('/api/connections/') or path.startswith('/api/channel-profiles/admin') else 'read'
     if method != 'POST':
         return None
     if path == '/api/logout':
         return 'read'
+    if path=='/api/channel-profiles/admin':return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-publications/nopu_'+ID+r'/(media-selection|media-deliveries(?:/nmd_'+ID+r'/(process|cancel))?)',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-publications/nopu_'+ID+r'/queue(?:/nopq_'+ID+r'/cancel)?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/official-publications(?:/nopu_'+ID+r'/(approve|renew|revoke|cancel|step|poll))?',path):return 'manage'

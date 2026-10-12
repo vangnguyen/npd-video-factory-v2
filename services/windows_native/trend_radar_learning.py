@@ -12,7 +12,7 @@ def duration_bucket(value):
 
 def create(radar,payload,*,actor):
     if not isinstance(payload,LearningRequest):payload=LearningRequest.model_validate(payload)
-    selection=select(payload.channel_profile_ref)
+    selection=select(payload.channel_profile_ref,store=radar.analytics.store,workspace_id=radar.workspace)
     if payload.provider_mode=='fixture' and not payload.fixture_acknowledged:raise WorkflowError('TREND_FIXTURE_ACKNOWLEDGEMENT_REQUIRED',400)
     scope={'workspace_id':radar.workspace,'channel_profile_ref':payload.channel_profile_ref,'channel_profile_sha256':selection['profile_sha256'],
         'niche':selection['profile']['niche_profile']['niche'],'platform':payload.platform,'mock':payload.provider_mode=='fixture',

@@ -399,6 +399,8 @@ class LocalServer(ThreadingHTTPServer):
         super().__init__(("127.0.0.1", port), Handler)
         self.config, self.store = config, Store(config.data_root)
         self.access = access
+        from .channel_registry import NativeChannelRegistry
+        self.channel_registry=NativeChannelRegistry(self.store,access.workspace_id if access else 'wsp_native_local')
         self.session = secrets.token_urlsafe(32)
         self.csrf = secrets.token_urlsafe(32)
         self.connection_lock = threading.Lock()
@@ -830,8 +832,18 @@ class Handler(BaseHTTPRequestHandler):
             from app.subtitle_templates import template_catalog
             return self.reply(template_catalog())
         if path=='/api/channel-profiles':
-            from .channel_profiles import catalog
-            return self.reply(catalog())
+            return self.reply(self.server.channel_registry.catalog(),headers={'Cache-Control':'no-store'})
+        if path=='/api/channel-profiles/admin':
+            return self.reply(self.server.channel_registry.page(),headers={'Cache-Control':'no-store'})
+        channel_history=re.fullmatch(r'/api/channel-profiles/admin/([a-z][a-z0-9-]{2,49})/history',path)
+        if channel_history:
+            params=parse_qs(self.path.partition('?')[2],keep_blank_values=True)
+            if set(params)-{'before_version','limit'} or any(len(v)!=1 for v in params.values()):raise WorkflowError('CHANNEL_PROFILE_HISTORY_QUERY_INVALID',400)
+            try:
+                before=int(params['before_version'][0]) if 'before_version' in params else None
+                limit=int(params.get('limit',['20'])[0])
+            except ValueError:raise WorkflowError('CHANNEL_PROFILE_HISTORY_QUERY_INVALID',400) from None
+            return self.reply(self.server.channel_registry.history(channel_history[1],before_version=before,limit=limit),headers={'Cache-Control':'no-store'})
         cost_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/cost-summary', path)
         if cost_route:
             from .costs import CostLedger
@@ -884,7 +896,7 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
-                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
+                "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_channel_profile_admin":True,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
             return self.reply({"status": "ready", "model": "gpt-6-luna", "voice": "Thùy Dung", "resolution": "1080x1920", "human_review_required": True})
         if path == "/api/defaults":
@@ -1020,6 +1032,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-official-learning.mjs'] = 'native-official-learning.mjs'
         static['/native-qualified-learning.mjs'] = 'native-qualified-learning.mjs'
         static['/native-channel-profiles.mjs'] = 'native-channel-profiles.mjs'
+        static['/native-channel-admin.mjs'] = 'native-channel-admin.mjs'
         static['/native-bridge.mjs']='native-bridge.mjs'
         static.update({'/login': 'native-login.html', '/native-login.mjs': 'native-login.mjs',
                        '/native-access.mjs': 'native-access.mjs', '/native-access.css': 'native-access.css'})
@@ -1045,6 +1058,15 @@ class Handler(BaseHTTPRequestHandler):
             raise WorkflowError("INVALID_JSON_BODY", 400) from None
 
     def dispatch_post(self):
+        if self.path=='/api/channel-profiles/admin':
+            self.boundary(write=True)
+            from .channel_registry import Mutation
+            from .contracts import digest
+            session=getattr(self,'auth_session',None)
+            actor='human:'+digest(session.principal.token_id) if session else 'legacy-local-owner'
+            try:request=Mutation.model_validate(self.read_body(max_bytes=16384))
+            except ValueError:raise WorkflowError('CHANNEL_PROFILE_MUTATION_INVALID',400) from None
+            return self.reply(self.server.channel_registry.mutate(request,actor=actor),headers={'Cache-Control':'no-store'})
         if self.path.startswith('/v1/'):
             from .bridge_routes import dispatch
             return dispatch(self)
@@ -1279,7 +1301,7 @@ class Handler(BaseHTTPRequestHandler):
             channel=None
             if 'channel_profile_ref' in body:
                 from .channel_profiles import select
-                channel=select(body['channel_profile_ref'])
+                channel=select(body['channel_profile_ref'],store=self.server.store,workspace_id=self.server.channel_registry.workspace)
             if 'content_profile_id' in body:
                 identifier=body['content_profile_id']
                 if not isinstance(identifier,str): raise WorkflowError('CONTENT_PROFILE_NOT_FOUND',400)

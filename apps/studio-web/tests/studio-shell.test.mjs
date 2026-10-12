@@ -86,6 +86,11 @@ test('CI primary action moves into PageHeader using the original callback node',
   assert.equal(newResearch.parentNode,f.actions);newResearch.onclick();assert.equal(count,1);
   assert.equal(newResearch.classList.contains('primary'),true);
 });
+test('Native owner channel control stays connected after legacy navigation is replaced',async()=>{
+  const f=fixture(),button=f.doc.createElement('button');button.id='manage-channel-profiles';button.hidden=true;f.aside.append(button);
+  mountStudioShell({page:'project',document:f.doc});assert.equal(f.doc.getElementById('manage-channel-profiles'),button);assert.ok(button.parentNode);assert.equal(button.hidden,true);
+  const html=await readFile(new URL('../native.html',import.meta.url),'utf8');const nav=html.match(/<nav[\s\S]*?<\/nav>/)?.[0];assert.doesNotMatch(nav,/manage-channel-profiles/);assert.match(html,/<\/nav>\s*<button class="studio-nav-item" id="manage-channel-profiles" hidden>/);
+});
 
 test('Every secondary page makes zero optional imports/styles on a legacy or false capability',async()=>{
   for(const installer of [installProductionShell,installIntelligenceShell,installConnectionShell]){
@@ -142,6 +147,5 @@ test('Secondary HTML has no unconditional dependency on assets unavailable from 
   assert.match(css,/--content-max:1720px/);assert.match(css,/studio-main>:not\(\.app-topbar\).*max-width:var\(--content-max\)/);
   assert.match(css,/--text-muted:var\(--muted\)/);assert.match(css,/focus-visible/);
 });
-
 
 

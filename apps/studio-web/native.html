@@ -8,6 +8,7 @@
   <script type="module" src="/native.mjs"></script>
 </head>
 <body>
+  <dialog id="native-channel-admin-dialog" class="native-profile-dialog" aria-label="Quản trị hồ sơ kênh"></dialog>
   <a class="skip-link" href="#studio-main">Đến không gian biên tập</a>
   <aside class="sidebar">
     <a href="/" class="brand"><span class="brand-mark">N</span><span>NPD VIDEO STUDIO<small>Không gian sản xuất</small></span></a>
@@ -22,6 +23,7 @@
       <a class="nav" href="/production?view=library">Video hoàn chỉnh</a>
       <a class="nav" href="/settings/assemblyai">Cài đặt</a>
     </nav>
+    <button class="studio-nav-item" id="manage-channel-profiles" hidden>Hồ sơ kênh</button>
     <label class="side-label" for="project-picker">DỰ ÁN ĐÃ LƯU</label>
     <select id="project-picker"><option value="">Chọn dự án…</option></select>
     <label class="check"><input id="show-archived" type="checkbox"> Hiện dự án đã lưu trữ</label>

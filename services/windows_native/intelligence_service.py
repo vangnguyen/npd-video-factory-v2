@@ -1,6 +1,7 @@
 """Explicit local intelligence workflow; approved briefs reuse native production."""
 from datetime import datetime, timezone
 import json
+import copy
 from pathlib import Path
 import threading
 import time
@@ -97,6 +98,8 @@ class IntelligenceService:
             from .trend_radar_lineage import validate
             validate(trend_context)
             if channel_profile!=trend_context['channel_selection'] or channel_profile['profile']['content_profile_id']!=profile_id:raise WorkflowError('TREND_CHANNEL_PROFILE_MISMATCH',400)
+            profile=copy.deepcopy(channel_profile['content_profile'])
+            context.update(profile=profile,profile_sha256=digest(profile))
             context.update(trend_radar=trend_context,channel_profile=channel_profile)
             from .qualified_learning_feedback import from_run_context,qualified_context,idea_recommendations
             feedback=from_run_context(context)
