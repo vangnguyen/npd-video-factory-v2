@@ -3809,3 +3809,19 @@ REGRESSIONS: initial metadata fixture labelling corrected without replacing hist
 EXTERNAL BLOCKERS: configured real providers/accounts/budgets, original Owner UAT and production acceptance remain separate; recursive scratch deletion automatically rejected as blocked by policy, roots/backups retained and no retry/bypass
 OWNER ACTION REQUIRED: none for continued safe implementation; listening/Phase10 UAT remains deferred; no paid/publish/deploy/main approval exercised
 NEXT WAVE: continue original full Mode B/Mode A media/ingest/UI/E2E and remaining North Star requirements
+
+## Wave 3/6/8/16 — Mode B integrated deterministic CI candidate
+
+WAVE: 3/6/8/16 component
+STATUS: local media/worker/render/QC/cold chain PASS with explicit ASR/reviewer fixtures; full waves PARTIAL
+HEAD SHA: source parent 4f4c61a4588f4ca2ee8eb8bf03dc5f9b78e2687a; final external seal recovery/20261007/mode-b-ci-program-state.json
+CAPABILITIES COMPLETED: executable original deterministic flow A; long Vietnamese source caption text/timestamp preservation; whole-file-SHA ingest, measured cuts, canonical edit/undo, reframe attention fallback, dynamic subtitles, selected B-roll, music/ducking, matching effects/PCM preview-final, Full QC, approval gates and separate-process exact recovery
+CAPABILITIES PARTIAL: genuine footage/recognition/alignment/semantics/tracking/rights/Owner/full non-developer Mode A/B/A-B-C/provider/production;59 groups remain
+TESTS: Native58 across8 modules includes5 new long-caption tests; API22 PASS; Studio769 is previous sealed baseline, not rerun; no Docker
+REAL PROVIDER TESTS: none; reused prior local-real TTS WAV without inference; actual local FFmpeg/Remotion/audio/SQLite/backup are separate
+MOCK TESTS: synthetic moving pixels/music, three explicit ASR fixture requests with synthetic word intervals, simulated content approval; no actual browser/signed HTTP claimed
+EVIDENCE: NATIVE_MODE_B_CI.md; north-star/mode-b-ci-evidence.json; native-mode-b-ci-n4 complete CI candidate files; prior n1/n2/n3 failures retained
+REGRESSIONS: matching full caption words, source video/audio coordinates, preview/final effects/PCM, passed QC, exact cold hashes, preapproval render refusal and final Owner gate; accepted15/live source verified by preservation seal
+EXTERNAL BLOCKERS: real-provider/Owner/rights/production gates remain; Docker unavailable
+OWNER ACTION REQUIRED: none for safe continuation; listening/UAT remains deferred
+NEXT WAVE: original full uploaded-footage UI and genuine provider/semantic acceptance, remaining Mode A/B and North Star platform capabilities

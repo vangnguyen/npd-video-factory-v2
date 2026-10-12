@@ -50,7 +50,7 @@ def configure(store,project_id,revision,body):
                 raise WorkflowError('AUTO_EDIT_SUBTITLE_TRACK_LOCKED',400)
             try:style=SubtitleStyle.model_validate({**template['style'],'keywords':payload.keywords})
             except ValueError:raise WorkflowError('SUBTITLE_TEMPLATE_KEYWORDS_INVALID',400) from None
-            try:validate_subtitles(derive_subtitle_cues(snapshot),style,snapshot.duration_seconds)
+            try:validate_subtitles(derive_subtitle_cues(snapshot,style=style),style,snapshot.duration_seconds)
             except ProductionContractError as error:
                 code='WORD_ALIGNMENT_UNAVAILABLE' if 'WORD_ALIGNMENT' in str(error) else 'SUBTITLE_LAYOUT_OVERFLOW'
                 raise WorkflowError(code,400) from None

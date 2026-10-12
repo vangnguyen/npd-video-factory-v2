@@ -42,7 +42,8 @@ def _new_id(prefix: str) -> str:
     return f"{prefix}_{uuid.uuid4().hex[:20]}"
 
 
-def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
+def derive_subtitle_cues(snapshot: TimelineSnapshot, *, style: SubtitleStyle | None = None) -> list[SubtitleCue]:
+    style = style or SubtitleStyle.model_validate(snapshot.metadata.get('subtitle_style', {}))
     clips = sorted(
         (
             clip
@@ -64,7 +65,7 @@ def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
             # caption timing. It must not inherit provider word timestamps.
             text=clip.metadata['subtitle_text']
             if not isinstance(text,str) or not text.strip():raise ProductionContractError('edited subtitle text is empty')
-            capacity=subtitle_character_capacity(SubtitleStyle())
+            capacity=subtitle_character_capacity(style)
             chunks=[];current=''
             for word in text.split():
                 if len(word)>capacity:raise ProductionContractError('edited subtitle word exceeds safe caption area')
@@ -86,6 +87,33 @@ def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
             for word in clip.metadata.get("measured_source_words", [])
             if clip.source_start <= word["start_seconds"] < word["end_seconds"] <= clip.source_end
             and clip.timeline_start + (word["end_seconds"]-clip.source_start)/clip.speed <= end+0.001]
+        aligned_text = ' '.join(word['text'] for word in word_items)
+        if word_items and clip.label in {aligned_text, aligned_text[:120]}:
+            # Source clip labels are bounded UI summaries. Recover full text only
+            # from matching saved words, and split at existing word boundaries.
+            # Never invent word times or stretch them across source silence.
+            capacity = min(180, subtitle_character_capacity(style))
+            groups = []
+            group = []
+            characters = 0
+            for word in word_items:
+                if len(word['text']) > capacity:
+                    raise ProductionContractError('subtitle word exceeds safe caption area')
+                added = len(word['text']) + bool(group)
+                if group and (characters + added > capacity or len(group) == 40):
+                    groups.append(group)
+                    group = []
+                    characters = 0
+                group.append(word)
+                characters += len(word['text']) + (len(group) > 1)
+            if group:
+                groups.append(group)
+            if len(groups) > 1 or aligned_text != clip.label:
+                for group in groups:
+                    cues.append(SubtitleCue(cue_id=_new_id('sub'),
+                        start_seconds=group[0]['start_seconds'], end_seconds=group[-1]['end_seconds'],
+                        text=' '.join(word['text'] for word in group), words=group))
+                continue
         cues.append(
             SubtitleCue(
                 cue_id=_new_id("sub"),
@@ -97,7 +125,7 @@ def derive_subtitle_cues(snapshot: TimelineSnapshot) -> list[SubtitleCue]:
         )
     if not cues:
         raise ProductionContractError("timeline has no enabled subtitle cues")
-    validate_subtitles(cues, SubtitleStyle(), snapshot.duration_seconds)
+    validate_subtitles(cues, style, snapshot.duration_seconds)
     return cues
 
 

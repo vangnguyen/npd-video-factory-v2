@@ -1,0 +1,23 @@
+# Master Spec Auto Edit CI chain
+
+This closes a local integration gap in Master Spec section 64 and produces the required Artifact A file set as a **CI candidate**. Full non-developer Mode B, genuine ASR/Vision/subject tracking, Owner UAT and original A/B/C acceptance remain open. All 59 broad capability groups remain unclosed. Exact final source seal is recorded externally in `recovery/20261007/mode-b-ci-program-state.json`.
+
+`scripts/north_star_mode_b_ci.py` creates one owned media project, ingests an immutable moving video through whole-file-SHA multipart intake, runs the actual ASR worker with an explicit fixture transport, and runs actual local scene/motion/silence/highlight analysis. Its speech is the hash-pinned existing local-real TTS WAV from `native-guided-real-narration-n2`; no new TTS inference occurs. The fixture word intervals are synthetic inputs derived within the saved speech-activity windows. They are never described as real recognition or measured word alignment.
+
+The runner reviews the available highlight while keeping both speech units, applies two measured non-destructive silence decisions, checks no fixture word is cut, and saves the canonical 9:16 timeline. One source-shot property edit and undo use that same history. Center-crop keyframes retain `needs_attention=true` and null subject confidence. Dynamic captions, selected uploaded moving B-roll, original-audio normalization, an uploaded synthetic tone bed, fades/crossfades and music ducking reach effects preview and final render. No stock search, paid generation, semantic Vision, subject tracking, real highlight usefulness or musical quality is inferred.
+
+The first integrated run exposed a real caption bug: a provider segment's full text exceeded the clip label's 120-character limit and the default caption safe area. It failed before a dynamic template could be selected. Caption derivation now recovers full text only when the saved word text matches the bounded label, splits at existing word boundaries with the chosen/persisted style and at most 40 words per cue, and keeps exact source-to-timeline timestamps. Changed labels cannot silently acquire old word text. Human-edited unaligned captions retain their separate segment-bound path and cannot acquire karaoke alignment. QC limits are unchanged.
+
+The passing run `native-mode-b-ci-n4` keeps all 30 fixture words, reduces the 9.42-second source speech track to a 7.396166-second canonical edit, and produces a 7.4-second 1080x1920 final MP4. Preview and final have matching visual/caption effect props and byte-identical canonical PCM mixes. Full local QC and measured audio balance pass; no reference audio is missing and music does not overpower the source. Render admission is blocked before simulated approval. Final download remains blocked pending real final watch/listen review. No Owner approval is recorded.
+
+The bundle includes final/preview MP4, canonical timeline, normalized transcript, scenes, highlights, silence decisions, media plan, asset provenance, subtitle JSON, audio analysis/balance/clocks, render manifest, QC, job events, cost, physical originals and an owned-state archive. A separate interpreter restores the archive and verifies the exact project/job hashes, immutable source hashes and render checkpoint without another provider call or render. The owned original and cold-restore temporary roots clean up through their lifecycle after evidence export. Historical accepted artifacts and earlier policy-blocked browser roots are untouched.
+
+Earlier attempts remain evidence: n1 failed on caption overflow; n2 used an incorrect harness assertion comparing normalized music bytes to original-source bytes; n3 reached actual render/QC but its verbose cold subprocess returned nonzero. The helper now returns compact project/job digests and captures any future child stderr. Only n4 is claimed as the full passing CI chain. Genuine footage/provider/rights/Owner/production acceptance remains separate. Uploaded assets retain unknown publication rights and publishing stays disabled.
+
+Run with a fresh external output directory and explicit reused speech inputs:
+
+```powershell
+python -X utf8 scripts/north_star_mode_b_ci.py --output <fresh-external-directory> --speech-wav <existing-wav> --speech-metadata <existing-json> --expected-speech-sha256 <64-hex>
+```
+
+See [evidence index](north-star/mode-b-ci-evidence.json). This runner tests the direct production-domain/worker chain; it does not claim a browser or signed HTTP flow. Earlier six-role browser upload evidence remains separately documented in [NATIVE_UPLOAD_SOURCE_HASH.md](NATIVE_UPLOAD_SOURCE_HASH.md).

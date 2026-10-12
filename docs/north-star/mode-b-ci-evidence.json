@@ -1,0 +1,174 @@
+{
+  "schema_version": "north-star-mode-b-ci-v1",
+  "recorded_at": "2026-10-12T14:42:18.267932+00:00",
+  "source_parent": "4f4c61a4588f4ca2ee8eb8bf03dc5f9b78e2687a",
+  "wave": "3/6/8/16 component; full original waves remain PARTIAL",
+  "tests": {
+    "Native": 58,
+    "Native_modules": 8,
+    "new_caption_tests_included": 5,
+    "API": 22,
+    "Studio_prior_sealed_baseline": 769,
+    "Studio_rerun_this_increment": false,
+    "Docker_tested": false
+  },
+  "test_logs": {
+    "mode-b-ci-native-regression.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-ci-native-regression.log",
+      "sha256": "7e3bc2d7f558aa518bea1c8483516281d057012104ce5d5f01b0d77f9d4575dd",
+      "bytes": 3810,
+      "passed": 17
+    },
+    "mode-b-ci-media-render-regression.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-ci-media-render-regression.log",
+      "sha256": "aa7d0fdb648ad678a5255bcf5e14989788dee3e0ab3ecc5b897c9607cde7bc67",
+      "bytes": 4672,
+      "passed": 20
+    },
+    "mode-b-ci-phase10-regression.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-ci-phase10-regression.log",
+      "sha256": "fdd83996a451a00f4022104edbde48f27867a1186791e9f75e6890cf8fa37f03",
+      "bytes": 4633,
+      "passed": 21
+    },
+    "api_observed_summary": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-ci-api-observed-summary.json",
+      "sha256": "46d4b5a45b847d5304b3841ebd0c82f00ea2f564279f917d0b9feec7b9ef39c0",
+      "bytes": 341
+    }
+  },
+  "candidate": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-ci-n4\\evidence.json",
+    "sha256": "c90710c7359f0676fdae69576d66d5d2a45f88381042e87bf83ae5b754f23d97",
+    "bytes": 5681,
+    "receipt": {
+      "ASR_fixture_requests": 3,
+      "all_rendered_subtitle_words_preserved": true,
+      "artifact_A_real_acceptance": false,
+      "canonical_undo_passed": true,
+      "ci_chain_passed": true,
+      "cleanup": "owned TemporaryDirectory lifecycle after immutable export",
+      "cold_restore_passed": true,
+      "exports": {
+        "analysis-job.json": "061fade6609b7bda72465c65776b09e011261bb0b8e7d12ef54e869a51a2b23e",
+        "asr-job.json": "27c8c300d86e924a7f944d8b8537ffa7a0bca11e702ca7e15bb7c406de0e8549",
+        "asset-provenance.json": "4c5c75e5764de09664956a59a762fc352060b636249796ecec1ee44c3ec06ac5",
+        "assets/089a6a8f825c44b7abc480862d6dcd8e.music.wav": "90145ee3429163c9e93ee914641e238e6edc950d51026bb95ef4dd078b1875ca",
+        "assets/50018b49ced54c47a45fb14cc83a35db.mp4": "368f0e20ad105bc07468adf527a0f69254cc708de5f8951d96f52a78ee37e3af",
+        "assets/50018b49ced54c47a45fb14cc83a35db.thumb.jpg": "bd18af0170e8bfe43d734bc1ff9744eea207742e9e899d84f6f53ac58a025a49",
+        "assets/913c03df99bf43028d265cebe10b13d0.mp4": "f397bb4478d8eaf236a6068230f31d2a4d17a0d62736feb3263b3e2e1d315a11",
+        "assets/913c03df99bf43028d265cebe10b13d0.thumb.jpg": "5d6d88ba64fc4bf96228618d7fa09626fc3dd4f5df46d16892233641aef789fd",
+        "audio-analysis.json": "67f29cd16a0847e7bf1b5a379f8e3de95ccac9a80769a71073b505ba29d82e38",
+        "audio-balance.json": "ffc5b37426fe149a8c24ec7dae0dff16de3faf59b96f80e40c0d04e460158cd4",
+        "canonical-audio-mux.json": "a4fa90c9b29c996628d304a09f0dd7a420bf6ec296aa22ea4d26027f7ef8bb92",
+        "checkpoint-render.json": "f40092f6f4c52277dbc3db0dd227aa2b9d709b3c1f945eca8759762b96996c71",
+        "cold-context.json": "3d6cd7938b0a5b2bf69a2053e8c1320890f1dcd73c4f08cd4cabd4ba8078fc1b",
+        "cold-restore.json": "d8fa38c76ea5334aacd6339de9bfdd547a232ffd5f02ada5503564e03f70828c",
+        "cost.json": "3afed2a59d8288ee45af073e4e6bcfa26715155e7c894c96bdae6aa8a84d5b6f",
+        "ffprobe.json": "3c40e32aaffcfbfc9f46cfbb965e2852b6c1b8825057c7248add47c15b1f5b6a",
+        "final.mp4": "5e07492dbc93b76c141b6e217909d8bd0debdfa5b690b0a35316be29ea37d11f",
+        "fixture-provider-calls.json": "87e2fc456a931ca0890e467d209ea81d21a3cc4a2ab32ce5abae1d7d4b7c2bcf",
+        "fixture-word-intervals.json": "979a81c5e5795937a2f3aecf36107c6f41e8bd42454cbcfdb59184679478f6ab",
+        "highlight-analysis.json": "a2094ab3abdad76c77537f16900acd61b879f3953ff4a171e5ead4efdf89f756",
+        "highlight-review.json": "4a937b9fba7bf5b7ea27de443241da1fccc009e8d9bef0cc21d63b6e116a3d4e",
+        "job-events.json": "9b3eadb65278e1e48bf3b10e77e84f9be8ef95c9af973fe7b21a387ff0366301",
+        "media-plan.json": "47291457075a9deb836510861336fd536c4a6a70991642daa46f10a91e478ff9",
+        "music-import.json": "112b6675eef19f0a18d6d486d89eeae6691761d9f3fca87f4b561a04d11836c5",
+        "originals/089a6a8f825c44b7abc480862d6dcd8e.wav": "a9e8148f233007740607478dc8d4ec560dfdbb6bdcdcfee1adc2a99c984c9ef4",
+        "originals/50018b49ced54c47a45fb14cc83a35db.mp4": "368f0e20ad105bc07468adf527a0f69254cc708de5f8951d96f52a78ee37e3af",
+        "originals/913c03df99bf43028d265cebe10b13d0.mp4": "f397bb4478d8eaf236a6068230f31d2a4d17a0d62736feb3263b3e2e1d315a11",
+        "owned-state.zip": "4cd874ad6dbf56119750006562fe9a83204c01ab654a93c8b4eaa1748b4e3611",
+        "preview-timeline-render.json": "a97bd68c4da1c3d0185d88fa04f84d936a12325b8b0e5e9645dd08c42078586e",
+        "preview.json": "6466d3728e31e438e03bbdd1b9caad352c4a1de45fddbcffc743d8d361b74f58",
+        "preview.mp4": "25a2e39c371329d0d5a416f8298e1e805e9f3baaf509624e06a3d5e096f4efc8",
+        "project.json": "375e3897d4471da08ec040f561935d4b5d5b97ecd9a75abe4d5b5072bf44382a",
+        "qc.json": "c819906d8be71a7032644b976cb6809494dd3d789be79dbade35c55341b8209a",
+        "render-frame-qc.json": "1e7add5489bf2e8e234b7104f5b4ac913007a1d705b79d8ad919b65d04ee760b",
+        "render-frame-qc/0.png": "ea3580ac4f4e4ff413feda2f9f6e094440a953ca084d48c7a1c50840c2d66211",
+        "render-frame-qc/1.png": "d3423325e02c220a19ff442419c9713679b5cfc052a6428b3600871f85b403be",
+        "render-frame-qc/2.png": "89a0211f7ee03ef307c06f7bbe5b6b065c94b981b0fe71c91b0faf4626d0835c",
+        "render-frame-qc/3.png": "a53bbf553dae0b1bad661cdaad2c0e1d3d957ad28bfd096c834a1e8f7f918ee9",
+        "render-frame-qc/4.png": "c7161ece4ba41f601ccf27d42abb7246a3158b232d029a34ffebdf599a01e16b",
+        "render-frame-qc/5.png": "47832c723ab0f0be58b3b221e3fa345c9eb6441685bbd0199d0526352eca5af5",
+        "render-frame-qc/6.png": "49505cce9404a764ab600ff60acb80e752404910032ae4079f880799397d885c",
+        "render-frame-qc/7.png": "8eb0c6e7458e51da611b8883aa6f93daad5707acab684c4971377c61ffb58735",
+        "render-job.json": "5c0288ff0b7c6c249f139c538074f467ceb6ae5ad568abecc7e702f279fa67ab",
+        "render-manifest.json": "ee150e449fa0b6f4354746a760ae6eaee2174179d87e8ea3e55f5c06542764a0",
+        "scene-analysis.json": "344d9edf9b91c7beb9d89c9a285bcaade1c357e8b61c427e818ffba46fded980",
+        "scope.json": "9f3995271b56c7a70cfc326c471eed3e78af212cd114f36830d8e7a75ac75386",
+        "silence-decisions.json": "eb3426c1350e180d6419d7420c3cd2f612b60aa0f4f531dde017959efcc9cc4b",
+        "source-audio-clocks.json": "6a71a84e31e962a414806374e7704e327a26f43c8f2c555f8d2d6678742b3e04",
+        "source-media-imports.json": "4dacb3bfe2b0f6d25d00febef14c6517c1094e1d49c65a477bc49ff0312e0115",
+        "subtitles.json": "bb17fe70efa6b37b52fdaaee65605635ad48dcd745bc69eff34b9b68e3bcce97",
+        "timeline-render.json": "3182260ab31780a72c059e3366dface8970740ef4d755de267614c77a381b572",
+        "timeline.json": "ca0a8b03e36fd15e2327da65ee5a67ebe14868efa1b05c5cc126c0a9b495f3ed",
+        "transcript.json": "ef7be331ccf873a4daeabc7b1a10893a75d58564ecc64129cd93159224d0c3f9",
+        "upload-video.json": "b589338151c66717b5a03ed39fb05cf7909d7afa6af9509cf9e10ce1783598df"
+      },
+      "final_review_gate_retained": true,
+      "full_Mode_B_ready": false,
+      "highlight_count": 1,
+      "new_TTS_calls": 0,
+      "owner_UAT": false,
+      "paid_calls": 0,
+      "preapproval_render_blocked": true,
+      "preview_final_PCM_mix_equal": true,
+      "preview_final_effects_equal": true,
+      "real_provider_calls": 0,
+      "render_duration_seconds": 7.396166,
+      "scene_count": 1,
+      "schema": "north-star-mode-b-ci-v1",
+      "silence_decisions_applied": 2,
+      "source_duration_seconds": 9.42,
+      "source_words_preserved": 30
+    },
+    "QC": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-ci-n4\\qc.json",
+      "sha256": "c819906d8be71a7032644b976cb6809494dd3d789be79dbade35c55341b8209a",
+      "bytes": 15651
+    },
+    "cold_restore": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-ci-n4\\cold-restore.json",
+      "sha256": "d8fa38c76ea5334aacd6339de9bfdd547a232ffd5f02ada5503564e03f70828c",
+      "bytes": 406
+    },
+    "owned_cleanup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-ci-n4\\owned-cleanup-verified.json",
+      "sha256": "59cf10f6a1f4ceb069570bdf703d459aeb1c9f0ee5b5c8bcb0775ea597f61d59",
+      "bytes": 211
+    },
+    "caption_baseline_comparison": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-ci-n4\\caption-baseline-comparison.json",
+      "sha256": "d18aa903c1ce41770ef0c2ff1c780961aab1ccc9ef77252a0e67a2f85b45d055",
+      "bytes": 256
+    }
+  },
+  "retained_attempts": [
+    {
+      "name": "native-mode-b-ci-n1",
+      "outcome": "caption overflow, no final"
+    },
+    {
+      "name": "native-mode-b-ci-n2",
+      "outcome": "harness compared normalized music SHA to original bytes"
+    },
+    {
+      "name": "native-mode-b-ci-n3",
+      "outcome": "render/QC passed; verbose cold child returned nonzero; not full chain PASS"
+    }
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "full_Mode_A_B_accepted": false,
+  "original_A_B_C_accepted": false,
+  "owner_UAT": false,
+  "real_provider_calls": 0,
+  "paid_calls": 0,
+  "new_TTS_inferences": 0,
+  "main_merged": false,
+  "production_deployed": false
+}
