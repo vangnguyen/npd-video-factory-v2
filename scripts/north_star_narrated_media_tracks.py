@@ -28,7 +28,8 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');parser.add_argument('--sfx',action='store_true');parser.add_argument('--clip-style',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');parser.add_argument('--sfx',action='store_true');parser.add_argument('--clip-style',action='store_true');parser.add_argument('--clip-style-parity',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    if args.clip_style_parity:args.clip_style=True
     if args.clip_style and not args.video_timeline:parser.error('--clip-style uses the canonical video fixture')
     if args.sfx and (args.timeline_editor or args.source_video_captions or args.video_timeline or args.visual_properties):parser.error('--sfx uses a separate component fixture')
     if args.visual_properties and not args.video_timeline:parser.error('--visual-properties requires --video-timeline')
@@ -95,7 +96,7 @@ def main():
         style_controller=None
         if args.clip_style:
             durable_json(context,{'fixture_human':True,'origin':'http://127.0.0.1:'+str(server.server_port),'workspace_id':case.workspace,
-                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf,'clip_style_mode':'narrated'})
+                'project':case.store.get(current['id']),'cookie':cookie,'csrf':session.csrf,'clip_style_mode':'narrated','clip_style_scenario':'parity' if args.clip_style_parity else 'baseline'})
             style_run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_clip_style_http_ui.mjs'),str(context)],capture_output=True,timeout=90)
             if style_run.returncode:raise AssertionError(style_run.stderr.decode('utf-8',errors='replace')[:6000])
             style_controller=json.loads(style_run.stdout);durable_json(out/'style-controller.json',style_controller)

@@ -191,16 +191,15 @@ export const TimelineRender: React.FC<TimelineRendererInputProps> = ({manifest})
   const {fps} = useVideoConfig();
   return (
     <AbsoluteFill style={{backgroundColor: "#05080d"}}>
-      {[...manifest.visual_clips]
-        .sort((left, right) => left.track_order - right.track_order)
+      {orderedVisualClips(manifest.visual_clips)
         .map((clip, index, clips) => (
           <Sequence
             key={clip.clip_id}
             from={Math.round(clip.timeline_start * fps)}
-            durationInFrames={Math.max(1, Math.round((clip.duration + crossfadeTail(clip, clips.find(next=>next.track_order===clip.track_order&&Math.abs(next.timeline_start-clip.timeline_start-clip.duration)<.001))) * fps))}
+            durationInFrames={Math.max(1, Math.round((clip.duration + crossfadeTail(clip, contiguousVisualPeer(clips,clip,'next'))) * fps))}
           >
-            <HeldVisual clip={clip} previous={clips.find(previous=>previous.track_order===clip.track_order&&Math.abs(clip.timeline_start-previous.timeline_start-previous.duration)<.001)}
-              hold={crossfadeTail(clip, clips.find(next=>next.track_order===clip.track_order&&Math.abs(next.timeline_start-clip.timeline_start-clip.duration)<.001)) > 0} />
+            <HeldVisual clip={clip} previous={contiguousVisualPeer(clips,clip,'previous')}
+              hold={crossfadeTail(clip, contiguousVisualPeer(clips,clip,'next')) > 0} />
           </Sequence>
         ))}
 
@@ -246,6 +245,12 @@ export const crossfadeTail = (clip: TimelineRenderManifest["visual_clips"][numbe
 };
 
 type VisualClip = TimelineRenderManifest['visual_clips'][number];
+// Track order controls layers; time controls the predecessor/incoming order
+// inside a track, even when an edit changed the snapshot's array order.
+export const orderedVisualClips = (clips:VisualClip[]):VisualClip[] => [...clips].sort((a,b)=>a.track_order-b.track_order || a.timeline_start-b.timeline_start);
+export const contiguousVisualPeer = (clips:VisualClip[],clip:VisualClip,direction:'previous'|'next'):VisualClip|undefined =>
+  clips.find(peer=>peer.clip_id!==clip.clip_id && peer.track_order===clip.track_order &&
+    Math.abs(direction==='next'?peer.timeline_start-clip.timeline_start-clip.duration:clip.timeline_start-peer.timeline_start-peer.duration)<.001);
 export const incomingVisualTransition = (clip:VisualClip, previous?:VisualClip):VisualClip['transition_in'] => {
   if (previous?.transition_out?.kind==='crossfade' && previous.track_order===clip.track_order
       && Math.abs(clip.timeline_start-previous.timeline_start-previous.duration)<.001

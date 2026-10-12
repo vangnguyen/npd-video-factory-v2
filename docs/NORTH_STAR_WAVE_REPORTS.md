@@ -3537,3 +3537,17 @@ REGRESSIONS: related suites pass. Source adapter forced2.3 discovered in B_n1 an
 EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta insights mapping remain separate gates.
 OWNER ACTION REQUIRED: none for safe work; listening/UAT remains deferred.
 NEXT WAVE: remaining effect/transition/render parity, original complete Mode A/B UI and every original remaining North Star gap. SOURCE_PRESERVED=YES at sealed parent and verified draft,new exact seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3I / 6 / 16 — Native clip-style parity and crossfade renderer repair
+STATUS: scoped component implemented/mock/local-real verified; full original waves remain open.
+HEAD SHA: parentc90931ca29b7ce09cf7783b9b8f9017f2b6f6d86; exact resulting pushed HEAD in recovery/20261007/clip-style-parity-program-state.json after preservation seal.
+CAPABILITIES COMPLETED: temporal draw order inside preserved track layers; self-peer rejection; shared inspector six-effect/crossfade/slide fixture decisions; source split inside transcript gap; undo/redo/source/voice retention; fresh local preview/final/QC/cold recovery and independent declared pixel samples.
+CAPABILITIES PARTIAL: other parameters/chains/canvases, complete supported renderer parity/limits, full original Mode A/B UI/browser/non-developer/Owner/genuine media, all original North Star requirements and A/B/C. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED=59 unclosed groups.
+TESTS: fresh Renderer48 PASS(2new) and typecheck; signed local ModeA24/ModeB14 requests;8 pixel samples with source-only blur-edge masks; two cold restores; reversed-array direct renderer3 whole-frame samples MAE0. Parent Studio728/Native49/API17/static64 retained, not rerun this increment.
+REAL PROVIDER TESTS: none; provider/new inference/paid calls0.
+MOCK TESTS: synthetic movingvideo/audio,prepared measured narration/saved ASR,fixture human/DOM; actual shared widget/signed HTTP/SQLite/FFmpeg/Remotion. No real browser/Owner.
+EVIDENCE: NATIVE_CLIP_STYLE_PARITY.md;north-star/clip-style-parity-evidence.json;native-clip-style-parity-mode-a-n4/b-n1;clip-style-parity-pixels-a-n5/b-n2;clip-style-parity-cold-a-n4.json/b-n1.json;crossfade-array-order-n1.125 bundle export files verified plus oracle/probe exports.
+REGRESSIONS: renderer suite/actual media/recovery pass. Conflicting ModeA pair rejected correctly; nonqualifying color-chain/oracle attempts retained and never relabeled. Fresh seal verifies15 historical accepted artifacts/clean live source. No historical replacement/deletion/rejected-delete retry; only new owned fixture teardown after export.
+EXTERNAL BLOCKERS: real provider, browser/non-developer/Owner and production acceptance remain separate; other safe implementation continues.
+OWNER ACTION REQUIRED: none for safe work; listening/UAT remains deferred.
+NEXT WAVE: remaining renderer/advanced timeline integration and full original Mode A/B/media/platform/production requirements. SOURCE_PRESERVED=YES at parent/draft,new exact seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.

@@ -48,7 +48,9 @@ def main():
     parser.add_argument('--source-drag-drop', action='store_true')
     parser.add_argument('--sfx', action='store_true')
     parser.add_argument('--clip-style', action='store_true')
+    parser.add_argument('--clip-style-parity', action='store_true')
     args = parser.parse_args()
+    if args.clip_style_parity:args.clip_style=True
     if args.sfx and (args.visual_properties or args.source_caption_retiming or args.source_drag_drop):
         parser.error('--sfx uses a separate component fixture')
     if args.source_drag_drop and (not args.visual_properties or args.source_caption_retiming):
@@ -118,7 +120,7 @@ def main():
         style_controller = None
         if args.clip_style:
             current=case.store.get(current['id'])
-            durable_json(context,{**context_body,'project':current,'clip_style_mode':'source'})
+            durable_json(context,{**context_body,'project':current,'clip_style_mode':'source','clip_style_scenario':'parity' if args.clip_style_parity else 'baseline'})
             style_run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_clip_style_http_ui.mjs'),str(context)],capture_output=True,timeout=90)
             if style_run.returncode:raise AssertionError(style_run.stderr.decode('utf-8',errors='replace')[:6000])
             style_controller=json.loads(style_run.stdout);durable_json(out/'style-controller.json',style_controller)

@@ -20,10 +20,27 @@ vi.mock("remotion", async () => {
   };
 });
 
-import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits, crossfadeTail, visualTransitionStyle, visualEffectCss, incomingVisualTransition} from "./TimelineRender";
+import {TimelineRender, activeSubtitleWordIndex, assertSubtitleFits, crossfadeTail, visualTransitionStyle, visualEffectCss, incomingVisualTransition, orderedVisualClips, contiguousVisualPeer} from "./TimelineRender";
 import {makeTimelineManifest} from "./test-fixtures";
 
 describe("timeline-render-v1 composition", () => {
+  it('keeps an incoming crossfade above its predecessor after snapshot array reordering, without changing track layers',()=>{
+    const a={...makeTimelineManifest('data:image/png;base64,AA==').visual_clips[0],clip_id:'clip_before',timeline_start:0,duration:1,
+      transition_out:{kind:'crossfade' as const,duration_seconds:.2}};
+    const b={...a,clip_id:'clip_after',timeline_start:1,transition_out:undefined};
+    const overlay={...a,clip_id:'clip_overlay',track_order:a.track_order+1};
+    const input=[overlay,b,a];
+    expect(orderedVisualClips(input).map(c=>c.clip_id)).toEqual(['clip_before','clip_after','clip_overlay']);
+    expect(input.map(c=>c.clip_id)).toEqual(['clip_overlay','clip_after','clip_before']);
+    expect(contiguousVisualPeer(input,b,'previous')).toBe(a);
+    expect(contiguousVisualPeer(input,a,'next')).toBe(b);
+    expect(incomingVisualTransition(b,a)?.kind).toBe('crossfade');
+  });
+  it('never treats an extremely short clip as its own transition peer',()=>{
+    const clip={...makeTimelineManifest('data:image/png;base64,AA==').visual_clips[0],duration:.0005};
+    expect(contiguousVisualPeer([clip],clip,'next')).toBeUndefined();
+    expect(contiguousVisualPeer([clip],clip,'previous')).toBeUndefined();
+  });
   it('applies fade-out within saved duration and preserves the incoming envelope',()=>{
     const clip={...makeTimelineManifest('data:image/png;base64,AA==').visual_clips[0],duration:2,
       transition_in:{kind:'fade' as const,duration_seconds:.5},transition_out:{kind:'fade' as const,duration_seconds:.5}};

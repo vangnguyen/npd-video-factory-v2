@@ -1,0 +1,234 @@
+{
+  "schema_version": "north-star-native-clip-style-parity-v1",
+  "recorded_at": "2026-10-12T03:40:35.343137+00:00",
+  "source_parent": "c90931ca29b7ce09cf7783b9b8f9017f2b6f6d86",
+  "authority": "Master Spec sections39-40; original Waves3I/6/16",
+  "implementation": "temporal ordering within unchanged track layers; exclude self-peer; independent six-effect/crossfade/slide fixture oracles",
+  "fresh_tests": {
+    "Renderer": 48,
+    "new_Renderer": 2,
+    "Renderer_typecheck": "PASS"
+  },
+  "test_logs": {
+    "clip-style-parity-renderer-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\clip-style-parity-renderer-n1.log",
+      "sha256": "a81416ab630d5f3a0f17efed5e6c6ee025eb76b23b8dc2751abf9b230dc9d427",
+      "bytes": 978
+    },
+    "clip-style-parity-typecheck-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\clip-style-parity-typecheck-n1.log",
+      "sha256": "204fbe280f7d4e46527e455f3d9c677a2d0ccb5fd75f3c4a2a39f16e32a61572",
+      "bytes": 273
+    }
+  },
+  "previous_not_rerun_suites": {
+    "parent": "c90931ca29b7ce09cf7783b9b8f9017f2b6f6d86",
+    "evidence": "docs/north-star/clip-style-evidence.json",
+    "Studio": 728,
+    "Native_related": 49,
+    "API_related": 17,
+    "Static_modules": 64
+  },
+  "local_real": {
+    "A": {
+      "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4",
+      "verified_export_files": 73,
+      "timeline_version": 28,
+      "actual_uploads": 4,
+      "imports": 3,
+      "signed_controller_requests": 24,
+      "style_controller_requests": 7,
+      "source_split_performed": false,
+      "source_windows_preserved_by_style": true,
+      "actual_full_QC_passed": true,
+      "PCM_sha256": "9e7021621324ef28a63629d166cdd623f38df72bbac16196835742af9af5b96c",
+      "original_prepared_voice_sha256": "6019f07bcb0d56b684e656cdff45d0839417add2801bc8648b6c240b34e53e5a",
+      "pixel_oracle": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\clip-style-parity-pixels-a-n5\\evidence.json",
+        "sha256": "2f7d62b8f36e5c3956d0fb553734db48c8f698f89e928e5be348095f5de721bb",
+        "bytes": 9072
+      },
+      "cold_restore": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\clip-style-parity-cold-a-n4.json",
+        "sha256": "b22c5e0cdcb4b35ebb00efd1bb6b30208b5f3e374596d555f3095ab6c9633559",
+        "bytes": 4488
+      },
+      "fixtures": {
+        "synthetic_video_audio": true,
+        "saved_ASR": false,
+        "prepared_measured_narration": true,
+        "fixture_human_DOM": true,
+        "real_browser": false,
+        "Owner_UAT": false
+      },
+      "files": {
+        "evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\evidence.json",
+          "sha256": "617311e185d805afed04ab58a94a7e9eb5964c1a4aa33a4be88b16628bc33d7d",
+          "bytes": 9784
+        },
+        "style-controller.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\style-controller.json",
+          "sha256": "6aee41b9fe16627c0d0020ad24af345f5624a0f829f81d06eae737b2c1dfd763",
+          "bytes": 236554
+        },
+        "timeline.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\timeline.json",
+          "sha256": "137e70c342ebdbe0f478e335a57700b737392d98be44e43e69881f52a8327022",
+          "bytes": 6578
+        },
+        "timeline-editor.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\timeline-editor.json",
+          "sha256": "250ef3cf6864096aaac78e6a9c489abd02d764ddd2ca83cc2cf17bdfb5e8d16e",
+          "bytes": 39990
+        },
+        "render-manifest.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\render-manifest.json",
+          "sha256": "905038fe307b17b0f4a6a5ce484f2c56ba8a8ccda1cc85577e4e51a694b495f8",
+          "bytes": 7708
+        },
+        "preview.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\preview.mp4",
+          "sha256": "5d42fa72fe148c604dbc83a141cf3e94b6a267327b471c166750ae3efc1a68b5",
+          "bytes": 689806
+        },
+        "final.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\final.mp4",
+          "sha256": "5d42fa72fe148c604dbc83a141cf3e94b6a267327b471c166750ae3efc1a68b5",
+          "bytes": 689806
+        },
+        "qc.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\qc.json",
+          "sha256": "d386cfdb614819d784b3b84498a533fcfdfa200e3ebecd8dbb3901450d5e77ca",
+          "bytes": 19441
+        },
+        "backup.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-a-n4\\backup.zip",
+          "sha256": "1e0021632a2ba667890a3880cee739b05d41fe06005cd81052eff38e2883eb25",
+          "bytes": 53166782
+        }
+      }
+    },
+    "B": {
+      "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1",
+      "verified_export_files": 52,
+      "timeline_version": 12,
+      "actual_uploads": 4,
+      "imports": 3,
+      "signed_controller_requests": 14,
+      "style_controller_requests": 8,
+      "source_split_performed": true,
+      "source_windows_preserved_by_style": true,
+      "actual_full_QC_passed": true,
+      "PCM_sha256": "937d3bcd40f452af69c430be305d3cb15d4d4b4879544bd3cf002eec867a3937",
+      "original_prepared_voice_sha256": null,
+      "pixel_oracle": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\clip-style-parity-pixels-b-n2\\evidence.json",
+        "sha256": "a1d88129f8d1e138e7af4dfbf5ed0efb62741a8d15ba8de55c965e276828d17d",
+        "bytes": 9058
+      },
+      "cold_restore": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\clip-style-parity-cold-b-n1.json",
+        "sha256": "36c49f98f2b2b96ce48b06c6a8ff571af44ce7f88d9838ab48cfc12184234e93",
+        "bytes": 4848
+      },
+      "fixtures": {
+        "synthetic_video_audio": true,
+        "saved_ASR": true,
+        "prepared_measured_narration": false,
+        "fixture_human_DOM": true,
+        "real_browser": false,
+        "Owner_UAT": false
+      },
+      "files": {
+        "evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\evidence.json",
+          "sha256": "58f33e47f3ac7c2cdfeebd9c927d36b4d857bf572d03dd8a3f88cc3d8906d5f7",
+          "bytes": 7375
+        },
+        "style-controller.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\style-controller.json",
+          "sha256": "fa22ae8c96ff6f7feae224bca548b031b50eae5da2764cf95f5744f26bb4c534",
+          "bytes": 737379
+        },
+        "timeline.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\timeline.json",
+          "sha256": "be8eaea68189649ae6465d78828af38842652da966ed3770ed01a2233bd97209",
+          "bytes": 40231
+        },
+        "timeline-editor.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\timeline-editor.json",
+          "sha256": "0f3433add742ae052a473d4ecf365553aa87106548093cece38b229041853924",
+          "bytes": 219548
+        },
+        "timeline-history.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\timeline-history.json",
+          "sha256": "0706996170b946dc36eafb3c1bc522d5d54d35b9b63293e1e8e3b49f530a93db",
+          "bytes": 383178
+        },
+        "render-manifest.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\render-manifest.json",
+          "sha256": "77e63a8af9637dca5d79f866d2a0e001592478b636e6eee011b9d57f2acbab8a",
+          "bytes": 42676
+        },
+        "preview.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\preview.mp4",
+          "sha256": "1615574129d65c35d402480e890e7932cac49e1ec1f38ba776776962ba7d2ac9",
+          "bytes": 243065
+        },
+        "final.mp4": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\final.mp4",
+          "sha256": "7f12db1dea42f379ce8aee0504db73e76df087b7cd1c35b48b69893f1f98680a",
+          "bytes": 558454
+        },
+        "qc.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\qc.json",
+          "sha256": "d0c6d736fa2f0e042ee81205912f85c13d6da8dbd922210e105dbe2754869438",
+          "bytes": 15469
+        },
+        "backup.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-clip-style-parity-mode-b-n1\\backup.zip",
+          "sha256": "aa6fa86001f7d80d1ce101f1b8f6d7b5b7b214d488ff9b2ca7893dc82f6689e1",
+          "bytes": 17960946
+        }
+      }
+    }
+  },
+  "reversed_array_renderer_probe": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\crossfade-array-order-n1\\evidence.json",
+    "sha256": "07aa2a54724144928a39366300ed2599ec6ba7653fafab1049a305d6518cc58a",
+    "bytes": 2062
+  },
+  "qualified_scope": "four declared ROI samples per mode; five color omissions at first sample, blur at independently source-derived edges, blend/draw-order and outgoing slide at assigned frames; other control comparisons diagnostic",
+  "specification": "https://www.w3.org/TR/filter-effects-1/",
+  "rejected_or_nonqualifying_attempts": {
+    "ModeA_n1": "correctly rejected conflicting incoming fade/outgoing crossfade; driver now edits next clip first",
+    "ModeA_n2_n3": "render/QC passed; first color chains insufficient to independently distinguish brightness or contrast; not qualified for six-effect bundle",
+    "earlier_pixel_oracles": "retained; initial whole-ROI blur dilution and near-tied offscreen color control; declared sample purposes and independent edge mask added without overwriting failures"
+  },
+  "safety": {
+    "historical_artifacts_replaced": false,
+    "historical_data_deleted": false,
+    "rejected_deletion_retried": false,
+    "owned_fixture_teardown_after_export_only": true,
+    "provider_calls": 0,
+    "paid_calls": 0,
+    "real_published": false,
+    "production_deployed": false,
+    "main_merged": false,
+    "Owner_UAT": false
+  },
+  "remaining": [
+    "other effect values/chains/canvases and renderer limits",
+    "complete original Mode A/B browser/non-developer/Owner and genuine-media flows",
+    "all original Master Spec requirements and final A/B/C acceptance"
+  ],
+  "program_ready_claims": {
+    "full_wave_complete": false,
+    "AUTO_EDIT_MODE_READY": false,
+    "IMPLEMENTATION_COMPLETE": false,
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": false,
+    "PRODUCTION_DEPLOYED": false,
+    "VIDEO_FACTORY_NORTH_STAR_READY": false
+  }
+}
