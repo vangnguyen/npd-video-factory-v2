@@ -1,0 +1,3584 @@
+{
+  "instagram_reels": {
+    "actual_HTTP_tested": false,
+    "actual_browser_tested": false,
+    "manual_created": {
+      "actor_ref": "explicit-fixture",
+      "attempts": 0,
+      "created_at": "2026-10-12T17:48:12.645866+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_at": null,
+      "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "3fca488651bfb63c7e2cce3b8856446f4c28b62c4dd1cbede8da847a31cacef2",
+      "result_snapshot_id": null,
+      "schema_version": "native-official-analytics-sync-v3",
+      "snapshot": {
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:09.824718+00:00",
+          "identity_revision_sha256": "8129992659baf4c56bbbff900865e4664dc9433668b2b0f9bcb7e037af57ad11",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+        "consented_at": "2026-10-12T17:48:09.594662+00:00",
+        "deadline": "2026-10-12T18:03:09.594662+00:00",
+        "meta_read_profile": {
+          "api_version": "v24.0",
+          "login_type": "facebook_login",
+          "page_id": "12345"
+        },
+        "mock": true,
+        "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+        "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+        "publishing_authority": false,
+        "recurring_authority": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "expected_configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+          "expected_publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "expected_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "max_attempts": 1,
+          "metric_scope": "lifetime_media_insights",
+          "platform": "instagram_reels",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "query": null,
+          "remote_post_id": "45678",
+          "schema_version": "native-official-analytics-request-v3",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-consent-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+          "features": {
+            "captured_at": "2026-10-12T17:48:09.594662Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+              "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "9af893d3e7d03e5cf02a791c4fb6d62efe4c8582b750961575322387b6ed8b24",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "receipt_mock": true,
+          "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "remote_post_id": "45678"
+        },
+        "target": {
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "platform": "instagram_reels",
+          "profile_id": "ppf_meta_admission_instagram_reels",
+          "profile_version": 1,
+          "provider_key": "instagram-graph-api-publishing",
+          "schema_version": "publishing-target-v1",
+          "target_account_id": "23456",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "snapshot_sha256": "0bdce4f8d69216369ada05873f8c306584fd1de4007d49cc092f73e908d685e3",
+      "status": "queued",
+      "sync_id": "noas_ead8bec8da634fb9a3153d684ec45ac1",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:12.645866+00:00",
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "manual_done": {
+      "actor_ref": "explicit-fixture",
+      "attempts": 1,
+      "created_at": "2026-10-12T17:48:12.645866+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_at": null,
+      "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "3fca488651bfb63c7e2cce3b8856446f4c28b62c4dd1cbede8da847a31cacef2",
+      "result": {
+        "attempt_id": "noaa_86562712b965469cb3b8788ccc04ceed",
+        "automatic_action": false,
+        "collected_at": "2026-10-12T17:48:09.594662+00:00",
+        "evidence": {
+          "api_version": "v24.0",
+          "completion_rate_supported": false,
+          "coverage_end_date": null,
+          "metric_mapping": {
+            "comments": "comments",
+            "likes": "likes",
+            "reach": "reach",
+            "saved": "saves",
+            "shares": "shares",
+            "views": "views"
+          },
+          "metric_scope": "lifetime_media_insights",
+          "normalized_units": {
+            "comments": "count",
+            "likes": "count",
+            "reach": "count",
+            "saves": "count",
+            "shares": "count",
+            "views": "count"
+          },
+          "observed_window_hours": null,
+          "provider_metric_semantics_real_verified": false,
+          "query": null,
+          "returned_metrics": [
+            "views",
+            "reach",
+            "likes",
+            "comments",
+            "shares",
+            "saved"
+          ],
+          "revenue_supported": false,
+          "schema_version": "meta-analytics-counts-v1",
+          "unavailable_metrics": [
+            "impressions",
+            "watch_time",
+            "average_view_duration",
+            "completion_rate",
+            "followers_gained",
+            "clicks",
+            "ctr",
+            "revenue",
+            "rpm",
+            "observation_window_hours"
+          ],
+          "watch_time_unit_verified": false
+        },
+        "external_call": false,
+        "features": {
+          "captured_at": "2026-10-12T17:48:09.594662Z",
+          "cta": null,
+          "duration_seconds": 3.0,
+          "evidence": {
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "frozen_subtitle_style": null,
+            "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+            "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+            "production_cost_vnd": null,
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "provider_posted_time": null,
+            "publication_protocol_mock": true,
+            "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+            "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+            "semantic_labels_verified": false,
+            "source_is_dry_run": false,
+            "subtitle_catalog_id_verified": false
+          },
+          "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+          "hook_type": null,
+          "idea_id": null,
+          "music_profile": null,
+          "niche": null,
+          "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "publishing_time": null,
+          "scene_count": null,
+          "subtitle_template": null,
+          "topic": null,
+          "trend_cluster_id": null,
+          "visual_strategy": null,
+          "voice_profile": null
+        },
+        "metrics": {
+          "average_view_duration": null,
+          "clicks": null,
+          "comments": 0.0,
+          "completion_rate": null,
+          "ctr": null,
+          "followers_gained": null,
+          "impressions": null,
+          "likes": 4.0,
+          "observation_window_hours": null,
+          "reach": 100.0,
+          "revenue": null,
+          "rpm": null,
+          "saves": 3.0,
+          "shares": 2.0,
+          "views": 123.0,
+          "watch_time": null
+        },
+        "mock": true,
+        "platform": "instagram_reels",
+        "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+        "provider_key": "instagram-graph-insights-api",
+        "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+        "publication_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+        "publishing_time": null,
+        "real_audience_observation": false,
+        "real_provider_tested": false,
+        "remote_post_id": "45678",
+        "response_refs": [
+          "noar_435b604f73dc4f1d951bdb328608cf84",
+          "noar_29764cb219e247938e8eced1c2676efd",
+          "noar_8fdc71b4af4340009e8960b5187d68e7"
+        ],
+        "result_snapshot_id": "noam_cd8c8ee6bdfc42fb8ec6f708bf2bf0b9",
+        "schema_version": "native-official-analytics-snapshot-v3",
+        "snapshot_sha256": "0bdce4f8d69216369ada05873f8c306584fd1de4007d49cc092f73e908d685e3",
+        "source_kind": "official_protocol_mock",
+        "sync_id": "noas_ead8bec8da634fb9a3153d684ec45ac1",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "result_snapshot_id": "noam_cd8c8ee6bdfc42fb8ec6f708bf2bf0b9",
+      "schema_version": "native-official-analytics-sync-v3",
+      "snapshot": {
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:09.824718+00:00",
+          "identity_revision_sha256": "8129992659baf4c56bbbff900865e4664dc9433668b2b0f9bcb7e037af57ad11",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+        "consented_at": "2026-10-12T17:48:09.594662+00:00",
+        "deadline": "2026-10-12T18:03:09.594662+00:00",
+        "meta_read_profile": {
+          "api_version": "v24.0",
+          "login_type": "facebook_login",
+          "page_id": "12345"
+        },
+        "mock": true,
+        "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+        "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+        "publishing_authority": false,
+        "recurring_authority": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "expected_configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+          "expected_publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "expected_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "max_attempts": 1,
+          "metric_scope": "lifetime_media_insights",
+          "platform": "instagram_reels",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "query": null,
+          "remote_post_id": "45678",
+          "schema_version": "native-official-analytics-request-v3",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-consent-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+          "features": {
+            "captured_at": "2026-10-12T17:48:09.594662Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+              "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "9af893d3e7d03e5cf02a791c4fb6d62efe4c8582b750961575322387b6ed8b24",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "receipt_mock": true,
+          "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "remote_post_id": "45678"
+        },
+        "target": {
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "platform": "instagram_reels",
+          "profile_id": "ppf_meta_admission_instagram_reels",
+          "profile_version": 1,
+          "provider_key": "instagram-graph-api-publishing",
+          "schema_version": "publishing-target-v1",
+          "target_account_id": "23456",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "snapshot_sha256": "0bdce4f8d69216369ada05873f8c306584fd1de4007d49cc092f73e908d685e3",
+      "status": "succeeded",
+      "sync_id": "noas_ead8bec8da634fb9a3153d684ec45ac1",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:13.338413+00:00",
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "owner_uat": false,
+    "plan_created": {
+      "actor_ref": "explicit-fixture",
+      "automatic_consent_renewal": false,
+      "created_at": "2026-10-12T17:48:09.594662+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_due_at": "2026-10-12T17:48:09.594662+00:00",
+      "occurrences": [],
+      "pending_sync_id": null,
+      "plan_id": "noap_29faa4d77e134d0c9e4ca29efa25b87c",
+      "policy": {
+        "approved_at": "2026-10-12T17:48:09.594662+00:00",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:09.824718+00:00",
+          "identity_revision_sha256": "8129992659baf4c56bbbff900865e4664dc9433668b2b0f9bcb7e037af57ad11",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "automatic_consent_renewal": false,
+        "credential_proof": {
+          "expires_at": "2026-10-12T18:48:09.594662+00:00",
+          "scopes_sha256": "abf7029ec38b4f79a3adc11938b2784ec83593cdca67c0d81751f9ab19bdf4f4",
+          "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116"
+        },
+        "fixed_report_query": true,
+        "mock": true,
+        "plan_id": "noap_29faa4d77e134d0c9e4ca29efa25b87c",
+        "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+        "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+        "publishing_enabled": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_background_reads": true,
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "deadline": "2026-10-12T17:58:09.594662Z",
+          "expected_configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+          "expected_publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "expected_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "interval_seconds": 60,
+          "max_attempts": 1,
+          "max_runs": 2,
+          "metric_scope": "lifetime_media_insights",
+          "platform": "instagram_reels",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "query": null,
+          "remote_post_id": "45678",
+          "schema_version": "native-official-analytics-refresh-request-v3",
+          "start_at": "2026-10-12T17:48:09.594662Z",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-refresh-policy-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+          "features": {
+            "captured_at": "2026-10-12T17:48:09.594662Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+              "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "9af893d3e7d03e5cf02a791c4fb6d62efe4c8582b750961575322387b6ed8b24",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "receipt_mock": true,
+          "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "remote_post_id": "45678"
+        },
+        "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "policy_sha256": "1f87c323904eb9168ebe62cd972f5d633c4037413367783a148dcdf095eda3ec",
+      "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "23d597d943009b6cf4d9a80b52de80be72ab7c96c73ea10390b6e8150225b7fd",
+      "run_count": 0,
+      "schema_version": "native-official-analytics-refresh-plan-v3",
+      "status": "active",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:09.594662+00:00",
+      "version": 1,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "plan_done": {
+      "actor_ref": "explicit-fixture",
+      "automatic_consent_renewal": false,
+      "created_at": "2026-10-12T17:48:09.594662+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_due_at": "2026-10-12T17:50:09.594662+00:00",
+      "occurrences": [
+        {
+          "admitted_at": "2026-10-12T17:48:09.594662+00:00",
+          "consent_sha256": "87397c725b184912b80e0edb744fbf2444ea6499ae71a4e3856d86a4df35b04d",
+          "due_at": "2026-10-12T17:48:09.594662+00:00",
+          "occurrence_id": "noao_1ba70e1ecee44ccf9102f63f9fe87533",
+          "occurrence_sha256": "952fd221a9bbccecaf2e7e80e43d17a50a4397fe8eee2d7cf0688ff9e23d9ec3",
+          "ordinal": 1,
+          "plan_id": "noap_29faa4d77e134d0c9e4ca29efa25b87c",
+          "policy_sha256": "1f87c323904eb9168ebe62cd972f5d633c4037413367783a148dcdf095eda3ec",
+          "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "read_request_sha256": "ce692efc6bfa87cffa018631c616f16da62ba0038949c7c71f9aafa15320ef13",
+          "schema_version": "native-official-analytics-refresh-occurrence-v3",
+          "sync": {
+            "actor_ref": "explicit-fixture",
+            "attempts": 1,
+            "created_at": "2026-10-12T17:48:13.482193+00:00",
+            "failure_code": null,
+            "mock": true,
+            "next_at": null,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+            "publishing_enabled": false,
+            "real_provider_tested": false,
+            "request_fingerprint": "ce692efc6bfa87cffa018631c616f16da62ba0038949c7c71f9aafa15320ef13",
+            "result": {
+              "attempt_id": "noaa_64b4d88612bb4af0bd9c2f561ace754e",
+              "automatic_action": false,
+              "collected_at": "2026-10-12T17:48:09.594662+00:00",
+              "evidence": {
+                "api_version": "v24.0",
+                "completion_rate_supported": false,
+                "coverage_end_date": null,
+                "metric_mapping": {
+                  "comments": "comments",
+                  "likes": "likes",
+                  "reach": "reach",
+                  "saved": "saves",
+                  "shares": "shares",
+                  "views": "views"
+                },
+                "metric_scope": "lifetime_media_insights",
+                "normalized_units": {
+                  "comments": "count",
+                  "likes": "count",
+                  "reach": "count",
+                  "saves": "count",
+                  "shares": "count",
+                  "views": "count"
+                },
+                "observed_window_hours": null,
+                "provider_metric_semantics_real_verified": false,
+                "query": null,
+                "returned_metrics": [
+                  "views",
+                  "reach",
+                  "likes",
+                  "comments",
+                  "shares",
+                  "saved"
+                ],
+                "revenue_supported": false,
+                "schema_version": "meta-analytics-counts-v1",
+                "unavailable_metrics": [
+                  "impressions",
+                  "watch_time",
+                  "average_view_duration",
+                  "completion_rate",
+                  "followers_gained",
+                  "clicks",
+                  "ctr",
+                  "revenue",
+                  "rpm",
+                  "observation_window_hours"
+                ],
+                "watch_time_unit_verified": false
+              },
+              "external_call": false,
+              "features": {
+                "captured_at": "2026-10-12T17:48:09.594662Z",
+                "cta": null,
+                "duration_seconds": 3.0,
+                "evidence": {
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                  "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                  "frozen_subtitle_style": null,
+                  "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                  "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                  "production_cost_vnd": null,
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "provider_posted_time": null,
+                  "publication_protocol_mock": true,
+                  "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                  "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+                  "semantic_labels_verified": false,
+                  "source_is_dry_run": false,
+                  "subtitle_catalog_id_verified": false
+                },
+                "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+                "hook_type": null,
+                "idea_id": null,
+                "music_profile": null,
+                "niche": null,
+                "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+                "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+                "publishing_time": null,
+                "scene_count": null,
+                "subtitle_template": null,
+                "topic": null,
+                "trend_cluster_id": null,
+                "visual_strategy": null,
+                "voice_profile": null
+              },
+              "metrics": {
+                "average_view_duration": null,
+                "clicks": null,
+                "comments": 0.0,
+                "completion_rate": null,
+                "ctr": null,
+                "followers_gained": null,
+                "impressions": null,
+                "likes": 4.0,
+                "observation_window_hours": null,
+                "reach": 100.0,
+                "revenue": null,
+                "rpm": null,
+                "saves": 3.0,
+                "shares": 2.0,
+                "views": 123.0,
+                "watch_time": null
+              },
+              "mock": true,
+              "platform": "instagram_reels",
+              "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+              "provider_key": "instagram-graph-insights-api",
+              "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+              "publication_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+              "publishing_time": null,
+              "real_audience_observation": false,
+              "real_provider_tested": false,
+              "remote_post_id": "45678",
+              "response_refs": [
+                "noar_928b552ef2234e9fb2f9933bdda6fc8d",
+                "noar_b3774c6cd3624d05985489b8125aee85",
+                "noar_cf293e84dbbe49b880cde79ac83d9ec3"
+              ],
+              "result_snapshot_id": "noam_27e496987c864b5eaccac9515f048eda",
+              "schema_version": "native-official-analytics-snapshot-v3",
+              "snapshot_sha256": "87397c725b184912b80e0edb744fbf2444ea6499ae71a4e3856d86a4df35b04d",
+              "source_kind": "official_protocol_mock",
+              "sync_id": "noas_a2f004cb15a04ef1b9e940caba162a94",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "result_snapshot_id": "noam_27e496987c864b5eaccac9515f048eda",
+            "schema_version": "native-official-analytics-sync-v3",
+            "snapshot": {
+              "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "authority": {
+                "expires_at": "2026-10-12T18:48:09.824718+00:00",
+                "identity_revision_sha256": "8129992659baf4c56bbbff900865e4664dc9433668b2b0f9bcb7e037af57ad11",
+                "subject": "usr:explicit-fixture",
+                "token_id": "explicit-fixture"
+              },
+              "configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+              "consented_at": "2026-10-12T17:48:09.594662+00:00",
+              "deadline": "2026-10-12T17:58:09.594662+00:00",
+              "meta_read_profile": {
+                "api_version": "v24.0",
+                "login_type": "facebook_login",
+                "page_id": "12345"
+              },
+              "mock": true,
+              "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+              "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+              "publishing_authority": false,
+              "recurring_authority": false,
+              "request": {
+                "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "acknowledged_bounded_retries": false,
+                "acknowledged_protocol_mock": true,
+                "acknowledged_read_only": true,
+                "expected_configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+                "expected_publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                "expected_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                "max_attempts": 1,
+                "metric_scope": "lifetime_media_insights",
+                "platform": "instagram_reels",
+                "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+                "query": null,
+                "remote_post_id": "45678",
+                "schema_version": "native-official-analytics-request-v3",
+                "valid_for_seconds": 600
+              },
+              "schema_version": "native-official-analytics-consent-v3",
+              "source": {
+                "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+                "features": {
+                  "captured_at": "2026-10-12T17:48:09.594662Z",
+                  "cta": null,
+                  "duration_seconds": 3.0,
+                  "evidence": {
+                    "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                    "current_project_metadata_used": false,
+                    "exact_publishing_time_available": false,
+                    "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                    "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                    "frozen_subtitle_style": null,
+                    "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                    "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                    "production_cost_vnd": null,
+                    "project_metadata_source": "native_published_render_request_snapshot",
+                    "provider_posted_time": null,
+                    "publication_protocol_mock": true,
+                    "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                    "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+                    "semantic_labels_verified": false,
+                    "source_is_dry_run": false,
+                    "subtitle_catalog_id_verified": false
+                  },
+                  "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+                  "hook_type": null,
+                  "idea_id": null,
+                  "music_profile": null,
+                  "niche": null,
+                  "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+                  "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+                  "publishing_time": null,
+                  "scene_count": null,
+                  "subtitle_template": null,
+                  "topic": null,
+                  "trend_cluster_id": null,
+                  "visual_strategy": null,
+                  "voice_profile": null
+                },
+                "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                "job_result_sha256": "9af893d3e7d03e5cf02a791c4fb6d62efe4c8582b750961575322387b6ed8b24",
+                "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                "receipt_mock": true,
+                "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                "remote_post_id": "45678"
+              },
+              "target": {
+                "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "platform": "instagram_reels",
+                "profile_id": "ppf_meta_admission_instagram_reels",
+                "profile_version": 1,
+                "provider_key": "instagram-graph-api-publishing",
+                "schema_version": "publishing-target-v1",
+                "target_account_id": "23456",
+                "workspace_id": "wsp_meta_admission_fixture"
+              },
+              "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "snapshot_sha256": "87397c725b184912b80e0edb744fbf2444ea6499ae71a4e3856d86a4df35b04d",
+            "status": "succeeded",
+            "sync_id": "noas_a2f004cb15a04ef1b9e940caba162a94",
+            "token_returned": false,
+            "updated_at": "2026-10-12T17:48:14.214197+00:00",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "sync_id": "noas_a2f004cb15a04ef1b9e940caba162a94",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        {
+          "admitted_at": "2026-10-12T17:49:09.594662+00:00",
+          "consent_sha256": "3cd0c6c5ac0d4820987b521124340defbc7a9fe683795d24b08805f3364bb3d9",
+          "due_at": "2026-10-12T17:49:09.594662+00:00",
+          "occurrence_id": "noao_dfdbfd2ca82d4619923776fd84c4c4f8",
+          "occurrence_sha256": "d747ea4a9e195f8d852ea98540d640e9d50da206132198e06689da7e42f83832",
+          "ordinal": 2,
+          "plan_id": "noap_29faa4d77e134d0c9e4ca29efa25b87c",
+          "policy_sha256": "1f87c323904eb9168ebe62cd972f5d633c4037413367783a148dcdf095eda3ec",
+          "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "read_request_sha256": "ba5ad5acee6bc4e0738bbcbe3a1908be2deecef60683f4c209006bc424c0dbab",
+          "schema_version": "native-official-analytics-refresh-occurrence-v3",
+          "sync": {
+            "actor_ref": "explicit-fixture",
+            "attempts": 1,
+            "created_at": "2026-10-12T17:48:14.388323+00:00",
+            "failure_code": null,
+            "mock": true,
+            "next_at": null,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+            "publishing_enabled": false,
+            "real_provider_tested": false,
+            "request_fingerprint": "ba5ad5acee6bc4e0738bbcbe3a1908be2deecef60683f4c209006bc424c0dbab",
+            "result": {
+              "attempt_id": "noaa_031b27677c86427eb3001116e08ab543",
+              "automatic_action": false,
+              "collected_at": "2026-10-12T17:49:09.594662+00:00",
+              "evidence": {
+                "api_version": "v24.0",
+                "completion_rate_supported": false,
+                "coverage_end_date": null,
+                "metric_mapping": {
+                  "comments": "comments",
+                  "likes": "likes",
+                  "reach": "reach",
+                  "saved": "saves",
+                  "shares": "shares",
+                  "views": "views"
+                },
+                "metric_scope": "lifetime_media_insights",
+                "normalized_units": {
+                  "comments": "count",
+                  "likes": "count",
+                  "reach": "count",
+                  "saves": "count",
+                  "shares": "count",
+                  "views": "count"
+                },
+                "observed_window_hours": null,
+                "provider_metric_semantics_real_verified": false,
+                "query": null,
+                "returned_metrics": [
+                  "views",
+                  "reach",
+                  "likes",
+                  "comments",
+                  "shares",
+                  "saved"
+                ],
+                "revenue_supported": false,
+                "schema_version": "meta-analytics-counts-v1",
+                "unavailable_metrics": [
+                  "impressions",
+                  "watch_time",
+                  "average_view_duration",
+                  "completion_rate",
+                  "followers_gained",
+                  "clicks",
+                  "ctr",
+                  "revenue",
+                  "rpm",
+                  "observation_window_hours"
+                ],
+                "watch_time_unit_verified": false
+              },
+              "external_call": false,
+              "features": {
+                "captured_at": "2026-10-12T17:49:09.594662Z",
+                "cta": null,
+                "duration_seconds": 3.0,
+                "evidence": {
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                  "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                  "frozen_subtitle_style": null,
+                  "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                  "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                  "production_cost_vnd": null,
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "provider_posted_time": null,
+                  "publication_protocol_mock": true,
+                  "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                  "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+                  "semantic_labels_verified": false,
+                  "source_is_dry_run": false,
+                  "subtitle_catalog_id_verified": false
+                },
+                "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+                "hook_type": null,
+                "idea_id": null,
+                "music_profile": null,
+                "niche": null,
+                "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+                "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+                "publishing_time": null,
+                "scene_count": null,
+                "subtitle_template": null,
+                "topic": null,
+                "trend_cluster_id": null,
+                "visual_strategy": null,
+                "voice_profile": null
+              },
+              "metrics": {
+                "average_view_duration": null,
+                "clicks": null,
+                "comments": 0.0,
+                "completion_rate": null,
+                "ctr": null,
+                "followers_gained": null,
+                "impressions": null,
+                "likes": 4.0,
+                "observation_window_hours": null,
+                "reach": 100.0,
+                "revenue": null,
+                "rpm": null,
+                "saves": 3.0,
+                "shares": 2.0,
+                "views": 250.0,
+                "watch_time": null
+              },
+              "mock": true,
+              "platform": "instagram_reels",
+              "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+              "provider_key": "instagram-graph-insights-api",
+              "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+              "publication_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+              "publishing_time": null,
+              "real_audience_observation": false,
+              "real_provider_tested": false,
+              "remote_post_id": "45678",
+              "response_refs": [
+                "noar_0665e23336654a1c8260592733dba1cd",
+                "noar_b3aa26f79c0a45f4937dadaaa5cb3e6d",
+                "noar_3937d0be5e514a17abde3a36d75f3fe0"
+              ],
+              "result_snapshot_id": "noam_c7efaf5c14bc4724acf1da07cb4131b2",
+              "schema_version": "native-official-analytics-snapshot-v3",
+              "snapshot_sha256": "3cd0c6c5ac0d4820987b521124340defbc7a9fe683795d24b08805f3364bb3d9",
+              "source_kind": "official_protocol_mock",
+              "sync_id": "noas_c15c6445a1144d3c9e19c82b89681004",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "result_snapshot_id": "noam_c7efaf5c14bc4724acf1da07cb4131b2",
+            "schema_version": "native-official-analytics-sync-v3",
+            "snapshot": {
+              "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "authority": {
+                "expires_at": "2026-10-12T18:48:09.824718+00:00",
+                "identity_revision_sha256": "8129992659baf4c56bbbff900865e4664dc9433668b2b0f9bcb7e037af57ad11",
+                "subject": "usr:explicit-fixture",
+                "token_id": "explicit-fixture"
+              },
+              "configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+              "consented_at": "2026-10-12T17:49:09.594662+00:00",
+              "deadline": "2026-10-12T17:58:09.594662+00:00",
+              "meta_read_profile": {
+                "api_version": "v24.0",
+                "login_type": "facebook_login",
+                "page_id": "12345"
+              },
+              "mock": true,
+              "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+              "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+              "publishing_authority": false,
+              "recurring_authority": false,
+              "request": {
+                "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "acknowledged_bounded_retries": false,
+                "acknowledged_protocol_mock": true,
+                "acknowledged_read_only": true,
+                "expected_configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+                "expected_publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                "expected_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                "max_attempts": 1,
+                "metric_scope": "lifetime_media_insights",
+                "platform": "instagram_reels",
+                "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+                "query": null,
+                "remote_post_id": "45678",
+                "schema_version": "native-official-analytics-request-v3",
+                "valid_for_seconds": 540
+              },
+              "schema_version": "native-official-analytics-consent-v3",
+              "source": {
+                "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+                "features": {
+                  "captured_at": "2026-10-12T17:49:09.594662Z",
+                  "cta": null,
+                  "duration_seconds": 3.0,
+                  "evidence": {
+                    "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                    "current_project_metadata_used": false,
+                    "exact_publishing_time_available": false,
+                    "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                    "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                    "frozen_subtitle_style": null,
+                    "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                    "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                    "production_cost_vnd": null,
+                    "project_metadata_source": "native_published_render_request_snapshot",
+                    "provider_posted_time": null,
+                    "publication_protocol_mock": true,
+                    "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                    "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+                    "semantic_labels_verified": false,
+                    "source_is_dry_run": false,
+                    "subtitle_catalog_id_verified": false
+                  },
+                  "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+                  "hook_type": null,
+                  "idea_id": null,
+                  "music_profile": null,
+                  "niche": null,
+                  "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+                  "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+                  "publishing_time": null,
+                  "scene_count": null,
+                  "subtitle_template": null,
+                  "topic": null,
+                  "trend_cluster_id": null,
+                  "visual_strategy": null,
+                  "voice_profile": null
+                },
+                "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                "job_result_sha256": "9af893d3e7d03e5cf02a791c4fb6d62efe4c8582b750961575322387b6ed8b24",
+                "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+                "receipt_mock": true,
+                "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+                "remote_post_id": "45678"
+              },
+              "target": {
+                "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "platform": "instagram_reels",
+                "profile_id": "ppf_meta_admission_instagram_reels",
+                "profile_version": 1,
+                "provider_key": "instagram-graph-api-publishing",
+                "schema_version": "publishing-target-v1",
+                "target_account_id": "23456",
+                "workspace_id": "wsp_meta_admission_fixture"
+              },
+              "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "snapshot_sha256": "3cd0c6c5ac0d4820987b521124340defbc7a9fe683795d24b08805f3364bb3d9",
+            "status": "succeeded",
+            "sync_id": "noas_c15c6445a1144d3c9e19c82b89681004",
+            "token_returned": false,
+            "updated_at": "2026-10-12T17:48:15.148517+00:00",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "sync_id": "noas_c15c6445a1144d3c9e19c82b89681004",
+          "workspace_id": "wsp_meta_admission_fixture"
+        }
+      ],
+      "pending_sync_id": null,
+      "plan_id": "noap_29faa4d77e134d0c9e4ca29efa25b87c",
+      "policy": {
+        "approved_at": "2026-10-12T17:48:09.594662+00:00",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:09.824718+00:00",
+          "identity_revision_sha256": "8129992659baf4c56bbbff900865e4664dc9433668b2b0f9bcb7e037af57ad11",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "automatic_consent_renewal": false,
+        "credential_proof": {
+          "expires_at": "2026-10-12T18:48:09.594662+00:00",
+          "scopes_sha256": "abf7029ec38b4f79a3adc11938b2784ec83593cdca67c0d81751f9ab19bdf4f4",
+          "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116"
+        },
+        "fixed_report_query": true,
+        "mock": true,
+        "plan_id": "noap_29faa4d77e134d0c9e4ca29efa25b87c",
+        "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+        "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+        "publishing_enabled": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_background_reads": true,
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "deadline": "2026-10-12T17:58:09.594662Z",
+          "expected_configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+          "expected_publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "expected_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "interval_seconds": 60,
+          "max_attempts": 1,
+          "max_runs": 2,
+          "metric_scope": "lifetime_media_insights",
+          "platform": "instagram_reels",
+          "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+          "query": null,
+          "remote_post_id": "45678",
+          "schema_version": "native-official-analytics-refresh-request-v3",
+          "start_at": "2026-10-12T17:48:09.594662Z",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-refresh-policy-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+          "features": {
+            "captured_at": "2026-10-12T17:48:09.594662Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+              "render_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_1de098ec28085330081a86b8ed5040bd",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "9af893d3e7d03e5cf02a791c4fb6d62efe4c8582b750961575322387b6ed8b24",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+          "receipt_mock": true,
+          "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+          "remote_post_id": "45678"
+        },
+        "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "policy_sha256": "1f87c323904eb9168ebe62cd972f5d633c4037413367783a148dcdf095eda3ec",
+      "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "23d597d943009b6cf4d9a80b52de80be72ab7c96c73ea10390b6e8150225b7fd",
+      "run_count": 2,
+      "schema_version": "native-official-analytics-refresh-plan-v3",
+      "status": "completed",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:49:09.594662+00:00",
+      "version": 5,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "project": {
+      "archived": false,
+      "id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "revision": 2
+    },
+    "publication": {
+      "actor_ref": "explicit-fixture",
+      "approval_id": "nopa_30c52b472ab84a05b42ab059d1a21c5c",
+      "created_at": "2026-10-12T17:48:10.117741+00:00",
+      "dedupe_sha256": "b7437d235758cff4b07affceddbb393b50bff2a9efbfbbaf4e4774526be8933c",
+      "failure_code": null,
+      "mock": true,
+      "mock_publication_complete": true,
+      "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+      "published": false,
+      "real_provider_tested": false,
+      "receipt": {
+        "created_at": "2026-10-12T17:48:09.594662Z",
+        "duplicate_post_created": false,
+        "external_action": false,
+        "mock": true,
+        "mode": "live",
+        "platform": "instagram_reels",
+        "provider_key": "instagram-graph-api-publishing",
+        "receipt_id": "rcpt_96714b0940cf48af85b37f81e674616d",
+        "remote_post_id": "45678",
+        "remote_url": null,
+        "request_fingerprint": "33d5763a8916d08d3917477aac5b738989eb6ddf9d6bc01e87be405574bdafc4"
+      },
+      "request_fingerprint": "33d5763a8916d08d3917477aac5b738989eb6ddf9d6bc01e87be405574bdafc4",
+      "schema_version": "native-official-publication-v1",
+      "snapshot": {
+        "account_check_is_publish_authority": false,
+        "account_check_snapshot_sha256": "ae2f97b1c552c75a4a59fec89b68011b4545c10b74dc76b7192b412e031c9b62",
+        "account_result_sha256": "a5517254572ac6930b9dbb5a56405971b1d2aec61dac3c074a58412d1ede8f0c",
+        "chunk_size": 16777216,
+        "configuration_sha256": "c6e13e9cb2dad44042c674adc72506e84a16a9ad97234f4d5d5f37d056948ad3",
+        "credential_cipher_sha256": "88a91c7c9c09816b733d6227e99bb020e8c90287168876bc4d5131d9e87e22e0",
+        "disclosures": {
+          "api_version": "v24.0",
+          "app_eligibility_verified": false,
+          "login_type": "facebook_login",
+          "page_id": "12345",
+          "provider_permissions_verified": false,
+          "share_to_feed": false
+        },
+        "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+        "dry_run_receipt_is_publish_authority": false,
+        "dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+        "execution_supported": true,
+        "final_bytes": 59,
+        "final_job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+        "final_job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+        "final_review": {
+          "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "created_at": "2026-10-12T17:48:09.812009+00:00",
+          "decision": "approve",
+          "id": 1,
+          "job_id": "c12b12f98d7e4d7e858cd706c31fe411",
+          "note": "",
+          "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+          "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+          "revision": 2,
+          "snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207"
+        },
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "media_configuration_sha256": "50e527cdb488c4a77250f081a1350a9cb829873e65b3eb306540d37493e3922a",
+        "meta_account_proof": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "actor_ref": "explicit-fixture",
+          "attempts": 1,
+          "check_id": "nack_d55b1db6d4954b9eb9720d5960b9eae4",
+          "created_at": "2026-10-12T17:48:09.917772+00:00",
+          "failure_code": null,
+          "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+          "publishing_enabled": false,
+          "request_fingerprint": "69c771b381a07d46932a3e3d2994d59bf0d4be3c800e4442c1a5634642771a4f",
+          "result": {
+            "account_match": true,
+            "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "check_id": "nack_d55b1db6d4954b9eb9720d5960b9eae4",
+            "cost_operation_id": "6ee490c59a9a9556dc02bb26ebc68df1aa84f4f16ac76fce4e7ef46ce9258f76",
+            "external_call": false,
+            "meta": {
+              "app_eligibility_verified": false,
+              "declared_permissions": [
+                "instagram_basic",
+                "instagram_content_publish",
+                "pages_read_engagement"
+              ],
+              "instagram_account_id": "23456",
+              "linked_instagram_match": true,
+              "observations": [
+                {
+                  "cost_operation_id": "7d81bab12f68b279523c2c7ef10f121c6b700f4ee12de13bdb1e5a43a5b1ac2f",
+                  "operation": "page_identity",
+                  "request_sha256": "440993c7213565edcf256a8737d70a591301ab48800b78a97a43fc38dbf068d4",
+                  "response_sha256": "42bf2bef78652b34b9036356ccf861d9df2ae63ec67c363f06fcbedebab54ad6",
+                  "response_status": 200
+                },
+                {
+                  "cost_operation_id": "6ee490c59a9a9556dc02bb26ebc68df1aa84f4f16ac76fce4e7ef46ce9258f76",
+                  "operation": "instagram_identity",
+                  "request_sha256": "5ca163bdcc83288311659213c358aeb7ff09752956209146aef1fdde7285f76a",
+                  "response_sha256": "55aba1c7c11fd7608e47417c0fdfcc92bef7364af2eded283999464a68a25b78",
+                  "response_status": 200
+                }
+              ],
+              "page_id": "12345",
+              "provider_permissions_verified": false,
+              "publishing_enabled": false,
+              "read_only": true,
+              "schema_version": "native-meta-account-proof-v1",
+              "token_page_match": true
+            },
+            "mock": true,
+            "operation": "account_lookup",
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "publishing_enabled": false,
+            "read_only": true,
+            "real_provider_tested": false,
+            "response_sha256": "55aba1c7c11fd7608e47417c0fdfcc92bef7364af2eded283999464a68a25b78",
+            "response_status": 200,
+            "schema_version": "native-official-account-check-result-v1",
+            "snapshot_sha256": "ae2f97b1c552c75a4a59fec89b68011b4545c10b74dc76b7192b412e031c9b62",
+            "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+            "token_returned": false,
+            "verified_at": "2026-10-12T17:48:09.594662+00:00",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "result_sha256": "a5517254572ac6930b9dbb5a56405971b1d2aec61dac3c074a58412d1ede8f0c",
+          "schema_version": "native-official-account-check-v1",
+          "snapshot": {
+            "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configuration_sha256": "ba0845dc095f9e8da434e5589c9bc5cab73d8e704f52b6c5cfb78f414224e581",
+            "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+            "meta": {
+              "cipher_sha256": "88a91c7c9c09816b733d6227e99bb020e8c90287168876bc4d5131d9e87e22e0",
+              "consented_at": "2026-10-12T17:48:09.594662Z",
+              "deadline": "2026-10-12T18:03:09.594662Z",
+              "profile": {
+                "api_version": "v24.0",
+                "login_type": "facebook_login",
+                "page_id": "12345",
+                "schema_version": "native-meta-publishing-profile-v1",
+                "target": {
+                  "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "platform": "instagram_reels",
+                  "profile_id": "ppf_meta_admission_instagram_reels",
+                  "profile_version": 1,
+                  "provider_key": "instagram-graph-api-publishing",
+                  "schema_version": "publishing-target-v1",
+                  "target_account_id": "23456",
+                  "workspace_id": "wsp_meta_admission_fixture"
+                }
+              },
+              "schema_version": "native-meta-account-source-v1"
+            },
+            "mock": true,
+            "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+            "project_revision": 2,
+            "request": {
+              "acknowledged_read_only": true,
+              "expected_configuration_sha256": "ba0845dc095f9e8da434e5589c9bc5cab73d8e704f52b6c5cfb78f414224e581",
+              "revision": 2,
+              "schema_version": "native-official-account-check-request-v1"
+            },
+            "schema_version": "native-official-account-check-snapshot-v1",
+            "target": {
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "platform": "instagram_reels",
+              "profile_id": "ppf_meta_admission_instagram_reels",
+              "profile_version": 1,
+              "provider_key": "instagram-graph-api-publishing",
+              "schema_version": "publishing-target-v1",
+              "target_account_id": "23456",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "snapshot_sha256": "ae2f97b1c552c75a4a59fec89b68011b4545c10b74dc76b7192b412e031c9b62",
+          "status": "succeeded",
+          "token_returned": false,
+          "updated_at": "2026-10-12T17:48:10.016147+00:00",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "meta_options": {
+          "share_to_feed": false
+        },
+        "meta_profile": {
+          "api_version": "v24.0",
+          "login_type": "facebook_login",
+          "page_id": "12345",
+          "schema_version": "native-meta-publishing-profile-v1",
+          "target": {
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform": "instagram_reels",
+            "profile_id": "ppf_meta_admission_instagram_reels",
+            "profile_version": 1,
+            "provider_key": "instagram-graph-api-publishing",
+            "schema_version": "publishing-target-v1",
+            "target_account_id": "23456",
+            "workspace_id": "wsp_meta_admission_fixture"
+          }
+        },
+        "metadata": {
+          "caption": "",
+          "description": "",
+          "hashtags": [],
+          "privacy": "public",
+          "scheduled_at": null,
+          "thumbnail_asset_id": null,
+          "title": "Tên tiếng Việt cho bản duyệt Meta"
+        },
+        "metadata_source": "completed_dry_run",
+        "mock": true,
+        "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+        "project_revision": 2,
+        "request": {
+          "account_check_id": "nack_d55b1db6d4954b9eb9720d5960b9eae4",
+          "dry_run_publication_id": "npub_9e57ca899a4e457a991539f39ebee365",
+          "expected_account_check_snapshot_sha256": "ae2f97b1c552c75a4a59fec89b68011b4545c10b74dc76b7192b412e031c9b62",
+          "expected_account_result_sha256": "a5517254572ac6930b9dbb5a56405971b1d2aec61dac3c074a58412d1ede8f0c",
+          "expected_configuration_sha256": "c6e13e9cb2dad44042c674adc72506e84a16a9ad97234f4d5d5f37d056948ad3",
+          "expected_dry_run_snapshot_sha256": "3ee30e405ee04bcdd69c113dbd268e93ca0998cd55f539e4bdbffabb849b1bc7",
+          "expected_media_configuration_sha256": "50e527cdb488c4a77250f081a1350a9cb829873e65b3eb306540d37493e3922a",
+          "profile_id": "ppf_meta_admission_instagram_reels",
+          "revision": 2,
+          "schema_version": "native-official-meta-publication-request-v2"
+        },
+        "reviewed_at": "2026-10-12T17:48:09.594662+00:00",
+        "schema_version": "native-official-meta-publication-snapshot-v2",
+        "separate_owner_publish_approval_required": true,
+        "target": {
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "platform": "instagram_reels",
+          "profile_id": "ppf_meta_admission_instagram_reels",
+          "profile_version": 1,
+          "provider_key": "instagram-graph-api-publishing",
+          "schema_version": "publishing-target-v1",
+          "target_account_id": "23456",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+        "token_returned": false,
+        "validation": {
+          "dry_run": {
+            "attention": [],
+            "platform": {
+              "capability": {
+                "audio_codecs": [
+                  "aac"
+                ],
+                "max_caption_characters": 2200,
+                "max_duration_seconds": 180.0,
+                "max_file_size_bytes": 2000000000,
+                "max_hashtags": 30,
+                "max_title_characters": 150,
+                "min_duration_seconds": 1.0,
+                "platform": "instagram_reels",
+                "supported_profiles": [
+                  "vertical-1080x1920",
+                  "square-1080x1080"
+                ],
+                "thumbnail": "optional",
+                "verification_state": "owner_verified_for_live",
+                "version": "2026-08-27.v1",
+                "video_codecs": [
+                  "h264"
+                ]
+              },
+              "checks": [
+                {
+                  "code": "PROFILE_SUPPORTED",
+                  "evidence": {
+                    "profile": "vertical-1080x1920"
+                  },
+                  "key": "render-profile",
+                  "message": "Final render profile is supported by the versioned platform contract.",
+                  "passed": true
+                },
+                {
+                  "code": "DURATION_SUPPORTED",
+                  "evidence": {
+                    "duration_seconds": 3.0
+                  },
+                  "key": "duration",
+                  "message": "Duration is within the configured platform range.",
+                  "passed": true
+                },
+                {
+                  "code": "RESOLUTION_PRESENT",
+                  "evidence": {
+                    "height": 1920,
+                    "width": 1080
+                  },
+                  "key": "resolution",
+                  "message": "QC contains a positive output resolution.",
+                  "passed": true
+                },
+                {
+                  "code": "FILE_SIZE_SUPPORTED",
+                  "evidence": {
+                    "size_bytes": 59
+                  },
+                  "key": "file-size",
+                  "message": "Output size is within the configured platform ceiling.",
+                  "passed": true
+                },
+                {
+                  "code": "VIDEO_CODEC_SUPPORTED",
+                  "evidence": {
+                    "codec": "h264"
+                  },
+                  "key": "video-codec",
+                  "message": "Video codec is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "AUDIO_CODEC_SUPPORTED",
+                  "evidence": {
+                    "codec": "aac"
+                  },
+                  "key": "audio-codec",
+                  "message": "Audio codec is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "TITLE_SUPPORTED",
+                  "evidence": {
+                    "characters": 33
+                  },
+                  "key": "title-length",
+                  "message": "Title length is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "CAPTION_SUPPORTED",
+                  "evidence": {
+                    "characters": 0
+                  },
+                  "key": "caption-length",
+                  "message": "Caption length is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "HASHTAGS_SUPPORTED",
+                  "evidence": {
+                    "count": 0
+                  },
+                  "key": "hashtag-count",
+                  "message": "Hashtag count is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "THUMBNAIL_SUPPORTED",
+                  "evidence": {
+                    "policy": "optional"
+                  },
+                  "key": "thumbnail",
+                  "message": "Thumbnail requirement is satisfied.",
+                  "passed": true
+                },
+                {
+                  "code": "CAPABILITY_DRY_RUN_ONLY",
+                  "evidence": {
+                    "verification_state": "owner_verified_for_live"
+                  },
+                  "key": "capability-live-verification",
+                  "message": "Capability snapshot is permitted for this execution mode.",
+                  "passed": true
+                }
+              ],
+              "status": "passed"
+            },
+            "provider": {
+              "adapter_state": "mock",
+              "checks": [
+                {
+                  "code": "DRY_RUN_NO_EXTERNAL_ACTION",
+                  "evidence": {
+                    "external_action": false
+                  },
+                  "key": "external-action",
+                  "message": "Deterministic dry-run provider performs no external action.",
+                  "passed": true
+                }
+              ],
+              "credential_status": "not_required",
+              "mock_execution": false,
+              "official_api_only": true,
+              "provider_key": "mock-publishing",
+              "supports_dry_run": true,
+              "supports_live_publish": false,
+              "target_binding": null
+            },
+            "rights": {
+              "asset_ids": [
+                "explicit_fixture.mp4"
+              ],
+              "checks": [
+                {
+                  "code": "RIGHTS_VERIFIED",
+                  "evidence": {
+                    "asset_id": "explicit_fixture.mp4",
+                    "license_present": true,
+                    "production_eligible": true,
+                    "rights_status": "owned"
+                  },
+                  "key": "asset:explicit_fixture.mp4",
+                  "message": "Asset rights evidence is sufficient.",
+                  "passed": true
+                }
+              ],
+              "policy_version": "v2-09-rights-fail-closed-v1",
+              "status": "passed"
+            },
+            "status": "passed"
+          },
+          "official_platform": {
+            "capability": {
+              "audio_codecs": [
+                "aac"
+              ],
+              "max_caption_characters": 2200,
+              "max_duration_seconds": 180.0,
+              "max_file_size_bytes": 2000000000,
+              "max_hashtags": 30,
+              "max_title_characters": 150,
+              "min_duration_seconds": 1.0,
+              "platform": "instagram_reels",
+              "supported_profiles": [
+                "vertical-1080x1920",
+                "square-1080x1080"
+              ],
+              "thumbnail": "optional",
+              "verification_state": "owner_verified_for_live",
+              "version": "2026-08-27.v1",
+              "video_codecs": [
+                "h264"
+              ]
+            },
+            "checks": [
+              {
+                "code": "PROFILE_SUPPORTED",
+                "evidence": {
+                  "profile": "vertical-1080x1920"
+                },
+                "key": "render-profile",
+                "message": "Final render profile is supported by the versioned platform contract.",
+                "passed": true
+              },
+              {
+                "code": "DURATION_SUPPORTED",
+                "evidence": {
+                  "duration_seconds": 3.0
+                },
+                "key": "duration",
+                "message": "Duration is within the configured platform range.",
+                "passed": true
+              },
+              {
+                "code": "RESOLUTION_PRESENT",
+                "evidence": {
+                  "height": 1920,
+                  "width": 1080
+                },
+                "key": "resolution",
+                "message": "QC contains a positive output resolution.",
+                "passed": true
+              },
+              {
+                "code": "FILE_SIZE_SUPPORTED",
+                "evidence": {
+                  "size_bytes": 59
+                },
+                "key": "file-size",
+                "message": "Output size is within the configured platform ceiling.",
+                "passed": true
+              },
+              {
+                "code": "VIDEO_CODEC_SUPPORTED",
+                "evidence": {
+                  "codec": "h264"
+                },
+                "key": "video-codec",
+                "message": "Video codec is supported.",
+                "passed": true
+              },
+              {
+                "code": "AUDIO_CODEC_SUPPORTED",
+                "evidence": {
+                  "codec": "aac"
+                },
+                "key": "audio-codec",
+                "message": "Audio codec is supported.",
+                "passed": true
+              },
+              {
+                "code": "TITLE_SUPPORTED",
+                "evidence": {
+                  "characters": 33
+                },
+                "key": "title-length",
+                "message": "Title length is supported.",
+                "passed": true
+              },
+              {
+                "code": "CAPTION_SUPPORTED",
+                "evidence": {
+                  "characters": 0
+                },
+                "key": "caption-length",
+                "message": "Caption length is supported.",
+                "passed": true
+              },
+              {
+                "code": "HASHTAGS_SUPPORTED",
+                "evidence": {
+                  "count": 0
+                },
+                "key": "hashtag-count",
+                "message": "Hashtag count is supported.",
+                "passed": true
+              },
+              {
+                "code": "THUMBNAIL_SUPPORTED",
+                "evidence": {
+                  "policy": "optional"
+                },
+                "key": "thumbnail",
+                "message": "Thumbnail requirement is satisfied.",
+                "passed": true
+              },
+              {
+                "code": "CAPABILITY_DRY_RUN_ONLY",
+                "evidence": {
+                  "verification_state": "owner_verified_for_live"
+                },
+                "key": "capability-live-verification",
+                "message": "Capability snapshot is permitted for this execution mode.",
+                "passed": true
+              }
+            ],
+            "status": "passed"
+          }
+        },
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+      "status": "completed",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:12.467303+00:00",
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "real_provider_acceptance": false,
+    "refresh_runtime": {
+      "automatic_consent_renewal": false,
+      "default_enabled": false,
+      "enabled": true,
+      "fixed_report_query": true,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "schema_version": "native-official-analytics-refresh-runtime-v1",
+      "separate_owner_background_read_consent_required": true,
+      "token_returned": false,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "runtime": {
+      "accounts": [
+        {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "account_verified": false,
+          "configuration_sha256": "b3feee70bace98ee6332bb2d9fe1cf453eb8bbe63cbce4d23fc0e1b538aa8893",
+          "credential_alias": "explicit-meta-analytics-read",
+          "credential_present": true,
+          "credential_verified": false,
+          "external_reads_enabled": false,
+          "meta_read_profile": {
+            "api_version": "v24.0",
+            "login_type": "facebook_login",
+            "page_id": "12345"
+          },
+          "mode": "fixture",
+          "publishing_enabled": false,
+          "real_provider_tested": false,
+          "status": "CONFIGURED",
+          "target": {
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform": "instagram_reels",
+            "profile_id": "ppf_meta_admission_instagram_reels",
+            "profile_version": 1,
+            "provider_key": "instagram-graph-api-publishing",
+            "schema_version": "publishing-target-v1",
+            "target_account_id": "23456",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+          "token_returned": false
+        }
+      ],
+      "automatic_refresh": false,
+      "default_enabled": false,
+      "enabled": true,
+      "fixture_fallback": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "schema_version": "native-official-analytics-capabilities-v3",
+      "separate_read_consent_required": true,
+      "supported_platforms": [
+        "youtube",
+        "tiktok",
+        "instagram_reels",
+        "facebook"
+      ],
+      "token_returned": false,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "schema_version": "native-meta-analytics-contract-fixture-v1",
+    "source": {
+      "metric_scope": "lifetime_media_insights",
+      "mock": true,
+      "project_id": "e683cb3e69aa4ffeb88d25da81db5262",
+      "publication_id": "nopu_9bcec8f9e3a8453eb43cfb0710fb2765",
+      "publication_snapshot_sha256": "13d118afce8b03573ea12f9629ca4a1a734ea2b32820ebcac4d32fb344e0df73",
+      "published": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "receipt_qualified": true,
+      "receipt_sha256": "f464b0bd9bb4a7ab4d475dceabfe8521e36443f8f7d66f2a6fe3f0de70b361d8",
+      "remote_post_id": "45678",
+      "remote_post_ids": [
+        "45678"
+      ],
+      "schema_version": "native-official-analytics-publication-binding-v3",
+      "target": {
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "platform": "instagram_reels",
+        "profile_id": "ppf_meta_admission_instagram_reels",
+        "profile_version": 1,
+        "provider_key": "instagram-graph-api-publishing",
+        "schema_version": "publishing-target-v1",
+        "target_account_id": "23456",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "target_binding_sha256": "50019cba176b40b3bf0f32cfe6dd064f3474c0a0ac326e954aea54df5c1f2116",
+      "token_returned": false,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "workspace_id": "wsp_meta_admission_fixture"
+  },
+  "facebook": {
+    "actual_HTTP_tested": false,
+    "actual_browser_tested": false,
+    "manual_created": {
+      "actor_ref": "explicit-fixture",
+      "attempts": 0,
+      "created_at": "2026-10-12T17:48:20.565615+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_at": null,
+      "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+      "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "80027a7617ecdda4a3876440a68fa78b3f15e97530e76237c9ef6ac254822690",
+      "result_snapshot_id": null,
+      "schema_version": "native-official-analytics-sync-v3",
+      "snapshot": {
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:15.653991+00:00",
+          "identity_revision_sha256": "9844de18834ed99a52290ad46924c7b60ddec9aba8071034c5dda04effcb4617",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+        "consented_at": "2026-10-12T17:48:15.584260+00:00",
+        "deadline": "2026-10-12T18:03:15.584260+00:00",
+        "meta_read_profile": {
+          "api_version": "v24.0",
+          "login_type": "facebook_login",
+          "page_id": "12345"
+        },
+        "mock": true,
+        "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+        "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+        "publishing_authority": false,
+        "recurring_authority": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "expected_configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+          "expected_publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "expected_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "max_attempts": 1,
+          "metric_scope": "cumulative_video_node_counters",
+          "platform": "facebook",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "query": null,
+          "remote_post_id": "34567",
+          "schema_version": "native-official-analytics-request-v3",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-consent-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+          "features": {
+            "captured_at": "2026-10-12T17:48:15.584260Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+              "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "c4bca1b093249a94bfc9acef446b9c693c7dab72d140cfb7d2e959f9ffe9c310",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "receipt_mock": true,
+          "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "remote_post_id": "34567"
+        },
+        "target": {
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "platform": "facebook",
+          "profile_id": "ppf_meta_admission_facebook",
+          "profile_version": 1,
+          "provider_key": "facebook-graph-api-publishing",
+          "schema_version": "publishing-target-v1",
+          "target_account_id": "12345",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "snapshot_sha256": "00f2ca20e0ad3c85fa0c708aafbab3b205d7bb4831918da14ef268ae75a83c75",
+      "status": "queued",
+      "sync_id": "noas_2ec8df820ffc487aa071a5d04b70652d",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:20.565615+00:00",
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "manual_done": {
+      "actor_ref": "explicit-fixture",
+      "attempts": 1,
+      "created_at": "2026-10-12T17:48:20.565615+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_at": null,
+      "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+      "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "80027a7617ecdda4a3876440a68fa78b3f15e97530e76237c9ef6ac254822690",
+      "result": {
+        "attempt_id": "noaa_888713ae63254232b8a6eec8dbf468f1",
+        "automatic_action": false,
+        "collected_at": "2026-10-12T17:48:15.584260+00:00",
+        "evidence": {
+          "api_version": "v24.0",
+          "completion_rate_supported": false,
+          "coverage_end_date": null,
+          "metric_mapping": {
+            "comments.summary.total_count": "comments",
+            "likes.summary.total_count": "likes",
+            "views": "views"
+          },
+          "metric_scope": "cumulative_video_node_counters",
+          "normalized_units": {
+            "comments": "count",
+            "likes": "count",
+            "views": "count"
+          },
+          "observed_window_hours": null,
+          "provider_metric_semantics_real_verified": false,
+          "query": null,
+          "returned_metrics": [
+            "views",
+            "likes.summary.total_count",
+            "comments.summary.total_count"
+          ],
+          "revenue_supported": false,
+          "schema_version": "meta-analytics-counts-v1",
+          "unavailable_metrics": [
+            "impressions",
+            "reach",
+            "watch_time",
+            "average_view_duration",
+            "completion_rate",
+            "shares",
+            "saves",
+            "followers_gained",
+            "clicks",
+            "ctr",
+            "revenue",
+            "rpm",
+            "observation_window_hours"
+          ],
+          "watch_time_unit_verified": false
+        },
+        "external_call": false,
+        "features": {
+          "captured_at": "2026-10-12T17:48:15.584260Z",
+          "cta": null,
+          "duration_seconds": 3.0,
+          "evidence": {
+            "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+            "current_project_metadata_used": false,
+            "exact_publishing_time_available": false,
+            "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+            "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+            "frozen_subtitle_style": null,
+            "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+            "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+            "production_cost_vnd": null,
+            "project_metadata_source": "native_published_render_request_snapshot",
+            "provider_posted_time": null,
+            "publication_protocol_mock": true,
+            "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+            "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+            "semantic_labels_verified": false,
+            "source_is_dry_run": false,
+            "subtitle_catalog_id_verified": false
+          },
+          "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+          "hook_type": null,
+          "idea_id": null,
+          "music_profile": null,
+          "niche": null,
+          "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "publishing_time": null,
+          "scene_count": null,
+          "subtitle_template": null,
+          "topic": null,
+          "trend_cluster_id": null,
+          "visual_strategy": null,
+          "voice_profile": null
+        },
+        "metrics": {
+          "average_view_duration": null,
+          "clicks": null,
+          "comments": 0.0,
+          "completion_rate": null,
+          "ctr": null,
+          "followers_gained": null,
+          "impressions": null,
+          "likes": 4.0,
+          "observation_window_hours": null,
+          "reach": null,
+          "revenue": null,
+          "rpm": null,
+          "saves": null,
+          "shares": null,
+          "views": 123.0,
+          "watch_time": null
+        },
+        "mock": true,
+        "platform": "facebook",
+        "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+        "provider_key": "facebook-graph-video-insights-api",
+        "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+        "publication_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+        "publishing_time": null,
+        "real_audience_observation": false,
+        "real_provider_tested": false,
+        "remote_post_id": "34567",
+        "response_refs": [
+          "noar_4aae3fc8dce7485b8a96ac32755020f1",
+          "noar_3dc044f8ca0c4372818f99b13febc19a",
+          "noar_e521be771ecd439ea2c5be78283365b1"
+        ],
+        "result_snapshot_id": "noam_3791e6e4633942e0b71cb874d71eff96",
+        "schema_version": "native-official-analytics-snapshot-v3",
+        "snapshot_sha256": "00f2ca20e0ad3c85fa0c708aafbab3b205d7bb4831918da14ef268ae75a83c75",
+        "source_kind": "official_protocol_mock",
+        "sync_id": "noas_2ec8df820ffc487aa071a5d04b70652d",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "result_snapshot_id": "noam_3791e6e4633942e0b71cb874d71eff96",
+      "schema_version": "native-official-analytics-sync-v3",
+      "snapshot": {
+        "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:15.653991+00:00",
+          "identity_revision_sha256": "9844de18834ed99a52290ad46924c7b60ddec9aba8071034c5dda04effcb4617",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+        "consented_at": "2026-10-12T17:48:15.584260+00:00",
+        "deadline": "2026-10-12T18:03:15.584260+00:00",
+        "meta_read_profile": {
+          "api_version": "v24.0",
+          "login_type": "facebook_login",
+          "page_id": "12345"
+        },
+        "mock": true,
+        "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+        "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+        "publishing_authority": false,
+        "recurring_authority": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "expected_configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+          "expected_publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "expected_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "max_attempts": 1,
+          "metric_scope": "cumulative_video_node_counters",
+          "platform": "facebook",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "query": null,
+          "remote_post_id": "34567",
+          "schema_version": "native-official-analytics-request-v3",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-consent-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+          "features": {
+            "captured_at": "2026-10-12T17:48:15.584260Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+              "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "c4bca1b093249a94bfc9acef446b9c693c7dab72d140cfb7d2e959f9ffe9c310",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "receipt_mock": true,
+          "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "remote_post_id": "34567"
+        },
+        "target": {
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "platform": "facebook",
+          "profile_id": "ppf_meta_admission_facebook",
+          "profile_version": 1,
+          "provider_key": "facebook-graph-api-publishing",
+          "schema_version": "publishing-target-v1",
+          "target_account_id": "12345",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "snapshot_sha256": "00f2ca20e0ad3c85fa0c708aafbab3b205d7bb4831918da14ef268ae75a83c75",
+      "status": "succeeded",
+      "sync_id": "noas_2ec8df820ffc487aa071a5d04b70652d",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:21.591288+00:00",
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "owner_uat": false,
+    "plan_created": {
+      "actor_ref": "explicit-fixture",
+      "automatic_consent_renewal": false,
+      "created_at": "2026-10-12T17:48:15.584260+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_due_at": "2026-10-12T17:48:15.584260+00:00",
+      "occurrences": [],
+      "pending_sync_id": null,
+      "plan_id": "noap_72d705de80e246128756be70e903de7a",
+      "policy": {
+        "approved_at": "2026-10-12T17:48:15.584260+00:00",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:15.653991+00:00",
+          "identity_revision_sha256": "9844de18834ed99a52290ad46924c7b60ddec9aba8071034c5dda04effcb4617",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "automatic_consent_renewal": false,
+        "credential_proof": {
+          "expires_at": "2026-10-12T18:48:15.584260+00:00",
+          "scopes_sha256": "48f4e48b81f7f797fe9c277f70e5e84b94e8250b508a38ddfa4ffc0bbfc4b13c",
+          "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d"
+        },
+        "fixed_report_query": true,
+        "mock": true,
+        "plan_id": "noap_72d705de80e246128756be70e903de7a",
+        "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+        "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+        "publishing_enabled": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_background_reads": true,
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "deadline": "2026-10-12T17:58:15.584260Z",
+          "expected_configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+          "expected_publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "expected_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "interval_seconds": 60,
+          "max_attempts": 1,
+          "max_runs": 2,
+          "metric_scope": "cumulative_video_node_counters",
+          "platform": "facebook",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "query": null,
+          "remote_post_id": "34567",
+          "schema_version": "native-official-analytics-refresh-request-v3",
+          "start_at": "2026-10-12T17:48:15.584260Z",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-refresh-policy-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+          "features": {
+            "captured_at": "2026-10-12T17:48:15.584260Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+              "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "c4bca1b093249a94bfc9acef446b9c693c7dab72d140cfb7d2e959f9ffe9c310",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "receipt_mock": true,
+          "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "remote_post_id": "34567"
+        },
+        "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "policy_sha256": "643f1edd80d5cc5d1ffa81cd58fa230237fc3f709acdf4c0c3272ea8d41ab63a",
+      "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+      "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "24add67219a5c35bb35f691c2949b8cba6959d9175ebde8308b6e9e8a9c8f0f7",
+      "run_count": 0,
+      "schema_version": "native-official-analytics-refresh-plan-v3",
+      "status": "active",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:15.584260+00:00",
+      "version": 1,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "plan_done": {
+      "actor_ref": "explicit-fixture",
+      "automatic_consent_renewal": false,
+      "created_at": "2026-10-12T17:48:15.584260+00:00",
+      "failure_code": null,
+      "mock": true,
+      "next_due_at": "2026-10-12T17:50:15.584260+00:00",
+      "occurrences": [
+        {
+          "admitted_at": "2026-10-12T17:48:15.584260+00:00",
+          "consent_sha256": "1fb93b152affc4592e647da8ad36b6eb4e06e758b5c3fd325251d2548644905a",
+          "due_at": "2026-10-12T17:48:15.584260+00:00",
+          "occurrence_id": "noao_92480797373240208923cfd34e5e9193",
+          "occurrence_sha256": "f370f23a94106d96a867b23d37cc3a33940583c95993350fd4c3b19532455e98",
+          "ordinal": 1,
+          "plan_id": "noap_72d705de80e246128756be70e903de7a",
+          "policy_sha256": "643f1edd80d5cc5d1ffa81cd58fa230237fc3f709acdf4c0c3272ea8d41ab63a",
+          "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "read_request_sha256": "e3bb901edfb6233c8bac6bfddee7b1b5e45d11902b734656267d0ef6ff8e455d",
+          "schema_version": "native-official-analytics-refresh-occurrence-v3",
+          "sync": {
+            "actor_ref": "explicit-fixture",
+            "attempts": 1,
+            "created_at": "2026-10-12T17:48:21.802581+00:00",
+            "failure_code": null,
+            "mock": true,
+            "next_at": null,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+            "publishing_enabled": false,
+            "real_provider_tested": false,
+            "request_fingerprint": "e3bb901edfb6233c8bac6bfddee7b1b5e45d11902b734656267d0ef6ff8e455d",
+            "result": {
+              "attempt_id": "noaa_d2e16d4e252e42788ed3e25afe8ab632",
+              "automatic_action": false,
+              "collected_at": "2026-10-12T17:48:15.584260+00:00",
+              "evidence": {
+                "api_version": "v24.0",
+                "completion_rate_supported": false,
+                "coverage_end_date": null,
+                "metric_mapping": {
+                  "comments.summary.total_count": "comments",
+                  "likes.summary.total_count": "likes",
+                  "views": "views"
+                },
+                "metric_scope": "cumulative_video_node_counters",
+                "normalized_units": {
+                  "comments": "count",
+                  "likes": "count",
+                  "views": "count"
+                },
+                "observed_window_hours": null,
+                "provider_metric_semantics_real_verified": false,
+                "query": null,
+                "returned_metrics": [
+                  "views",
+                  "likes.summary.total_count",
+                  "comments.summary.total_count"
+                ],
+                "revenue_supported": false,
+                "schema_version": "meta-analytics-counts-v1",
+                "unavailable_metrics": [
+                  "impressions",
+                  "reach",
+                  "watch_time",
+                  "average_view_duration",
+                  "completion_rate",
+                  "shares",
+                  "saves",
+                  "followers_gained",
+                  "clicks",
+                  "ctr",
+                  "revenue",
+                  "rpm",
+                  "observation_window_hours"
+                ],
+                "watch_time_unit_verified": false
+              },
+              "external_call": false,
+              "features": {
+                "captured_at": "2026-10-12T17:48:15.584260Z",
+                "cta": null,
+                "duration_seconds": 3.0,
+                "evidence": {
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                  "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                  "frozen_subtitle_style": null,
+                  "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                  "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                  "production_cost_vnd": null,
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "provider_posted_time": null,
+                  "publication_protocol_mock": true,
+                  "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                  "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+                  "semantic_labels_verified": false,
+                  "source_is_dry_run": false,
+                  "subtitle_catalog_id_verified": false
+                },
+                "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+                "hook_type": null,
+                "idea_id": null,
+                "music_profile": null,
+                "niche": null,
+                "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+                "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+                "publishing_time": null,
+                "scene_count": null,
+                "subtitle_template": null,
+                "topic": null,
+                "trend_cluster_id": null,
+                "visual_strategy": null,
+                "voice_profile": null
+              },
+              "metrics": {
+                "average_view_duration": null,
+                "clicks": null,
+                "comments": 0.0,
+                "completion_rate": null,
+                "ctr": null,
+                "followers_gained": null,
+                "impressions": null,
+                "likes": 4.0,
+                "observation_window_hours": null,
+                "reach": null,
+                "revenue": null,
+                "rpm": null,
+                "saves": null,
+                "shares": null,
+                "views": 123.0,
+                "watch_time": null
+              },
+              "mock": true,
+              "platform": "facebook",
+              "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+              "provider_key": "facebook-graph-video-insights-api",
+              "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+              "publication_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+              "publishing_time": null,
+              "real_audience_observation": false,
+              "real_provider_tested": false,
+              "remote_post_id": "34567",
+              "response_refs": [
+                "noar_d21ea9e19d244c8e85369d9b015b3c20",
+                "noar_c8f421a8ac7b498caa478d440b004ac7",
+                "noar_69f072b3ed9348539dd1667c05e558d2"
+              ],
+              "result_snapshot_id": "noam_20f2cffc365a462fb92e24567af96a3b",
+              "schema_version": "native-official-analytics-snapshot-v3",
+              "snapshot_sha256": "1fb93b152affc4592e647da8ad36b6eb4e06e758b5c3fd325251d2548644905a",
+              "source_kind": "official_protocol_mock",
+              "sync_id": "noas_121c1807aedd437baf001d1dea02dafb",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "result_snapshot_id": "noam_20f2cffc365a462fb92e24567af96a3b",
+            "schema_version": "native-official-analytics-sync-v3",
+            "snapshot": {
+              "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "authority": {
+                "expires_at": "2026-10-12T18:48:15.653991+00:00",
+                "identity_revision_sha256": "9844de18834ed99a52290ad46924c7b60ddec9aba8071034c5dda04effcb4617",
+                "subject": "usr:explicit-fixture",
+                "token_id": "explicit-fixture"
+              },
+              "configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+              "consented_at": "2026-10-12T17:48:15.584260+00:00",
+              "deadline": "2026-10-12T17:58:15.584260+00:00",
+              "meta_read_profile": {
+                "api_version": "v24.0",
+                "login_type": "facebook_login",
+                "page_id": "12345"
+              },
+              "mock": true,
+              "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+              "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+              "publishing_authority": false,
+              "recurring_authority": false,
+              "request": {
+                "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "acknowledged_bounded_retries": false,
+                "acknowledged_protocol_mock": true,
+                "acknowledged_read_only": true,
+                "expected_configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+                "expected_publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                "expected_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                "max_attempts": 1,
+                "metric_scope": "cumulative_video_node_counters",
+                "platform": "facebook",
+                "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+                "query": null,
+                "remote_post_id": "34567",
+                "schema_version": "native-official-analytics-request-v3",
+                "valid_for_seconds": 600
+              },
+              "schema_version": "native-official-analytics-consent-v3",
+              "source": {
+                "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+                "features": {
+                  "captured_at": "2026-10-12T17:48:15.584260Z",
+                  "cta": null,
+                  "duration_seconds": 3.0,
+                  "evidence": {
+                    "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                    "current_project_metadata_used": false,
+                    "exact_publishing_time_available": false,
+                    "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                    "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                    "frozen_subtitle_style": null,
+                    "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                    "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                    "production_cost_vnd": null,
+                    "project_metadata_source": "native_published_render_request_snapshot",
+                    "provider_posted_time": null,
+                    "publication_protocol_mock": true,
+                    "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                    "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+                    "semantic_labels_verified": false,
+                    "source_is_dry_run": false,
+                    "subtitle_catalog_id_verified": false
+                  },
+                  "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+                  "hook_type": null,
+                  "idea_id": null,
+                  "music_profile": null,
+                  "niche": null,
+                  "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+                  "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+                  "publishing_time": null,
+                  "scene_count": null,
+                  "subtitle_template": null,
+                  "topic": null,
+                  "trend_cluster_id": null,
+                  "visual_strategy": null,
+                  "voice_profile": null
+                },
+                "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                "job_result_sha256": "c4bca1b093249a94bfc9acef446b9c693c7dab72d140cfb7d2e959f9ffe9c310",
+                "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                "receipt_mock": true,
+                "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                "remote_post_id": "34567"
+              },
+              "target": {
+                "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "platform": "facebook",
+                "profile_id": "ppf_meta_admission_facebook",
+                "profile_version": 1,
+                "provider_key": "facebook-graph-api-publishing",
+                "schema_version": "publishing-target-v1",
+                "target_account_id": "12345",
+                "workspace_id": "wsp_meta_admission_fixture"
+              },
+              "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "snapshot_sha256": "1fb93b152affc4592e647da8ad36b6eb4e06e758b5c3fd325251d2548644905a",
+            "status": "succeeded",
+            "sync_id": "noas_121c1807aedd437baf001d1dea02dafb",
+            "token_returned": false,
+            "updated_at": "2026-10-12T17:48:23.175107+00:00",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "sync_id": "noas_121c1807aedd437baf001d1dea02dafb",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        {
+          "admitted_at": "2026-10-12T17:49:15.584260+00:00",
+          "consent_sha256": "5bde3be6d9ba6437ff401de9c12bb0dafa4ed3086a0de099d51035826c051715",
+          "due_at": "2026-10-12T17:49:15.584260+00:00",
+          "occurrence_id": "noao_c63fd75815334265b2040170d90b3e2f",
+          "occurrence_sha256": "21238da3fd5ac52466718e672f11518897afc32f8b9966379a52b87072a0450c",
+          "ordinal": 2,
+          "plan_id": "noap_72d705de80e246128756be70e903de7a",
+          "policy_sha256": "643f1edd80d5cc5d1ffa81cd58fa230237fc3f709acdf4c0c3272ea8d41ab63a",
+          "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "read_request_sha256": "a56b12737c8de0ed4dae13108c28f3a4abb18e7da1ce4d728fabe75d936ac141",
+          "schema_version": "native-official-analytics-refresh-occurrence-v3",
+          "sync": {
+            "actor_ref": "explicit-fixture",
+            "attempts": 1,
+            "created_at": "2026-10-12T17:48:23.441738+00:00",
+            "failure_code": null,
+            "mock": true,
+            "next_at": null,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+            "publishing_enabled": false,
+            "real_provider_tested": false,
+            "request_fingerprint": "a56b12737c8de0ed4dae13108c28f3a4abb18e7da1ce4d728fabe75d936ac141",
+            "result": {
+              "attempt_id": "noaa_2458a1b5fdc1438eb6c705cbfa713978",
+              "automatic_action": false,
+              "collected_at": "2026-10-12T17:49:15.584260+00:00",
+              "evidence": {
+                "api_version": "v24.0",
+                "completion_rate_supported": false,
+                "coverage_end_date": null,
+                "metric_mapping": {
+                  "comments.summary.total_count": "comments",
+                  "likes.summary.total_count": "likes",
+                  "views": "views"
+                },
+                "metric_scope": "cumulative_video_node_counters",
+                "normalized_units": {
+                  "comments": "count",
+                  "likes": "count",
+                  "views": "count"
+                },
+                "observed_window_hours": null,
+                "provider_metric_semantics_real_verified": false,
+                "query": null,
+                "returned_metrics": [
+                  "views",
+                  "likes.summary.total_count",
+                  "comments.summary.total_count"
+                ],
+                "revenue_supported": false,
+                "schema_version": "meta-analytics-counts-v1",
+                "unavailable_metrics": [
+                  "impressions",
+                  "reach",
+                  "watch_time",
+                  "average_view_duration",
+                  "completion_rate",
+                  "shares",
+                  "saves",
+                  "followers_gained",
+                  "clicks",
+                  "ctr",
+                  "revenue",
+                  "rpm",
+                  "observation_window_hours"
+                ],
+                "watch_time_unit_verified": false
+              },
+              "external_call": false,
+              "features": {
+                "captured_at": "2026-10-12T17:49:15.584260Z",
+                "cta": null,
+                "duration_seconds": 3.0,
+                "evidence": {
+                  "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                  "current_project_metadata_used": false,
+                  "exact_publishing_time_available": false,
+                  "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                  "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                  "frozen_subtitle_style": null,
+                  "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                  "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                  "production_cost_vnd": null,
+                  "project_metadata_source": "native_published_render_request_snapshot",
+                  "provider_posted_time": null,
+                  "publication_protocol_mock": true,
+                  "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                  "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+                  "semantic_labels_verified": false,
+                  "source_is_dry_run": false,
+                  "subtitle_catalog_id_verified": false
+                },
+                "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+                "hook_type": null,
+                "idea_id": null,
+                "music_profile": null,
+                "niche": null,
+                "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+                "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+                "publishing_time": null,
+                "scene_count": null,
+                "subtitle_template": null,
+                "topic": null,
+                "trend_cluster_id": null,
+                "visual_strategy": null,
+                "voice_profile": null
+              },
+              "metrics": {
+                "average_view_duration": null,
+                "clicks": null,
+                "comments": 0.0,
+                "completion_rate": null,
+                "ctr": null,
+                "followers_gained": null,
+                "impressions": null,
+                "likes": 4.0,
+                "observation_window_hours": null,
+                "reach": null,
+                "revenue": null,
+                "rpm": null,
+                "saves": null,
+                "shares": null,
+                "views": 250.0,
+                "watch_time": null
+              },
+              "mock": true,
+              "platform": "facebook",
+              "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+              "provider_key": "facebook-graph-video-insights-api",
+              "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+              "publication_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+              "publishing_time": null,
+              "real_audience_observation": false,
+              "real_provider_tested": false,
+              "remote_post_id": "34567",
+              "response_refs": [
+                "noar_cb937ed5b62743c7b34d5eeaa1c363d2",
+                "noar_3dc884b44bf643e69ea14fe4b58b28fc",
+                "noar_22d9753b0ad34196ba304b82b9191d0d"
+              ],
+              "result_snapshot_id": "noam_02bc31ee0b114a44a6e333207dc7d64f",
+              "schema_version": "native-official-analytics-snapshot-v3",
+              "snapshot_sha256": "5bde3be6d9ba6437ff401de9c12bb0dafa4ed3086a0de099d51035826c051715",
+              "source_kind": "official_protocol_mock",
+              "sync_id": "noas_9ecb1a19dc7b4007b9bdf44912523972",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "result_snapshot_id": "noam_02bc31ee0b114a44a6e333207dc7d64f",
+            "schema_version": "native-official-analytics-sync-v3",
+            "snapshot": {
+              "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "authority": {
+                "expires_at": "2026-10-12T18:48:15.653991+00:00",
+                "identity_revision_sha256": "9844de18834ed99a52290ad46924c7b60ddec9aba8071034c5dda04effcb4617",
+                "subject": "usr:explicit-fixture",
+                "token_id": "explicit-fixture"
+              },
+              "configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+              "consented_at": "2026-10-12T17:49:15.584260+00:00",
+              "deadline": "2026-10-12T17:58:15.584260+00:00",
+              "meta_read_profile": {
+                "api_version": "v24.0",
+                "login_type": "facebook_login",
+                "page_id": "12345"
+              },
+              "mock": true,
+              "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+              "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+              "publishing_authority": false,
+              "recurring_authority": false,
+              "request": {
+                "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "acknowledged_bounded_retries": false,
+                "acknowledged_protocol_mock": true,
+                "acknowledged_read_only": true,
+                "expected_configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+                "expected_publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                "expected_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                "max_attempts": 1,
+                "metric_scope": "cumulative_video_node_counters",
+                "platform": "facebook",
+                "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+                "query": null,
+                "remote_post_id": "34567",
+                "schema_version": "native-official-analytics-request-v3",
+                "valid_for_seconds": 540
+              },
+              "schema_version": "native-official-analytics-consent-v3",
+              "source": {
+                "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+                "features": {
+                  "captured_at": "2026-10-12T17:49:15.584260Z",
+                  "cta": null,
+                  "duration_seconds": 3.0,
+                  "evidence": {
+                    "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+                    "current_project_metadata_used": false,
+                    "exact_publishing_time_available": false,
+                    "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+                    "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                    "frozen_subtitle_style": null,
+                    "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                    "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                    "production_cost_vnd": null,
+                    "project_metadata_source": "native_published_render_request_snapshot",
+                    "provider_posted_time": null,
+                    "publication_protocol_mock": true,
+                    "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                    "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+                    "semantic_labels_verified": false,
+                    "source_is_dry_run": false,
+                    "subtitle_catalog_id_verified": false
+                  },
+                  "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+                  "hook_type": null,
+                  "idea_id": null,
+                  "music_profile": null,
+                  "niche": null,
+                  "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+                  "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+                  "publishing_time": null,
+                  "scene_count": null,
+                  "subtitle_template": null,
+                  "topic": null,
+                  "trend_cluster_id": null,
+                  "visual_strategy": null,
+                  "voice_profile": null
+                },
+                "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+                "job_result_sha256": "c4bca1b093249a94bfc9acef446b9c693c7dab72d140cfb7d2e959f9ffe9c310",
+                "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+                "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+                "receipt_mock": true,
+                "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+                "remote_post_id": "34567"
+              },
+              "target": {
+                "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "platform": "facebook",
+                "profile_id": "ppf_meta_admission_facebook",
+                "profile_version": 1,
+                "provider_key": "facebook-graph-api-publishing",
+                "schema_version": "publishing-target-v1",
+                "target_account_id": "12345",
+                "workspace_id": "wsp_meta_admission_fixture"
+              },
+              "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "snapshot_sha256": "5bde3be6d9ba6437ff401de9c12bb0dafa4ed3086a0de099d51035826c051715",
+            "status": "succeeded",
+            "sync_id": "noas_9ecb1a19dc7b4007b9bdf44912523972",
+            "token_returned": false,
+            "updated_at": "2026-10-12T17:48:24.542556+00:00",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "sync_id": "noas_9ecb1a19dc7b4007b9bdf44912523972",
+          "workspace_id": "wsp_meta_admission_fixture"
+        }
+      ],
+      "pending_sync_id": null,
+      "plan_id": "noap_72d705de80e246128756be70e903de7a",
+      "policy": {
+        "approved_at": "2026-10-12T17:48:15.584260+00:00",
+        "authority": {
+          "expires_at": "2026-10-12T18:48:15.653991+00:00",
+          "identity_revision_sha256": "9844de18834ed99a52290ad46924c7b60ddec9aba8071034c5dda04effcb4617",
+          "subject": "usr:explicit-fixture",
+          "token_id": "explicit-fixture"
+        },
+        "automatic_consent_renewal": false,
+        "credential_proof": {
+          "expires_at": "2026-10-12T18:48:15.584260+00:00",
+          "scopes_sha256": "48f4e48b81f7f797fe9c277f70e5e84b94e8250b508a38ddfa4ffc0bbfc4b13c",
+          "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d"
+        },
+        "fixed_report_query": true,
+        "mock": true,
+        "plan_id": "noap_72d705de80e246128756be70e903de7a",
+        "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+        "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+        "publishing_enabled": false,
+        "request": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "acknowledged_background_reads": true,
+          "acknowledged_bounded_retries": false,
+          "acknowledged_protocol_mock": true,
+          "acknowledged_read_only": true,
+          "deadline": "2026-10-12T17:58:15.584260Z",
+          "expected_configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+          "expected_publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "expected_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "interval_seconds": 60,
+          "max_attempts": 1,
+          "max_runs": 2,
+          "metric_scope": "cumulative_video_node_counters",
+          "platform": "facebook",
+          "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+          "query": null,
+          "remote_post_id": "34567",
+          "schema_version": "native-official-analytics-refresh-request-v3",
+          "start_at": "2026-10-12T17:48:15.584260Z",
+          "valid_for_seconds": 900
+        },
+        "schema_version": "native-official-analytics-refresh-policy-v3",
+        "source": {
+          "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+          "features": {
+            "captured_at": "2026-10-12T17:48:15.584260Z",
+            "cta": null,
+            "duration_seconds": 3.0,
+            "evidence": {
+              "canonical_timeline_sha256": "dbae9c540a83c1b5da3e5450286776799b850368de32f537d5e0e4ed7a0b274a",
+              "current_project_metadata_used": false,
+              "exact_publishing_time_available": false,
+              "feature_context_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+              "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+              "frozen_subtitle_style": null,
+              "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+              "official_receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+              "production_cost_vnd": null,
+              "project_metadata_source": "native_published_render_request_snapshot",
+              "provider_posted_time": null,
+              "publication_protocol_mock": true,
+              "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+              "render_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+              "semantic_labels_verified": false,
+              "source_is_dry_run": false,
+              "subtitle_catalog_id_verified": false
+            },
+            "feature_snapshot_id": "noftr_22c0a4101627e31fdc5c4d1d9690550e",
+            "hook_type": null,
+            "idea_id": null,
+            "music_profile": null,
+            "niche": null,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+            "publishing_time": null,
+            "scene_count": null,
+            "subtitle_template": null,
+            "topic": null,
+            "trend_cluster_id": null,
+            "visual_strategy": null,
+            "voice_profile": null
+          },
+          "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "job_result_sha256": "c4bca1b093249a94bfc9acef446b9c693c7dab72d140cfb7d2e959f9ffe9c310",
+          "job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+          "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+          "receipt_mock": true,
+          "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+          "remote_post_id": "34567"
+        },
+        "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "policy_sha256": "643f1edd80d5cc5d1ffa81cd58fa230237fc3f709acdf4c0c3272ea8d41ab63a",
+      "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+      "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "request_fingerprint": "24add67219a5c35bb35f691c2949b8cba6959d9175ebde8308b6e9e8a9c8f0f7",
+      "run_count": 2,
+      "schema_version": "native-official-analytics-refresh-plan-v3",
+      "status": "completed",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:49:15.584260+00:00",
+      "version": 5,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "project": {
+      "archived": false,
+      "id": "794e7e85213c4a0ea1d2f44107953c98",
+      "revision": 2
+    },
+    "publication": {
+      "actor_ref": "explicit-fixture",
+      "approval_id": "nopa_93c8ea853d36481aa43df408e7e53259",
+      "created_at": "2026-10-12T17:48:15.886856+00:00",
+      "dedupe_sha256": "8d2b377a27b9eb8c60ea7523fa4b409c38cd55dac4db74b0933432de02b6c0e5",
+      "failure_code": null,
+      "mock": true,
+      "mock_publication_complete": true,
+      "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+      "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+      "published": false,
+      "real_provider_tested": false,
+      "receipt": {
+        "created_at": "2026-10-12T17:48:15.584260Z",
+        "duplicate_post_created": false,
+        "external_action": false,
+        "mock": true,
+        "mode": "live",
+        "platform": "facebook",
+        "provider_key": "facebook-graph-api-publishing",
+        "receipt_id": "rcpt_7244f05e5d364a8b80f53a173701b686",
+        "remote_post_id": "34567",
+        "remote_url": null,
+        "request_fingerprint": "ca517336630aa99a0e9b721b6e92a8afc93d0a9041580c5a4981ef2b9a8544d2"
+      },
+      "request_fingerprint": "ca517336630aa99a0e9b721b6e92a8afc93d0a9041580c5a4981ef2b9a8544d2",
+      "schema_version": "native-official-publication-v1",
+      "snapshot": {
+        "account_check_is_publish_authority": false,
+        "account_check_snapshot_sha256": "6237620386036765d1c328a45d197999b3aeb1c3f5164088af450e766ef3d9cd",
+        "account_result_sha256": "30c342ac5d916af0343c01f6bb6b093c3d68a6abe604cfd38a9e45ac3c0e3117",
+        "chunk_size": 16777216,
+        "configuration_sha256": "25210aab0874793a4dad6cc859d2b20f1d9ebb93e0b0d1b9281d7be5ff6e68c7",
+        "credential_cipher_sha256": "37ee6e6d18381e1c7f41212b578f5de3a17d4885417d63087d44cba93afa83da",
+        "disclosures": {
+          "api_version": "v24.0",
+          "app_eligibility_verified": false,
+          "login_type": "facebook_login",
+          "page_id": "12345",
+          "provider_permissions_verified": false,
+          "share_to_feed": false
+        },
+        "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+        "dry_run_receipt_is_publish_authority": false,
+        "dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+        "execution_supported": true,
+        "final_bytes": 59,
+        "final_job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+        "final_job_snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207",
+        "final_review": {
+          "artifact_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+          "created_at": "2026-10-12T17:48:15.641139+00:00",
+          "decision": "approve",
+          "id": 1,
+          "job_id": "158e541c19f14a85a32cbdd9b5a2790e",
+          "note": "",
+          "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+          "reviewer": "EXPLICIT SYNTHETIC FINAL REVIEW — NOT OWNER UAT",
+          "revision": 2,
+          "snapshot_sha256": "c9df6f0f745e871b37f8b87efed3aff2eeff0e09202f1fa1c31532b7e5179207"
+        },
+        "final_sha256": "e50f6a6362dbd000f0f3e4431e5a6343d9cf8fadbea25a6db752b65723e179bb",
+        "media_configuration_sha256": "62f7b39ad182aec1ae81727aa1f1cc391626110207edaf0790b6a8c6987df4d3",
+        "meta_account_proof": {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "actor_ref": "explicit-fixture",
+          "attempts": 1,
+          "check_id": "nack_48dbc47275964c2cb96459b1cb9d3a8b",
+          "created_at": "2026-10-12T17:48:15.732136+00:00",
+          "failure_code": null,
+          "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+          "publishing_enabled": false,
+          "request_fingerprint": "36ba08b24cb00cba0368ba4d4fbd2750ba5ad0fa0a32478a0af105f579a23d3b",
+          "result": {
+            "account_match": true,
+            "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "check_id": "nack_48dbc47275964c2cb96459b1cb9d3a8b",
+            "cost_operation_id": "f3a2e904844be29c1218d78c2ceef5e9d2b811bccda54f4aeae4c607d49cf06e",
+            "external_call": false,
+            "meta": {
+              "app_eligibility_verified": false,
+              "declared_permissions": [
+                "pages_manage_posts",
+                "pages_read_engagement"
+              ],
+              "instagram_account_id": null,
+              "linked_instagram_match": null,
+              "observations": [
+                {
+                  "cost_operation_id": "f3a2e904844be29c1218d78c2ceef5e9d2b811bccda54f4aeae4c607d49cf06e",
+                  "operation": "page_identity",
+                  "request_sha256": "d4ebed803df4c750b6c622019803e822a2a21320d98a3ab73f5e1b3ed34fc046",
+                  "response_sha256": "42bf2bef78652b34b9036356ccf861d9df2ae63ec67c363f06fcbedebab54ad6",
+                  "response_status": 200
+                }
+              ],
+              "page_id": "12345",
+              "provider_permissions_verified": false,
+              "publishing_enabled": false,
+              "read_only": true,
+              "schema_version": "native-meta-account-proof-v1",
+              "token_page_match": true
+            },
+            "mock": true,
+            "operation": "account_lookup",
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "publishing_enabled": false,
+            "read_only": true,
+            "real_provider_tested": false,
+            "response_sha256": "42bf2bef78652b34b9036356ccf861d9df2ae63ec67c363f06fcbedebab54ad6",
+            "response_status": 200,
+            "schema_version": "native-official-account-check-result-v1",
+            "snapshot_sha256": "6237620386036765d1c328a45d197999b3aeb1c3f5164088af450e766ef3d9cd",
+            "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+            "token_returned": false,
+            "verified_at": "2026-10-12T17:48:15.584260+00:00",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "result_sha256": "30c342ac5d916af0343c01f6bb6b093c3d68a6abe604cfd38a9e45ac3c0e3117",
+          "schema_version": "native-official-account-check-v1",
+          "snapshot": {
+            "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configuration_sha256": "17758a6690f794af20004ec591c111db00ac5a928c14071acf9ff34064e5d7ce",
+            "document_sha256": "e126bfc54191d7d5addf377ef53c8732bfb9b071a686e4d4395aa78d919b8886",
+            "meta": {
+              "cipher_sha256": "37ee6e6d18381e1c7f41212b578f5de3a17d4885417d63087d44cba93afa83da",
+              "consented_at": "2026-10-12T17:48:15.584260Z",
+              "deadline": "2026-10-12T18:03:15.584260Z",
+              "profile": {
+                "api_version": "v24.0",
+                "login_type": "facebook_login",
+                "page_id": "12345",
+                "schema_version": "native-meta-publishing-profile-v1",
+                "target": {
+                  "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "platform": "facebook",
+                  "profile_id": "ppf_meta_admission_facebook",
+                  "profile_version": 1,
+                  "provider_key": "facebook-graph-api-publishing",
+                  "schema_version": "publishing-target-v1",
+                  "target_account_id": "12345",
+                  "workspace_id": "wsp_meta_admission_fixture"
+                }
+              },
+              "schema_version": "native-meta-account-source-v1"
+            },
+            "mock": true,
+            "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+            "project_revision": 2,
+            "request": {
+              "acknowledged_read_only": true,
+              "expected_configuration_sha256": "17758a6690f794af20004ec591c111db00ac5a928c14071acf9ff34064e5d7ce",
+              "revision": 2,
+              "schema_version": "native-official-account-check-request-v1"
+            },
+            "schema_version": "native-official-account-check-snapshot-v1",
+            "target": {
+              "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "platform": "facebook",
+              "profile_id": "ppf_meta_admission_facebook",
+              "profile_version": 1,
+              "provider_key": "facebook-graph-api-publishing",
+              "schema_version": "publishing-target-v1",
+              "target_account_id": "12345",
+              "workspace_id": "wsp_meta_admission_fixture"
+            },
+            "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "snapshot_sha256": "6237620386036765d1c328a45d197999b3aeb1c3f5164088af450e766ef3d9cd",
+          "status": "succeeded",
+          "token_returned": false,
+          "updated_at": "2026-10-12T17:48:15.794338+00:00",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "meta_options": {
+          "share_to_feed": false
+        },
+        "meta_profile": {
+          "api_version": "v24.0",
+          "login_type": "facebook_login",
+          "page_id": "12345",
+          "schema_version": "native-meta-publishing-profile-v1",
+          "target": {
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform": "facebook",
+            "profile_id": "ppf_meta_admission_facebook",
+            "profile_version": 1,
+            "provider_key": "facebook-graph-api-publishing",
+            "schema_version": "publishing-target-v1",
+            "target_account_id": "12345",
+            "workspace_id": "wsp_meta_admission_fixture"
+          }
+        },
+        "metadata": {
+          "caption": "",
+          "description": "",
+          "hashtags": [],
+          "privacy": "public",
+          "scheduled_at": null,
+          "thumbnail_asset_id": null,
+          "title": "Tên tiếng Việt cho bản duyệt Meta"
+        },
+        "metadata_source": "completed_dry_run",
+        "mock": true,
+        "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+        "project_revision": 2,
+        "request": {
+          "account_check_id": "nack_48dbc47275964c2cb96459b1cb9d3a8b",
+          "dry_run_publication_id": "npub_8ed582741d4441aaa1f4fdf8aaca93c7",
+          "expected_account_check_snapshot_sha256": "6237620386036765d1c328a45d197999b3aeb1c3f5164088af450e766ef3d9cd",
+          "expected_account_result_sha256": "30c342ac5d916af0343c01f6bb6b093c3d68a6abe604cfd38a9e45ac3c0e3117",
+          "expected_configuration_sha256": "25210aab0874793a4dad6cc859d2b20f1d9ebb93e0b0d1b9281d7be5ff6e68c7",
+          "expected_dry_run_snapshot_sha256": "eb018433e156b4453eaba610bdc44fe76bcc0f53325e8cde594c2e2d32ff92ce",
+          "expected_media_configuration_sha256": "62f7b39ad182aec1ae81727aa1f1cc391626110207edaf0790b6a8c6987df4d3",
+          "profile_id": "ppf_meta_admission_facebook",
+          "revision": 2,
+          "schema_version": "native-official-meta-publication-request-v2"
+        },
+        "reviewed_at": "2026-10-12T17:48:15.584260+00:00",
+        "schema_version": "native-official-meta-publication-snapshot-v2",
+        "separate_owner_publish_approval_required": true,
+        "target": {
+          "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "platform": "facebook",
+          "profile_id": "ppf_meta_admission_facebook",
+          "profile_version": 1,
+          "provider_key": "facebook-graph-api-publishing",
+          "schema_version": "publishing-target-v1",
+          "target_account_id": "12345",
+          "workspace_id": "wsp_meta_admission_fixture"
+        },
+        "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+        "token_returned": false,
+        "validation": {
+          "dry_run": {
+            "attention": [],
+            "platform": {
+              "capability": {
+                "audio_codecs": [
+                  "aac"
+                ],
+                "max_caption_characters": 5000,
+                "max_duration_seconds": 180.0,
+                "max_file_size_bytes": 2000000000,
+                "max_hashtags": 30,
+                "max_title_characters": 255,
+                "min_duration_seconds": 1.0,
+                "platform": "facebook",
+                "supported_profiles": [
+                  "vertical-1080x1920",
+                  "landscape-1920x1080",
+                  "square-1080x1080"
+                ],
+                "thumbnail": "optional",
+                "verification_state": "owner_verified_for_live",
+                "version": "2026-08-27.v1",
+                "video_codecs": [
+                  "h264"
+                ]
+              },
+              "checks": [
+                {
+                  "code": "PROFILE_SUPPORTED",
+                  "evidence": {
+                    "profile": "vertical-1080x1920"
+                  },
+                  "key": "render-profile",
+                  "message": "Final render profile is supported by the versioned platform contract.",
+                  "passed": true
+                },
+                {
+                  "code": "DURATION_SUPPORTED",
+                  "evidence": {
+                    "duration_seconds": 3.0
+                  },
+                  "key": "duration",
+                  "message": "Duration is within the configured platform range.",
+                  "passed": true
+                },
+                {
+                  "code": "RESOLUTION_PRESENT",
+                  "evidence": {
+                    "height": 1920,
+                    "width": 1080
+                  },
+                  "key": "resolution",
+                  "message": "QC contains a positive output resolution.",
+                  "passed": true
+                },
+                {
+                  "code": "FILE_SIZE_SUPPORTED",
+                  "evidence": {
+                    "size_bytes": 59
+                  },
+                  "key": "file-size",
+                  "message": "Output size is within the configured platform ceiling.",
+                  "passed": true
+                },
+                {
+                  "code": "VIDEO_CODEC_SUPPORTED",
+                  "evidence": {
+                    "codec": "h264"
+                  },
+                  "key": "video-codec",
+                  "message": "Video codec is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "AUDIO_CODEC_SUPPORTED",
+                  "evidence": {
+                    "codec": "aac"
+                  },
+                  "key": "audio-codec",
+                  "message": "Audio codec is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "TITLE_SUPPORTED",
+                  "evidence": {
+                    "characters": 33
+                  },
+                  "key": "title-length",
+                  "message": "Title length is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "CAPTION_SUPPORTED",
+                  "evidence": {
+                    "characters": 0
+                  },
+                  "key": "caption-length",
+                  "message": "Caption length is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "HASHTAGS_SUPPORTED",
+                  "evidence": {
+                    "count": 0
+                  },
+                  "key": "hashtag-count",
+                  "message": "Hashtag count is supported.",
+                  "passed": true
+                },
+                {
+                  "code": "THUMBNAIL_SUPPORTED",
+                  "evidence": {
+                    "policy": "optional"
+                  },
+                  "key": "thumbnail",
+                  "message": "Thumbnail requirement is satisfied.",
+                  "passed": true
+                },
+                {
+                  "code": "CAPABILITY_DRY_RUN_ONLY",
+                  "evidence": {
+                    "verification_state": "owner_verified_for_live"
+                  },
+                  "key": "capability-live-verification",
+                  "message": "Capability snapshot is permitted for this execution mode.",
+                  "passed": true
+                }
+              ],
+              "status": "passed"
+            },
+            "provider": {
+              "adapter_state": "mock",
+              "checks": [
+                {
+                  "code": "DRY_RUN_NO_EXTERNAL_ACTION",
+                  "evidence": {
+                    "external_action": false
+                  },
+                  "key": "external-action",
+                  "message": "Deterministic dry-run provider performs no external action.",
+                  "passed": true
+                }
+              ],
+              "credential_status": "not_required",
+              "mock_execution": false,
+              "official_api_only": true,
+              "provider_key": "mock-publishing",
+              "supports_dry_run": true,
+              "supports_live_publish": false,
+              "target_binding": null
+            },
+            "rights": {
+              "asset_ids": [
+                "explicit_fixture.mp4"
+              ],
+              "checks": [
+                {
+                  "code": "RIGHTS_VERIFIED",
+                  "evidence": {
+                    "asset_id": "explicit_fixture.mp4",
+                    "license_present": true,
+                    "production_eligible": true,
+                    "rights_status": "owned"
+                  },
+                  "key": "asset:explicit_fixture.mp4",
+                  "message": "Asset rights evidence is sufficient.",
+                  "passed": true
+                }
+              ],
+              "policy_version": "v2-09-rights-fail-closed-v1",
+              "status": "passed"
+            },
+            "status": "passed"
+          },
+          "official_platform": {
+            "capability": {
+              "audio_codecs": [
+                "aac"
+              ],
+              "max_caption_characters": 5000,
+              "max_duration_seconds": 180.0,
+              "max_file_size_bytes": 2000000000,
+              "max_hashtags": 30,
+              "max_title_characters": 255,
+              "min_duration_seconds": 1.0,
+              "platform": "facebook",
+              "supported_profiles": [
+                "vertical-1080x1920",
+                "landscape-1920x1080",
+                "square-1080x1080"
+              ],
+              "thumbnail": "optional",
+              "verification_state": "owner_verified_for_live",
+              "version": "2026-08-27.v1",
+              "video_codecs": [
+                "h264"
+              ]
+            },
+            "checks": [
+              {
+                "code": "PROFILE_SUPPORTED",
+                "evidence": {
+                  "profile": "vertical-1080x1920"
+                },
+                "key": "render-profile",
+                "message": "Final render profile is supported by the versioned platform contract.",
+                "passed": true
+              },
+              {
+                "code": "DURATION_SUPPORTED",
+                "evidence": {
+                  "duration_seconds": 3.0
+                },
+                "key": "duration",
+                "message": "Duration is within the configured platform range.",
+                "passed": true
+              },
+              {
+                "code": "RESOLUTION_PRESENT",
+                "evidence": {
+                  "height": 1920,
+                  "width": 1080
+                },
+                "key": "resolution",
+                "message": "QC contains a positive output resolution.",
+                "passed": true
+              },
+              {
+                "code": "FILE_SIZE_SUPPORTED",
+                "evidence": {
+                  "size_bytes": 59
+                },
+                "key": "file-size",
+                "message": "Output size is within the configured platform ceiling.",
+                "passed": true
+              },
+              {
+                "code": "VIDEO_CODEC_SUPPORTED",
+                "evidence": {
+                  "codec": "h264"
+                },
+                "key": "video-codec",
+                "message": "Video codec is supported.",
+                "passed": true
+              },
+              {
+                "code": "AUDIO_CODEC_SUPPORTED",
+                "evidence": {
+                  "codec": "aac"
+                },
+                "key": "audio-codec",
+                "message": "Audio codec is supported.",
+                "passed": true
+              },
+              {
+                "code": "TITLE_SUPPORTED",
+                "evidence": {
+                  "characters": 33
+                },
+                "key": "title-length",
+                "message": "Title length is supported.",
+                "passed": true
+              },
+              {
+                "code": "CAPTION_SUPPORTED",
+                "evidence": {
+                  "characters": 0
+                },
+                "key": "caption-length",
+                "message": "Caption length is supported.",
+                "passed": true
+              },
+              {
+                "code": "HASHTAGS_SUPPORTED",
+                "evidence": {
+                  "count": 0
+                },
+                "key": "hashtag-count",
+                "message": "Hashtag count is supported.",
+                "passed": true
+              },
+              {
+                "code": "THUMBNAIL_SUPPORTED",
+                "evidence": {
+                  "policy": "optional"
+                },
+                "key": "thumbnail",
+                "message": "Thumbnail requirement is satisfied.",
+                "passed": true
+              },
+              {
+                "code": "CAPABILITY_DRY_RUN_ONLY",
+                "evidence": {
+                  "verification_state": "owner_verified_for_live"
+                },
+                "key": "capability-live-verification",
+                "message": "Capability snapshot is permitted for this execution mode.",
+                "passed": true
+              }
+            ],
+            "status": "passed"
+          }
+        },
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+      "status": "completed",
+      "token_returned": false,
+      "updated_at": "2026-10-12T17:48:20.401022+00:00",
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "real_provider_acceptance": false,
+    "refresh_runtime": {
+      "automatic_consent_renewal": false,
+      "default_enabled": false,
+      "enabled": true,
+      "fixed_report_query": true,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "schema_version": "native-official-analytics-refresh-runtime-v1",
+      "separate_owner_background_read_consent_required": true,
+      "token_returned": false,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "runtime": {
+      "accounts": [
+        {
+          "account_ref": "npac_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "account_verified": false,
+          "configuration_sha256": "c4c768b59413dc3047a0bc3173d4dd72f479f5f9f5a9daef536526965d297487",
+          "credential_alias": "explicit-meta-analytics-read",
+          "credential_present": true,
+          "credential_verified": false,
+          "external_reads_enabled": false,
+          "meta_read_profile": {
+            "api_version": "v24.0",
+            "login_type": "facebook_login",
+            "page_id": "12345"
+          },
+          "mode": "fixture",
+          "publishing_enabled": false,
+          "real_provider_tested": false,
+          "status": "CONFIGURED",
+          "target": {
+            "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform": "facebook",
+            "profile_id": "ppf_meta_admission_facebook",
+            "profile_version": 1,
+            "provider_key": "facebook-graph-api-publishing",
+            "schema_version": "publishing-target-v1",
+            "target_account_id": "12345",
+            "workspace_id": "wsp_meta_admission_fixture"
+          },
+          "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+          "token_returned": false
+        }
+      ],
+      "automatic_refresh": false,
+      "default_enabled": false,
+      "enabled": true,
+      "fixture_fallback": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "schema_version": "native-official-analytics-capabilities-v3",
+      "separate_read_consent_required": true,
+      "supported_platforms": [
+        "youtube",
+        "tiktok",
+        "instagram_reels",
+        "facebook"
+      ],
+      "token_returned": false,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "schema_version": "native-meta-analytics-contract-fixture-v1",
+    "source": {
+      "metric_scope": "cumulative_video_node_counters",
+      "mock": true,
+      "project_id": "794e7e85213c4a0ea1d2f44107953c98",
+      "publication_id": "nopu_beb6b2cc94034593a75946b40d87f161",
+      "publication_snapshot_sha256": "05fa2d35b98071e98d34a17ef196b5e7c746b281e39a0b9ec1fa4637ba69076a",
+      "published": false,
+      "publishing_enabled": false,
+      "real_provider_tested": false,
+      "receipt_qualified": true,
+      "receipt_sha256": "7166b138b0b5c8444d36d5891110402e55b0ffa4606ab3b0b1e4a2caf0b0d3ae",
+      "remote_post_id": "34567",
+      "remote_post_ids": [
+        "34567"
+      ],
+      "schema_version": "native-official-analytics-publication-binding-v3",
+      "target": {
+        "credential_binding_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "platform": "facebook",
+        "profile_id": "ppf_meta_admission_facebook",
+        "profile_version": 1,
+        "provider_key": "facebook-graph-api-publishing",
+        "schema_version": "publishing-target-v1",
+        "target_account_id": "12345",
+        "workspace_id": "wsp_meta_admission_fixture"
+      },
+      "target_binding_sha256": "d50347c5fb494d7e759cf8bd3ea28aae5599b565c086a2cea3fc54c008ffe98d",
+      "token_returned": false,
+      "workspace_id": "wsp_meta_admission_fixture"
+    },
+    "workspace_id": "wsp_meta_admission_fixture"
+  }
+}
