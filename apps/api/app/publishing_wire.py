@@ -18,6 +18,8 @@ TIKTOK_UPLOAD_HOSTS = frozenset({'open-upload.tiktokapis.com', 'upload.us.tiktok
 HOSTS = {'youtube': frozenset({'www.googleapis.com'}),
     'analytics_youtube': frozenset({'www.googleapis.com', 'youtubeanalytics.googleapis.com'}),
     'analytics_tiktok': frozenset({'open.tiktokapis.com'}),
+    'analytics_instagram_reels': frozenset({'graph.facebook.com'}),
+    'analytics_facebook': frozenset({'graph.facebook.com'}),
     'tiktok': frozenset({'open.tiktokapis.com', *TIKTOK_UPLOAD_HOSTS}),
     'instagram_reels': frozenset({'graph.facebook.com'}),
     'facebook': frozenset({'graph.facebook.com', 'rupload.facebook.com'})}
