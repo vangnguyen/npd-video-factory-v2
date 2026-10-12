@@ -105,6 +105,9 @@ def validate_document(document):
     validate_timeline(document)
     from .source_reframe_vision import validate_timeline as validate_reframe
     validate_reframe(document)
+    if snapshot.metadata.get('local_tracking_selection') is not None:
+        from .source_tracking import validate_timeline as validate_tracking
+        validate_tracking(document)
     if snapshot.metadata.get('native_auto_edit_schema') != SCHEMA or document.get('proposal') is not None:
         raise WorkflowError('AUTO_EDIT_TIMELINE_SCHEMA_INVALID')
     from .source_media_track_origins import validate_timeline as validate_imports

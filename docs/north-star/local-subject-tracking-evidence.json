@@ -1,0 +1,196 @@
+{
+  "schema_version": "north-star-local-subject-tracking-v1",
+  "recorded_at": "2026-10-12T06:47:04.980101+00:00",
+  "source_parent": "6579bb873a0827abb576246e209bf01f6eca5558",
+  "wave": "3F/4/8/14/15 component; full program unchanged",
+  "implemented": [
+    "local temporal template provider with independently checked FFT normalized cross-correlation",
+    "immutable source binding/decoded PTS/sample PNG evidence",
+    "queue/worker/restart/job-result/timeline CAS and role boundaries",
+    "four-ratio smoothed canonical crop paths with safe fallback",
+    "capability-gated Vietnamese editor controller/draft and context fences",
+    "source geometry inheritance without approval/measurement authority",
+    "existing signed bridge analysis event and no GPU requirement"
+  ],
+  "tests": {
+    "Studio": 744,
+    "new_Studio_controller_cases": 7,
+    "Native_related": 61,
+    "Native_modules": 9,
+    "new_Native_tracking": 4,
+    "new_Native_HTTP": 3,
+    "API_math": 8,
+    "signed_HTTP_static_modules": 66,
+    "prior_default_Windows_control": 51,
+    "default_control_at_parent_not_rerun_after_tracking": true
+  },
+  "test_logs": {
+    "local-tracking-related-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-related-n2.log",
+      "sha256": "838db87f130465927aa5794cb46c931bb7c5e8631d68547f9e0636bb23ee4a57",
+      "bytes": 166
+    },
+    "local-tracking-studio-full-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-studio-full-n3.log",
+      "sha256": "b904d0e2458f27b4103c8925f22719021f4cc4499daa16a910751492b90d182a",
+      "bytes": 76751
+    },
+    "local-tracking-core-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-core-n2.log",
+      "sha256": "98024fd511989cd13d0d3b40330a752dd1af452d8996d91e5390c4f43b0bd876",
+      "bytes": 100
+    }
+  },
+  "static_http": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-static-http-n1.json",
+    "sha256": "f9c07d9d6cc9dabb091d7879449c7422d454643c8be24c29d0edec06b4103b3b",
+    "bytes": 6882
+  },
+  "local_rehearsal": {
+    "evidence": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\evidence.json",
+      "sha256": "941c0ebbc4345fbeedb335746d3f236c53e5222f0c2bf88b0a591471bd7c89ea",
+      "bytes": 4186
+    },
+    "cold_process": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\cold-process.json",
+      "sha256": "3763c45ee07e33a8f900d5d65cc1ee789c5c12849e7fa7583b050ad5cb29a389",
+      "bytes": 146
+    },
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\owned-tracking-backup.zip",
+      "sha256": "a95e6c51f0c3c33b14d3013458e4c02269a734c3bcb7b168975b79bb5c6617a7",
+      "bytes": 14044749
+    },
+    "positive_render": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\tracked\\final.mp4",
+      "sha256": "dce9d5cb180888b042c7e6c5cccf5e65d9ec30c2cdd681d5bbe9960cf84935c4",
+      "bytes": 181639
+    },
+    "negative_candidate": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\lost\\candidate-failed-qc.mp4",
+      "sha256": "84db556471eec29f6d487a8e6ea250e1b2fc2ab7a1bd0bd134393aa596942015",
+      "bytes": 154311
+    },
+    "negative_QC": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\lost\\qc-report.json",
+      "sha256": "e842b9bc6824df4178d80cdb54c78ed2e7e984e260cba07dca4664d548237409",
+      "bytes": 1555
+    },
+    "negative_final_approval": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\lost\\negative-final-review.json",
+      "sha256": "9e73acce1eea03a2447c6b4933ad54066b34f6865aa2df57ebc29ef5e7cbaea4",
+      "bytes": 309
+    },
+    "source_position_ground_truth": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\tracked\\independent-position-check.json",
+      "sha256": "9b239a4286c28c8ca3f2295f64b104dc8ad6ec4231f4214c82d07be9147e6718",
+      "bytes": 149
+    },
+    "rendered_position_ground_truth": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-local-tracking-n5\\tracked\\independent-rendered-position-check.json",
+      "sha256": "55fb5c68fe102b094bb4450b7bfdb4e149a82d6401d76635b16a4eff33f87670",
+      "bytes": 887
+    },
+    "fixture_DOM": true,
+    "actual_browser": false,
+    "saved_ASR_fixture": true,
+    "real_ASR_provider": false,
+    "semantic_Vision": false,
+    "Owner_UAT": false,
+    "source_originals_unchanged": true,
+    "temporary_owned_root_cleaned": true
+  },
+  "default_runtime_control": {
+    "receipt": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-default-runtime-control-n1.json",
+      "sha256": "cc364d981d4b93aac934be60e53130e7f0b5714f0aa8d06dcbaad87151f03060",
+      "bytes": 372
+    },
+    "default_Windows_51_pass": true,
+    "historical_faulthandler_diagnostic_AV_not_reproduced": true,
+    "root_cause_resolved": false,
+    "production_soak_complete": false
+  },
+  "failed_runs_retained": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-native-n1.log",
+      "sha256": "adbdd220aa3e572c531f76fc2584b141803b7961648f19f5241b05db702495c5",
+      "bytes": 6127
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-native-n2.log",
+      "sha256": "327a2b2be3d895e22cc6a4ea22ae0ad0b30845e5cc6b730f4ebd629b948d4d02",
+      "bytes": 3700
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-native-n3.log",
+      "sha256": "8db1e3b605b234e7a357e8f7f9325f27ed1c2ef43b83217b898561127471016d",
+      "bytes": 4282
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-native-n4.log",
+      "sha256": "716045530f5725cb7ca7a4c45adb071f4e17673ae4105276a860a4d978f4e415",
+      "bytes": 1117
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-native-n5.log",
+      "sha256": "be41ebbe294fffd56ac4e180e25428dd874fb2c9b3293452dc42944fd096a3f5",
+      "bytes": 1777
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-studio-full-n1.log",
+      "sha256": "594a523203ebc4c069dfda45fbe302d9d48a8cb56895a148f5fb0bcf96a61d3e",
+      "bytes": 100151
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-rehearsal-n2.log",
+      "sha256": "edb9900c92945718ed06e6b84275c2245e69928ee267a2e5354b43d908a74182",
+      "bytes": 3269
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-rehearsal-n3.log",
+      "sha256": "c38b8a17a005cc51444de365ac898e7029f43815f6d3ed2a5d20a77fa8082ae4",
+      "bytes": 665
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-tracking-rehearsal-n4.log",
+      "sha256": "597c20a5dd6a46a41bc2af1be70d0e4da7fa40a0897895449a75ff58177f6098",
+      "bytes": 405
+    }
+  ],
+  "limits": [
+    "human region seed; no semantic/face/person inference",
+    "at most600 adapted source samples; between-sample motion unmeasured",
+    "fixed template; scale/rotation/occlusion/reacquisition remain open",
+    "all plans require attention/preview/fresh human approval",
+    "local fixture footage and saved fixture ASR are not full ModeB/A/B/C",
+    "historical Windows diagnostic and production/runtime/real-provider acceptance remain open"
+  ],
+  "provider_calls": 0,
+  "paid_calls": 0,
+  "TTS_model_inferences": 0,
+  "real_publishing": false,
+  "production_deployed": false,
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  }
+}

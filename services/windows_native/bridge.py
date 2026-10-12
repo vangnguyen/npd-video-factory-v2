@@ -393,7 +393,7 @@ class NativeBridge:
                     result=json.loads(job['result']) if job['result'] else None
                     data.update(result_sha256=digest(result) if result else None,owner_final_video_accepted=False)
                 elif job['kind']=='content' and job['status']=='awaiting_review':event_type='video.approval.required'
-                elif job['kind'] in ('asr','auto_edit_analysis','media_frames') and job['status']=='succeeded':event_type='video.analysis.completed'
+                elif job['kind'] in ('asr','auto_edit_analysis','media_frames','source_tracking') and job['status']=='succeeded':event_type='video.analysis.completed'
         if event_type:self.put(con,self.envelope(event_type,'workflow:'+str(sequence),data,stamp))
 
     def read_event(self,row,*,source_con=None):

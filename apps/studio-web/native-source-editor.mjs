@@ -9,6 +9,7 @@ import {initializeSourceThumbnailReview} from './native-source-thumbnail-review.
 import {initializeVisualProperties} from './native-visual-properties.mjs';
 import {initializeSourceDragDrop} from './native-source-drag-drop.mjs';
 import {initializeClipStyle} from './native-clip-style.mjs';
+import {initializeSubjectTracking} from './native-subject-tracking.mjs';
 
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 export const sourceState=p=>isSourceProject(p)?p.document.canonical_timeline:null;
@@ -72,7 +73,7 @@ export function sourceAdvancedMarkup(project,zoom=1,selectedId=null) {
     }).join('')}</div></section>`).join('');
 }
 
-export function initializeSourceEditor({api,getProject,getGuards,getReviewedVision=()=>null,getSelected,getPreview,getPlayers,onProject,onDirty,onMessage,onWorking,onDraftsCreated=()=>{}}) {
+export function initializeSourceEditor({api,getProject,getGuards,getReviewedVision=()=>null,getSelected,getPreview,getPlayers,onProject,onDirty,onMessage,onWorking,onDraftsCreated=()=>{},canTrack=false}) {
   const $=id=>document.getElementById(id);
   const host=document.createElement('section');host.id='native-source-inspector';host.hidden=true;
   $('shot-editor-form').after(host);
@@ -83,7 +84,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output><p class="hint">Kéo clip trong cùng track để đổi vị trí. Shot nguồn được sắp lại liền nhau cùng âm thanh và phụ đề; kiểm tra lại B-roll, preview và duyệt bản mới.</p>';
   $('advanced-tracks').before(toolbar);
   if(!document.querySelector('link[data-source-editor-style]')){const link=document.createElement('link');link.rel='stylesheet';link.href='/native-source-editor.css';link.dataset.sourceEditorStyle='true';document.head.append(link);}
-  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null,style=null;
+  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null,style=null,trackingUI=null;
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const visualRoot=document.createElement('section');visualRoot.id='native-source-visual';
@@ -102,7 +103,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     onDirty:v=>{if(v){dirty=true;dirtyForm='style';onDirty(true);}else if(dirtyForm==='style'){dirty=false;dirtyForm=null;onDirty(false);}if(style)controls();},onMessage,
     onSave:async(values,binding)=>{await run(()=>send(sourceClipAction(getProject(),binding.clip_id,'set_clip_properties',values)),{allowDirty:true});const p=getProject();
       return p?.id===binding.project_id&&p.revision===binding.revision+1&&state()?.version===binding.timeline_version+1&&(getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
-  const blocked=()=>working||sceneReview.isWorking()||thumbnailReview?.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const blocked=()=>working||trackingUI?.isWorking()||sceneReview.isWorking()||thumbnailReview?.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
   const sceneRoot=document.createElement('section');
   const sceneReview=initializeSceneReview({root:sceneRoot,api,getReviewedVision,onProject,onMessage,onWorking,onDraftsCreated,
     getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
@@ -116,12 +117,19 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
     busy:working||getGuards().busy||thumbnailReview?.isWorking(),active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   const thumbnailRoot=document.createElement('section');
+  const trackingRoot=document.createElement('section');
+  trackingUI=initializeSubjectTracking({root:trackingRoot,api,onProject,onMessage,onWorking,
+    onDirty:value=>{if(value){dirty=true;dirtyForm='tracking';onDirty(true);}else if(dirtyForm==='tracking'){dirty=false;dirtyForm=null;onDirty(false);}},
+    getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,canTrack,
+      dirty:dirty||getGuards().dirty,dirtyPart:dirtyForm,busy:working||getGuards().busy||sceneReview.isWorking()||thumbnailReview?.isWorking(),
+      active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   thumbnailReview=initializeSourceThumbnailReview({root:thumbnailRoot,api,getReviewedVision,onProject,onMessage,onWorking,
     getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
       dirty:dirty||getGuards().dirty,busy:working||getGuards().busy||sceneReview.isWorking(),
       active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   function controls(){
     host.querySelectorAll('input,select,button').forEach(el=>el.disabled=blocked());
+    trackingUI?.controls();
     if(locked())host.querySelectorAll('[data-source-form] input,[data-source-form] button,[data-source-action],[data-source-placement],[data-source-speed],[data-source-volume],[data-source-crop]').forEach(el=>el.disabled=true);
     const manual=host.querySelector('[data-source-reframe-mode]')?.value==='manual_override';
     host.querySelectorAll('[data-source-crop-point]').forEach(el=>el.disabled=!manual||blocked()||dirtyForm==='trim'||dirtyForm==='visual');
@@ -185,6 +193,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     host.append(sceneRoot);
     host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
     host.append(cropRoot);
+    host.append(trackingRoot);
     host.append(thumbnailRoot);
     void history();renderAdvanced();controls();
   }
@@ -290,7 +299,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
         (getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
   for(const player of getPlayers())player.addEventListener('timeupdate',()=>{if(!isSourceProject(getProject())||player.hidden)return;playhead=player.currentTime;toolbar.querySelector('[data-source-position]').value=`${num(playhead)}s`;});
   void api('/api/auto-edit/subtitle-templates').then(value=>{catalog=value;shownKey=null;if(isSourceProject(getProject())&&!dirty)renderSelected(true);}).catch(error=>onMessage(error.message,true));
-  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,clipStyle:style,dragDrop,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking(),
+  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,clipStyle:style,dragDrop,subjectTracking:trackingUI,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking()||trackingUI.isWorking(),
     readyForApproval:()=>isSourceProject(getProject())&&getPreview()?.status==='READY'&&getPreview()?.timeline_sha256===state().sha256,
     render:()=>renderSelected()};
 }

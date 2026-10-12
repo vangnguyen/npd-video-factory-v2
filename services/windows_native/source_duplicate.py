@@ -147,6 +147,9 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
     output['name']=document['name'][:139]+' — bản sao'
     from .source_reframe_vision import inherit
     inherit(output,source_id,revision)
+    if output.get('source_tracking_analyses'):
+        from .source_tracking import inherit as inherit_tracking
+        inherit_tracking(output,source_id,revision)
     from .source_thumbnail_review import inherit as inherit_thumbnails
     inherit_thumbnails(output,source_id,revision)
     from .source_media_track_origins import inherit as inherit_media_imports

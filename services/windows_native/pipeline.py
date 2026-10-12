@@ -780,6 +780,9 @@ class Pipeline:
         if job['kind']=='media_frames':
             from .media_frame_analysis import analyze
             return analyze(self.config,job,out,stage)
+        if job['kind']=='source_tracking':
+            from .source_tracking import analyze
+            return analyze(self.config,job,out,stage)
         if job["kind"] == "auto_edit_analysis":
             from .auto_edit_analysis import analyze, validate_sources
             validate_sources(self.config, job)

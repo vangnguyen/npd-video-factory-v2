@@ -146,7 +146,7 @@ export function initializeShotStudio({api,getProject,getGuards,getReviewedVision
   const thumbnail=assetId=>`/api/projects/${getProject().id}/media/${encodeURIComponent(assetId)}/thumbnail`;
   const assets=()=>(getProject()?.document.assets??(getProject()?.document.asset?[getProject().document.asset]:[])).filter(a=>['image','video'].includes(a.kind??'image'));
   const selected=()=>projectShots(getProject()).find(s=>s.shot_id===selectedId);
-  const sourceEditor=capabilities.native_source_timeline===true&&sourceUI?sourceUI.initializeSourceEditor({api,getProject,getGuards,getReviewedVision,onDraftsCreated,
+  const sourceEditor=capabilities.native_source_timeline===true&&sourceUI?sourceUI.initializeSourceEditor({api,getProject,getGuards,getReviewedVision,onDraftsCreated,canTrack:capabilities.native_local_subject_tracking===true,
     getSelected:()=>selectedId,getPreview:()=>preview,getPlayers:()=>[$('video'),proxy],onProject:value=>onProject(value,true),
     onDirty:setDirty,onMessage,onWorking}):null;
   const guard=()=>({...getGuards(),busy:getGuards().busy||working||(sourceEditor?.isWorking()??false)});

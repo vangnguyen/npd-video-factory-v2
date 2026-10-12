@@ -650,10 +650,18 @@ class Store:
                 self.event(con, identifier, "human_content_approved", approval)
         return self.get(identifier)
 
-    def enqueue(self, identifier, revision, kind, request_key):
-        if kind not in {"content", "render", "narration", "asr", "auto_edit_analysis", "media_frames"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
+    def enqueue(self, identifier, revision, kind, request_key, *, tracking_request=None):
+        if kind not in {"content", "render", "narration", "asr", "auto_edit_analysis", "media_frames", "source_tracking"} or not isinstance(request_key, str) or not 8 <= len(request_key) <= 100:
             raise WorkflowError("INVALID_JOB_REQUEST", 400)
         identity = digest({"project_id": identifier, "revision": revision, "kind": kind})
+        if kind=='source_tracking':
+            import importlib.util
+            if importlib.util.find_spec('numpy') is None or importlib.util.find_spec('PIL') is None:raise WorkflowError('LOCAL_TRACKING_RUNTIME_NOT_CONFIGURED',503)
+            from .source_tracking import Create
+            try:tracking=Create.model_validate(tracking_request)
+            except ValueError:raise WorkflowError('LOCAL_TRACKING_REQUEST_INVALID',400) from None
+            identity=digest({'original_identity':identity,'tracking_request':tracking.model_dump(mode='json')})
+        elif tracking_request is not None:raise WorkflowError('LOCAL_TRACKING_REQUEST_KIND_INVALID',400)
         with self.transaction() as con:
             existing = con.execute("SELECT * FROM jobs WHERE request_key=?", (request_key,)).fetchone()
             if existing:
@@ -692,6 +700,10 @@ class Store:
                 if not available:raise WorkflowError('MEDIA_FRAME_NO_PENDING_ASSET',400)
                 if len(doc.get('media_frame_analyses',[]))+min(16,len(available))>MAX_RECORDS:
                     raise WorkflowError('MEDIA_FRAME_HISTORY_LIMIT')
+            if kind=='source_tracking':
+                from .source_tracking import source,MAX_HISTORY
+                source(doc,identifier,tracking)
+                if len(doc.get('source_tracking_analyses',[]))>=MAX_HISTORY:raise WorkflowError('LOCAL_TRACKING_HISTORY_LIMIT_OR_CONFLICT')
             if kind in {"render","narration"} and (not approval or approval["revision"] != revision
                                      or approval["snapshot_sha256"] != digest(doc)):
                 raise WorkflowError('AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER' if is_auto_edit(doc) else 'HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
@@ -713,6 +725,7 @@ class Store:
                         if approval.get('render_mode')!='prepared_narration' or approval.get('reviewed_preview')!=reviewed(self,SimpleNamespace(data_root=self.root),project,con=con):raise WorkflowError('NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED',400)
             identifier_job, stamp = uuid.uuid4().hex, now()
             snapshot = {"document": doc, "approval": approval}
+            if kind=='source_tracking':snapshot['tracking_request']=tracking.model_dump(mode='json')
             con.execute("INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                         (identifier_job, identifier, revision, kind, "queued", "queued", request_key, identity,
                          json.dumps(snapshot, ensure_ascii=False), None, None, stamp, stamp))
@@ -792,6 +805,11 @@ class Store:
                 project=self.project(con.execute('SELECT * FROM projects WHERE id=?',(job['project_id'],)).fetchone())
                 if project['revision']!=job['revision'] or digest(project['document'])!=digest(job['snapshot']['document']):
                     raise WorkflowError('MEDIA_FRAME_STALE_RESULT')
+                save_result(self,con,project,result,job['id'])
+            if result and job['kind']=='source_tracking':
+                from .source_tracking import save_result
+                project=self.project(con.execute('SELECT * FROM projects WHERE id=?',(job['project_id'],)).fetchone())
+                if project['revision']!=job['revision'] or digest(project['document'])!=digest(job['snapshot']['document']):raise WorkflowError('LOCAL_TRACKING_STALE_RESULT')
                 save_result(self,con,project,result,job['id'])
             con.execute("UPDATE jobs SET status=?,stage=?,error=?,result=?,updated_at=? WHERE id=?",
                         (status, status, json.dumps(error) if error else None,

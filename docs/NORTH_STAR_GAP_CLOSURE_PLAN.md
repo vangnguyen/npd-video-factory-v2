@@ -392,3 +392,7 @@ The technology configuration now has actual locked offline speech, audible previ
 ## Owner-managed channel definitions checkpoint
 
 The latest Wave 7 component adds workspace-scoped immutable channel versions, Owner configuration UI, archive/restore, exact revision/hash admission, idempotent receipts and project/Trend/Idea/Bridge frozen selections. Local signed controller and separate-process backup restoration supply configuration evidence only. Full brand/template/profile-family administration, publishing/analytics account preferences, configured languages/voices, browser/non-developer acceptance, real providers and original A/B/C remain. No group is reclassified from PARTIAL on this checkpoint; production and publishing remain disabled. See NATIVE_CHANNEL_PROFILE_ADMIN.md and north-star/channel-admin-evidence.json.
+
+## Local temporal tracking checkpoint
+
+Wave3F/4 now adds editor-seeded local template matching using actual decoded source PTS, a bounded sample budget, fixed-template similarity/ambiguity safety and immutable frame/job provenance. Four-ratio crop paths use the canonical engine; safe fallback, negative failed_qc/final-review blocking and cold recovery are locally evidenced. Semantic/autonomous seeds, calibrated/dense all-frame/general face/person/object/scale/rotation/occlusion tracking and real footage/browser/Owner remain open. Default Windows intelligence control passes51 cases without changing runtime policy; historical diagnostic cause and production soak remain unproven. Full groups and A/B/C stay open.

@@ -25,14 +25,17 @@ class ManualPoint(StrictModel):
 class Request(StrictModel):
     expected_version:int=Field(ge=1,strict=True)
     aspect_ratio:Literal['9:16','16:9','1:1','4:5']
-    mode:Literal['center_crop','manual_override','reviewed_vision']='center_crop'
+    mode:Literal['center_crop','manual_override','reviewed_vision','local_tracking']='center_crop'
     points:list[ManualPoint]=Field(default_factory=list,max_length=200)
     reviewed_vision:ReviewedVision|None=None
+    tracking_id:str|None=Field(default=None,pattern=r'^ltr_[a-f0-9]{24}$')
+    tracking_sha256:str|None=Field(default=None,pattern=r'^[a-f0-9]{64}$')
     @model_validator(mode='after')
     def valid_mode(self):
         if bool(self.points)!=(self.mode=='manual_override'):raise ValueError('manual points required only for manual mode')
         if len({point.time for point in self.points})!=len(self.points):raise ValueError('duplicate times')
         if (self.reviewed_vision is not None)!=(self.mode=='reviewed_vision'):raise ValueError('reviewed Vision required only for reviewed mode')
+        if (self.tracking_id is not None)!=(self.mode=='local_tracking') or (self.tracking_sha256 is not None)!=(self.mode=='local_tracking'):raise ValueError('local tracking requires exact saved analysis binding')
         return self
 
 
@@ -69,6 +72,7 @@ def apply(store,project_id,revision,body,*,config=None,official_vision=None):
                 manual_overrides=overrides,minimum_tracking_confidence=.6,subtitle_safe_area_bottom=.18,
                 maximum_jump=.12,fingerprint=fingerprint)[0]
             saved=None
+            tracked=None
             if payload.reviewed_vision:
                 first=con.execute('SELECT workspace_id FROM native_official_vision_intents WHERE project_id=? AND vision_id=?',
                     (project_id,payload.reviewed_vision.vision_id)).fetchone()
@@ -79,6 +83,11 @@ def apply(store,project_id,revision,body,*,config=None,official_vision=None):
                 saved=reviewed.record(project,original,context,payload.aspect_ratio)
                 from app.vision_models import ReframePlanRead
                 plan=ReframePlanRead.model_validate(saved['review']['plan'])
+            if payload.mode=='local_tracking':
+                from . import source_tracking
+                tracked=source_tracking.read_saved(store,con,project,payload.tracking_id,payload.tracking_sha256)
+                if tracked['analysis']['source']['analysis_id']!=snapshot.metadata['source_analysis_id']:raise WorkflowError('LOCAL_TRACKING_MAIN_SOURCE_REQUIRED',400)
+                plan,tracking_basis=source_tracking.plan(tracked['analysis'],payload.aspect_ratio)
             result=bind_reframe(snapshot,asset_id=identifier,metadata=source,plan=plan,vision_analysis_id=None)
         except (ValueError,TimelineEditError):raise WorkflowError('AUTO_EDIT_REFRAME_PLAN_INVALID_OR_LOCKED',400) from None
         result.metadata['source_reframe_plan']={'schema':'native-source-reframe-v1','plan':plan.model_dump(mode='json'),
@@ -92,6 +101,12 @@ def apply(store,project_id,revision,body,*,config=None,official_vision=None):
             'tracking_confidence':None,'human_review_required':True,
             'confidence_basis':result.metadata['source_reframe_plan']['confidence_basis']}
         result.metadata.pop('reviewed_reframe_selection',None)
+        result.metadata.pop('local_tracking_selection',None)
+        if tracked is not None:
+            result.metadata['local_tracking_selection']=source_tracking.selection(tracked)
+            result.metadata['source_reframe_plan'].update(provider_status='LOCAL_TEMPORAL_TEMPLATE_TRACKING',confidence_basis=tracking_basis,
+                tracking_id=tracked['analysis']['tracking_id'],decoded_pts_verified=True,every_frame_tracking_performed=False)
+            result.metadata['reframe_review']['confidence_basis']=tracking_basis
         if saved is not None:
             proof=reviewed.lineage(saved)
             result.metadata['reviewed_reframe_selection']=proof
