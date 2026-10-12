@@ -54,7 +54,8 @@ def validate_timeline(document):
                     if base is None or not any(v==reference for v in history):
                         raise WorkflowError('SOURCE_MEDIA_IMPORT_TRANSCRIPT_CHANGED')
                     checked_transcripts.add(identifier)
-            elif row['operation']!='audio' or track['type']!='audio' or clip['kind'] not in {'voice','music'} or asset['kind']!='audio':
+            elif (row['operation']!='audio' or track['type']!='audio' or clip['kind'] not in {'voice','music','sfx'} or asset['kind']!='audio'
+                or not isinstance(row.get('request'),dict) or track['kind']!=clip['kind'] or row['request'].get('role')!=clip['kind']):
                 raise WorkflowError('SOURCE_MEDIA_IMPORT_AUDIO_INVALID')
             elif metadata.get('source_audio_waveform')!=row.get('waveform'):
                 raise WorkflowError('SOURCE_MEDIA_IMPORT_WAVEFORM_CHANGED')

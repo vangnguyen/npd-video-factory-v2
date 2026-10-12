@@ -23,7 +23,7 @@ class Captions(StrictModel):
     subtitle_template_ref:str=Field(min_length=1,max_length=100)
 
 class Audio(Binding):
-    role:Literal['voice','music']
+    role:Literal['voice','music','sfx']
     track_id:str|None=Field(default=None,pattern=TRACK)
     replace_existing:StrictBool=False
     source_start:float=Field(ge=0,le=600)

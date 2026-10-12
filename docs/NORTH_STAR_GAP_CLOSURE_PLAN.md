@@ -370,3 +370,11 @@ Source advanced graph now moves existing clips in the same track through the exi
 Component evidence: NATIVE_SOURCE_DRAG_DROP.md and north-star/source-drag-drop-evidence.json; Studio718/Native18 PASS,63 static imported modules,24 signed fixture controller requests, actual preview/final/FullQC,2 independent ROI comparisons and separate-process cold recovery. Parent Source DOM/browser/non-developer/Owner and real provider acceptance remain open. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED remains59 unclosed groups.
 
 NEXT WAVE: Native effects/SFX authoring and render parity, Meta analytics and every original remaining safe Mode A/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C gap. Owner listening/UAT remains deferred; no main merge, real publishing or production deployment.
+
+## Native uploaded SFX component
+
+Shared Source/narrated audio card explicitly imports SFX with bounded window/gain/fades, matching immutable role provenance, same canonical editing/history and default rights/publication gates. A real decoded-tone regression exposed missing ModeA SFX despite format QC; a SFX-only sample-clock correction passes the before/after regression and actual both-mode PCM/preview/final spectral checks. Rejected n1 is retained; post-fix n2 bundles are component evidence.
+
+NATIVE_MEDIA_SFX.md and north-star/media-sfx-evidence.json index Studio720/Native49/Static3/API23 PASS,7 Linux media skips,16 signed controller requests, actual render/FullQC and two cold recoveries. Fake DOM/synthetic audio does not certify genuine speech/provider/browser/Owner acceptance. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED stays59 unclosed groups.
+
+NEXT WAVE: Native visual effects/post-import transition/fade editing/render parity, Meta analytics and every original safe ModeA/B/media/provider/audio/multi-niche/platform/publishing/analytics/winner/learning/trend/Hub/hardening/A/B/C requirement. No main merge/real publishing/deployment; listening/UAT stays deferred.

@@ -62,7 +62,11 @@ def build_timeline_audio_graph(snapshot: TimelineSnapshot, assets: dict[str, tup
                     start = 0 if direction == "in" else max(0, clip.duration - length)
                     chain.append(f"afade=t={direction}:st={start:.9f}:d={length:.9f}")
             delay_samples = round(clip.timeline_start * 48000)
-            chain.append(f"adelay=delays={delay_samples}S:all=1[audio{len(receipts)}]")
+            # Rebuild the SFX clock from its complete delayed sample stream.
+            # amix otherwise reconciles retained packet timestamps differently
+            # for a trimmed SFX and voice/music decoded at other sample rates.
+            sfx_clock = ",asetpts=N/SR/TB" if track.kind == "sfx" else ""
+            chain.append(f"adelay=delays={delay_samples}S:all=1{sfx_clock}[audio{len(receipts)}]")
             filters.append(",".join(chain))
             receipts.append({"clip_id": clip.clip_id, "track_id": track.track_id, "asset_id": clip.asset_id,
                              "source_sha256": asset.checksum_sha256, "source_start": clip.source_start,

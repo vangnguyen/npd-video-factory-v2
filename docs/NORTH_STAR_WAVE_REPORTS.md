@@ -3509,3 +3509,17 @@ REGRESSIONS: related checks pass; preservation seal verifies15 historical accept
 EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta insights mapping remain distinct gates.
 OWNER ACTION REQUIRED: none for safe work; listening/UAT stays deferred as requested.
 NEXT WAVE: Native effects/SFX authoring and every original remaining North Star gap. SOURCE_PRESERVED=YES at sealed parent, fresh new seal required; PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO; IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3 / 6 / 16 — Native uploaded SFX component
+STATUS: component implemented and mock/local-real tested after clock repair; full waves/North Star remain open.
+HEAD SHA: parent c60d10794d4d598cdc92626da200f2907bfe69f3; resulting exact committed/pushed HEAD is in recovery/20261007/media-sfx-program-state.json after preservation seal.
+CAPABILITIES COMPLETED: shared SFX role/import/gain/fade/track selection in both modes; immutable role/source/waveform provenance,idempotency/CAS and existing canonical operations/history; SFX sample clock after trim/delay; prepared narration/other-track path preserved.
+CAPABILITIES PARTIAL: visual effects,post-import fade/transition editing,renderer limits,full UI/browser/non-developer/Owner/genuine media/provider and original Mode A/B/A/B/C. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED=59 unclosed groups.
+TESTS: Studio720 PASS including2 new; Native49 PASS in5 modules including7 new; Static3 separately/63 modules; API23 PASS/7 Linux media skips for missing FFmpeg/FFprobe. Decoded regression fails before and passes after repair; actual post-fix PCM/preview/final spectral/render/FullQC and two cold recoveries pass. Prior Renderer40 not rerun.
+REAL PROVIDER TESTS: none; ASR/TTS/provider/paid calls0.
+MOCK TESTS: synthetic tone/narration/image/movingvideo,saved ModeB ASR,fixture human and DOM. Real shared card/signed HTTP/SQLite/FFmpeg; whole parent editor/browser not exercised; Owner UAT false.
+EVIDENCE: NATIVE_MEDIA_SFX.md;north-star/media-sfx-evidence.json;native-media-sfx-mode-a-n2/b-n2;media-sfx-audio-a-n2/b-n2;media-sfx-cold-restore-a-n2.json/b-n2.json.16 controller requests,saved SFX0.9-1.4s,measured3000Hz band against before/after controls.
+REGRESSIONS: related prior capabilities pass. Missing ModeA n1 SFX found independently and retained as rejected component candidate. New seal verifies15 historical accepted artifacts/clean live source. No accepted replacement,historical deletion or rejected-deletion retry; owned fixtures teardown after verified export.
+EXTERNAL BLOCKERS: real provider/browser/Owner/production acceptance and unavailable authoritative Meta insights mapping remain separate.
+OWNER ACTION REQUIRED: none for safe work; listening/UAT deferred as requested.
+NEXT WAVE: Native visual effects/post-import fade/transition editing/render parity and every original remaining North Star requirement. SOURCE_PRESERVED=YES at sealed parent,new seal required;PHASE10_TECHNICALLY_READY=YES;OWNER_UAT_REQUIRED=YES;PHASE10_READY=NO;IMPLEMENTATION_COMPLETE=NO;REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO;PRODUCTION_DEPLOYED=NO;VIDEO_FACTORY_NORTH_STAR_READY=NO.

@@ -46,7 +46,10 @@ def main():
     parser.add_argument('--source-caption-retiming', action='store_true')
     parser.add_argument('--visual-properties', action='store_true')
     parser.add_argument('--source-drag-drop', action='store_true')
+    parser.add_argument('--sfx', action='store_true')
     args = parser.parse_args()
+    if args.sfx and (args.visual_properties or args.source_caption_retiming or args.source_drag_drop):
+        parser.error('--sfx uses a separate component fixture')
     if args.source_drag_drop and (not args.visual_properties or args.source_caption_retiming):
         parser.error('--source-drag-drop requires --visual-properties and uses its own source caption fixture')
     out = args.evidence_dir.resolve()
@@ -107,6 +110,10 @@ def main():
                 raise AssertionError(drag_run.stderr.decode('utf-8',errors='replace')[:6000])
             drag_controller=json.loads(drag_run.stdout)
             durable_json(out/'drag-controller.json',drag_controller)
+        sfx_controller = None
+        if args.sfx:
+            from north_star_sfx_fixture import run_sfx_controller
+            original,sfx_controller=run_sfx_controller(case,server,cookie,session.csrf,context,out,original)
         server.shutdown()
         server.server_close()
         thread.join()
@@ -170,6 +177,8 @@ def main():
                     for clip in manifest['visual_clips']]}
         matching_effects = effects(preview_manifest) == effects(final_manifest)
         mix_sha = file_sha(Path(preview_manifest['audio']['mix_uri']))
+        if args.sfx:
+            shutil.copyfile(Path(final_manifest['audio']['mix_uri']),out/'audio-mix.wav')
         if not matching_effects or mix_sha != file_sha(Path(final_manifest['audio']['mix_uri'])):
             raise AssertionError('Preview/final effects or measured PCM mix differ')
         durable_json(out / 'preview-timeline-render.json', preview_manifest)
@@ -187,7 +196,7 @@ def main():
                 'SELECT * FROM events WHERE project_id=? ORDER BY id', (current['id'],))]
         durable_json(out / 'job-events.json', events)
         imports = json.loads((out / 'source-media-imports.json').read_bytes())
-        expected_imports = 4 if args.source_drag_drop else 2 if args.source_caption_retiming else 3
+        expected_imports = (4 if args.source_drag_drop else 2 if args.source_caption_retiming else 3)+int(args.sfx)
         if len(imports['imports']) != expected_imports or len(imports['verified_active_source_sha256']) != expected_imports:
             raise AssertionError('Every active uploaded voice/music/SRT origin must be verified')
         checkpoint = json.loads((out / 'checkpoint-render.json').read_bytes())
@@ -204,7 +213,7 @@ def main():
         manager.close()
         manager = None
         source_page = catalog(case.store, current['id'], case.workspace)
-        if args.source_caption_retiming or args.visual_properties:
+        if args.source_caption_retiming or args.visual_properties or args.sfx:
             from services.windows_native.auto_edit_timeline import view
             durable_json(out/'timeline-editor.json',view(case.store,current['id']))
             with case.store.transaction() as con:
@@ -231,7 +240,7 @@ def main():
         receipt = {'schema_version': 'native-source-caption-retiming-render-proof-v1' if args.source_caption_retiming else 'native-source-media-tracks-render-proof-v1',
             'explicit_synthetic_media': True, 'synthetic_tones_not_speech': True,
             'saved_ASR_fixture': True, 'signed_human_fixture': True, 'fake_DOM': True,
-            'project_id': current['id'], 'job_id': job['id'], 'actual_uploads': 4,
+            'project_id': current['id'], 'job_id': job['id'], 'actual_uploads': 4+int(args.sfx),
             'signed_controller_requests': len(controller['requests']), 'imports': expected_imports,
             'timeline_version': before['canonical_timeline']['version'],
             'actual_waveform_measurement': True, 'actual_preview_render_and_full_QC': True,
@@ -248,6 +257,8 @@ def main():
             'visual_widget_requests': len(visual_controller['requests']) if visual_controller else 0,
             'actual_source_drag_drop_controller': args.source_drag_drop,
             'drag_controller_requests': len(drag_controller['requests']) if drag_controller else 0,
+            'actual_SFX_media_card': args.sfx,
+            'sfx_controller_requests': len(sfx_controller['requests']) if sfx_controller else 0,
             'whole_source_editor_DOM_exercised': False,
             'exports': {str(path.relative_to(out)).replace('\\', '/'): file_sha(path)
                 for path in out.rglob('*') if path.is_file()}}

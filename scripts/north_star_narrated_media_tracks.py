@@ -28,10 +28,11 @@ def files(root):
     return {p.relative_to(root).as_posix():file_sha(p) for name in ('assets','originals') for p in (root/name).rglob('*') if p.is_file()}
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--evidence-dir',type=Path,required=True);parser.add_argument('--timeline-editor',action='store_true');parser.add_argument('--source-video-captions',action='store_true');parser.add_argument('--video-timeline',action='store_true');parser.add_argument('--visual-properties',action='store_true');parser.add_argument('--sfx',action='store_true');args=parser.parse_args();out=args.evidence_dir.resolve()
+    if args.sfx and (args.timeline_editor or args.source_video_captions or args.video_timeline or args.visual_properties):parser.error('--sfx uses a separate component fixture')
     if args.visual_properties and not args.video_timeline:parser.error('--visual-properties requires --video-timeline')
     if out.exists() or out==REPO or REPO in out.parents:raise ValueError('Fresh external evidence directory required')
-    out.mkdir(parents=True);case=NarratedMediaTracksTests();case.short_owned_root=args.video_timeline;server=manager=None
+    out.mkdir(parents=True);case=NarratedMediaTracksTests();case.short_owned_root=args.video_timeline or args.sfx;server=manager=None
     try:
         if args.source_video_captions or args.video_timeline:
             from services.windows_native.tests.test_source_caption_mapping import prepare as mapping_prepare
@@ -49,6 +50,12 @@ def main():
         run=subprocess.run([r'C:\Program Files\nodejs\node.exe',str(REPO/'scripts/native_source_media_tracks_http_ui.mjs'),str(context)],capture_output=True,check=True,timeout=60)
         controller=json.loads(run.stdout);durable_json(out/'signed-controller.json',controller)
         if len(controller['requests'])!=6 or controller['timeline_mode']!='narrated' or len(controller['imports'])!=3:raise AssertionError('Expected actual Mode A controller flow')
+        sfx_controller=None
+        if args.sfx:
+            from north_star_sfx_fixture import run_sfx_controller
+            original,sfx_controller=run_sfx_controller(case,server,cookie,session.csrf,context,out,original)
+            from services.windows_native.narrated_timeline_editor import view as sfx_view
+            durable_json(out/'timeline-editor.json',sfx_view(case.store,current['id'],case.workspace))
         if args.source_video_captions:
             from services.windows_native.source_media_tracks import add_subtitles
             from services.windows_native.shot_adapter import validate_document
@@ -148,8 +155,8 @@ def main():
         durable_json(out/'backup-restore.json',{'backup':backup,'restore':restore,'catalog_equal':True,'physical_origins_and_render_resolved_after_restore':True,
             'temporary_original_and_restore_removed_after_export':True})
         receipt={'schema_version':'native-narrated-media-tracks-render-proof-v1','synthetic_tones_not_speech':True,'synthetic_measured_narration_fixture':True,
-            'saved_ASR_fixture':False,'signed_human_fixture':True,'fake_DOM':True,'project_id':current['id'],'job_id':job['id'],'actual_uploads':4 if args.source_video_captions or args.video_timeline else 3,
-            'signed_controller_requests':6,'imports':4 if args.source_video_captions else 3,'timeline_version':before['canonical_timeline']['version'],'actual_waveform_measurement':True,
+            'saved_ASR_fixture':False,'signed_human_fixture':True,'fake_DOM':True,'project_id':current['id'],'job_id':job['id'],'actual_uploads':(4 if args.source_video_captions or args.video_timeline else 3)+int(args.sfx),
+            'signed_controller_requests':6,'imports':(4 if args.source_video_captions else 3)+int(args.sfx),'timeline_version':before['canonical_timeline']['version'],'actual_waveform_measurement':True,
             'source_video_captions':args.source_video_captions,'actual_source_trim_and_loop_reflow':args.source_video_captions,
             'actual_preview_render_and_full_QC':True,'matching_preview_final_PCM_sha256':file_sha(jobdir/'narrated-mix.wav'),
             'matching_preview_final_ASS_sha256':file_sha(jobdir/'subtitles.ass'),'immutable_source_media':original,'original_prepared_voice_sha256':voice_sha,
@@ -161,6 +168,7 @@ def main():
             'canonical_undo_redo_exact_snapshot':args.timeline_editor or args.video_timeline,
             'canonical_editor_history_exact_after_restore':args.timeline_editor or args.video_timeline,
             'canonical_video_render':args.video_timeline,'video_editing_controller':args.video_timeline,
+            'actual_SFX_media_card':args.sfx,'sfx_controller_requests':len(sfx_controller['requests']) if sfx_controller else 0,
             'actual_shared_visual_properties_widget':args.visual_properties,
             'exports':{p.relative_to(out).as_posix():file_sha(p) for p in out.rglob('*') if p.is_file()}}
         durable_json(out/'evidence.json',receipt);print(json.dumps({k:v for k,v in receipt.items() if k not in {'exports','immutable_source_media'}},ensure_ascii=False))

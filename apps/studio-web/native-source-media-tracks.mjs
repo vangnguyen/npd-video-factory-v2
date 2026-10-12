@@ -78,7 +78,7 @@ export function initializeSourceMediaTracks({api,getState,root=document,onWorkin
   function sync(){const now=context();if(now!==scope){scope=now;generation++;clear();}controls();}
   function changed(){ownDirty=true;onDirty(true);controls();}
   function render(){audioBox.hidden=subtitleBox.hidden=!value?.timeline_available;captionBox.hidden=!value?.timeline_available;
-    options(audio,value.assets.filter(a=>a.kind==='audio').map(a=>[a.asset_id,a.filename]));options(role,[['voice','Giọng nói'],['music','Nhạc nền']],audioAsset()?.role==='music'?'music':'voice');
+    options(audio,value.assets.filter(a=>a.kind==='audio').map(a=>[a.asset_id,a.filename]));options(role,[['voice','Giọng nói'],['music','Nhạc nền'],['sfx','Hiệu ứng âm thanh (SFX)']],audioAsset()?.role==='music'?'music':'voice');
     options(subtitle,value.assets.filter(a=>a.kind==='subtitle').map(a=>[a.asset_id,a.filename]));options(timebase,[['timeline','Timeline hiện tại'],['source','Video nguồn · ánh xạ qua các đoạn đã cắt']]);
     options(sourceVideo,[['','Chọn video đang dùng trong shot'],...(value.source_video_assets??[]).map(a=>[a.asset_id,a.filename])]);
     for(const s of[audioCaptionTrack,subtitleTrack])trackOptions(s,'subtitles',true);trackOptions(audioTrack,role.value);
@@ -105,7 +105,7 @@ export function initializeSourceMediaTracks({api,getState,root=document,onWorkin
     const changed=type==='captions'?m.changed:true,verified=validateSourceMediaTracks(response,s,{revision:s.project.revision+(changed?1:0),version:value.timeline_version+(changed?1:0)});
     if(type!=='captions'){
       if(m.operation!==type||!/^smi_[a-f0-9]{24}$/.test(m.import_id??'')||!bool(m.replayed)||m.asset_id!==request.asset_id||m.asset_sha256!==request.asset_sha256||!sha(m.request_sha256)||!track(m.track_id)||!Array.isArray(m.clip_ids)||!m.clip_ids.length||m.clip_ids.some(id=>!clip(id))||new Set(m.clip_ids).size!==m.clip_ids.length)throw Error('Nguồn nhập hoặc clip trả về khác yêu cầu.');
-      if(type==='audio'&&(JSON.stringify(m.source_window)!==JSON.stringify([request.source_start,request.source_end])||!Array.isArray(m.timeline_window)||Math.abs(m.timeline_window[0]-request.timeline_start)>1e-6||Math.abs(m.timeline_window[1]-(request.repeat_until??request.timeline_start+request.source_end-request.source_start))>1e-6))throw Error('Khoảng audio trả về khác lựa chọn.');
+      if(type==='audio'&&(verified.tracks.find(t=>t.track_id===m.track_id)?.kind!==request.role||JSON.stringify(m.source_window)!==JSON.stringify([request.source_start,request.source_end])||!Array.isArray(m.timeline_window)||Math.abs(m.timeline_window[0]-request.timeline_start)>1e-6||Math.abs(m.timeline_window[1]-(request.repeat_until??request.timeline_start+request.source_end-request.source_start))>1e-6))throw Error('Vai trò hoặc khoảng audio trả về khác lựa chọn.');
       if(type==='subtitles'&&(m.timebase!==request.timebase||!integer(m.caption_count)||m.caption_count!==m.clip_ids.length||!integer(m.clipped_intervals)||!integer(m.dropped_intervals)))throw Error('Khoảng cue trả về chưa khớp.');
       if(type==='subtitles'&&request.source_video_asset_id&&(m.source_video_asset_id!==request.source_video_asset_id||m.source_video_asset_sha256!==request.source_video_asset_sha256||m.mapping_schema!=='native-source-video-caption-mapping-v1'))throw Error('Video ánh xạ trả về khác lựa chọn.');
     }
@@ -115,6 +115,7 @@ export function initializeSourceMediaTracks({api,getState,root=document,onWorkin
       scope=context();generation++;value=verified;render();status.textContent=type==='subtitles'?`Đã nhập ${m.caption_count} caption; ${m.clipped_intervals} khoảng cắt ngắn, ${m.dropped_intervals} khoảng bỏ. Kiểm tra preview rồi duyệt lại.`:'Đã lưu vào timeline. Kiểm tra preview và duyệt lại.';}
   });}
   async function applyAudio(){await save('audio',s=>{const a=audioAsset();if(!a)throw Error('Chọn audio đã tải lên.');const captions=withCaptions.checked;
+    if(!['voice','music','sfx'].includes(role.value)||loop.checked&&role.value!=='music')throw Error('Chọn vai trò audio phù hợp; chỉ nhạc nền được lặp.');
     if(captions&&(role.value!=='voice'||!a.transcript_id))throw Error('Nhận diện lời nói trước khi tạo caption cho audio.');
     return keyed('audio',{...binding(s,a),role:role.value,track_id:audioTrack.value||null,replace_existing:replace.checked,source_start:n(sourceStart),source_end:n(sourceEnd),timeline_start:n(timelineStart),volume:n(volume),fade_in_seconds:n(fadeIn),fade_out_seconds:n(fadeOut),
       repeat_until:loop.checked?n(until):null,crossfade_seconds:loop.checked?n(crossfade):0,captions:captions?{transcript_id:a.transcript_id,analysis_sha256:a.analysis_sha256,replace_track_id:audioCaptionTrack.value||null,subtitle_template_ref:audioTemplate.value}:null});});}

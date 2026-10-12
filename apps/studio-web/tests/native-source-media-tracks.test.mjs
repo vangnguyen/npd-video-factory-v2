@@ -55,6 +55,24 @@ test('initialization is inert and audio placement uses the read source and canon
   assert.equal(b.asset_id,fixture.initial.assets[0].asset_id);assert.equal(b.asset_sha256,fixture.initial.assets[0].asset_sha256);assert.equal(b.timeline_sha256,fixture.initial.timeline_sha256);
   assert.equal(b.timeline_start,.5);assert.equal(b.source_start,0);assert.equal(b.source_end,2);assert.equal(b.role,'voice');assert.equal(b.captions,null);assert.equal(h.controller.currentBinding().timeline_version,fixture.audio.timeline_version);
 });
+
+test('uploaded SFX is an explicit role on the same canonical audio import and disables music/caption extras',async()=>{
+  const h=harness(),response=copy(fixture.audio);response.tracks.find(t=>t.track_id===response.mutation.track_id).kind='sfx';
+  h.respond(async(path,body)=>copy(body?response:fixture.initial));await h.controller.load();
+  assert.deepEqual(h.node('role').children.map(o=>o.value),['voice','music','sfx']);
+  h.node('role').value='sfx';for(const f of h.node('role').listeners.change)f();h.node('timeline-start').value='.5';
+  assert.equal(h.node('loop').disabled,true);assert.equal(h.node('audio-captions').disabled,true);
+  await h.controller.applyAudio();assert.equal(h.saved.length,1,JSON.stringify(h.messages));
+  const body=h.calls[1].body;assert.equal(body.role,'sfx');assert.equal(body.repeat_until,null);assert.equal(body.captions,null);
+  assert.equal(body.asset_sha256,fixture.initial.assets[0].asset_sha256);assert.equal(body.timeline_sha256,fixture.initial.timeline_sha256);
+});
+
+test('SFX role cannot silently acknowledge a returned voice track or dispatch music repetition',async()=>{
+  const h=harness();await h.controller.load();h.node('role').value='sfx';for(const f of h.node('role').listeners.change)f();
+  h.node('loop').checked=true;await h.controller.applyAudio();assert.equal(h.calls.length,1);assert.equal(h.saved.length,0);
+  h.node('loop').checked=false;h.node('timeline-start').value='.5';await h.controller.applyAudio();
+  assert.equal(h.calls.length,2);assert.equal(h.saved.length,0);assert.match(h.messages.at(-1)[0],/Vai trò/);
+});
 test('SRT import explicitly selects the existing caption track and finite template with no word timing fiction',async()=>{
   const h=harness(fixture.audio);h.respond(async(path,body)=>copy(body?fixture.subtitles:fixture.audio));await h.controller.load();await h.controller.applySubtitles();
   assert.equal(h.saved.length,1,JSON.stringify(h.messages));const b=h.calls[1].body;assert.equal(b.replace_track_id,fixture.subtitles.mutation.track_id);assert.equal(b.timebase,'timeline');assert.equal(b.offset_seconds,0);assert.equal(b.trim_to_timeline,false);

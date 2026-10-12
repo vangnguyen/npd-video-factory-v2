@@ -134,7 +134,7 @@ def validate(document):
     generated=[];assets={v['id']:v for v in canonical_assets(document)}
     for track in snapshot.tracks:
         if track.track_id=='trk_native_video':continue
-        if track.type not in {'audio','text'} or track.kind not in {'voice','music','subtitles'}:raise WorkflowError('NARRATED_MEDIA_TRACK_INVALID')
+        if track.type not in {'audio','text'} or track.kind not in {'voice','music','sfx','subtitles'}:raise WorkflowError('NARRATED_MEDIA_TRACK_INVALID')
         for clip in track.clips:
             if clip.metadata.get('narrated_generated_voice') is True:
                 if (track.track_id!=VOICE_TRACK or track.kind!='voice' or clip.kind!='voice' or clip.asset_id!=ref['asset_id'] or

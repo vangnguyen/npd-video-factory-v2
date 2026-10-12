@@ -1,4 +1,4 @@
-"""Uploaded voice/music and captions mutate the existing canonical Source timeline."""
+"""Uploaded voice/music/SFX and captions mutate the existing canonical timeline."""
 import asyncio,copy,hashlib,json,math,re,unicodedata,uuid
 from .contracts import WorkflowError,digest
 from .store import now
@@ -102,7 +102,7 @@ def _track(snapshot,identifier,role,*,replace=False):
         return track
     if len(snapshot.tracks)>=32:raise WorkflowError('AUTO_EDIT_TIMELINE_LIMIT',400)
     track=TimelineTrack(track_id='trk_'+uuid.uuid4().hex[:24],type='text' if role=='subtitles' else 'audio',kind=role,
-        label={'voice':'Giọng nói tải lên','music':'Nhạc tải lên','subtitles':'Phụ đề tải lên'}[role],order=len(snapshot.tracks))
+        label={'voice':'Giọng nói tải lên','music':'Nhạc tải lên','sfx':'Hiệu ứng âm thanh tải lên','subtitles':'Phụ đề tải lên'}[role],order=len(snapshot.tracks))
     snapshot.tracks.append(track);return track
 
 def _asset(store,document,payload,kind):
