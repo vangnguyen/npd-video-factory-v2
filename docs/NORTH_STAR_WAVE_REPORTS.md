@@ -3825,3 +3825,20 @@ REGRESSIONS: matching full caption words, source video/audio coordinates, previe
 EXTERNAL BLOCKERS: real-provider/Owner/rights/production gates remain; Docker unavailable
 OWNER ACTION REQUIRED: none for safe continuation; listening/UAT remains deferred
 NEXT WAVE: original full uploaded-footage UI and genuine provider/semantic acceptance, remaining Mode A/B and North Star platform capabilities
+
+
+## Wave 3/6/8/16 — Mode B actual browser candidate
+
+WAVE: 3/6/8/16 component
+STATUS: actual browser/local workers/render/QC/cold PASS with explicit ASR/CI identities; full waves PARTIAL
+HEAD SHA: source parent 9d84ad810dc0d58af74de3507864e06989592a2b; exact final seal in external recovery/20261007/mode-b-browser-program-state.json
+CAPABILITIES COMPLETED: UI source-to-render candidate, read-only current-preview playback for Reviewer, correct source labels, caption overlay/disclosure/provenance/error guidance, bounded logout keep-alive handling, quiescent evidence export and exact recovery
+CAPABILITIES PARTIAL: genuine footage/recognition/alignment/semantics/tracking/rights/Owner/full Mode A/B/A-B-C/provider/production; 59 broad groups remain
+TESTS: Studio772 PASS; Native access/HTTP/RBAC23 PASS; no repeated API/media/Docker suite this increment
+REAL PROVIDER TESTS: none; reused local-real TTS WAV without inference; actual local HTTP/FFmpeg/Remotion/SQLite/backup only
+MOCK TESTS: generated moving pixels/synthetic music, three ASR transport requests and synthetic word intervals, explicit CI Editor/Reviewer; no Owner acceptance
+EVIDENCE: NATIVE_MODE_B_BROWSER.md; north-star/mode-b-browser-evidence.json; native-mode-b-browser-n4 Artifact A CI candidate, UI/player/console/three-width/restore proof; prior failed attempts retained
+REGRESSIONS: no role weakening, stale preview refused, invalid-CSRF body unread/connection closed, nonempty logout does not revoke, render/QC and final gate retained; accepted15/live source checked by source seal
+EXTERNAL BLOCKERS: genuine provider/account/budget/rights, Owner UAT and full Docker/production acceptance remain separate
+OWNER ACTION REQUIRED: none for continued safe implementation; listening/UAT deferred; no paid/publish/deploy/main approval exercised
+NEXT WAVE: original genuine uploaded-footage/Mode A/B/UI/semantic acceptance and remaining safe North Star platform gaps

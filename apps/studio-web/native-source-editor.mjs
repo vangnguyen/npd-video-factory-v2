@@ -164,12 +164,15 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     try{const values=await api(`/api/projects/${p.id}/versions`);if(historyKey!==key||getProject()?.id!==p.id)return;versions=sourceVersions(values);controls();}
     catch(error){if(historyKey===key){historyKey=null;onMessage(error.message,true);}}
   }
+  let disclosureProject=null;
   function renderSelected(force=false){
     const p=getProject(),source=isSourceProject(p),key=source?`${p.id}:${p.revision}:${selectedId}`:null;
     host.hidden=!source;reviewHome.hidden=!source;toolbar.hidden=!source;
     if(source){reviewHome.append(review);reviewLabel.lastChild.textContent=' Tôi đã xem preview hiện tại, kiểm tra điểm cắt, âm thanh nguồn, lời nói và quyền sử dụng. Tôi duyệt bản dựng này để render; video cuối vẫn cần xem, nghe và duyệt riêng.';}
-    else{marker.after(review);reviewLabel.lastChild.textContent=originalReviewText;shownKey=null;return;}
+    else{marker.after(review);reviewLabel.lastChild.textContent=originalReviewText;shownKey=null;disclosureProject=null;return;}
     if(!force&&(dirty||shownKey===key)){controls();return;}shownKey=key;
+    const opened=disclosureProject===p.id?new Set([...host.querySelectorAll('details[open]')].map(el=>el.querySelector('summary')?.textContent.trim()).filter(Boolean)):new Set();
+    disclosureProject=p.id;
     const found=selected(),clip=found?.clip,track=found?.track;
     host.innerHTML=`<p class="hint">Điểm cắt shot nguồn giữ âm thanh và phụ đề đồng bộ. Chỉnh từng track trong Advanced Timeline sẽ giữ lựa chọn riêng của track.</p>
       ${clip?`<h3>${esc(clip.label)}</h3><p class="hint">${esc(track.label)} · ${num(clip.duration)}s${track.locked?' · đã khóa':''}</p>
@@ -195,6 +198,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     host.append(cropRoot);
     host.append(trackingRoot);
     host.append(thumbnailRoot);
+    for(const section of host.querySelectorAll('details'))if(opened.has(section.querySelector('summary')?.textContent.trim()))section.open=true;
     void history();renderAdvanced();controls();
   }
   async function run(fn,{allowDirty=false}={}){

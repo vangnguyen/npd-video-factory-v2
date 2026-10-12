@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved,scriptReviewLabel,newProjectQuality} from '../native.mjs';
+import {jobActive,currentVideo,canRender,mediaLibrary,mediaBindings,mediaReady,mediaType,documentType,mediaAnalysisPending,defaultSceneOptions,musicType,finalApproved,scriptReviewLabel,newProjectQuality,nativeRenderLabel} from '../native.mjs';
 
 test('New quality policy is capability gated and older servers keep existing project contract',()=>{
   assert.deepEqual(newProjectQuality({capabilities:{north_star_quality:true}}),{production_quality:true});
@@ -74,4 +74,12 @@ test('Final download requires a review of the same video hash and revision',()=>
   const job={revision:3,result:{qc:{final_sha256:'bytes-a'}},final_review:{decision:'approve',revision:3,artifact_sha256:'bytes-a'}};
   assert.equal(finalApproved(job),true);
   for(const review of [null,{...job.final_review,decision:'reject'},{...job.final_review,revision:2},{...job.final_review,artifact_sha256:'other'}])assert.equal(finalApproved({...job,final_review:review}),false);
+});
+
+test('persisted source timelines keep their render label before async shot enrichment',()=>{
+  const p={document:{canonical_timeline:{snapshot:{metadata:{native_auto_edit_schema:'native-auto-edit-timeline-v1'}}}}};
+  const before=JSON.stringify(p);
+  assert.equal(nativeRenderLabel(p),'Render video nguồn đã duyệt');
+  assert.equal(JSON.stringify(p),before);
+  assert.equal(nativeRenderLabel(null),'Tạo giọng đọc & video');
 });

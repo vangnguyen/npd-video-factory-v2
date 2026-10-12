@@ -432,3 +432,8 @@ Wave 3A/8F/15 now freezes whole-file SHA before UI create/resume using bounded B
 ## Mode B integrated CI component
 
 The original deterministic CI flow A now executes one hash-pinned source through actual worker analysis, measured silence decisions, canonical edit/undo, attention crop fallback, complete word captions/B-roll/ducking, preview/simulated approval/final/QC and fresh-interpreter recovery. Long provider segments no longer lose text at bounded UI labels. Continue genuine uploaded footage/ASR/Vision/subject tracking, non-developer UI including publish/analytics, Owner UAT and full original A/B/C acceptance. This scoped CI candidate does not close those59 broad groups. See NATIVE_MODE_B_CI.md.
+
+
+## Native Mode B browser integration component
+
+The signed Studio browser now reaches actual local render/QC through the original source-edit workflow with separate CI Editor/Reviewer identities. Reviewer can play a valid saved preview without edit permission or another job; logout body consumption, source guidance, caption overlay and saved edit panels are repaired. Generated pixels/reused local-real speech/mock word intervals are explicit. Three widths, 772 Studio/23 Native access tests, exact cold restore and final approval/publishing gates pass. Continue genuine uploaded footage/ASR/Vision/tracking, full non-developer Mode A/B, real account publication/analytics and original Owner/A-B-C/production acceptance. All59 broad groups remain unclosed. See NATIVE_MODE_B_BROWSER.md.

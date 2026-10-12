@@ -1,0 +1,182 @@
+{
+  "schema_version": "north-star-mode-b-browser-v1",
+  "recorded_at": "2026-10-12T16:51:02.437297+00:00",
+  "source_parent": "9d84ad810dc0d58af74de3507864e06989592a2b",
+  "wave": "3/6/8/16 component; full original waves remain PARTIAL",
+  "tests": {
+    "Studio": 772,
+    "Native_access_HTTP_RBAC": 23,
+    "API_rerun_this_increment": false,
+    "previous_sealed_media_native_tests": 58,
+    "previous_sealed_API_tests": 22,
+    "Docker_tested": false
+  },
+  "test_logs": {
+    "mode-b-browser-studio-final.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-browser-studio-final.log",
+      "sha256": "955018bc574c40d77cdeeae02443f32752e9349eb0c31d4bd35f6ba3522048a0",
+      "bytes": 79569
+    },
+    "mode-b-http-access-regression.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-http-access-regression.log",
+      "sha256": "769f5f95fdfcab26a1527f6c22a4a88a795036eb0f42b2a0b7a5443e94995350",
+      "bytes": 5184
+    },
+    "mode-b-http-keepalive-baseline.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\mode-b-http-keepalive-baseline.log",
+      "sha256": "9b96844f4a4439f12c50ecd9efcac767de4a0cd10dab92eb52767556ea1ecbb9",
+      "bytes": 1565
+    }
+  },
+  "passing_browser": {
+    "proof": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\evidence.json",
+      "sha256": "03c2aee12edb26d8d1a672b6f9c0b3c8cdcf1790eff64a412d1a71e61244ab09",
+      "bytes": 1894
+    },
+    "receipt": {
+      "schema_version": "native-mode-b-browser-proof-v1",
+      "actual_UI_through_render_QC": true,
+      "project_id": "daa0f68bf46048f9bb8abf704e52fe6c",
+      "render_job_id": "279f302495b74c41ab2175a345df152e",
+      "final_sha256": "5e07492dbc93b76c141b6e217909d8bd0debdfa5b690b0a35316be29ea37d11f",
+      "words_preserved": 30,
+      "silence_cuts": 2,
+      "source_clips_after_split_undo": 3,
+      "output_seconds": 7.4,
+      "ASR_fixture_requests_total": 3,
+      "ASR_requests_after_two_restores": 0,
+      "real_provider_calls": 0,
+      "paid_calls": 0,
+      "new_TTS_inferences": 0,
+      "Reviewer_fixture_approval": true,
+      "Owner_UAT": false,
+      "full_Mode_B_ready": false,
+      "artifact_A_real_acceptance": false,
+      "publishing_enabled": false,
+      "production_deployed": false,
+      "cold_restore_exact": true,
+      "final_approval_gate_retained": true,
+      "layout_widths": [
+        1366,
+        1920,
+        2560
+      ],
+      "owned_temporary_roots_cleaned": [
+        {
+          "path": "C:\\Users\\PC\\AppData\\Local\\Temp\\vf-mode-b-browser-ft54pra9",
+          "absent": true
+        },
+        {
+          "path": "C:\\Users\\PC\\AppData\\Local\\Temp\\vf-mode-b-browser-pbpt0les",
+          "absent": true
+        },
+        {
+          "path": "C:\\Users\\PC\\AppData\\Local\\Temp\\vf-mode-b-browser-nfr8a2vv",
+          "absent": true
+        },
+        {
+          "path": "C:\\Users\\PC\\AppData\\Local\\Temp\\vf-mode-b-browser-06e3yqkc",
+          "absent": true
+        }
+      ],
+      "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\artifact-A-ci\\daa0f68bf46048f9bb8abf704e52fe6c",
+      "backup": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\owned-browser-state.zip",
+      "retained_failure_n1": "snapshot parent missing; no accepted artifact was lost",
+      "retained_failure_n3": "logout keep-alive body caused {}GET/501; fixed and browser verified in n4"
+    },
+    "cold_restore": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\cold-restore.json",
+      "sha256": "e86ea77d10128fa9020628b23e21764e0e292540bf7faa066243437344aa1893",
+      "bytes": 1374
+    },
+    "archive": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\owned-browser-state.zip",
+      "sha256": "d8682cfd2183532e1ae8bd20cc7a123bee7c9fe12b2f4ea08f357d66d8fabd0e",
+      "bytes": 78319145
+    },
+    "artifact_exports": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\artifact-A-ci\\daa0f68bf46048f9bb8abf704e52fe6c\\exports.json",
+      "sha256": "b75ea8cfbcca2221f5fc069731205351f0832ff4bba75003f443ea8e8c118ca4",
+      "bytes": 2816
+    },
+    "exported_file_count": 32,
+    "console": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\ui-console.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    "layouts": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\ui-layouts.json",
+      "sha256": "4c033e132db8e82b0616a165c049f70e3c9396c256551645fe78301ee17fe872",
+      "bytes": 1215
+    },
+    "final_state": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\ui-final-state.json",
+      "sha256": "175581248868736375f08bdb20c3ae2ca335e28326695336f44179f95c8f9e02",
+      "bytes": 343
+    },
+    "screenshots": {
+      "1366": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\ui-final-1366.jpg",
+        "sha256": "bbd50b318c6953897fd93ac1b2e18096b9bc345817da30c2814ecf03b62a1dca",
+        "bytes": 77298
+      },
+      "1920": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\ui-final-1920.jpg",
+        "sha256": "1efc9abf72f38c6caa7ad8ef22ac6cc69ec1074b138a573802b2af0e4a9e1f67",
+        "bytes": 86160
+      },
+      "2560": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n4\\ui-final-2560.jpg",
+        "sha256": "32de46dd900e8b86a5c87b4805e8b4a15f66d6be6207ebdddcf2ad9756a29f47",
+        "bytes": 106795
+      }
+    }
+  },
+  "prior_browser_stages": {
+    "native-mode-b-browser-n2": {
+      "helper": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n2\\helper.json",
+        "sha256": "4dffa2c665befee17aa252e98493f3bad55684895039baae8b89c24baefd5597",
+        "bytes": 3600
+      },
+      "provider_calls": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n2\\fixture-provider-calls.json",
+        "sha256": "b1522f62df7d564af239aebc9d6843826d10c28e0265bf8a35d8e13219aa5039",
+        "bytes": 199
+      }
+    },
+    "native-mode-b-browser-n3": {
+      "helper": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n3\\helper.json",
+        "sha256": "ca96e8eb6fc04703f4d9138a183923e2308f540a2ee359e74888f63522b37804",
+        "bytes": 3600
+      },
+      "provider_calls": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-mode-b-browser-n3\\fixture-provider-calls.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "bytes": 2
+      }
+    }
+  },
+  "scope": {
+    "pixels": "generated fixture",
+    "speech": "reused hash-pinned local-real TTS WAV, no new inference",
+    "ASR": "explicit transport fixture, synthetic word intervals",
+    "human": "explicit CI Editor/Reviewer, not Owner",
+    "analytics": "empty-state unavailable metrics only",
+    "publication": "disabled, no publication",
+    "n4_candidate_export": "export function invoked on idle owned store before shutdown; no replay or extra approval",
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false,
+    "historical_policy_blocked_roots_deleted": false
+  },
+  "SOURCE_PRESERVED": "final commit/push/bundle receipt recorded externally",
+  "PHASE10_TECHNICALLY_READY": "YES",
+  "OWNER_UAT_REQUIRED": "YES",
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

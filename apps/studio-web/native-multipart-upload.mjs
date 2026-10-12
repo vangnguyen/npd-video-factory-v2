@@ -66,7 +66,19 @@ export function initializeNativeMultipartUpload({api,binary,getState,root=docume
     summary.textContent=selected?`${labels[selected.request.kind]} · ${statuses[selected.status]} · đã nhận ${selected.received_bytes.toLocaleString('vi-VN')} / ${selected.request.total_bytes.toLocaleString('vi-VN')} bytes${selected.status==='completed'&&selected.result.rights_status==='unknown'?' · Quyền phát hành chưa được xác minh.':''}`:'';controls();};
   async function run(fn){sync();const s=getState();if(working||s.busy||!s.project)return;const expected=context(),ticket=++generation;working=true;pauseRequested=false;onWorking(true);controls();const accept=()=>expected===context()&&ticket===generation;
     try{await fn(s,accept);}catch(e){if(accept()){status.textContent=e.message;onMessage(e.message,true);}}finally{working=false;onWorking(false);sync();}}
-  function chosen(s){const f=file.files?.[0];if(!s.canEdit||s.dirty||s.active||s.project?.archived||!f||!rights.checked||!Number.isSafeInteger(f.size)||f.size<1||f.size>limits[kind.value]*chunkBytes||!mimes[kind.value]?.includes(mime.value))throw Error('Lưu dự án, chọn đúng loại/file và xác nhận quyền sử dụng trước.');return f;}
+  function chosen(s){
+    const f=file.files?.[0];
+    if(!s.canEdit)throw Error('Vai trò hiện tại không có quyền tải tư liệu.');
+    if(s.dirty)throw Error('Lưu chỉnh sửa dự án trước khi tải tư liệu.');
+    if(s.active)throw Error('Chờ công việc đang chạy hoàn tất trước khi tải tư liệu.');
+    if(s.project?.archived)throw Error('Khôi phục dự án đã lưu trữ trước khi tải tư liệu.');
+    if(!f)throw Error('Chọn file gốc trước khi tải tư liệu.');
+    if(!rights.checked)throw Error('Xác nhận quyền sử dụng cho file đang chọn trước khi tải.');
+    if(!Number.isSafeInteger(f.size)||f.size<1)throw Error('File đang chọn rỗng hoặc không đọc được kích thước. Chọn lại file.');
+    if(f.size>limits[kind.value]*chunkBytes)throw Error('File vượt giới hạn cho loại tư liệu đã chọn.');
+    if(!mimes[kind.value]?.includes(mime.value))throw Error('Chọn MIME được hỗ trợ cho loại tư liệu này.');
+    return f;
+  }
   async function sourceHash(f,accept){
     const identity=[kind.value,mime.value,illustration.checked];
     const current=()=>accept()&&!pauseRequested&&file.files?.[0]===f&&rights.checked&&identity[0]===kind.value&&identity[1]===mime.value&&identity[2]===illustration.checked;

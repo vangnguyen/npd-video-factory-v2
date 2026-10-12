@@ -16,6 +16,7 @@ export async function loadNativeCosts(session,loader=()=>import('./native-costs.
 }
 export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
+export const nativeRenderLabel=project=>isSourceProject(project)?'Render video nguồn đã duyệt':usesNarratedWorkflow(project)?'Render video đã duyệt':'Tạo giọng đọc & video';
 export const supportsMusicLoopProject=(project,sourceEnabled=false,narratedEnabled=false)=>Boolean(
   sourceEnabled&&isSourceProject(project)||narratedEnabled&&project?.document?.canonical_timeline?.snapshot?.metadata?.native_shot_schema==='native-shot-timeline-v1');
 export function musicLoopHeaders(project,value,enabled=false,narratedEnabled=false){
@@ -367,7 +368,7 @@ if (typeof document !== "undefined") {
     $("approval-state").textContent=project?.approval?.approval_scope==='narration_only'?"Đã duyệt để tạo lời đọc":project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
     const workflowHint=$("narrated-workflow-hint");if(workflowHint){workflowHint.textContent=narratedWorkflowGuide(project);workflowHint.hidden=!workflowHint.textContent;}
     const reviewCopy=$("production-review-copy");if(reviewCopy)reviewCopy.textContent=usesNarratedWorkflow(project)?'Tôi đã xem và nghe preview có tiếng của phiên bản này, kiểm tra nội dung, phụ đề, nhạc và quyền sử dụng tư liệu. Tôi duyệt để render video cuối.':'Tôi đã kiểm tra lời đọc, thông tin cần nguồn, ảnh/video từng cảnh và quyền sử dụng. Tôi duyệt phiên bản này để tạo giọng đọc và video.';
-    $("render").textContent=usesNarratedWorkflow(project)?'Render video đã duyệt':'Tạo giọng đọc & video';
+    $("render").textContent=nativeRenderLabel(project);
     $("script-review-state").textContent=scriptReviewLabel(project);
     $("script-review-state").hidden=!scriptReviewLabel(project);
     const jobs=project?.jobs??[];

@@ -2,9 +2,23 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {supportsShotStudio,loadNativeShotStudio,nativeLegacyLayout} from '../native.mjs';
-import {projectShots,shotMutationAllowed,changedShotValues,reorderedShotIds,safeSuggestion,previewLabel,previewTimingLabel,escapeText,scriptReviewAllowed,scriptStageReview,readableSuggestion,boundPreview,currentStudioRender,supportsVoiceQuality,loadVoiceQuality,voiceQualityApplyAllowed,voiceQualityLabel,narratedPreviewReady} from '../shot-studio.mjs';
+import {projectShots,shotMutationAllowed,changedShotValues,reorderedShotIds,safeSuggestion,previewLabel,previewTimingLabel,escapeText,scriptReviewAllowed,scriptStageReview,readableSuggestion,boundPreview,currentStudioRender,supportsVoiceQuality,loadVoiceQuality,voiceQualityApplyAllowed,voiceQualityLabel,narratedPreviewReady,savedPreviewPlayable} from '../shot-studio.mjs';
 
 const project={id:'project',revision:7,archived:false,jobs:[],shot_timeline:{version:3,sha256:'timeline-a',shots:[{shot_id:'s-a',scene:1,visual:'Biển',narration:'Nội dung A',subtitle:'Nội dung A',on_screen_text:'A',asset_id:'asset-a',duration:4,narration_enabled:true,crop_strategy:'contain',motion:'none',source_start:0,transition:'cut'},{shot_id:'s-b',scene:2,duration:5}]}};
+
+test('source timeline preview guidance uses original audio before render and keeps narrated defaults separate',()=>{
+  const p={...project,document:{canonical_timeline:{snapshot:{metadata:{native_auto_edit_schema:'native-auto-edit-timeline-v1'}}}}};
+  const before=JSON.stringify(p);
+  for(const preview of [null,{status:'EMPTY'},{status:'QUEUED'},{status:'RUNNING'},{status:'STALE'},{status:'FAILED'}]){
+    assert.doesNotMatch(previewLabel(preview,p),/chưa có giọng đọc/);
+    assert.match(previewTimingLabel('proxy',preview,p),/âm thanh nguồn/);
+    assert.doesNotMatch(previewTimingLabel('proxy',preview,p),/Thùy Dung|ước tính/);
+  }
+  assert.match(previewTimingLabel('final',null,p),/âm thanh gốc/);
+  assert.equal(JSON.stringify(p),before);
+  assert.match(previewLabel(null),/chưa có giọng đọc/);
+  assert.match(previewTimingLabel('proxy'),/ước tính/);
+});
 
 test('narrated preview is bound to current canonical edits and audio, with distinct approval eligibility',()=>{
   const p={...project,document:{prepared_narration:{voice_audio_sha256:'voice-a'}}},preview={status:'READY',revision:7,timeline_sha256:'timeline-a',video_url:'/private-fixture-preview',
@@ -175,4 +189,14 @@ test('Applying a known voice-quality policy requires saved idle active project s
   assert.equal(voiceQualityApplyAllowed(selected,capabilities,catalog,warm.id),false,'Existing exact policy is a no-op');
   assert.equal(voiceQualityLabel(selected,catalog),warm.label);
   assert.equal(voiceQualityApplyAllowed({...selected,document:{voice_quality:{...selected.document.voice_quality,sha256:'stale'}}},capabilities,catalog,warm.id),true);
+});
+
+test('saved preview playback is read-only and refuses stale or unbound media',()=>{
+  const p={...project,shot_timeline:{...project.shot_timeline,editing_mode:'source_footage'},document:{canonical_timeline:{snapshot:{metadata:{native_auto_edit_schema:'native-auto-edit-timeline-v1'}}}}};
+  const v={status:'READY',revision:7,timeline_sha256:'timeline-a',video_url:'/api/projects/project/preview/video?version=3',audio_mode:'canonical_timeline_proxy',preview_profile:'native-source-timeline-proxy-v2',final_approval_eligible:false,manifest:{playable:true,timeline_sha256:'timeline-a',timeline_version:3,final_approval_eligible:false}};
+  const before=JSON.stringify([p,v]);
+  assert.equal(savedPreviewPlayable(p,v),true);
+  for(const bad of [{...v,revision:8},{...v,timeline_sha256:'foreign'},{...v,status:'STALE'},{...v,video_url:null},{...v,preview_profile:'native-source-timeline-proxy-v1'},{...v,manifest:{...v.manifest,playable:false}}])assert.equal(savedPreviewPlayable(p,bad),false);
+  assert.equal(savedPreviewPlayable({...p,archived:true},v),false);
+  assert.equal(JSON.stringify([p,v]),before);
 });
