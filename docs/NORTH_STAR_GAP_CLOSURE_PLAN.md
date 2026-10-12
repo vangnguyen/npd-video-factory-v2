@@ -404,3 +404,7 @@ Wave 3B now has immutable general VI/EN/auto profiles, scoped UI selection, mode
 ## Decoded source pixel clock component
 
 Wave 3F/4/8/15 now has versioned new source-frame rational PTS, original job/decoder-log/manifest authority, actual VFR/nonzero-start and cold recovery. Legacy observations are not relabelled or replaced. Remaining P0: genuine semantics/providers/ASR, dense source motion/audio clocks, continuous tracking, full non-developer/Owner UI and original Mode A/B/A-B-C acceptance. Continue those safe gaps; provider budget/secret and production gates remain separate.
+
+## Dense video-clock component
+
+Wave 3C/3E/4 now has real dense motion/shot PTS, bounded sanitized records, v4 cache/fingerprints and preserved Native v3 reads. Two generated-source/independent FFprobe/cold-restore rehearsals pass. Remaining: dense audio clock and ASR-to-source mapping, genuine semantics/tracking/providers, full original Mode A/B/UI/Owner/A-B-C and production. No broader readiness claim is made.

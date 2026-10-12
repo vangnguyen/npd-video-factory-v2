@@ -3649,3 +3649,31 @@ EXTERNAL BLOCKERS: provider configuration/budget for genuine semantics/ASR, Owne
 OWNER ACTION REQUIRED: none for remaining safe implementation; separate external gates apply
 
 NEXT WAVE: dense source analysis and remaining genuine media/Mode B UI/E2E, preserving the entire North Star scope
+
+## Wave 3C / 3E / 4 / 8 / 15 — Dense video clocks
+
+WAVE: 3C/3E/4/8/15 component
+
+STATUS: implemented/local-real tested; full waves PARTIAL
+
+HEAD SHA: source parent 286203b8c605feb58b9fe6fa7bbe2c2dfcf1e1b1; final commit in workspace dense-visual-clock-program-state.json
+
+CAPABILITIES COMPLETED: actual motion/shot PTS; bounded concurrent pixel/log decoding; sanitized clock records; v4 fingerprints and v3 Native compatibility; independent VFR/offset-shot and cold restore
+
+CAPABILITIES PARTIAL: audio/ASR clocks; semantics/tracking/providers; full original Mode A/B/UI/Owner/production
+
+TESTS: Native 25 PASS; Linux API 17 PASS / 1 missing-FFmpeg media skip; previous Studio 750 is prior evidence, not rerun in this backend increment
+
+REAL PROVIDER TESTS: real local FFmpeg/FFprobe/SQLite only; no external provider
+
+MOCK TESTS: ASR regression fixtures, no genuine speech/provider acceptance
+
+EVIDENCE: NATIVE_DENSE_VISUAL_CLOCK.md; dense-visual-clock-evidence.json; two source/analysis/independent-probe bundles; separate-process restore; source checkpoint/recovery pair
+
+REGRESSIONS: source preview/tracking/ASR analysis and v3 compatibility scoped checks pass; old accepted artifacts checked at preservation
+
+EXTERNAL BLOCKERS: provider budget/credentials and original Owner/non-developer/production acceptance
+
+OWNER ACTION REQUIRED: none for remaining safe work; real paid/provider/deployment gates stay separate
+
+NEXT WAVE: dense audio and ASR/source clock mapping plus full original Mode B gaps

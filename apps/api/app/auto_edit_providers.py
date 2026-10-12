@@ -362,7 +362,7 @@ class DeterministicMediaSignalProvider:
 
 class FFmpegMediaSignalProvider:
     key = "ffmpeg-media-signals"
-    algorithm_version = "scene-silence-waveform-visual-v3"
+    algorithm_version = "scene-silence-waveform-visual-v4"
     _SHOT_TIME = re.compile(r"pts_time:([0-9.]+)")
     _SILENCE_START = re.compile(r"silence_start: ([0-9.]+)")
     _SILENCE_END = re.compile(r"silence_end: ([0-9.]+).+silence_duration: ([0-9.]+)")
@@ -404,10 +404,16 @@ class FFmpegMediaSignalProvider:
         shot_task = self._run(
             [
                 "-hide_banner",
+                "-nostdin",
+                "-copyts",
+                "-start_at_zero",
+                "-protocol_whitelist", "file,pipe",
                 "-i",
                 str(path),
+                "-map", "0:v:0", "-an",
                 "-filter:v",
-                "select='gt(scene,0.35)',metadata=mode=print:key=lavfi.scene_score,showinfo",
+                "select='gt(scene,0.35)',showinfo,metadata=mode=print:key=lavfi.scene_score",
+                "-fps_mode", "passthrough", "-frames:v", "1001",
                 "-f",
                 "null",
                 "-",
@@ -441,12 +447,17 @@ class FFmpegMediaSignalProvider:
             silence_output = ""
             waveform = None
         duration = float(metadata.duration_seconds or 0)
-        scores = {}; timestamp = None
+        from .decoded_frame_clock import parse_showinfo,BASIS
+        clock_lines=[line for line in shot_output.splitlines() if re.search(r'\[Parsed_showinfo_[^\]]+\].*(?:config in time_base:|\bn:\s*\d+\s+pts:)',line)]
+        have_frames=any(re.search(r'\bn:\s*\d+\s+pts:',line) for line in clock_lines)
+        stamps=parse_showinfo('\n'.join(clock_lines)+'\n',maximum_frames=1000) if have_frames else []
+        scores = {}; timestamp = None;ordinal=0
         for line in shot_output.splitlines():
-            times = self._SHOT_TIME.findall(line)
-            if times:timestamp = float(times[-1])
+            if re.search(r'\[Parsed_showinfo_[^\]]+\].*\bn:\s*\d+\s+pts:',line):
+                timestamp=stamps[ordinal].timestamp_seconds;ordinal+=1
             score = re.search(r'lavfi.scene_score=([0-9.]+)',line)
             if score and timestamp is not None:scores[timestamp] = min(1.,float(score.group(1)))
+        if len(scores)!=len(stamps):raise ValueError('scene score/decoded clock counts differ')
         boundaries = tuple((timestamp,scores[timestamp]) for timestamp in sorted(scores)
             if .05 < timestamp < max(0,duration-.05))
         starts = [float(value) for value in self._SILENCE_START.findall(silence_output)]
@@ -465,6 +476,9 @@ class FFmpegMediaSignalProvider:
                 "fixture": False,
                 "paid_call": False,
                 "scene_detector": "ffmpeg-showinfo",
+                "scene_timestamp_basis":BASIS,"scene_decoded_clock_verified":True,
+                "scene_decoder_clock_log":'\n'.join(clock_lines)+'\n',
+                "scene_decoded_stamps":[stamp.model_dump(mode='json') for stamp in stamps],
                 "silence_detector": "ffmpeg-silencedetect" if metadata.audio_codec else "no-audio-stream",
                 "silence_level_measurement": "not_measured; detector threshold is configuration",
             },

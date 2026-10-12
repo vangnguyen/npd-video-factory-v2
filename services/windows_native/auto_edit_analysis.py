@@ -43,20 +43,31 @@ def asset_reference(asset):
     return "ast_" + digest(asset["id"])[:32]
 
 
-def fingerprint(project_id, document, asset):
+def fingerprint(project_id, document, asset, *, signal_algorithm=None):
     record = analysis_for_asset(document, asset)
     return digest({"algorithm": ALGORITHM, "project_id": project_id,
         "asset_id": asset["id"], "source_sha256": asset["sha256"],
         "asr_analysis_sha256": record["analysis_sha256"] if record else None,
-        "signals": FFmpegMediaSignalProvider.algorithm_version,
+        "signals": signal_algorithm or FFmpegMediaSignalProvider.algorithm_version,
         "configuration": AutoEditAnalysisRequest(asset_id=asset_reference(asset)).model_dump(mode="json")})
+
+
+def matches_saved_fingerprint(value,project_id,document,asset):
+    selected=value.provenance.get('signal_algorithm')
+    if selected is not None:
+        if selected not in {FFmpegMediaSignalProvider.algorithm_version,'scene-silence-waveform-visual-v3'}:
+            return False
+        return value.fingerprint==fingerprint(project_id,document,asset,signal_algorithm=selected)
+    # Historical Native results did not expose the recipe separately. Match its
+    # exact former fingerprint; this grants no decoded-clock or fresh authority.
+    return value.fingerprint==fingerprint(project_id,document,asset,signal_algorithm='scene-silence-waveform-visual-v3')
 
 
 def pending(document, project_id):
     saved = document.get("auto_edit_analyses", [])
     return [asset for asset in project_assets(document) if asset.get("kind") == "video"
         and not any(item.get("native_asset_id") == asset["id"] and
-            item.get("analysis", {}).get("fingerprint") == fingerprint(project_id, document, asset)
+            matches_saved_fingerprint(AutoEditAnalysisRead.model_validate(item['analysis']),project_id,document,asset)
             for item in saved)]
 
 
@@ -143,7 +154,7 @@ def make_analysis(project_id, document, asset, metadata, signals):
         project_id="prj_" + project_id, project_version_id=None, asset_id=configuration.asset_id,
         status="succeeded", fingerprint=key, configuration=configuration, source_media=metadata,
         transcript=transcript, scenes=scenes, silence_decisions=decisions, highlights=highlights,
-        error_code=None, provenance={"algorithm": ALGORITHM, "source_asset_checksum": asset["sha256"],
+        error_code=None, provenance={"algorithm": ALGORITHM, "signal_algorithm":FFmpegMediaSignalProvider.algorithm_version,"source_asset_checksum": asset["sha256"],
             "native_asset_id": asset["id"], "saved_asr_analysis_sha256": record["analysis_sha256"] if record else None,
             "media_signals": {**signals.provenance, "waveform": signals.waveform, "visual": signals.visual,
                 "silence_intervals": signals.silence_intervals},
@@ -201,7 +212,7 @@ def validate_record(record, project_id, document, asset, *, require_current=True
     if value.project_id != "prj_" + project_id or record["native_asset_id"] != asset["id"] or value.asset_id != asset_reference(asset):
         raise WorkflowError("AUTO_EDIT_ANALYSIS_SOURCE_MISMATCH")
     if value.provenance.get("source_asset_checksum") != asset["sha256"] or (require_current and
-            value.fingerprint != fingerprint(project_id, document, asset)):
+            not matches_saved_fingerprint(value,project_id,document,asset)):
         raise WorkflowError("AUTO_EDIT_ANALYSIS_STALE")
     return value
 
@@ -224,7 +235,7 @@ def view(store, project_id):
         if asset is None:
             continue
         analysis = validate_record(record, project_id, document, asset, require_current=False)
-        if analysis.fingerprint != fingerprint(project_id, document, asset):
+        if not matches_saved_fingerprint(analysis,project_id,document,asset):
             continue
         transcript = selected_transcript(document, analysis)
         selected = analysis.model_copy(update={"transcript": transcript})

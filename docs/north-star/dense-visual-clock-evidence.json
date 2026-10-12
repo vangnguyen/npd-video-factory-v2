@@ -1,0 +1,151 @@
+{
+  "schema_version": "north-star-dense-visual-clock-v1",
+  "recorded_at": "2026-10-12T09:46:40.028483+00:00",
+  "source_parent": "286203b8c605feb58b9fe6fa7bbe2c2dfcf1e1b1",
+  "wave": "3C/3E/4/8/15 component; full waves partial",
+  "tests": {
+    "Native": 25,
+    "Native_modules": 5,
+    "API": 17,
+    "API_media_skipped_missing_Linux_FFmpeg": 1,
+    "new_Native_clock": 4,
+    "prior_Studio": 750,
+    "Studio_not_rerun_backend_only": true
+  },
+  "test_logs": {
+    "dense-visual-clock-native-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\dense-visual-clock-native-n2.log",
+      "sha256": "a1ef0c540fa777ea770e720cb654171b640d5f5cea0c1cc42e720dc14cd77e5e",
+      "bytes": 103
+    },
+    "dense-visual-clock-api-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\dense-visual-clock-api-n2.log",
+      "sha256": "51fa0a0f776bb070cbb66c4edffe3127e6e4408f85a3cd1b9b9738a382610b82",
+      "bytes": 113
+    }
+  },
+  "rehearsal": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\evidence.json",
+    "sha256": "96cea91ac94e107432b3712cb68b573211673ca03584d677c24f9cae5df623da",
+    "bytes": 3910
+  },
+  "cold": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\cold.json",
+    "sha256": "3190df0c16f3b00021b8f05b0ab27bb01db12a84c463841cd438ea9f87e5f769",
+    "bytes": 115
+  },
+  "backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\owned-dense-state.zip",
+    "sha256": "42fd845ca4f069c0a46e4787f413a96d76d07b9b41e8dc116c18b3db331bc387",
+    "bytes": 31746
+  },
+  "exports": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\cold.json",
+      "sha256": "3190df0c16f3b00021b8f05b0ab27bb01db12a84c463841cd438ea9f87e5f769",
+      "bytes": 115
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\evidence.json",
+      "sha256": "96cea91ac94e107432b3712cb68b573211673ca03584d677c24f9cae5df623da",
+      "bytes": 3910
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\expected.json",
+      "sha256": "5878bd68e0f9951dd65dd250046a231f4cabd52df179369e11bd97887d8e06bf",
+      "bytes": 87481
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\offset-shot\\analysis.json",
+      "sha256": "ffbb345c22bebad0cd40479ed954c3292103502e6e4083b992c43f819c3b10c3",
+      "bytes": 27163
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\offset-shot\\independent-check.json",
+      "sha256": "31ac5377703679a89be09d184f385e139dc77cff3164b943817c2fa5e6630355",
+      "bytes": 1840
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\offset-shot\\project.json",
+      "sha256": "798dab0096673918c340015a38d91a3a556dd4f488acc11b8752785780a9f38c",
+      "bytes": 45144
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\offset-shot\\source.mp4",
+      "sha256": "bd8bb5aba1be343f1943b5d3a083d26670af56d6382ffeb0d6e8b6d187da9750",
+      "bytes": 3380
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\offset-shot\\visual.json",
+      "sha256": "58f604a5cfbaf29c528e96764a2b89f2d9fd70fd5f9992f5cfc661c6d21b7ce5",
+      "bytes": 4891
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\vfr\\analysis.json",
+      "sha256": "d53f724b797cf003612f7030f3df5a0dea6461fe3ad1fda8ac1b566f1a7d5656",
+      "bytes": 18419
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\vfr\\independent-check.json",
+      "sha256": "668bb21d2124f1002c781359d854fd97f2c4847805d332cf48a4ce1acd6cc19c",
+      "bytes": 406
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\vfr\\project.json",
+      "sha256": "b608ce0afd810cb9f30f2f0c3230345af8560a0f8c9d4aed7c0b15f014afce79",
+      "bytes": 35432
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\vfr\\source.mp4",
+      "sha256": "d9e46f160423dc544c7c18273d5c2e218eca63a5c0bbf8d02bcd0a1bd446e14a",
+      "bytes": 2079
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-dense-visual-n1\\vfr\\visual.json",
+      "sha256": "10716beb254e0711a30774f500d151b499261e42665227babff9c6a59208a4ef",
+      "bytes": 4953
+    }
+  ],
+  "motion_and_scene_decoded_source_clock_local_real": true,
+  "v3_fingerprint_and_history_preserved": true,
+  "audio_and_ASR_clock_acceptance": false,
+  "actual_browser": false,
+  "semantic_Vision": false,
+  "ASR_provider": false,
+  "Owner_UAT": false,
+  "external_provider_calls": 0,
+  "paid_calls": 0,
+  "local_TTS_inferences": 0,
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  },
+  "main_merged": false,
+  "production_deployed": false,
+  "publishing_enabled": false,
+  "historical_artifacts_replaced": false,
+  "owned_rehearsal_roots_cleaned": true,
+  "remaining": [
+    "audio/ASR source timing",
+    "genuine semantics/tracking/providers",
+    "full original Mode A/B/UI/Owner/A-B-C",
+    "production acceptance"
+  ]
+}

@@ -5,6 +5,8 @@ import asyncio
 import hashlib
 import math
 from pathlib import Path
+import re
+from .decoded_frame_clock import parse_showinfo,select_filter,targets,BASIS
 
 WIDTH, HEIGHT = 160, 90
 
@@ -35,10 +37,12 @@ async def measure_visual_signals(path: Path, *, executable: str, duration_second
     if not 2<=maximum_frames<=1000:
         raise ValueError('visual sample bound must be between 2 and 1000')
     rate=min(2.,maximum_frames/duration_seconds)
-    process=await asyncio.create_subprocess_exec(executable,'-v','error','-nostdin','-i',str(path),
-        '-map','0:v:0','-an','-vf',f'fps={rate:.12f}:start_time=0,scale={WIDTH}:{HEIGHT},format=gray',
-        '-frames:v',str(maximum_frames),'-f','rawvideo','-pix_fmt','gray','pipe:1',
-        stdout=asyncio.subprocess.PIPE,stderr=asyncio.subprocess.DEVNULL)
+    requested=targets(duration_seconds,min(maximum_frames,max(1,math.ceil(duration_seconds*rate))))
+    process=await asyncio.create_subprocess_exec(executable,'-hide_banner','-nostdin','-copyts','-start_at_zero',
+        '-protocol_whitelist','file,pipe','-i',str(path),'-map','0:v:0','-an',
+        '-vf',select_filter(requested)+f',scale={WIDTH}:{HEIGHT},format=gray,showinfo','-fps_mode','passthrough',
+        '-frames:v',str(maximum_frames+1),'-f','rawvideo','-pix_fmt','gray','pipe:1',
+        stdout=asyncio.subprocess.PIPE,stderr=asyncio.subprocess.PIPE)
     frames=[]
     async def consume():
         previous=None
@@ -47,18 +51,38 @@ async def measure_visual_signals(path: Path, *, executable: str, duration_second
             except asyncio.IncompleteReadError as error:
                 if error.partial:raise ValueError('incomplete decoded video frame') from error
                 break
-            timestamp=round(len(frames)/rate,6)
-            frames.append({'timestamp_seconds':timestamp,**frame_signals(frame,previous)})
+            frames.append(frame_signals(frame,previous))
             previous=frame
             if len(frames)>maximum_frames:raise ValueError('visual decoder exceeded sample bound')
         await process.wait()
         if process.returncode!=0 or not frames:raise RuntimeError('visual decode failed or returned no frames')
-    try:await asyncio.wait_for(consume(),timeout=timeout_seconds)
+    async def consume_log():
+        chunks=[];size=0
+        while chunk:=await process.stderr.read(65536):
+            size+=len(chunk)
+            if size>2*1024*1024:raise ValueError('visual decoder log exceeded bound')
+            chunks.append(chunk)
+        # Retain clock/config rows; filenames and arbitrary SEI payloads are excluded.
+        text=b''.join(chunks).decode('utf-8','strict')
+        return '\n'.join(line for line in text.splitlines() if re.search(r'\[Parsed_showinfo_[^\]]+\].*(?:config in time_base:|\bn:\s*\d+\s+pts:)',line))+'\n'
+    tasks=[asyncio.create_task(consume()),asyncio.create_task(consume_log())]
+    try:_,clock_log=await asyncio.wait_for(asyncio.gather(*tasks),timeout=timeout_seconds)
     finally:
         if process.returncode is None:
             process.kill();await process.wait()
-    return {'schema_version':1,'method':'ffmpeg-gray-temporal-luma-v1','measured':True,
+        for task in tasks:
+            if not task.done():task.cancel()
+        await asyncio.gather(*tasks,return_exceptions=True)
+    stamps=parse_showinfo(clock_log,maximum_frames=maximum_frames)
+    if len(stamps)!=len(frames):raise ValueError('visual pixel/clock counts differ')
+    for frame,stamp in zip(frames,stamps,strict=True):
+        if (stamp.width,stamp.height)!=(WIDTH,HEIGHT) or stamp.timestamp_seconds>=duration_seconds+.001:raise ValueError('visual decoded clock outside source bounds')
+        frame.update(timestamp_seconds=stamp.timestamp_seconds,timestamp_basis=BASIS,decoded_clock=stamp.model_dump(mode='json'))
+    return {'schema_version':2,'method':'ffmpeg-gray-temporal-luma-v2','measured':True,
         'sample_width':WIDTH,'sample_height':HEIGHT,'sampling_fps':rate,'maximum_frames':maximum_frames,
+        'sampling_fps_basis':'desired upper sampling density; actual VFR samples can be fewer and nonuniform',
+        'requested_sample_times':requested,'decoded_pts_verified':True,'timestamp_basis':BASIS,
+        'decoder_clock_log':clock_log,'decoder_clock_log_sha256':hashlib.sha256(clock_log.encode()).hexdigest(),
         'motion_semantics':'sampled absolute pixel difference; camera/subject changes and cuts are not separated',
         'edge_semantics':'luminance edge strength; not calibrated optical blur or semantic quality',
         'semantic_vision':False,'frames':frames}
