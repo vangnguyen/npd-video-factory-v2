@@ -3705,3 +3705,31 @@ EXTERNAL BLOCKERS: provider credentials/budget, genuine speech/Owner/non-develop
 OWNER ACTION REQUIRED: none for remaining safe implementation; separate real-provider/production gates remain
 
 NEXT WAVE: full original Mode B media/audio/UI/E2E gaps with unchanged North Star scope
+
+## Wave 3B / 3D / 3I / 6D / 8 / 15 — Forward source audio gaps
+
+WAVE: 3B/3D/3I/6D/8/15 component
+
+STATUS: implemented/local-real and protocol-mock tested; full waves PARTIAL
+
+HEAD SHA: source parent 16afeaa7e0dd1a99454c11fce47af78bd3745db6; final HEAD in workspace source-audio-gaps-program-state.json
+
+CAPABILITIES COMPLETED: forward PTS gaps; original decoded/derived padded WAV; exact segment PCM and independent FFprobe; waveform v3; transcript padding/origin integrity; no-word-split gap guard; v3/v4/v5 history; known-job resume/cold recovery
+
+CAPABILITIES PARTIAL: genuine ASR; uncertain/overlapping clocks; non-developer review UI; full real-media audio/render/AV/QC and original Mode A/B/A-B-C/Owner/production
+
+TESTS: Native 47 PASS; final targeted 7 overlapping cases PASS; API 23 / Studio 752 / consumer Native 22 PASS; retained v5 runtime read PASS
+
+REAL PROVIDER TESTS: local FFmpeg/FFprobe/SQLite only; no external speech provider
+
+MOCK TESTS: acknowledged ASR/words/resume transport fixture; generated tone is not speech
+
+EVIDENCE: NATIVE_SOURCE_AUDIO_GAPS.md; source-audio-gaps-evidence.json; two original/padded PCM/analysis/FFprobe/backup/cold bundles; checkpoint and recovery pair
+
+REGRESSIONS: related cases and legacy v5 source receipt checked; initial Studio directory command failure retained, corrected explicit test-file invocation PASS; accepted artifacts checked at preservation
+
+EXTERNAL BLOCKERS: genuine speech provider credentials/budget, deferred Owner/non-developer and production acceptance
+
+OWNER ACTION REQUIRED: none for remaining safe implementation; separate real-provider/production gates apply
+
+NEXT WAVE: original Mode B attention/UI/audio/media/E2E gaps; preserve full North Star scope

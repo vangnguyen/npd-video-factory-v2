@@ -412,3 +412,7 @@ Wave 3C/3E/4 now has real dense motion/shot PTS, bounded sanitized records, v4 c
 ## Continuous source audio/ASR clock component
 
 Wave 3B/3D/3I/6D/8/15 adds real continuous PCM origin/count validation, normalized silence times, waveform v2 and original-to-source ASR mapping with preserved provider evidence. Delayed generated-tone/mock-ASR resume/cold evidence passes. Remaining: genuine speech/provider, discontinuous segment mapping, real-media audio/render/AV/QC, full original Mode A/B/UI/Owner/A-B-C and production. These are not certified from a synthetic source or mock transcript.
+
+## Forward source audio gap component
+
+Wave 3B/3D/3I/6D/8/15 now supports measured forward gaps with separately preserved decoded PCM, explicitly padded provider-input WAV, source-relative waveform v3 and original/mapped transcript evidence. Overlaps/uncertain clocks and words crossing missing audio require review; no silent split or paid recreation. Local independent FFprobe/bytewise PCM and two cold rehearsals pass. The earlier forward discontinuity gap is closed in this bounded technical path. Remaining: genuine speech/providers, non-developer attention UI, complete real-media audio/render/AV/QC and original Mode A/B/A-B-C/Owner/production acceptance. See NATIVE_SOURCE_AUDIO_GAPS.md and north-star/source-audio-gaps-evidence.json.

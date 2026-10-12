@@ -1,7 +1,7 @@
 // Source-relative measured samples stay correct after canonical trim/split/move.
 export function waveformPath(clip){
   const waveform=clip?.metadata?.source_audio_waveform;
-  if(!waveform?.measured||!['ffmpeg-mono-pcm-peak-rms-v1','ffmpeg-mono-pcm-peak-rms-v2'].includes(waveform.method)||!Array.isArray(waveform.bins))return null;
+  if(!waveform?.measured||!['ffmpeg-mono-pcm-peak-rms-v1','ffmpeg-mono-pcm-peak-rms-v2','ffmpeg-mono-pcm-peak-rms-v3'].includes(waveform.method)||!Array.isArray(waveform.bins))return null;
   const start=clip.source_start??0,end=clip.source_end??(start+clip.duration*(clip.speed??1));
   if(!(end>start))return null;
   const points=waveform.bins.filter(b=>Number.isFinite(b.peak)&&b.peak>=0&&b.end_seconds>start&&b.start_seconds<end)

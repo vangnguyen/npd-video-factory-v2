@@ -9,3 +9,9 @@ test('v2 measured waveform retains source offset and legacy v1 still renders',()
   clip.metadata.source_audio_waveform.method='ffmpeg-mono-pcm-peak-rms-v1';assert.ok(waveformPath(clip));
   clip.metadata.source_audio_waveform.method='unmeasured';assert.equal(waveformPath(clip),null);
 });
+
+test('v3 observed segments render only actual bins on either side of missing audio',()=>{
+  const path=waveformPath({duration:2,source_start:0,metadata:{source_audio_waveform:{measured:true,
+    method:'ffmpeg-mono-pcm-peak-rms-v3',bins:[{start_seconds:.5,end_seconds:.6,peak:.5},{start_seconds:1.3,end_seconds:1.4,peak:.5}]}}});
+  assert.match(path,/^M27\.500 /);assert.match(path,/M67\.500 /);assert.equal(path.match(/M/g).length,2);
+});

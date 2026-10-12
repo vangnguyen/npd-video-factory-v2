@@ -1,0 +1,314 @@
+{
+  "schema_version": "north-star-source-audio-gaps-v1",
+  "recorded_at": "2026-10-12T10:27:52.801020+00:00",
+  "source_parent": "16afeaa7e0dd1a99454c11fce47af78bd3745db6",
+  "wave": "3B/3D/3I/6D/8/15 component; full waves PARTIAL",
+  "tests": {
+    "Native": 47,
+    "Native_modules": 8,
+    "final_clock_integrity_targeted_Native": 7,
+    "API": 23,
+    "Studio": 752,
+    "consumer_Native": 22,
+    "consumer_modules": 4,
+    "overlapping_batches_not_unique_total": true
+  },
+  "test_logs": {
+    "source-audio-gaps-native-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-native-n1.log",
+      "sha256": "12bdbc52a40b50a142592a75bc536fa1a6a6612f8b2478042286158d3853dfba",
+      "bytes": 152
+    },
+    "source-audio-gaps-api-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-api-n1.log",
+      "sha256": "8ff8b744231c443d3f5fe4605661b973a7ca9a024240245209a2a118d44a3838",
+      "bytes": 102
+    },
+    "source-audio-gaps-studio-full-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-studio-full-n2.log",
+      "sha256": "8e0250561cf97073c0712ebba1405a8a1f0948ef99b9ed228c362f61641cbaf7",
+      "bytes": 77538
+    },
+    "source-audio-gaps-guards-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-guards-n2.log",
+      "sha256": "0ee5a55791b6c6244b3cc8e51b46b237a7c6f6b20cbe85a95d98d091aa822d4a",
+      "bytes": 110
+    },
+    "source-audio-gaps-consumers-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-consumers-n1.log",
+      "sha256": "925d23015e4d4c6ff49c34275c96e938132818edc5081b230280827040fc123b",
+      "bytes": 127
+    },
+    "source-audio-gaps-rehearsal-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-rehearsal-n1.log",
+      "sha256": "4a2a1b4ac27b211d83e508cb6058dd0ea2154621a9aea20b6d0fbe5e58949ea6",
+      "bytes": 60
+    },
+    "source-audio-gaps-rehearsal-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-rehearsal-n2.log",
+      "sha256": "4a2a1b4ac27b211d83e508cb6058dd0ea2154621a9aea20b6d0fbe5e58949ea6",
+      "bytes": 60
+    },
+    "source-audio-gaps-legacy-v5-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-legacy-v5-n1.log",
+      "sha256": "d54a4c0e75266e8f9c5f33383b94704aa25c93334a494d72609031f8d46728b1",
+      "bytes": 53
+    }
+  },
+  "initial_Studio_directory_command_failure_retained": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-audio-gaps-studio-full-n1.log",
+    "sha256": "601895f3cf59e94800293198e52fc538f0828fd0b6e9bd9c6bf4da625fa69b10",
+    "bytes": 1039
+  },
+  "rehearsals": [
+    {
+      "rehearsal": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\evidence.json",
+        "sha256": "d04ea2c0526b8da5812a7872fca46ba5d13e9c50aefe47cfde4c6472436fabb0",
+        "bytes": 2001
+      },
+      "cold": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\cold.json",
+        "sha256": "a749a3ff484072fd4bb215cfba41bd3d581b7a2b129d6a61813c7878e8cf8245",
+        "bytes": 203
+      },
+      "backup": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\owned-source-audio-gap-state.zip",
+        "sha256": "faaae0ee114cf89cb3c8f4101db97f2addff58079878b48c8078041223d8fef3",
+        "bytes": 246202
+      },
+      "exports": [
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\analysis.json",
+          "sha256": "5394c46b4b5206282c8f9d4f0318b4579e133d69f8be5237e720d2afc84ce28c",
+          "bytes": 50197
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\audio-clock.json",
+          "sha256": "84f08ce4634d0e41508069c3a4c7ecce1746adb3fc1dfe39107de2858eac050e",
+          "bytes": 8981
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\cold.json",
+          "sha256": "a749a3ff484072fd4bb215cfba41bd3d581b7a2b129d6a61813c7878e8cf8245",
+          "bytes": 203
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\decoded-speech.wav",
+          "sha256": "c141efc3ce04f44f6e137477b05151150d2ea91cfd45c6ffab737a0924eece8a",
+          "bytes": 45646
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\evidence.json",
+          "sha256": "d04ea2c0526b8da5812a7872fca46ba5d13e9c50aefe47cfde4c6472436fabb0",
+          "bytes": 2001
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\expected.json",
+          "sha256": "50a491c7543329cfc7c2b30835f0dcb2af672ea272518594c57f1bab1e2793f0",
+          "bytes": 117355
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\independent-ffprobe.json",
+          "sha256": "7f4550d6b47a40b5b7578f2d6721f652de5c7c1336c46f3be15ae1fea6b27d9e",
+          "bytes": 1722
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\mapped-transcript.json",
+          "sha256": "58103e1dea6672f0738e3b65ae43ec4db7f6ae004f2762d2eafaf56618e13387",
+          "bytes": 3696
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\owned-source-audio-gap-state.zip",
+          "sha256": "faaae0ee114cf89cb3c8f4101db97f2addff58079878b48c8078041223d8fef3",
+          "bytes": 246202
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\pcm-proof.json",
+          "sha256": "91dcee98366fac5f55e1fc49849fb06379b02a96901dac91db25b4ffe0a3bd97",
+          "bytes": 790
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\project.json",
+          "sha256": "aeca0cb1396559f30ca32f2fbceb70baa369e89ad313cd954ff9baa192c32f64",
+          "bytes": 162631
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\provider-pcm-transcript.json",
+          "sha256": "4164709b1894680c9a5b5c9c88e55255993e9d3e9ed91ab2bdd6d6b5be18e295",
+          "bytes": 3037
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\source.mp4",
+          "sha256": "f11e77adeb809a6fdba652c9a356f37fafd11bb20bb0fd2891b3fec117cd802f",
+          "bytes": 54584
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\speech-clock.log",
+          "sha256": "52c9a7cd66720ffb6eca7f0a964b43acb1408469d2c987326cd14f48da7a7008",
+          "bytes": 4061
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\speech.wav",
+          "sha256": "1681daf0a392c8f9cc9b5b22f4f4230395ea0167c066e575fe1a6407826aee47",
+          "bytes": 64044
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n1\\waveform.json",
+          "sha256": "dd121a203493a753ea0d45769b7747462f4ac9ed9a56fba46a221f0261da910a",
+          "bytes": 15681
+        }
+      ]
+    },
+    {
+      "rehearsal": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\evidence.json",
+        "sha256": "5efa9962e0cbe4f0eb9a3f203ec6490fd49a3e4a9a4c08ea5a1ae2d14294b2cc",
+        "bytes": 2001
+      },
+      "cold": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\cold.json",
+        "sha256": "a749a3ff484072fd4bb215cfba41bd3d581b7a2b129d6a61813c7878e8cf8245",
+        "bytes": 203
+      },
+      "backup": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\owned-source-audio-gap-state.zip",
+        "sha256": "64600c028160cd6ef80b0b9a3571d1cdaf8cafd84f0f37d5ed368430a6b697f7",
+        "bytes": 245733
+      },
+      "exports": [
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\analysis.json",
+          "sha256": "e611fe785dce9e08cb4fd84cd54f48b2efcb60b9a1526f5784d835c82a432423",
+          "bytes": 50195
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\audio-clock.json",
+          "sha256": "ea82b7fe26fbeb716dd87413db51a148bc2f2c6d7699eb1ba29fa0243acb98af",
+          "bytes": 8981
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\cold.json",
+          "sha256": "a749a3ff484072fd4bb215cfba41bd3d581b7a2b129d6a61813c7878e8cf8245",
+          "bytes": 203
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\decoded-speech.wav",
+          "sha256": "c141efc3ce04f44f6e137477b05151150d2ea91cfd45c6ffab737a0924eece8a",
+          "bytes": 45646
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\evidence.json",
+          "sha256": "5efa9962e0cbe4f0eb9a3f203ec6490fd49a3e4a9a4c08ea5a1ae2d14294b2cc",
+          "bytes": 2001
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\expected.json",
+          "sha256": "b3080a30f4b682f1ea3b9086e4c2cddb9713e9406a580935e0401fead3c8b2ca",
+          "bytes": 117350
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\independent-ffprobe.json",
+          "sha256": "7f4550d6b47a40b5b7578f2d6721f652de5c7c1336c46f3be15ae1fea6b27d9e",
+          "bytes": 1722
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\mapped-transcript.json",
+          "sha256": "76db3270a12d2bebf11a9e001806848fd7c52f3a65393602ed77aade53de1999",
+          "bytes": 3695
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\owned-source-audio-gap-state.zip",
+          "sha256": "64600c028160cd6ef80b0b9a3571d1cdaf8cafd84f0f37d5ed368430a6b697f7",
+          "bytes": 245733
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\pcm-proof.json",
+          "sha256": "91dcee98366fac5f55e1fc49849fb06379b02a96901dac91db25b4ffe0a3bd97",
+          "bytes": 790
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\project.json",
+          "sha256": "757530c840827f292e18937ab3ae1b0da161ad7d40f94a3abb6fb5682336201c",
+          "bytes": 162623
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\provider-pcm-transcript.json",
+          "sha256": "440ea201a9e19662cc0fa2a359119523e1ff0264696311c0f430b5ef9624e9ba",
+          "bytes": 3036
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\source.mp4",
+          "sha256": "f11e77adeb809a6fdba652c9a356f37fafd11bb20bb0fd2891b3fec117cd802f",
+          "bytes": 54584
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\speech-clock.log",
+          "sha256": "dee199c071612d40a6a4ec1f78609a75b046d83b47d78856977add4ddbe00e75",
+          "bytes": 4061
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\speech.wav",
+          "sha256": "1681daf0a392c8f9cc9b5b22f4f4230395ea0167c066e575fe1a6407826aee47",
+          "bytes": 64044
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-source-audio-gaps-n2\\waveform.json",
+          "sha256": "0a328979ffa08f92f758888600ebc0cea672a7d46d822ed433018853655422c5",
+          "bytes": 15681
+        }
+      ]
+    }
+  ],
+  "local_real_scope": [
+    "generated AAC MP4 source gap",
+    "independent FFprobe decoded frame/sample clock",
+    "original decoded and gap-padded WAV bytewise proof",
+    "waveform absent intervals without synthetic amplitude",
+    "SQLite known job resume and distinct process cold restore"
+  ],
+  "ASR_scope": "explicit protocol fixture; generated tone is not speech",
+  "word_crossing_gap_refused_without_splitting_or_paid_replay": true,
+  "decoded_PCM_tamper_blocks_resume": true,
+  "padding_plan_and_clock_origin_tamper_refused": true,
+  "retained_v5_source_analysis_currently_valid": true,
+  "genuine_ASR_provider": false,
+  "actual_browser": false,
+  "Owner_UAT": false,
+  "external_provider_calls": 0,
+  "paid_calls": 0,
+  "local_TTS_inferences": 0,
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  },
+  "main_merged": false,
+  "production_deployed": false,
+  "publishing_enabled": false,
+  "historical_artifacts_replaced": false,
+  "owned_rehearsal_roots_cleaned": true,
+  "remaining": [
+    "genuine VI/EN/auto ASR",
+    "uncertain backward or overlapping clocks",
+    "non-developer word/clock attention workflow",
+    "complete original audio/render/AV/QC Mode A/B and A/B/C",
+    "Owner provider and production acceptance"
+  ]
+}

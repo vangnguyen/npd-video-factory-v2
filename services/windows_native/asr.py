@@ -249,7 +249,7 @@ def extract_audio(config, asset, out, artifacts):
         raise WorkflowError("ASR_AUDIO_EXTRACTION_FAILED")
     from app.decoded_audio_clock import parse_audio_clock,audio_clock_lines
     clock_log=audio_clock_lines(result.stderr.decode('utf-8','strict'))
-    try:clock=parse_audio_clock(clock_log,sample_rate=16000)
+    try:clock=parse_audio_clock(clock_log,sample_rate=16000,allow_gaps=True)
     except ValueError as error:
         code=str(error)
         raise WorkflowError(code if re.fullmatch(r'[A-Z0-9_]{3,120}',code) else 'ASR_AUDIO_CLOCK_INVALID') from None
@@ -260,12 +260,21 @@ def extract_audio(config, asset, out, artifacts):
         if audio.getnframes()!=clock['pcm_samples']:raise WorkflowError('ASR_AUDIO_CLOCK_SAMPLE_COUNT_MISMATCH')
     if partial.stat().st_size > 25_000_000:
         raise WorkflowError("ASR_AUDIO_MAX_25MB")
-    os.replace(partial, path)
+    extra=[];padding=None;decoded_metadata=None
+    if clock['contiguous'] is False:
+        from .asr_audio_clock import pad_wav
+        padded=out/'padded-speech.part.wav'
+        padding=pad_wav(partial,padded,clock)
+        decoded=out/'decoded-speech.wav';os.replace(partial,decoded);os.replace(padded,path)
+        decoded_metadata={'sha256':file_sha(decoded),'bytes':decoded.stat().st_size,'filename':decoded.name}
+        duration=padding['plan']['normalized_pcm_samples']/16000;extra.append(decoded)
+    else:os.replace(partial, path)
     metadata = {"duration_seconds": duration, "sha256": file_sha(path), "bytes": path.stat().st_size,
                 "channels": 1, "sample_rate": 16000, "source_sha256": asset["sha256"],
                 'decoded_source_clock':clock,'clock_log_sha256':hashlib.sha256(clock_log.encode()).hexdigest()}
+    if padding is not None:metadata.update(explicit_gap_padding=padding,decoded_pcm_wav=decoded_metadata)
     log_path=out/'speech-clock.log';log_path.write_text(clock_log,encoding='utf-8',newline='\n')
-    artifacts.commit("audio", [path,log_path], metadata)
+    artifacts.commit("audio", [path,log_path,*extra], metadata)
     return path, metadata
 
 
@@ -275,16 +284,24 @@ def source_mapped_transcript(value,metadata,source_duration):
     clock=metadata.get('decoded_source_clock')
     if clock is None:return value,None # Historical receipt is not re-certified.
     offset=clock['source_start_seconds'];original=copy.deepcopy(value);mapped=copy.deepcopy(value)
-    if not math.isfinite(offset) or offset<0 or clock.get('contiguous') is not True:
+    if not math.isfinite(offset) or offset<0 or not math.isfinite(source_duration) or source_duration<=0:
         raise WorkflowError('ASR_SOURCE_CLOCK_MAPPING_INVALID')
+    plan=None
+    if clock.get('contiguous') is not True:
+        from .asr_audio_clock import validate_padding
+        plan=validate_padding(metadata)
     for segment in mapped['segments']:
         segment['start_seconds']+=offset;segment['end_seconds']+=offset
-        for word in segment['words']:word['start_seconds']+=offset;word['end_seconds']+=offset
+        for word in segment['words']:
+            if plan and any(word['start_seconds']<g['pcm_end_sample']/16000 and word['end_seconds']>g['pcm_start_sample']/16000 for g in plan['gaps']):
+                raise WorkflowError('ASR_WORD_OVER_SOURCE_AUDIO_GAP_REVIEW_REQUIRED')
+            word['start_seconds']+=offset;word['end_seconds']+=offset
         if segment['end_seconds']>source_duration+.05:raise WorkflowError('ASR_SOURCE_CLOCK_MAPPING_OUTSIDE_MEDIA')
     mapped['provenance'].update(source_clock_mapping={'schema_version':'native-asr-source-clock-map-v1','offset_seconds':offset,
         'decoded_audio_clock_sha256':digest(clock),'provider_pcm_transcript_sha256':digest(original),
         'mapping':'source_seconds = provider_pcm_seconds + observed_source_start_seconds','source_media_mutated':False,
         'provider_pcm_evidence_mutated':False,'time_scale_changed':False})
+    if plan:mapped['provenance']['source_clock_mapping'].update(schema_version='native-asr-source-clock-map-v2',explicit_gap_padding_sha256=digest(metadata['explicit_gap_padding']))
     return mapped,original
 
 
@@ -377,6 +394,7 @@ def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
             paths = [audio, directory/"checkpoint-audio.json", directory/"provider"/"provider-completed.json",
                      directory/"provider"/"upload-ack.json", directory/"provider"/"transcript-ack.json"]
             if (directory/'speech-clock.log').is_file():paths.append(directory/'speech-clock.log')
+            if metadata.get('explicit_gap_padding') is not None:paths.append(directory/'decoded-speech.wav')
         record["analysis_sha256"] = digest(record)
         durable_json(directory / "analysis.json", record)
         artifacts.commit("analysis", paths + [directory/"analysis.json"], record)

@@ -19,7 +19,7 @@ Phần còn mở tập trung ở luồng UI đầy đủ Mode A/B; ASR/Vision/tr
 
 IMPLEMENTATION_COMPLETE = NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO; PRODUCTION_DEPLOYED = NO; VIDEO_FACTORY_NORTH_STAR_READY = NO. Publishing vẫn tắt mặc định. Không merge main, triển khai production, thay artifact đã nghiệm thu hoặc gọi provider trả phí trong mốc quản trị kênh này.
 
-Nguồn chi tiết: [ma trận năng lực](NORTH_STAR_CAPABILITY_MATRIX.md), [kế hoạch đóng gap](NORTH_STAR_GAP_CLOSURE_PLAN.md), [mốc video công nghệ](NATIVE_TECHNOLOGY_ACCEPTANCE.md), [mốc quản trị kênh](NATIVE_CHANNEL_PROFILE_ADMIN.md). SHA nguồn cuối cùng, kiểm thử và bản khôi phục được ghi riêng trong `recovery/20261007/source-audio-clock-program-state.json` của workspace để không tạo tham chiếu vòng với commit chứa tài liệu.
+Nguồn chi tiết: [ma trận năng lực](NORTH_STAR_CAPABILITY_MATRIX.md), [kế hoạch đóng gap](NORTH_STAR_GAP_CLOSURE_PLAN.md), [mốc video công nghệ](NATIVE_TECHNOLOGY_ACCEPTANCE.md), [mốc quản trị kênh](NATIVE_CHANNEL_PROFILE_ADMIN.md). SHA nguồn cuối cùng, kiểm thử và bản khôi phục được ghi riêng trong `recovery/20261007/source-audio-gaps-program-state.json` của workspace để không tạo tham chiếu vòng với commit chứa tài liệu.
 
 Mốc ASR: [Native language selection](NATIVE_ASR_LANGUAGE_SELECTION.md), [bằng chứng](north-star/asr-language-selection-evidence.json). Kiểm thử 50 Native / 37 API / 747 Studio; browser queue và hình học trường ở 1366/1920/2560 là phạm vi thành phần. Genuine speech/provider và full Mode A/B vẫn còn mở.
 
@@ -28,3 +28,5 @@ Mốc clock nguồn: [decoded source frame clock](NATIVE_DECODED_SOURCE_FRAME_CL
 Mốc dense video clock: [NATIVE_DENSE_VISUAL_CLOCK.md](NATIVE_DENSE_VISUAL_CLOCK.md). Motion/cảnh mới dùng PTS decoder, v3 còn đọc được; audio/ASR clock và full original acceptance vẫn mở. Native 25 PASS; API 17 PASS / 1 media skip thiếu FFmpeg Linux; hai rehearsal cục bộ và cold restore đạt.
 
 Mốc audio nguồn: [NATIVE_SOURCE_AUDIO_CLOCK.md](NATIVE_SOURCE_AUDIO_CLOCK.md). PCM liên tục và waveform giữ mốc decoder; transcript giả lập giữ bản PCM gốc và ánh xạ sang nguồn. Native 43 / API 20 / Studio 751 / consumer Native 22 PASS (các batch có phần trùng, không cộng thành tổng duy nhất). Rehearsal audio trễ 0,47675 giây và khôi phục trong tiến trình mới đạt. Genuine ASR, audio gián đoạn, đầy đủ audio/AV/QC/Mode A/B/Owner/A-B-C/production vẫn mở.
+
+Mốc audio gián đoạn: [NATIVE_SOURCE_AUDIO_GAPS.md](NATIVE_SOURCE_AUDIO_GAPS.md). Forward gap được đo bằng PTS và FFprobe; WAV phục vụ ASR đệm đúng 9.216 mẫu, giữ PCM gốc và không sửa nguồn. Waveform để trống khoảng thiếu; từ đi qua gap yêu cầu kiểm tra. Native 47 PASS, 7 ca guard chồng lặp sau thay đổi cuối; API 23 / Studio 752 / consumer Native 22 PASS. Hai rehearsal/cold restore đạt với ASR giả lập. Genuine speech/provider, đầy đủ UI/Mode A/B/Owner/A-B-C/production vẫn mở; 59 nhóm chưa đóng.

@@ -362,7 +362,7 @@ class DeterministicMediaSignalProvider:
 
 class FFmpegMediaSignalProvider:
     key = "ffmpeg-media-signals"
-    algorithm_version = "scene-silence-waveform-visual-v5"
+    algorithm_version = "scene-silence-waveform-visual-v6"
     _SHOT_TIME = re.compile(r"pts_time:([0-9.]+)")
     _SILENCE_START = re.compile(r"silence_start: ([0-9.]+)")
     _SILENCE_END = re.compile(r"silence_end: ([0-9.]+).+silence_duration: ([0-9.]+)")
