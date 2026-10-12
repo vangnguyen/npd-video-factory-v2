@@ -12,6 +12,7 @@ from .platform_models import AssetRead
 from .timeline_models import TimelineSnapshot
 from .timeline_audio_processing import build_processed_audio_graph
 from .auto_edit_providers import FFprobeMediaProbe
+from .source_audio_clock import INPUT_TIMESTAMP_OPTIONS,verify_audio_inputs
 
 
 class PreviewCancelledError(RuntimeError):
@@ -169,6 +170,11 @@ class FFmpegProxyRenderer:
         filters.append(f"[{previous}]format=yuv420p[outv]")
         audio = build_processed_audio_graph(snapshot, assets, first_input_index=len(renderable) + 1,
             processing=audio_processing)
+        try:source_audio_clocks=await verify_audio_inputs(snapshot,assets,executable=self.ffmpeg_path,is_cancelled=is_cancelled)
+        except ValueError as error:
+            if str(error)=='SOURCE_AUDIO_CLOCK_CANCELLED':raise PreviewCancelledError('preview was cancelled') from None
+            raise
+        command[1:1]=list(INPUT_TIMESTAMP_OPTIONS)
         probed_audio = {}
         for clip in audio.clips:
             if await is_cancelled():
@@ -250,6 +256,7 @@ class FFmpegProxyRenderer:
                 "audio_included": bool(audio.clips),
                 "audio_mixing": "canonical_timeline_volume_fades_limiter_v1",
                 "audio_clip_receipts": audio.clips,
+                "source_audio_clocks":source_audio_clocks,
                 "muted_audio_clip_ids": audio.muted_clip_ids,
                 "audio_limiter_peak_db": -1 if audio.clips else None,
                 "audio_speech_normalization": bool(audio.processing['normalization_original_audio_clip_ids']),

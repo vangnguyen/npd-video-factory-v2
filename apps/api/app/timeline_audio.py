@@ -7,6 +7,7 @@ from typing import Any
 
 from .platform_models import AssetRead
 from .timeline_models import TimelineSnapshot
+from .source_audio_clock import SOURCE_ALIGNMENT_FILTER,POLICY
 
 
 @dataclass(frozen=True)
@@ -52,7 +53,7 @@ def build_timeline_audio_graph(snapshot: TimelineSnapshot, assets: dict[str, tup
                 raise ValueError("PREVIEW_AUDIO_CLIP_LIMIT")
             index = first_input_index + len(receipts)
             inputs.extend(["-i", str(path)])
-            chain = [f"[{index}:a:0]atrim=start={clip.source_start:.9f}:end={clip.source_end:.9f}",
+            chain = [f"[{index}:a:0]{SOURCE_ALIGNMENT_FILTER}",f"atrim=start={clip.source_start:.9f}:end={clip.source_end:.9f}",
                      "asetpts=PTS-STARTPTS", *tempo_filters(clip.speed),
                      "aresample=48000", "aformat=sample_fmts=fltp:channel_layouts=stereo",
                      f"volume={clip.volume:.9f}", f"atrim=duration={clip.duration:.9f}"]
@@ -71,7 +72,8 @@ def build_timeline_audio_graph(snapshot: TimelineSnapshot, assets: dict[str, tup
             receipts.append({"clip_id": clip.clip_id, "track_id": track.track_id, "asset_id": clip.asset_id,
                              "source_sha256": asset.checksum_sha256, "source_start": clip.source_start,
                              "source_end": clip.source_end, "timeline_start": clip.timeline_start,
-                             "duration": clip.duration, "speed": clip.speed, "volume": clip.volume})
+                             "duration": clip.duration, "speed": clip.speed, "volume": clip.volume,
+                             "source_clock_policy":POLICY,"source_clock_alignment_before_trim":True})
     if receipts:
         labels = "".join(f"[audio{index}]" for index in range(len(receipts)))
         filters.append(f"{labels}amix=inputs={len(receipts)}:duration=longest:dropout_transition=0:normalize=0,"

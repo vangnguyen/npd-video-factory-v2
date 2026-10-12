@@ -5,10 +5,10 @@ from .auto_edit_timeline import validate_document
 from .contracts import WorkflowError, digest, file_sha
 from .media import project_assets
 from .source_assets import canonical_assets
-from .source_preview import FULL_PROFILE,profile_for,resolve_assets
+from .source_preview import FULL_PROFILE,LEGACY_PROFILE,LEGACY_FULL_PROFILE,profile_for,resolve_assets
 
 
-def reviewed_preview(root,project):
+def reviewed_preview(root,project,*,_checkpoint_profile=None):
     resolve_assets(SimpleNamespace(data_root=root),project)
     state=validate_document(project['document'])
     if state['snapshot']['metadata']['native_project_id']!=project['id']:
@@ -23,6 +23,11 @@ def reviewed_preview(root,project):
             if assets.get(clip['metadata'].get('native_asset_id'),{}).get('rights_confirmed') is not True:
                 raise WorkflowError('MEDIA_RIGHTS_CONFIRMATION_REQUIRED',400)
     profile=profile_for(project)
+    if _checkpoint_profile is not None:
+        legacy=LEGACY_FULL_PROFILE if profile==FULL_PROFILE else LEGACY_PROFILE
+        if _checkpoint_profile not in {profile,legacy}:
+            raise WorkflowError('AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED',400)
+        profile=_checkpoint_profile
     key=digest({'project':project['id'],'timeline':state['sha256'],'revision':project['revision'],'preview_profile':profile})
     folder=root/'shot-previews'/key
     try:
@@ -36,7 +41,7 @@ def reviewed_preview(root,project):
             or file_sha(folder/'preview.mp4')!=record['sha256']
             or file_sha(folder/'render-manifest.json')!=record['manifest_sha256']):
             raise ValueError('preview binding mismatch')
-        if profile==FULL_PROFILE and (manifest.get('preview_profile')!=profile
+        if profile in {FULL_PROFILE,LEGACY_FULL_PROFILE} and (manifest.get('preview_profile')!=profile
                 or manifest.get('rendering_effects_parity') is not True or manifest.get('scale')!=.4):
             raise ValueError('preview effects binding mismatch')
     except (OSError,ValueError,KeyError,TypeError):
@@ -44,7 +49,7 @@ def reviewed_preview(root,project):
     return {'id':key,'sha256':record['sha256'],'manifest_sha256':record['manifest_sha256'],
         'timeline_version':state['version'],'timeline_sha256':state['sha256'],'profile':profile,
         'final_render_parity':False,'final_video_review_required':True,
-        **({'rendering_effects_parity':True,'preview_scale':.4} if profile==FULL_PROFILE else {})}
+        **({'rendering_effects_parity':True,'preview_scale':.4} if profile in {FULL_PROFILE,LEGACY_FULL_PROFILE} else {})}
 
 
 def validate_render_approval(job):

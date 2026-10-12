@@ -56,10 +56,13 @@ def command_run(command,directory,log_name,timeout,code,cancel_event=None):
     if result:raise WorkflowError(code)
 
 
-def check_preview(config,job):
+def check_preview(config,job,*,verified_checkpoint=False):
     approval=validate_render_approval(job)
     project={'id':job['project_id'],'revision':job['revision'],'document':job['snapshot']['document']}
-    if reviewed_preview(config.data_root,project)!=approval['reviewed_preview']:
+    # The optional historical profile is allowed only after a retained render
+    # checkpoint has been hash-verified. New approvals/renders use current IDs.
+    historical=approval['reviewed_preview'].get('profile') if verified_checkpoint else None
+    if reviewed_preview(config.data_root,project,_checkpoint_profile=historical)!=approval['reviewed_preview']:
         raise WorkflowError('AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED',400)
     return project
 
@@ -85,8 +88,10 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
         staged[identifier]=(asset,destination)
     audio=build_processed_audio_graph(snapshot,staged,first_input_index=0,
         processing=snapshot.metadata.get('source_audio_processing'))
+    from .audio_clock_guard import verify as verify_audio_clocks,INPUT_TIMESTAMP_OPTIONS
+    source_audio_clocks=verify_audio_clocks(config,snapshot,staged,directory,cancel_event)
     mixed=media/'mix.wav'
-    command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n']
+    command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n',*INPUT_TIMESTAMP_OPTIONS]
     if audio.clips:
         filters=directory/'audio-filter.txt';filters.write_text(';'.join(audio.filters),encoding='utf-8')
         command += [*audio.inputs,'-/filter_complex',str(filters),'-map','[outa]']
@@ -130,19 +135,57 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
             'imports':list(records(project['document']).values()),'verified_active_source_sha256':verify_physical(config.data_root,project['document']),
             'source_media_mutated':False,'provider_calls':0,'human_review_required':True})
     durable_json(directory/'subtitles.json',{'cues':[cue.model_dump(mode='json') for cue in cues],
-        'style':style.model_dump(mode='json'),'word_alignment':'source_provider_intervals_where_available',
+        'style':style.model_dump(mode='json'),'word_alignment':'human_reviewed_source_intervals' if (root_analysis.get('transcript') or {}).get('provenance',{}).get('human_edit') else 'source_provider_intervals_where_available',
         'transcript_evidence':root_analysis.get('transcript')})
     durable_json(directory/'audio-analysis.json',{'schema':'canonical-source-audio-v1','clips':audio.clips,
         'muted_clip_ids':audio.muted_clip_ids,'source_audio_included':bool(audio.clips),
         'normalization_applied':bool(audio.processing['normalization_clip_ids']),
         'music_ducking':audio.processing['music_ducking'],'processing':audio.processing,
+        'source_audio_clocks':source_audio_clocks,
         'limiter_peak_db':-1 if audio.clips else None,
         'tts_calls':0,'actual_paid_cost':None,'intermediate_cache':cache})
     return snapshot,subtitles,assets,audio,profile
 
 
+def mux_canonical_audio(config,directory,snapshot,cancel_event=None):
+    """Encode the verified PCM directly into MP4, preserving AAC priming metadata.
+
+    Remotion's intermediate ADTS audio loses the encoder-delay metadata. Keep
+    its visual stream untouched and use the same canonical PCM as the preview.
+    This operates only on a new private attempt, never an accepted checkpoint.
+    """
+    rendered=directory/'final.mp4';visual=directory/'remotion-video.mp4';mixed=directory/'media/mix.wav'
+    if visual.exists() or not rendered.is_file() or not mixed.is_file():
+        raise WorkflowError('AUTO_EDIT_AUDIO_MUX_INPUT_INVALID')
+    manifest_path=directory/'timeline-render.json';clock_path=directory/'source-audio-clocks.json'
+    manifest=json.loads(manifest_path.read_bytes())
+    if Path(manifest['audio']['mix_uri']).resolve()!=mixed.resolve():
+        raise WorkflowError('AUTO_EDIT_AUDIO_MUX_INPUT_INVALID')
+    gain=manifest['audio']['gain_db']
+    import math
+    if type(gain) not in (float,int) or not math.isfinite(gain) or not -60<=gain<=12:
+        raise WorkflowError('AUTO_EDIT_AUDIO_MUX_INPUT_INVALID')
+    before={'visual':file_sha(rendered),'pcm':file_sha(mixed),'manifest':file_sha(manifest_path),'clocks':file_sha(clock_path)}
+    rendered.rename(visual)
+    filters=f'volume={gain:.9f}dB,apad,atrim=duration={snapshot.duration_seconds:.9f},asetpts=N/SR/TB'
+    executable=config.ffmpeg_bin/'ffmpeg.exe'
+    command_run([str(executable),'-v','error','-nostdin','-n','-i',str(visual),'-i',str(mixed),
+        '-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','192k','-ar','48000','-ac','2',
+        '-af',filters,'-t',f'{snapshot.duration_seconds:.9f}','-map_metadata','-1','-movflags','+faststart',str(rendered)],
+        directory,'canonical-audio-mux.log',max(60,min(300,snapshot.duration_seconds*2)),'AUTO_EDIT_AUDIO_MUX_FAILED',cancel_event)
+    if before!={'visual':file_sha(visual),'pcm':file_sha(mixed),'manifest':file_sha(manifest_path),'clocks':file_sha(clock_path)}:
+        raise WorkflowError('AUTO_EDIT_AUDIO_MUX_INPUT_CHANGED')
+    receipt={'schema_version':'native-canonical-pcm-mp4-mux-v1','input_sha256':before,'output_sha256':file_sha(rendered),
+        'ffmpeg_sha256':file_sha(executable),'duration_seconds':snapshot.duration_seconds,'gain_db':gain,
+        'video_stream_copied':True,'canonical_pcm_encoded_once_into_mp4':True,'adts_audio_reused':False,
+        'source_audio_clocks_sha256':before['clocks'],'external_provider_calls':0,'human_listening_accepted':False}
+    durable_json(directory/'canonical-audio-mux.json',receipt)
+    return receipt
+
+
 def run(config,job,out,stage):
-    project=check_preview(config,job)
+    validate_render_approval(job)
+    project={'id':job['project_id'],'revision':job['revision'],'document':job['snapshot']['document']}
     node=Path(getattr(config,'node_executable',r'C:\Program Files\nodejs\node.exe'))
     tsx=REPO/'renderer/node_modules/tsx/dist/cli.mjs'
     if not node.is_file() or not tsx.is_file():raise WorkflowError('AUTO_EDIT_RENDERER_NOT_CONFIGURED',503)
@@ -150,6 +193,7 @@ def run(config,job,out,stage):
     # Source/approval/preview are verified even when reusing a final checkpoint.
     resolve_assets(config,project)
     checkpoint=artifacts.load('render')
+    project=check_preview(config,job,verified_checkpoint=bool(checkpoint))
     if checkpoint:
         from .audio_balance import validate_qc
         validate_qc(out,checkpoint['result']['qc'],digest(project['document']))
@@ -164,6 +208,8 @@ def run(config,job,out,stage):
     stage('source_private_remotion_render')
     command_run([str(node),str(tsx),str(REPO/'renderer/src/native-job-cli.ts'),str(directory)],
         directory,'renderer.log',max(180,min(1800,snapshot.duration_seconds*12)),'AUTO_EDIT_RENDERER_FAILED')
+    stage('source_canonical_audio_mux')
+    audio_mux=mux_canonical_audio(config,directory,snapshot)
     output=directory/'final.mp4'
     stage('source_full_media_qc')
     subtitle_qc=validate_subtitles(subtitles.cues,subtitles.style,snapshot.duration_seconds)
@@ -231,12 +277,13 @@ def run(config,job,out,stage):
         'captions_included':bool(subtitles.cues),'canonical_audio_included':bool(audio.clips),
         'speech_normalization':bool(audio.processing['normalization_original_audio_clip_ids']),
         'music_ducking':audio.processing['music_ducking'],'audio_processing':audio.processing,
+        'canonical_audio_mux':audio_mux,'source_audio_clocks_sha256':file_sha(directory/'source-audio-clocks.json'),
         'external_provider_calls':0,'tts_calls':0,
         'human_final_video_accepted':False,'publishing_allowed':False})
     durable_json(directory/'cost.json',{'external_operations':[],'paid_operation_count':0,
         'actual_local_compute_cost':None,'duration_seconds':time.monotonic()-started})
     files=('final.mp4','qc-report.json','ffprobe.json','render-manifest.json','timeline.json',
-        'timeline-render.json','subtitles.json','audio-analysis.json','cost.json','renderer-receipt.json')
+        'timeline-render.json','subtitles.json','audio-analysis.json','source-audio-clocks.json','canonical-audio-mux.json','cost.json','renderer-receipt.json')
     if (directory/'source-media-imports.json').is_file():files+=('source-media-imports.json',)
     try:files+=render_frame_artifacts(directory)
     except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None

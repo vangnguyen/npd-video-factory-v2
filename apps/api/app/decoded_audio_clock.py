@@ -3,8 +3,8 @@ import re
 from decimal import Decimal
 
 
-def parse_audio_clock(text:str,*,sample_rate:int,maximum_frames:int=100000,allow_gaps:bool=False):
-    if sample_rate not in (8000,16000) or type(sample_rate) is not int or len(text)>16*1024*1024 or type(allow_gaps) is not bool or type(maximum_frames) is not int or not 1<=maximum_frames<=100000:
+def parse_audio_clock(text:str,*,sample_rate:int,maximum_frames:int=100000,allow_gaps:bool=False,expected_channels:int=1):
+    if sample_rate not in (8000,16000,48000) or type(sample_rate) is not int or len(text)>16*1024*1024 or type(allow_gaps) is not bool or type(maximum_frames) is not int or not 1<=maximum_frames<=100000 or type(expected_channels) is not int or expected_channels not in (1,2):
         raise ValueError('DECODED_AUDIO_CLOCK_BOUND_INVALID')
     frames=[];total=0;previous_end=None;run_origin=None;run_pcm_origin=0;has_gaps=False
     for line in text.splitlines():
@@ -12,7 +12,7 @@ def parse_audio_clock(text:str,*,sample_rate:int,maximum_frames:int=100000,allow
         m=re.search(r'\bn:(\d+)\s+pts:(-?\d+)\s+pts_time:([\deE.+-]+).*?\bchannels:(\d+).*?\brate:(\d+)\s+nb_samples:(\d+)',line)
         if not m:raise ValueError('DECODED_AUDIO_STAMP_INVALID')
         ordinal,pts,printed,channels,rate,count=m.groups();ordinal,pts,channels,rate,count=map(int,(ordinal,pts,channels,rate,count))
-        if ordinal!=len(frames) or channels!=1 or rate!=sample_rate or pts<0 or not 0<count<=192000:
+        if ordinal!=len(frames) or channels!=expected_channels or rate!=sample_rate or pts<0 or not 0<count<=192000:
             raise ValueError('DECODED_AUDIO_STAMP_INVALID')
         value=Decimal(printed)
         if not value.is_finite() or not -15<=value.as_tuple().exponent<=9:raise ValueError('DECODED_AUDIO_STAMP_INVALID')
@@ -39,6 +39,7 @@ def parse_audio_clock(text:str,*,sample_rate:int,maximum_frames:int=100000,allow
                'source_end_sample':b['source_start_sample'],
                'decoded_pcm_boundary_sample':b['pcm_start_sample']} for a,b in zip(segments,segments[1:])]
         clock.update(schema_version='decoded-mono-audio-clock-v2',contiguous=False,segments=segments,gaps=gaps)
+    if expected_channels==2:clock.update(schema_version='decoded-stereo-audio-clock-v2' if has_gaps else 'decoded-stereo-audio-clock-v1',channels=2)
     return clock
 
 

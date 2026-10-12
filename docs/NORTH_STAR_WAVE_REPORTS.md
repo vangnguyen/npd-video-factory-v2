@@ -3761,3 +3761,35 @@ EXTERNAL BLOCKERS: genuine provider acceptance, deferred Owner UAT and productio
 OWNER ACTION REQUIRED: none for remaining safe implementation; optional manual removal of retained owned browser fixture root if desired
 
 NEXT WAVE: source audio/render/AV/QC across real missing intervals and remaining original Mode B/UI/E2E gaps
+
+## Wave 3I / 6D / 6E / 8 / 15 — source gaps through canonical render
+
+WAVE: 3I/6D/6E/8/15 component
+
+STATUS: implemented/local-real media and explicit ASR/approval fixtures tested; full waves PARTIAL
+
+HEAD SHA: source parent bbae65493881ec1d8a9ac132dc0bde298a58d427; sealed exact final SHA in external recovery/20261007/source-gap-render-clock-program-state.json
+
+CAPABILITIES COMPLETED: bounded observed stereo audio preflight, source-gap alignment before trim/tempo/placement, shared Source/narrated/stem/proxy graph, separate PCM cache fingerprint, exclusive PCM-to-MP4 mux, actual effects/final/QC/edge/cold recovery
+
+CAPABILITIES PARTIAL: genuine spoken footage and all ingest/container clocks, audio/perceptual/semantic QC, full original Mode A/B/UI/Owner/A-B-C; 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED, 59 unclosed
+
+TESTS: final Native regression 54 PASS; final Native clock/gap 14 PASS; API 34 PASS / 7 media skip lacking Linux FFmpeg/FFprobe; actual Windows effects/final/QC/edge/cold PASS; overlapping batches not unique total
+
+REAL PROVIDER TESTS: none; genuine external/voice/speech acceptance remains separate; no TTS inference
+
+MOCK TESTS: restored explicit ASR words and automated pre-render approval; generated tone/test video; no Owner UAT or speech intelligibility inferred
+
+EVIDENCE: docs/NATIVE_SOURCE_GAP_RENDER_CLOCK.md; docs/north-star/source-gap-render-clock-evidence.json; native-source-gap-render-n3; initial failed rehearsals/logs retained
+
+REGRESSIONS: tested Source/narrated/balance/cache/SFX pass; QC thresholds unchanged; accepted historical artifacts rechecked during source seal; corrected nonexistent test-module invocation recorded
+
+EXTERNAL BLOCKERS: genuine configured provider/account/budget and Docker/full production acceptance remain external; historical browser cleanup execution-policy blocked, root/backup retained without retry
+
+OWNER ACTION REQUIRED: no action required for continued safe implementation; Owner UAT remains deferred, final real-media review and external/deployment gates not self-accepted
+
+NEXT WAVE: continue original Mode B attention/ingest/audio/media/full E2E gaps and remaining full North Star waves
+
+PROFILE / FRONTEND FOLLOW-UP: current lightweight v2 / full-effects v3 IDs invalidate new approval reuse of earlier previews; hash-verified retained render checkpoint reads permit matching historical profiles only. Studio 758 PASS; fresh native-source-gap-render-n4 effects/final/edge/QC/cold PASS.
+
+Kiểm tra profile/legacy cuối: 18 Native PASS; đọc checkpoint cũ không re-encode, duyệt preview cũ không cấp quyền render mới; các batch có phần chồng lặp.

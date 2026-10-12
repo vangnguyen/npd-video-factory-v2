@@ -51,7 +51,8 @@ export function boundPreview(project,preview) {
   if(preview.status==='READY'){
     const source=project?.shot_timeline?.editing_mode==='source_footage';
     const full=project?.document?.canonical_timeline?.snapshot?.metadata?.source_preview_mode==='final_effects';
-    const profile=full?'native-source-final-effects-preview-v2':'native-source-timeline-proxy-v1';
+    const profile=full?'native-source-final-effects-preview-v3':'native-source-timeline-proxy-v2';
+    if(source&&['native-source-timeline-proxy-v1','native-source-final-effects-preview-v2'].includes(preview.preview_profile))return {...preview,status:'STALE',video_url:null};
     const narrated=!source&&Boolean(project?.document?.prepared_narration);
     const valid=source?preview.audio_mode==='canonical_timeline_proxy'&&preview.preview_profile===profile&&(!full||preview.manifest?.rendering_effects_parity===true&&preview.manifest?.preview_profile===profile&&preview.manifest?.scale===.4)&&preview.manifest?.playable===true&&preview.manifest?.timeline_sha256===project.shot_timeline.sha256&&preview.manifest?.timeline_version===project.shot_timeline.version&&preview.manifest?.final_approval_eligible===false:narrated?preview.audio_mode==='measured_scene_narration_full_effects_preview'&&preview.preview_profile==='native-narrated-storyboard-preview-v1'&&preview.manifest?.schema_version===preview.preview_profile&&preview.manifest?.playable===true&&preview.manifest?.timeline_sha256===project.shot_timeline.sha256&&preview.manifest?.timeline_version===project.shot_timeline.version&&preview.manifest?.source_voice_sha256===project.document.prepared_narration.voice_audio_sha256&&preview.manifest?.new_inference_calls===0&&preview.manifest?.final_render_authorized===false&&preview.manifest?.qc?.passed===true:preview.audio_mode==='silent_visual_proxy';
     if(!valid||preview.final_approval_eligible!==narrated)return {...preview,status:'FAILED',video_url:null};

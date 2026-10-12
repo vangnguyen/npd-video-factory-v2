@@ -209,11 +209,13 @@ def source_stems(config,snapshot,assets,directory,*,packet_alignment=False):
         if file_sha(original)!=asset.checksum_sha256:raise WorkflowError('AUDIO_BALANCE_SOURCE_CHANGED')
         staged[identifier]=(asset,original)
     graph=build_processed_audio_graph(snapshot,staged,first_input_index=0,processing=snapshot.metadata.get('source_audio_processing'),stem_outputs=True,packet_alignment=packet_alignment)
+    from .audio_clock_guard import verify as verify_audio_clocks,INPUT_TIMESTAMP_OPTIONS
+    verify_audio_clocks(config,snapshot,staged)
     reference_role='canonical_original_audio' if 'reference' in graph.stems else 'no_reference'
     for role,components in graph.stem_graphs.items():
         filters=guard(directory/('audio-'+role+'-filter.txt'));filters.write_text(';'.join(components),encoding='utf-8')
         try:
-            result=subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-filter_complex_threads','1',*graph.inputs,'-/filter_complex',str(filters),
+            result=subprocess.run([str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n',*INPUT_TIMESTAMP_OPTIONS,'-filter_complex_threads','1',*graph.inputs,'-/filter_complex',str(filters),
                 *outputs(directory,{role:graph.stems[role]},snapshot.duration_seconds)],capture_output=True,timeout=min(300,max(30,snapshot.duration_seconds*2)))
             if result.returncode:raise ValueError()
         except (ValueError,OSError,subprocess.TimeoutExpired):raise WorkflowError('AUDIO_BALANCE_STEM_EXPORT_FAILED') from None

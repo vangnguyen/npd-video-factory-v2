@@ -111,6 +111,7 @@ def scope(root,project):
     return {'data_root_sha256':digest(os.path.normcase(str(root))), 'workspace_id':workspace,'master_or_project_id':identifier}
 
 def fingerprint(binding,audio,assets,duration,ffmpeg):
+    from app.source_audio_clock import INPUT_TIMESTAMP_OPTIONS,POLICY
     by_path={str(path):asset.checksum_sha256 for asset,path in assets.values()}
     sources=[]
     if len(audio.inputs)%2:raise WorkflowError('SOURCE_AUDIO_CACHE_GRAPH_INVALID')
@@ -119,6 +120,7 @@ def fingerprint(binding,audio,assets,duration,ffmpeg):
         sources.append(by_path[audio.inputs[index+1]])
     guard,io=paths()
     return {'algorithm':ALGORITHM,'scope':binding,'source_sha256_in_input_order':sources,
+        'input_timestamp_options':list(INPUT_TIMESTAMP_OPTIONS),'source_clock_policy':POLICY,
         'filters':audio.filters,'duration_seconds':duration,'silent_source':not bool(audio.clips),
         'output':{'codec':'pcm_s16le','sample_rate':48000,'channels':2},
         'ffmpeg_executable_sha256':file_sha(io(guard(ffmpeg,exists=True)))}

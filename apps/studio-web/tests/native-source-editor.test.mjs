@@ -58,12 +58,13 @@ test('full effects preview binds profile to canonical choice without allowing fi
   project.shot_timeline={sha256:'saved',version:2,editing_mode:'source_footage'};
   const body=sourcePreviewSettings(project,'final_effects');assert.equal(body.payload.expected_version,2);
   assert.equal(body.payload.preview_mode,'final_effects');assert.throws(()=>sourcePreviewSettings(project,'external'),/hợp lệ/);
-  const preview={status:'READY',revision:7,timeline_sha256:'saved',preview_profile:'native-source-final-effects-preview-v2',
+  const preview={status:'READY',revision:7,timeline_sha256:'saved',preview_profile:'native-source-final-effects-preview-v3',
     audio_mode:'canonical_timeline_proxy',final_approval_eligible:false,manifest:{playable:true,
-      rendering_effects_parity:true,preview_profile:'native-source-final-effects-preview-v2',scale:.4,
+      rendering_effects_parity:true,preview_profile:'native-source-final-effects-preview-v3',scale:.4,
       timeline_sha256:'saved',timeline_version:2,final_approval_eligible:false}};
   assert.equal(boundPreview(project,preview).status,'READY');
-  assert.equal(boundPreview(project,{...preview,preview_profile:'native-source-timeline-proxy-v1'}).status,'FAILED');
+  assert.equal(boundPreview(project,{...preview,preview_profile:'native-source-final-effects-preview-v2'}).status,'STALE');
+  assert.equal(boundPreview(project,{...preview,preview_profile:'native-source-timeline-proxy-v2'}).status,'FAILED');
   assert.equal(boundPreview(project,{...preview,manifest:{...preview.manifest,rendering_effects_parity:false}}).status,'FAILED');
   assert.equal(boundPreview(project,{...preview,final_approval_eligible:true}).status,'FAILED');
   assert.match(previewTimingLabel('proxy',preview,project),/cùng hiệu ứng/);

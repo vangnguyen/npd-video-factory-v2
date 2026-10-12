@@ -22,6 +22,22 @@ class NativeSourceRenderTests(unittest.TestCase):
     real_source=preview_fixture.NativeSourcePreviewTests.real_source
     wait=preview_fixture.NativeSourcePreviewTests.wait
 
+    def test_retained_legacy_checkpoint_is_readable_but_cannot_authorize_a_new_render(self):
+        from services.windows_native.source_preview import LEGACY_PROFILE
+        with patch('services.windows_native.source_preview.PROFILE',LEGACY_PROFILE):
+            self.review_fixture()
+            job=self.store.enqueue(self.project['id'],self.project['revision'],'render',uuid.uuid4().hex)
+            self.assertTrue(Runner(self.store,Pipeline(self.config)).run_one())
+            saved=self.store.get_job(job['id']);self.assertEqual(saved['status'],'succeeded',saved.get('error'))
+            self.assertEqual(saved['snapshot']['approval']['reviewed_preview']['profile'],LEGACY_PROFILE)
+        with patch.object(source_render,'command_run',side_effect=AssertionError('No rewrite of retained checkpoint')):
+            self.assertEqual(Pipeline(self.config).run(saved,lambda _:None),saved['result'])
+        with self.assertRaisesRegex(WorkflowError,'AUTO_EDIT_CURRENT_PREVIEW_REVIEW_REQUIRED'):
+            self.store.enqueue(self.project['id'],self.project['revision'],'render',uuid.uuid4().hex)
+        manager=PreviewManager(self.config,self.store)
+        try:self.assertEqual(manager.status(self.project['id'])['status'],'STALE')
+        finally:manager.close()
+
     def review_fixture(self):
         self.real_source()
         manager=PreviewManager(self.config,self.store)
@@ -85,6 +101,10 @@ class NativeSourceRenderTests(unittest.TestCase):
         folder=self.root/'jobs'/job['id']
         self.assertTrue((folder/'checkpoint-render.json').is_file())
         self.assertTrue((folder/'subtitles.json').is_file());self.assertTrue((folder/'cost.json').is_file())
+        mux=json.loads((folder/'canonical-audio-mux.json').read_bytes())
+        self.assertEqual(mux['output_sha256'],file_sha(folder/'final.mp4'))
+        self.assertEqual(mux['source_audio_clocks_sha256'],file_sha(folder/'source-audio-clocks.json'))
+        self.assertTrue(mux['video_stream_copied']);self.assertFalse(mux['adts_audio_reused'])
         from services.windows_native.render_frame_qc import validate
         frames=result['result']['qc']['rendered_frame_evidence'];value=validate(folder,frames,document_sha256=digest(before))
         self.assertEqual(value['rendered_video_sha256'],result['result']['qc']['final_sha256'])

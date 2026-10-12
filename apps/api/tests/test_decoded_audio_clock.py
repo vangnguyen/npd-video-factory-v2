@@ -33,3 +33,11 @@ def test_backward_overlap_is_still_refused_with_forward_gap_support():
 
 def test_continuous_clock_evidence_does_not_change_when_gaps_are_supported():
     assert parse_audio_clock(audio_clock_lines(LOG),sample_rate=8000)==parse_audio_clock(audio_clock_lines(LOG),sample_rate=8000,allow_gaps=True)
+
+def test_stereo_render_clock_is_explicit_and_overlaps_still_require_review():
+    log=LOG.replace('channels:1','channels:2').replace('rate:8000','rate:48000').replace('pts:4000','pts:24000').replace('pts:4800','pts:28800').replace('nb_samples:800','nb_samples:4800')
+    clock=parse_audio_clock(audio_clock_lines(log),sample_rate=48000,expected_channels=2,allow_gaps=True)
+    assert clock['channels']==2 and clock['schema_version']=='decoded-stereo-audio-clock-v1'
+    assert clock['source_start_seconds']==.5 and clock['pcm_samples']==9600
+    with pytest.raises(ValueError,match='NONCONTIGUOUS'):
+        parse_audio_clock(audio_clock_lines(log.replace('pts:28800 pts_time:0.6','pts:28000 pts_time:0.583333')),sample_rate=48000,expected_channels=2,allow_gaps=True)

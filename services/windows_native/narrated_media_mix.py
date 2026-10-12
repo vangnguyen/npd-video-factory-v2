@@ -61,15 +61,18 @@ def prepare(config,document,directory,voice_file,gain):
         register(identifier,path,item['sha256'],{'native_asset_id':item['id'],'rights_status':item.get('rights_status','unknown')})
     if set(assets)!=needed:raise WorkflowError('NARRATED_MEDIA_AUDIO_ASSET_UNAVAILABLE')
     graph=build_processed_audio_graph(snapshot,assets,first_input_index=0,processing=snapshot.metadata.get('source_audio_processing'),packet_alignment=True)
+    from .audio_clock_guard import verify as verify_audio_clocks,INPUT_TIMESTAMP_OPTIONS
+    source_audio_clocks=verify_audio_clocks(config,snapshot,assets,directory)
     filters=directory/'narrated-audio-filter.txt';filters.write_text(';'.join(graph.filters),encoding='utf-8')
     mix=directory/'narrated-mix.wav'
     if graph.clips:
-        command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-filter_complex_threads','1',*graph.inputs,'-/filter_complex',str(filters),'-map','[outa]']
+        command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n',*INPUT_TIMESTAMP_OPTIONS,'-filter_complex_threads','1',*graph.inputs,'-/filter_complex',str(filters),'-map','[outa]']
     else:command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-nostdin','-n','-f','lavfi','-i','anullsrc=r=48000:cl=stereo','-t',str(snapshot.duration_seconds)]
     run(config,[*command,'-ar','48000','-ac','2','-c:a','pcm_s16le',str(mix)],directory,'narrated-canonical-mix.log')
     manifest={'schema_version':'native-narrated-canonical-audio-v1','document_sha256':digest(document),'timeline_version':document['canonical_timeline']['version'],
         'timeline_sha256':document['canonical_timeline']['sha256'],'duration_seconds':snapshot.duration_seconds,'audio':{'mix_uri':str(mix),'mix_sha256':file_sha(mix)},
         'clips':graph.clips,'processing':graph.processing,'generated_voice_active':generated,'generated_voice_reference':ref,
+        'source_audio_clocks':source_audio_clocks,
         'placed_generated_voice_sha256':file_sha(source_voice),'normalized_generated_voice_sha256':normalized_sha,'legacy_generated_voice_gain':gain,
         'source_sha256':{key:asset.checksum_sha256 for key,(asset,path) in assets.items()},'imported_source_sha256':verified,
         'source_PCM_mutated':False,'new_inference_calls':0,'external_provider_calls':0,'human_final_video_accepted':False}
@@ -91,7 +94,8 @@ def run(config,command,directory,name):
 def artifact_names(directory):
     if not (directory/'narrated-media-mix.json').is_file():return ()
     from .narrated_video_render import artifact_names as visual_names
-    return ('narrated-media-mix.json','narrated-mix.wav','timeline-render.json','source-media-imports.json','narrated-audio-filter.txt')+visual_names(directory)
+    optional=('source-audio-clocks.json',) if (directory/'source-audio-clocks.json').is_file() else ()
+    return ('narrated-media-mix.json','narrated-mix.wav','timeline-render.json','source-media-imports.json','narrated-audio-filter.txt')+optional+visual_names(directory)
 
 def validate_bundle(config,document,directory,*,store=None,con=None):
     if not enabled(document):return

@@ -16,8 +16,10 @@ from app.platform_models import AssetRead
 from app.timeline_models import TimelineSnapshot
 from app.timeline_proxy import FFmpegProxyRenderer
 
-PROFILE = 'native-source-timeline-proxy-v1'
-FULL_PROFILE = 'native-source-final-effects-preview-v2'
+LEGACY_PROFILE = 'native-source-timeline-proxy-v1'
+LEGACY_FULL_PROFILE = 'native-source-final-effects-preview-v2'
+PROFILE = 'native-source-timeline-proxy-v2'
+FULL_PROFILE = 'native-source-final-effects-preview-v3'
 
 
 def profile_for(project):
@@ -94,7 +96,7 @@ async def render(config, project, output, event):
 
 def render_final_effects(config,project,output,event):
     # Lazy import avoids a cycle with the final worker's mandatory approval check.
-    from .source_render import REPO,prepare_project,command_run
+    from .source_render import REPO,prepare_project,command_run,mux_canonical_audio
     if event.is_set():raise WorkflowError('PREVIEW_CANCELLED')
     if output.exists():raise WorkflowError('PREVIEW_OUTPUT_EXISTS')
     node=Path(getattr(config,'node_executable',r'C:\Program Files\nodejs\node.exe'))
@@ -105,6 +107,7 @@ def render_final_effects(config,project,output,event):
     snapshot,subtitles,assets,audio,_=prepare_project(config,project,directory,directory.name,event)
     command_run([str(node),str(tsx),str(REPO/'renderer/src/native-job-cli.ts'),str(directory),'--preview'],
         directory,'renderer.log',max(180,min(1800,snapshot.duration_seconds*12)),'AUTO_EDIT_RENDERER_FAILED',event)
+    audio_mux=mux_canonical_audio(config,directory,snapshot,event)
     receipt=json.loads((directory/'renderer-receipt.json').read_bytes())
     width,height=round(snapshot.width*.4),round(snapshot.height*.4)
     if (receipt.get('fixture') is not False or receipt.get('preview') is not True
@@ -140,6 +143,8 @@ def render_final_effects(config,project,output,event):
         'canonical_audio_routing':True,'canonical_source_audio':bool(audio.clips),'audio_included':bool(audio.clips),
         'music_ducking':audio.processing['music_ducking'],'audio_processing':audio.processing,
         'audio_intermediate_cache':json.loads((directory/'audio-analysis.json').read_bytes())['intermediate_cache'],
+        'source_audio_clocks':json.loads((directory/'source-audio-clocks.json').read_bytes()),
+        'canonical_audio_mux':audio_mux,
         'audio_speech_normalization':bool(audio.processing['normalization_original_audio_clip_ids']),
         'tts_calls':0,'external_provider_calls':0,'final_qc_verified':False,
         'final_render_parity':False,'final_approval_eligible':False,'human_final_video_accepted':False}
