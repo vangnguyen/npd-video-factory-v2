@@ -1,0 +1,278 @@
+{
+  "schema_version": "north-star-decoded-source-clock-v1",
+  "recorded_at": "2026-10-12T09:27:41.802098+00:00",
+  "source_parent": "c2424696d2fedae3cbf8549903da12ce05c87066",
+  "wave": "3F/4/8/15 component; full waves remain partial",
+  "implemented": [
+    "versioned actual rational decoded source PTS",
+    "bounded VFR/low-rate samples without manufactured FPS duplicates",
+    "still-image and historical seek semantics preserved",
+    "physical clock/log and original job/checkpoint authority",
+    "separate nullable confidence and semantic/tracking flags",
+    "Vision/reviewed context/crop and thumbnail UI clock propagation"
+  ],
+  "tests": {
+    "API_clock": 8,
+    "Native_first_related": 65,
+    "Native_final_related": 46,
+    "Native_batches_overlap_not_summed": true,
+    "Studio": 750,
+    "new_Native_clock": 5,
+    "new_Studio_clock": 3,
+    "signed_HTTP_static_modules": 67
+  },
+  "test_logs": {
+    "decoded-clock-api-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-api-n1.log",
+      "sha256": "3ae9148d2ea95037bb306066689f01f7725e70ae48bbe67472d93611c4e2c730",
+      "bytes": 100
+    },
+    "decoded-clock-native-n4.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-native-n4.log",
+      "sha256": "47f538238a890ac7c8afb284796718c0fb81635a93fc145bbc96731a4ad3797b",
+      "bytes": 103
+    },
+    "decoded-clock-related-n5.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-related-n5.log",
+      "sha256": "3ba327301638354fcbbedd763ea6a3af63f3c9dc1130829d742e1691ea5cd504",
+      "bytes": 103
+    },
+    "decoded-clock-studio-full-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-studio-full-n1.log",
+      "sha256": "5e9e578fbf093f2112bf232e498ae2d984171dfa256d7189be8f5b5a7686c11b",
+      "bytes": 77347
+    }
+  },
+  "static_http": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-static-http-n1.json",
+    "sha256": "247c5da7474560fcddd148a19a7d1c00c74ea79c1e019eefec949216d36746bb",
+    "bytes": 6982
+  },
+  "local_real_evidence": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\evidence.json",
+    "sha256": "ed2d2f0552ccc55115daf5fc0439672b5273d5bfb1c6397f3b2de1cf231d18e3",
+    "bytes": 3049
+  },
+  "cold_process": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\cold-process.json",
+    "sha256": "12f7f1844a9794ba09fd3d9d5170ee96caafc2e6c79f0017a41b13da363afe64",
+    "bytes": 146
+  },
+  "backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\owned-clock-state.zip",
+    "sha256": "b785efcd4511d4319af18715ea002e58e47648aaf6253a19c2f9845d8b289c5b",
+    "bytes": 1124528
+  },
+  "exported_files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\cold-process.json",
+      "sha256": "12f7f1844a9794ba09fd3d9d5170ee96caafc2e6c79f0017a41b13da363afe64",
+      "bytes": 146
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\evidence.json",
+      "sha256": "ed2d2f0552ccc55115daf5fc0439672b5273d5bfb1c6397f3b2de1cf231d18e3",
+      "bytes": 3049
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\expected-projects.json",
+      "sha256": "378e4d442ecd79eb92b513f79f033fd671d0220193394b378f489d070bc4fb11",
+      "bytes": 69995
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\asset.json",
+      "sha256": "04af63d341c6b457f543acdf958e19cd32b8f7f856b52894195c352c7594266b",
+      "bytes": 982
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\clock-a12e8885d46d20e4fb13eadb.json",
+      "sha256": "ec79447bd1ab779a4968aa52b591b18ba8ee9c417f151704149448acfee8fd2e",
+      "bytes": 3023
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-135f9f90872185e7f3f81f87.png",
+      "sha256": "8a048b141eb4526672c537e9a5e7da66983dabea6836c377330cf5225bf6b558",
+      "bytes": 61408
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-263f872832cc474adf24be34.png",
+      "sha256": "8a54a126c504257e5e2224534bbea4ca5fb38d156a7ad445f5037380208af01e",
+      "bytes": 60977
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-4084778f9f921a6b99be67ad.png",
+      "sha256": "a54d2fb520bd3e96ec2add66886deff725206b56789378f369d0a3f19a00597b",
+      "bytes": 61597
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-4547eeb30d9288f72ecccfcc.png",
+      "sha256": "929c2f16e38a371346fa490d4ef9b065e3fafa594fa74bb4b04b13d24b87e930",
+      "bytes": 61857
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-7640c1aa64c5fbdb62a3757f.png",
+      "sha256": "b1c947d7ad72594254ebb10b526312f72472b96fc7bf31ceacc3c82cb3bb464b",
+      "bytes": 53253
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-803a030fabcf746946bfd52c.png",
+      "sha256": "fb977480c7ff2465ddf41f09d5c56635b58f9752c77b041e5ee58407f26768d7",
+      "bytes": 62843
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-ce62189d6ea8e74459e76dd1.png",
+      "sha256": "6ef9b0064faf7f3df364dd8017b7a9611760f26dc68c66fa98175511f09b6ab9",
+      "bytes": 61760
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\frame-f72b2ea5fb57e39a07c07ec2.png",
+      "sha256": "872b955288ecec28588cee9374de94a4cbc6ba558489306e13a6a108459e7441",
+      "bytes": 61446
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\independent-clock-check.json",
+      "sha256": "de08d51285a80e39af589207823357ed3737115e644e9e483df724a2c15fe91c",
+      "bytes": 798
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\observations.json",
+      "sha256": "fa3d459af9f4dd0bd2fd69902ca8ab39fe4c3b56fb62847232600fdc2441644a",
+      "bytes": 19795
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\project.json",
+      "sha256": "556db0b45953883d80a79367af76a95db320f724ea801c24372e7a859b7dc1d9",
+      "bytes": 50945
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\sampling-a12e8885d46d20e4fb13eadb.log",
+      "sha256": "5f093620fecbd771fe59c99a909cbef55a00228b46572e409195bd36ea1850d9",
+      "bytes": 6105
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\source.mp4",
+      "sha256": "a23c7fd3ea3ebac87ff0861c5a1f0863a6c6f15ac1bc869b3d3bec527a28b838",
+      "bytes": 43984
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\offset\\vision-input-binding.json",
+      "sha256": "07ba4e35677f726487eaa6455d8124c89466e48a4409a577fae72028d99e538c",
+      "bytes": 17413
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\asset.json",
+      "sha256": "387fda27e86480df2ce66573ec12d8feada8494c43f1a6bb98b45bd8f50a5992",
+      "bytes": 989
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\clock-78e085c2959403c199b038dc.json",
+      "sha256": "1e5e7eef2b3b98aa2ba9f30181fd4694d25f944251061bb2dd6cbd6f48cae96c",
+      "bytes": 1718
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\frame-08fa20129d38a506a13c7b45.png",
+      "sha256": "19b11bead20ba026d3ef09ce5f4ffc0bfe247d7b5a593b115b5aa89b010710cd",
+      "bytes": 1372
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\frame-09f9e187f724dade6294f34e.png",
+      "sha256": "427b066cd3185f21952e11086123dfe4bc5905397275601a08d7230b8e162dcc",
+      "bytes": 1379
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\frame-f59e7717055e9570c1cb16de.png",
+      "sha256": "532686d09007d3527894bfd916f34cedce1a1133cbb24a96c384a468333b0828",
+      "bytes": 1383
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\frame-f9350601efa5adcb33795310.png",
+      "sha256": "3b182b2bf7f4fb6f823d7ac8354032abef8a2864c4a93e6d495b4e26cac1d67f",
+      "bytes": 1372
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\independent-clock-check.json",
+      "sha256": "942caf253dde68d334c2e80ba96492af467c8ffb830a23a21dae135b809da261",
+      "bytes": 383
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\observations.json",
+      "sha256": "c1ada90477a6f58021b8efe9e84ec35d7af89969884bc10141df8858d3db8187",
+      "bytes": 10954
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\project.json",
+      "sha256": "065318658ae04df7c7aa763479528a7a78bc99fe9d471534e8fd780a56007aac",
+      "bytes": 30754
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\sampling-78e085c2959403c199b038dc.log",
+      "sha256": "4630ce2648047563fe239fe49b14010adeaaf193510de36e8a0a8f7932b7b1d7",
+      "bytes": 4304
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\source.mp4",
+      "sha256": "d9e46f160423dc544c7c18273d5c2e218eca63a5c0bbf8d02bcd0a1bd446e14a",
+      "bytes": 2079
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-decoded-clock-n1\\vfr\\vision-input-binding.json",
+      "sha256": "ff4a7951db15dbec29ed8bf6bfb9c14a3451a7f34ce87e5d946f17056e90ac05",
+      "bytes": 9433
+    }
+  ],
+  "retained_failed_trials": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-native-n2.log",
+      "sha256": "a83aa3726370994681e4b52bfffb676c2898168d51ceb97dce4c3d3cdb1cb777",
+      "bytes": 29903
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\decoded-clock-native-n3.log",
+      "sha256": "156d239650edb8bf06088d499c58b4fe3f8397608416f85c9aa6b944dd680a9d",
+      "bytes": 1233
+    }
+  ],
+  "failed_SQLite_close_and_artifact_error_order_fixed": true,
+  "genuine_VFR_nonzero_start_FFmpeg_FFprobe": true,
+  "genuine_speech_ASR": false,
+  "semantic_Vision_provider": false,
+  "continuous_tracking": false,
+  "actual_browser": false,
+  "Owner_UAT": false,
+  "paid_calls": 0,
+  "external_provider_calls": 0,
+  "local_TTS_inferences": 0,
+  "main_merged": false,
+  "production_deployed": false,
+  "publishing_enabled": false,
+  "historical_artifacts_replaced": false,
+  "owned_rehearsal_roots_cleaned": true,
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  },
+  "remaining": [
+    "dense source motion/audio clocks",
+    "genuine semantics/provider/ASR",
+    "continuous tracking and confidence calibration",
+    "full Mode A/B UI/Owner/original A/B/C",
+    "production acceptance"
+  ]
+}

@@ -38,7 +38,7 @@ export function initializeSourceCropReview({root,getState,getReviewedVision=()=>
       aspect_ratio:v.review.aspect_ratio,plan:v.review.plan,sample_evidence:v.review.sample_evidence,confidence_basis:v.review.confidence_basis,
       original_vision_id:v.review.reviewed_vision.items[0].request.vision_id,original_response_id:v.review.reviewed_vision.items[0].response_id,
       original_response_sha256:v.review.reviewed_vision.items[0].response_sha256,original_cost_operation_id:v.review.reviewed_vision.items[0].cost_operation_id,
-      mock:v.review.reviewed_vision.items[0].mock,tracking_confidence:null,continuous_tracking_performed:false,decoded_pts_verified:false})),null,2);
+      mock:v.review.reviewed_vision.items[0].mock,tracking_confidence:null,continuous_tracking_performed:false,decoded_pts_verified:v.review.decoded_pts_verified})),null,2);
   }
   function sync(){if(selected&&(binding!==context()||!same(selected,getReviewedVision())))clear();else controls();}
   function choose(){sync();if(blocked()){onMessage('Lưu chỉnh sửa và mở video nguồn có quyền chỉnh sửa trước khi chọn crop.',true);return;}

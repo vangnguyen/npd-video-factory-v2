@@ -19,6 +19,8 @@ Phần còn mở tập trung ở luồng UI đầy đủ Mode A/B; ASR/Vision/tr
 
 IMPLEMENTATION_COMPLETE = NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE = NO; PRODUCTION_DEPLOYED = NO; VIDEO_FACTORY_NORTH_STAR_READY = NO. Publishing vẫn tắt mặc định. Không merge main, triển khai production, thay artifact đã nghiệm thu hoặc gọi provider trả phí trong mốc quản trị kênh này.
 
-Nguồn chi tiết: [ma trận năng lực](NORTH_STAR_CAPABILITY_MATRIX.md), [kế hoạch đóng gap](NORTH_STAR_GAP_CLOSURE_PLAN.md), [mốc video công nghệ](NATIVE_TECHNOLOGY_ACCEPTANCE.md), [mốc quản trị kênh](NATIVE_CHANNEL_PROFILE_ADMIN.md). SHA nguồn cuối cùng, kiểm thử và bản khôi phục được ghi riêng trong `recovery/20261007/asr-language-selection-program-state.json` của workspace để không tạo tham chiếu vòng với commit chứa tài liệu.
+Nguồn chi tiết: [ma trận năng lực](NORTH_STAR_CAPABILITY_MATRIX.md), [kế hoạch đóng gap](NORTH_STAR_GAP_CLOSURE_PLAN.md), [mốc video công nghệ](NATIVE_TECHNOLOGY_ACCEPTANCE.md), [mốc quản trị kênh](NATIVE_CHANNEL_PROFILE_ADMIN.md). SHA nguồn cuối cùng, kiểm thử và bản khôi phục được ghi riêng trong `recovery/20261007/decoded-source-clock-program-state.json` của workspace để không tạo tham chiếu vòng với commit chứa tài liệu.
 
 Mốc ASR: [Native language selection](NATIVE_ASR_LANGUAGE_SELECTION.md), [bằng chứng](north-star/asr-language-selection-evidence.json). Kiểm thử 50 Native / 37 API / 747 Studio; browser queue và hình học trường ở 1366/1920/2560 là phạm vi thành phần. Genuine speech/provider và full Mode A/B vẫn còn mở.
+
+Mốc clock nguồn: [decoded source frame clock](NATIVE_DECODED_SOURCE_FRAME_CLOCK.md). Mẫu mới có PTS/time base/log/job/checkpoint thật; legacy giữ seek chưa xác minh. VFR và video bắt đầu giây 4 đã đối chiếu FFprobe và khôi phục trong tiến trình mới. Không nghiệm thu semantics/tracking/ASR/Owner/production từ bằng chứng này.

@@ -43,7 +43,8 @@ class MediaFrameTests(unittest.TestCase):
         self.assertEqual(value['semantic_provider_status'],'NOT_CONFIGURED');self.assertIsNone(value['confidence'])
         self.assertFalse(value['semantic_inference_performed']);self.assertFalse(value['frozen_video_detection_performed'])
         for frame in value['frames']:
-            self.assertTrue(0<frame['timestamp_seconds']<3);self.assertIsNone(frame['decoded_pts_seconds'])
+            self.assertTrue(0<=frame['timestamp_seconds']<3);self.assertEqual(frame['decoded_pts_seconds'],frame['timestamp_seconds'])
+            self.assertEqual(frame['timestamp_basis'],'decoded_source_pts; copyts_start_at_zero')
             path=frames.frame_path(self.root,frame);self.assertEqual(file_sha(path),frame['sha256'])
             with Image.open(path) as image:self.assertEqual(image.size,(frame['width'],frame['height']))
             self.assertLessEqual(max(frame['width'],frame['height']),480)

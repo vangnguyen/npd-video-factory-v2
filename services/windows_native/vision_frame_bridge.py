@@ -10,7 +10,7 @@ import math
 from pathlib import Path
 
 from .contracts import WorkflowError, digest
-from .media_frame_analysis import checked_path, frame_path, validate, FRAME_COUNT
+from .media_frame_analysis import checked_path, frame_path, validate, verify_clock, FRAME_COUNT, SCHEMA
 from app.auto_edit_models import MediaMetadata, SceneRead
 from app.openai_vision_provider import ExtractedVisionFrame
 
@@ -52,6 +52,7 @@ class NativeEvidenceFrameExtractor:
             if not metadata.width or not metadata.height:
                 raise ValueError()
             observation = validate(s['source_observation'], self.project_id, asset)
+            verify_clock(self.root,observation)
             frames = observation['frames']
             if (not 1 <= len(frames) <= FRAME_COUNT or getattr(self, 'max_frames', len(frames)) != len(frames)
                 or getattr(self, '_max_frames', len(frames)) != len(frames)
@@ -101,7 +102,7 @@ class NativeEvidenceFrameExtractor:
 
     def binding(self):
         _, metadata, observation = self._check()
-        return {'schema_version': 'native-vision-frame-input-v1', 'project_id': self.project_id,
+        binding={'schema_version': 'native-vision-frame-input-v1', 'project_id': self.project_id,
             'asset_id': self.source['asset']['id'], 'source_sha256': self.source['asset']['sha256'],
             'source_binding_sha256': self._fingerprint,
             'source_observation_id': observation['observation_id'],
@@ -116,6 +117,11 @@ class NativeEvidenceFrameExtractor:
             'frozen_video_detection_performed': False, 'semantic_inference_performed': False,
             'external_provider_calls': 0, 'paid_operations': 0,
             'source_media_mutated': False, 'canonical_timeline_mutated': False}
+        if observation['schema']==SCHEMA:
+            from app.decoded_frame_clock import BASIS
+            decoded=observation.get('decoded_clock_evidence') is not None
+            binding.update(timestamp_basis=BASIS if decoded else 'still_image',decoded_pts_verified=decoded)
+        return binding
 
     async def extract(self, path, *, metadata, scenes, asset_id, sample_interval_seconds):
         checked, original, observation = self._check()

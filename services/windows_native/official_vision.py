@@ -206,7 +206,8 @@ class NativeOfficialVision:
                     or provenance['request_sha256'] != response['request_sha256'] or provenance['artifact_evidence'] != artifacts
                     or provenance['cost_receipt']['actual_cost_vnd'] != response['calculated_usage_cost_vnd']
                     or result['source_sha256'] != snapshot['source']['asset']['sha256'] or result['input_binding'] != snapshot['input_binding']
-                    or any(result[k] is not False for k in ('automatic_planning_eligible','canonical_timeline_mutated','continuous_tracking_performed','decoded_pts_verified','confidence_calibrated','billing_invoice_verified','publishing_authorized','owner_uat_accepted','real_provider_tested'))
+                    or result['decoded_pts_verified'] is not snapshot['input_binding'].get('decoded_pts_verified',False)
+                    or any(result[k] is not False for k in ('automatic_planning_eligible','canonical_timeline_mutated','continuous_tracking_performed','confidence_calibrated','billing_invoice_verified','publishing_authorized','owner_uat_accepted','real_provider_tested'))
                     or result['subject_tracks'] != [] or result['observed_actual_billed_cost_vnd'] is not None
                     or result['calculated_usage_cost_vnd'] != response['calculated_usage_cost_vnd'] or cost['status'] != 'response_received'
                     or [(v.timestamp_seconds, v.evidence_frame_reference) for v in frames] != [(v['timestamp_seconds'], v['reference']) for v in observation['frames']]
@@ -342,7 +343,7 @@ class NativeOfficialVision:
                     'frames':[v.model_dump(mode='json') for v in frames],'scenes':[v.model_dump(mode='json') for v in scenes],
                     'reframe_plans':[v.model_dump(mode='json') for v in plans],'best_frame_ids':best,'thumbnail_candidate_ids':thumbs,'subject_tracks':[],
                     'calculated_usage_cost_vnd':observation['calculated_usage_cost_vnd'],'observed_actual_billed_cost_vnd':None,
-                    'automatic_planning_eligible':False,'canonical_timeline_mutated':False,'continuous_tracking_performed':False,'decoded_pts_verified':False,
+                    'automatic_planning_eligible':False,'canonical_timeline_mutated':False,'continuous_tracking_performed':False,'decoded_pts_verified':value['snapshot']['input_binding'].get('decoded_pts_verified',False),
                     'confidence_calibrated':False,'billing_invoice_verified':False,'publishing_authorized':False,'owner_uat_accepted':False,'real_provider_tested':False}
                 con.execute("UPDATE native_official_vision_intents SET status='succeeded',result_json=?,result_sha256=?,updated_at=? WHERE vision_id=?",(json.dumps(result,ensure_ascii=False),digest(result),now(),identity))
                 self.event(con,row,'vision.official.result.saved','worker',mock=f.mock,planning_authorized=False)

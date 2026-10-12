@@ -21,6 +21,7 @@ function frameMarkup(projectId,frame){
   const facts=frame.pixel_facts;
   return `<figure><img loading="lazy" src="${frameImageUrl(projectId,frame.frame_id)}" alt="Mẫu nguồn tại ${number(frame.timestamp_seconds)} giây" width="240" height="160" style="object-fit:contain;max-width:100%;background:#131923">
     <figcaption>${number(frame.timestamp_seconds)}s · ${frame.width}×${frame.height} · sáng trung bình ${number(facts.luma_mean)}/255 · độ nét pixel ${number(facts.laplacian_variance)}
+    ${frame.timestamp_basis==='decoded_source_pts; copyts_start_at_zero'?' · PTS decoder đã xác minh':frame.timestamp_basis==='still_image'?' · ảnh tĩnh':' · thời điểm yêu cầu seek; PTS chưa xác minh'}
     ${facts.black_sample?' · mẫu đen':''}${frame.duplicate_sample_of?' · giống hệt một mẫu trước (không kết luận video bị đứng)':''}</figcaption></figure>`;
 }
 export function initializeMediaFrames({api,getProject,getState,onWorking,onMessage}){

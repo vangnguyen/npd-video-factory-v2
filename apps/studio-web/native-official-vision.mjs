@@ -2,7 +2,26 @@ import {frameImageUrl} from './native-media-frames.mjs';
 const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),id=(v,p)=>typeof v==='string'&&new RegExp('^'+p+'_[a-f0-9]{32}$').test(v),integer=(v,a,b)=>Number.isInteger(v)&&v>=a&&v<=b;
 const stable=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
 const falseFields=(v,keys)=>keys.every(k=>v?.[k]===false),score=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1;
-const resultFlags=['automatic_planning_eligible','canonical_timeline_mutated','continuous_tracking_performed','decoded_pts_verified','confidence_calibrated','billing_invoice_verified','publishing_authorized','owner_uat_accepted','real_provider_tested'];
+const resultFlags=['automatic_planning_eligible','canonical_timeline_mutated','continuous_tracking_performed','confidence_calibrated','billing_invoice_verified','publishing_authorized','owner_uat_accepted','real_provider_tested'];
+export function validateVisionFrameClock(observation,asset,binding){
+  const decoded=observation?.schema==='native-media-frame-observations-v2'&&asset?.kind==='video';
+  if(!['native-media-frame-observations-v1','native-media-frame-observations-v2'].includes(observation?.schema))throw Error('Phiên bản khung hình không hợp lệ.');
+  if(decoded){const e=observation.decoded_clock_evidence;
+    if(binding.decoded_pts_verified!==true||binding.timestamp_basis!=='decoded_source_pts; copyts_start_at_zero'||!e||e.algorithm!=='single-decode-threshold-sampling-v1'
+      ||!sha(e.sha256)||!sha(e.log_sha256)||!/^media-clock:\/\/[a-f0-9]{32}\/clock-[a-f0-9]{24}\.json$/.test(e.reference??'')
+      ||!/^media-clock:\/\/[a-f0-9]{32}\/sampling-[a-f0-9]{24}\.log$/.test(e.log_reference??''))throw Error('Bằng chứng PTS decoder không hợp lệ.');
+  }else if(binding.decoded_pts_verified!==undefined&&binding.decoded_pts_verified!==false)throw Error('Không nâng cấp PTS chưa đo.');
+  if(observation.schema==='native-media-frame-observations-v1'&&(observation.decoded_clock_evidence!=null||binding.timestamp_basis!=='requested_ffmpeg_source_seek; decoded_pts_unavailable'))throw Error('Không nâng cấp PTS chưa đo.');
+  if(observation.schema==='native-media-frame-observations-v2'&&!decoded&&(asset?.kind!=='image'||binding.timestamp_basis!=='still_image'||observation.frames.length!==1))throw Error('Thời điểm ảnh tĩnh không hợp lệ.');
+  for(const[i,f]of observation.frames.entries()){
+    if(decoded){const c=f.decoded_clock;
+      if(f.timestamp_basis!==binding.timestamp_basis||f.decoded_pts_seconds!==f.timestamp_seconds||!c||c.selected_ordinal!==i
+        ||!integer(c.pts,0,Number.MAX_SAFE_INTEGER)||!integer(c.time_base_numerator,1,2147483647)||!integer(c.time_base_denominator,1,2147483647)
+        ||!Number.isFinite(c.timestamp_seconds)||Math.abs(c.pts*c.time_base_numerator/c.time_base_denominator-c.timestamp_seconds)>1e-8
+        ||c.timestamp_seconds!==f.timestamp_seconds||c.width!==f.width||c.height!==f.height)throw Error('PTS không khớp khung hình.');
+    }else if(f.decoded_pts_seconds!==null||f.decoded_clock!=null||observation.schema==='native-media-frame-observations-v2'&&(f.timestamp_seconds!==0||f.timestamp_basis!=='still_image'))throw Error('Không nâng cấp PTS chưa đo.');
+  }return decoded;
+}
 function money(v,positive=false){if(typeof v!=='string'||!/^(?:0|[1-9][0-9]{0,12})(?:\.[0-9]{1,6})?$/.test(v)||!Number.isFinite(Number(v))||Number(v)>1e12||positive&&Number(v)<=0)throw new Error('Nhập số tiền VND hợp lệ, tối đa sáu số thập phân.');return v;}
 function time(v){if(typeof v!=='string'||!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?(?:Z|[+-]\d\d:\d\d)$/.test(v)||!Number.isFinite(Date.parse(v)))throw new Error('Thời hạn không hợp lệ.');
   const[y,m,d,h,n,s]=v.slice(0,19).split(/[-T:]/).map(Number),date=new Date(Date.UTC(y,m-1,d,h,n,s));if(date.getUTCFullYear()!==y||date.getUTCMonth()+1!==m||date.getUTCDate()!==d||h>23||n>59||s>59)throw new Error('Thời hạn không hợp lệ.');return Date.parse(v);}
@@ -37,7 +56,8 @@ export function validateOfficialVisionHistory(v,state){safe(v);const s=v?.snapsh
     ||rights?.schema_version!=='native-official-vision-rights-v1'||rights.asset_id!==b.asset_id||rights.asset_sha256!==b.source_sha256||!sha(rights.rights_sha256)||!falseFields(rights,['rights_independently_verified','publishing_authorized'])
     ||r.acknowledged_protocol_mock&&(rights.authorization_kind!=='protocol_mock_only_unverified_rights'||rights.override!==null)
     ||!r.acknowledged_protocol_mock&&!['registered_rights','explicit_owner_override'].includes(rights.authorization_kind))throw new Error('Nguồn, quyền sử dụng hoặc cấu hình Vision đã thay đổi.');
-  const refs=new Set();for(const f of b.source_frame_evidence){frameImageUrl(v.project_id,f.frame_id);if(typeof f.reference!=='string'||refs.has(f.reference)||!sha(f.sha256)||!sha(f.decoded_pixels_sha256)||!Number.isFinite(f.timestamp_seconds)||f.timestamp_seconds<0||f.decoded_pts_seconds!==null)throw new Error('Bằng chứng khung hình không hợp lệ.');refs.add(f.reference);}
+  const decodedPts=validateVisionFrameClock(o,source.asset,b);
+  const refs=new Set();for(const f of b.source_frame_evidence){frameImageUrl(v.project_id,f.frame_id);if(typeof f.reference!=='string'||refs.has(f.reference)||!sha(f.sha256)||!sha(f.decoded_pixels_sha256)||!Number.isFinite(f.timestamp_seconds)||f.timestamp_seconds<0)throw new Error('Bằng chứng khung hình không hợp lệ.');refs.add(f.reference);}
   if(v.claim_id!==null&&!id(v.claim_id,'nvoc')||v.cost_operation_id!==null&&!sha(v.cost_operation_id)||v.response_id!==null&&!id(v.response_id,'nvor'))throw new Error('Mã thao tác không hợp lệ.');
   const observed=v.response;
   if((observed!==null)!==(v.response_id!==null))throw new Error('Phản hồi không khớp.');
@@ -48,7 +68,7 @@ export function validateOfficialVisionHistory(v,state){safe(v);const s=v?.snapsh
   if(result){const p=result.adapter_provenance;
     if(result.schema_version!=='native-official-vision-result-v1'||['vision_id','workspace_id','project_id','snapshot_sha256','response_id','cost_operation_id'].some(k=>result[k]!==v[k])
       ||result.mock!==r.acknowledged_protocol_mock||result.semantic_inference_performed!==!r.acknowledged_protocol_mock||result.external_provider_calls!==(r.acknowledged_protocol_mock?0:1)||result.paid_operation_attempted!==!r.acknowledged_protocol_mock
-      ||!falseFields(result,resultFlags)||result.observed_actual_billed_cost_vnd!==null||!Array.isArray(result.subject_tracks)||result.subject_tracks.length!==0||stable(result.input_binding)!==stable(b)||result.source_sha256!==b.source_sha256
+      ||!falseFields(result,resultFlags)||result.decoded_pts_verified!==decodedPts||result.observed_actual_billed_cost_vnd!==null||!Array.isArray(result.subject_tracks)||result.subject_tracks.length!==0||stable(result.input_binding)!==stable(b)||result.source_sha256!==b.source_sha256
       ||!observed||result.response_sha256!==observed.response_sha256||result.calculated_usage_cost_vnd!==observed.calculated_usage_cost_vnd||p?.mock_tested!==result.mock||p.source_checksum!==b.source_sha256||p.response_sha256!==observed.response_sha256||p.request_sha256!==observed.request_sha256
       ||p.external_call!==true||p.paid!==true||!falseFields(p,['real_provider_tested','secret_recorded'])||!Array.isArray(result.frames)||result.frames.length!==b.source_frame_evidence.length||!Array.isArray(result.scenes)||result.scenes.length>200)throw new Error('Kết quả không khớp nguồn và phản hồi gốc.');
     const ids=new Set();for(const[i,f]of result.frames.entries()){const ref=b.source_frame_evidence[i];if(!/^vfr_[a-f0-9]{24}$/.test(f.frame_id??'')||ids.has(f.frame_id)||f.evidence_frame_reference!==ref.reference||f.timestamp_seconds!==ref.timestamp_seconds||f.provider_key!=='openai-vision'||f.model!=='gpt-5-mini'

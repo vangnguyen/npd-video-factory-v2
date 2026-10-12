@@ -40,7 +40,7 @@ def content(value,request):
         'best_frame_ids':list(result['best_frame_ids']),'thumbnail_candidate_ids':list(result['thumbnail_candidate_ids']),
         'source_frame_evidence':copy.deepcopy(snapshot['input_binding']['source_frame_evidence']),
         'calculated_usage_cost_vnd':result['calculated_usage_cost_vnd'],'observed_actual_billed_cost_vnd':None,
-        'prediction_confidence_calibrated':False,'continuous_tracking_performed':False,'decoded_pts_verified':False,
+        'prediction_confidence_calibrated':False,'continuous_tracking_performed':False,'decoded_pts_verified':result['decoded_pts_verified'],
         'automatic_application':False,'planning_authorizes_payment':False,'full_media_qc_replaced':False,
         'publishing_authorized':False,'owner_uat_accepted':False,'real_provider_tested':False}
 

@@ -8,7 +8,7 @@ import uuid
 
 from .contracts import WorkflowError,digest
 from .media import project_assets
-from .media_frame_analysis import validate,frame_path,checked_path
+from .media_frame_analysis import validate,frame_path,checked_path,verify_clock
 from .vision_models import NativeVisionRequest
 from .vision_provider import NativeFixtureVisionProvider
 from .store import now
@@ -41,6 +41,7 @@ class NativeVision:
             asset=assets.get(record['observation']['asset_id'])
             if asset is None:raise WorkflowError('NATIVE_VISION_ASSET_NOT_FOUND',404)
             value=validate(record,project['id'],asset);checked_path(self.config,asset)
+            verify_clock(self.store.root,value)
             for frame in value['frames']:frame_path(self.store.root,frame)
             with checked_path(self.config,asset).open('rb') as file:header=file.read(16)
             content_type=('image/png' if header.startswith(b'\x89PNG\r\n\x1a\n') else 'image/jpeg' if header.startswith(b'\xff\xd8\xff')

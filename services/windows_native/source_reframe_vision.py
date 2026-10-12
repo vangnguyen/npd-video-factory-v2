@@ -56,7 +56,7 @@ def record(project,snapshot,reviewed,ratio):
         'source_revision':project['revision'],'source_document_sha256':digest(project['document']),'source':snapshot,
         'reviewed_vision':reviewed,'aspect_ratio':ratio,'fingerprint':fingerprint,'plan':value.model_dump(mode='json'),
         'sample_evidence':samples,'confidence_basis':basis,'tracking_confidence':None,'prediction_confidence_calibrated':False,
-        'continuous_tracking_performed':False,'decoded_pts_verified':False,'external_dispatches':0,'paid_operations':0,
+        'continuous_tracking_performed':False,'decoded_pts_verified':reviewed['items'][0]['decoded_pts_verified'],'external_dispatches':0,'paid_operations':0,
         'publishing_authorized':False,'owner_uat_accepted':False,'created_at':now()}
     saved={'review':value,'sha256':digest(value)};records=project['document'].get('source_reframe_reviews',[])
     if len(records)>=100 or len(canonical(saved))>1024*1024 or len(canonical(records+[saved]))>16*1024*1024:
@@ -70,7 +70,7 @@ def lineage(saved):
         'original_response_id':item['response_id'],'original_response_sha256':item['response_sha256'],
         'original_cost_operation_id':item['cost_operation_id'],'mock_original_result':item['mock'],
         'confidence_basis':value['confidence_basis'],'tracking_confidence':None,'prediction_confidence_calibrated':False,
-        'continuous_tracking_performed':False,'decoded_pts_verified':False,'provider_dispatches':0,'publishing_authorized':False,
+        'continuous_tracking_performed':False,'decoded_pts_verified':value['decoded_pts_verified'],'provider_dispatches':0,'publishing_authorized':False,
         'owner_uat_accepted':False,'human_review_required':True}
 
 def validate(store,project,saved,service,con):
@@ -91,7 +91,7 @@ def validate(store,project,saved,service,con):
             'source_revision':value['source_revision'],'source_document_sha256':digest(document),'source':snapshot,'reviewed_vision':reviewed,
             'aspect_ratio':value['aspect_ratio'],'fingerprint':fingerprint,'plan':expected.model_dump(mode='json'),
             'sample_evidence':samples,'confidence_basis':basis,'tracking_confidence':None,'prediction_confidence_calibrated':False,
-            'continuous_tracking_performed':False,'decoded_pts_verified':False,'external_dispatches':0,'paid_operations':0,
+            'continuous_tracking_performed':False,'decoded_pts_verified':reviewed['items'][0]['decoded_pts_verified'],'external_dispatches':0,'paid_operations':0,
             'publishing_authorized':False,'owner_uat_accepted':False,'created_at':value['created_at']}
         if digest(value)!=digest(expected_value):raise ValueError()
     except WorkflowError:raise

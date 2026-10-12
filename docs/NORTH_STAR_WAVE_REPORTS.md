@@ -3621,3 +3621,31 @@ EXTERNAL BLOCKERS: configured secrets/budget for genuine ASR acceptance; origina
 OWNER ACTION REQUIRED: none for remaining safe implementation; UAT deferred; real paid/provider/deployment actions retain their own gates
 
 NEXT WAVE: continue genuine-source media understanding and full original Mode B UI/E2E gaps without shrinking the Master Spec
+
+## Wave 3F / 4 / 8 / 15 — Decoded source-frame clock component
+
+WAVE: 3F/4/8/15 component
+
+STATUS: implemented/local-real tested; full waves remain PARTIAL
+
+HEAD SHA: source parent c2424696d2fedae3cbf8549903da12ce05c87066; final source HEAD in workspace decoded-source-clock-program-state.json
+
+CAPABILITIES COMPLETED: v2 bounded actual decoder PTS; original clock/log/job/checkpoint checks; legacy preservation; Vision/reviewed crop propagation; VFR/nonzero-start independent probe and cold recovery
+
+CAPABILITIES PARTIAL: dense source motion/audio clocks, genuine semantics/ASR/tracking, full Mode A/B/Owner/production
+
+TESTS: final counts and log hashes in north-star/decoded-source-clock-evidence.json
+
+REAL PROVIDER TESTS: no external provider; actual local FFmpeg/FFprobe/Pillow/SQLite and two-source recovery
+
+MOCK TESTS: structured Vision result contracts use explicit fixtures; no real inference or paid operation
+
+EVIDENCE: NATIVE_DECODED_SOURCE_FRAME_CLOCK.md; decoded-source-clock-evidence.json; two source videos and clock bundles; independent FFprobe; new-process restore; source checkpoint/recovery pair
+
+REGRESSIONS: related legacy/current cases checked; failed SQLite-close/error-order trials retained; historical accepted artifacts verified at preservation seal
+
+EXTERNAL BLOCKERS: provider configuration/budget for genuine semantics/ASR, Owner UAT and production acceptance
+
+OWNER ACTION REQUIRED: none for remaining safe implementation; separate external gates apply
+
+NEXT WAVE: dense source analysis and remaining genuine media/Mode B UI/E2E, preserving the entire North Star scope
