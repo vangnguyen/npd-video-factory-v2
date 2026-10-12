@@ -1,8 +1,14 @@
 // Inert until an explicit user action. Chunk hashing keeps memory bounded to 1 MiB.
+import {digestNativeFile} from './native-file-sha256.mjs';
 const limits={video:250,image:15,logo:15,audio:25,music:25,subtitle:1},chunkBytes=1048576;
 const mimes={video:['video/mp4','video/quicktime'],image:['image/jpeg','image/png'],logo:['image/png'],
   audio:['audio/wav','audio/x-wav','audio/mpeg'],music:['audio/wav','audio/x-wav','audio/mpeg'],subtitle:['application/x-subrip','text/vtt']};
 const labels={video:'Video',audio:'Âm thanh nguồn',image:'Ảnh',logo:'Logo PNG giữ alpha',music:'Nhạc',subtitle:'Phụ đề SRT/VTT'};
+const statuses={receiving:'đang nhận',validating:'đang kiểm tra',needs_attention:'cần kiểm tra',completed:'đã lưu',cancelled:'đã hủy'};
+export function nativeUploadOptionLabel(row){
+  const source=row.request.expected_sha256??row.result?.source_sha256;
+  return `${row.request.filename} · ${labels[row.request.kind]} · ${statuses[row.status]} · ${source?source.slice(0,12):'chưa khóa toàn file'}`;
+}
 const stable=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
 const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),id=v=>typeof v==='string'&&/^nup_[a-f0-9]{32}$/.test(v);
 const exact=(v,keys,optional=[])=>v&&typeof v==='object'&&!Array.isArray(v)&&keys.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>keys.includes(k)||optional.includes(k));
@@ -40,10 +46,11 @@ export function initializeNativeMultipartUpload({api,binary,getState,root=docume
   for(const[k,text]of Object.entries(labels)){const option=node('option',text);option.value=k;kind.append(option);}kind.value='video';
   const rights=node('input',null,'rights'),illustration=node('input',null,'illustration');rights.type=illustration.type='checkbox';
   const list=button('Đọc upload đã lưu','history-read'),upload=button('Tải và lưu asset','upload'),resume=button('Tiếp tục upload đã chọn','resume'),
-    pause=button('Tạm dừng sau chunk hiện tại','pause'),cancel=button('Hủy upload đang dở','cancel'),selection=node('select',null,'selection'),status=node('p','Chọn loại và file. MIME sẽ được kiểm tra với nội dung thực.','status'),detail=node('pre',null,'detail');
+    pause=button('Tạm dừng sau chunk hiện tại','pause'),cancel=button('Hủy upload đang dở','cancel'),selection=node('select',null,'selection'),status=node('p','Chọn loại và file. MIME sẽ được kiểm tra với nội dung thực.','status'),detail=node('pre',null,'detail'),summary=node('p',null,'receipt-summary'),advanced=node('details',null,'advanced');
   detail.className='native-publication-evidence';list.dataset.vfPermission='read';
+  advanced.append(node('summary','Thông tin kiểm tra nâng cao'),detail);
   card.append(node('summary','Upload có thể tiếp tục'),label('Loại asset',kind),label('MIME khai báo',mime),label('File gốc',file),
-    label('Tôi có quyền sử dụng file đã chọn.',rights),label('Đây là hình minh họa.',illustration),upload,pause,list,label('Upload đã lưu',selection),resume,cancel,status,detail);
+    label('Tôi có quyền sử dụng file đã chọn.',rights),label('Đây là hình minh họa.',illustration),upload,pause,list,label('Upload đã lưu',selection),resume,cancel,status,summary,advanced);
   let working=false,scope='',generation=0,selected=null,rows=[],pauseRequested=false;const keys=new Map();
   const context=()=>{const s=getState();return JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.canEdit,s.dirty,s.active]);};
   const endpoint=s=>'/api/projects/'+s.project.id+'/uploads';
@@ -54,17 +61,26 @@ export function initializeNativeMultipartUpload({api,binary,getState,root=docume
     list.disabled=blocked||!s.project;selection.disabled=blocked||!rows.length;upload.disabled=blocked||!edit||!file.files?.[0]||!rights.checked;
     resume.disabled=blocked||!edit||!selected||!['receiving','needs_attention'].includes(selected.status)||!file.files?.[0]||!rights.checked;
     cancel.disabled=blocked||!edit||!selected||!['receiving','needs_attention','cancelled'].includes(selected.status);pause.disabled=!working;}
-  function sync(){const next=context();if(next!==scope){scope=next;generation++;selected=null;rows=[];selection.replaceChildren();detail.textContent='';rights.checked=false;}controls();}
-  const render=()=>{selection.replaceChildren();for(const r of rows){const n=node('option',r.request.filename+' · '+r.request.kind+' · '+r.status);n.value=r.upload_id;selection.append(n);}selection.value=selected?.upload_id??'';detail.textContent=selected?JSON.stringify(selected,null,2):'';controls();};
+  function sync(){const next=context();if(next!==scope){scope=next;generation++;selected=null;rows=[];selection.replaceChildren();detail.textContent='';summary.textContent='';rights.checked=false;}controls();}
+  const render=()=>{selection.replaceChildren();for(const r of rows){const n=node('option',nativeUploadOptionLabel(r));n.value=r.upload_id;selection.append(n);}selection.value=selected?.upload_id??'';detail.textContent=selected?JSON.stringify(selected,null,2):'';
+    summary.textContent=selected?`${labels[selected.request.kind]} · ${statuses[selected.status]} · đã nhận ${selected.received_bytes.toLocaleString('vi-VN')} / ${selected.request.total_bytes.toLocaleString('vi-VN')} bytes${selected.status==='completed'&&selected.result.rights_status==='unknown'?' · Quyền phát hành chưa được xác minh.':''}`:'';controls();};
   async function run(fn){sync();const s=getState();if(working||s.busy||!s.project)return;const expected=context(),ticket=++generation;working=true;pauseRequested=false;onWorking(true);controls();const accept=()=>expected===context()&&ticket===generation;
-    try{await fn(s,accept);}catch(e){if(accept())onMessage(e.message,true);}finally{working=false;onWorking(false);sync();}}
+    try{await fn(s,accept);}catch(e){if(accept()){status.textContent=e.message;onMessage(e.message,true);}}finally{working=false;onWorking(false);sync();}}
   function chosen(s){const f=file.files?.[0];if(!s.canEdit||s.dirty||s.active||s.project?.archived||!f||!rights.checked||!Number.isSafeInteger(f.size)||f.size<1||f.size>limits[kind.value]*chunkBytes||!mimes[kind.value]?.includes(mime.value))throw Error('Lưu dự án, chọn đúng loại/file và xác nhận quyền sử dụng trước.');return f;}
+  async function sourceHash(f,accept){
+    const identity=[kind.value,mime.value,illustration.checked];
+    const current=()=>accept()&&!pauseRequested&&file.files?.[0]===f&&rights.checked&&identity[0]===kind.value&&identity[1]===mime.value&&identity[2]===illustration.checked;
+    const result=await digestNativeFile(f,{isCurrent:current,onProgress:(done,total)=>{if(current())status.textContent=`Đang kiểm tra file · ${Math.floor(done/total*100)}%`;}});
+    if(result===null&&accept())status.textContent=pauseRequested?'Đã tạm dừng kiểm tra file; chưa gửi thêm bytes. Chọn tải hoặc tiếp tục khi sẵn sàng.':'Lựa chọn file đã đổi; chọn lại file và xác nhận quyền sử dụng.';
+    return result;
+  }
   async function readHistory(){await run(async(s,accept)=>{const v=await api(endpoint(s));if(!accept())return;
     if(v?.schema_version!=='native-multipart-upload-page-v1'||v.workspace_id!==s.workspace_id||v.project_id!==s.project.id||!Array.isArray(v.items)||v.items.length>50||typeof v.truncated!=='boolean'||v.publishing_enabled!==false)throw Error('Lịch sử upload không đúng phạm vi.');
     const validated=[];for(const item of v.items)validated.push(await validateNativeUpload(item,s,hash));if(!accept())return;rows=validated;selected=rows.find(r=>r.upload_id===selected?.upload_id)??rows[0]??null;render();});}
-  async function transfer(s,accept,f,current){
+  async function transfer(s,accept,f,current,sourceSha){
     selected=await validateNativeUpload(current,s,hash);if(!accept())return;
     if(selected.request.kind!==kind.value||selected.request.content_type!==mime.value||selected.request.filename!==f.name||selected.request.total_bytes!==f.size||selected.request.illustration!==illustration.checked)throw Error('File và loại đang chọn khác upload đã lưu.');
+    if(selected.request.expected_sha256!==null&&selected.request.expected_sha256!==sourceSha||selected.status==='completed'&&selected.result.source_sha256!==sourceSha)throw Error('Nội dung toàn file khác upload đã lưu. Chọn lại đúng file gốc.');
     if(selected.status==='completed'){status.textContent='Upload đã hoàn tất; không gửi lại bytes.';render();return;}
     if(!['receiving','needs_attention'].includes(selected.status))throw Error('Upload không ở trạng thái có thể tiếp tục.');
     for(const p of selected.parts){const data=await f.slice(p.offset,p.offset+p.bytes).arrayBuffer();if(await hash(data)!==p.sha256)throw Error('File đang chọn khác chunk đã lưu. Chọn lại đúng file gốc.');if(!accept())return;}
@@ -81,13 +97,13 @@ export function initializeNativeMultipartUpload({api,binary,getState,root=docume
     const done=await validateNativeUpload(value,s,hash);if(!accept())return;if(done.upload_id!==selected.upload_id||done.request_sha256!==selected.request_sha256||done.status!=='completed')throw Error('Biên nhận hoàn tất không đúng upload.');
     selected=done;rows=[done,...rows.filter(r=>r.upload_id!==done.upload_id)];status.textContent=done.result.duplicate?'Đã nhận diện asset trùng trong dự án.':'Đã lưu asset và file gốc. Phiên bản mới cần được duyệt lại.';render();rights.checked=false;await onSaved(done);
   }
-  async function createUpload(){await run(async(s,accept)=>{const f=chosen(s),body={schema_version:'native-multipart-upload-request-v1',revision:s.project.revision,kind:kind.value,content_type:mime.value,filename:f.name,total_bytes:f.size,expected_sha256:null,rights_confirmed:true,illustration:illustration.checked};
+  async function createUpload(){await run(async(s,accept)=>{const f=chosen(s),sourceSha=await sourceHash(f,accept);if(!sourceSha||!accept())return;const body={schema_version:'native-multipart-upload-request-v1',revision:s.project.revision,kind:kind.value,content_type:mime.value,filename:f.name,total_bytes:f.size,expected_sha256:sourceSha,rights_confirmed:true,illustration:illustration.checked};
     const keyScope=stable([s.workspace_id,s.project.id,body]);if(!keys.has(keyScope))keys.set(keyScope,'native-multipart-'+uuid());
-    const result=await api(endpoint(s),{...body,request_key:keys.get(keyScope)});if(!accept())return;const current=await validateNativeUpload(result,s,hash);if(stable(current.request)!==stable(body))throw Error('Upload trả về không đúng yêu cầu đã chọn.');await transfer(s,accept,f,current);});}
-  async function resumeUpload(){await run(async(s,accept)=>{const f=chosen(s);if(!selected)throw Error('Đọc và chọn upload đã lưu trước.');const current=await api(endpoint(s)+'/'+selected.upload_id);if(!accept())return;await transfer(s,accept,f,current);});}
+    const result=await api(endpoint(s),{...body,request_key:keys.get(keyScope)});if(!accept())return;const current=await validateNativeUpload(result,s,hash);if(stable(current.request)!==stable(body))throw Error('Upload trả về không đúng yêu cầu đã chọn.');await transfer(s,accept,f,current,sourceSha);});}
+  async function resumeUpload(){await run(async(s,accept)=>{const f=chosen(s);if(!selected)throw Error('Đọc và chọn upload đã lưu trước.');const sourceSha=await sourceHash(f,accept);if(!sourceSha||!accept())return;const current=await api(endpoint(s)+'/'+selected.upload_id);if(!accept())return;await transfer(s,accept,f,current,sourceSha);});}
   async function cancelUpload(){await run(async(s,accept)=>{if(!s.canEdit||s.dirty||s.active||s.project?.archived||!selected)throw Error('Chọn upload đang dở khi dự án có thể chỉnh sửa.');const prior=selected,value=await api(endpoint(s)+'/'+prior.upload_id+'/cancel',{});if(!accept())return;
     const v=await validateNativeUpload(value,s,hash);if(v.upload_id!==prior.upload_id||v.request_sha256!==prior.request_sha256||v.status!=='cancelled')throw Error('Phản hồi hủy không đúng upload.');selected=v;rows=rows.map(r=>r.upload_id===v.upload_id?v:r);render();});}
-  kind.addEventListener('change',()=>{modes();rights.checked=false;controls();});for(const n of[mime,file,rights,illustration])n.addEventListener('change',controls);
+  kind.addEventListener('change',()=>{modes();rights.checked=false;controls();});file.addEventListener('change',()=>{rights.checked=false;controls();});for(const n of[mime,rights,illustration])n.addEventListener('change',controls);
   selection.addEventListener('change',()=>{selected=rows.find(r=>r.upload_id===selection.value)??null;render();});
   for(const[b,fn]of[[upload,createUpload],[resume,resumeUpload],[list,readHistory],[cancel,cancelUpload]])b.addEventListener('click',fn);pause.addEventListener('click',()=>{pauseRequested=true;});
   sync();return{createUpload,resumeUpload,readHistory,cancelUpload,controls,sync,currentBinding:()=>({upload:selected}),isWorking:()=>working};

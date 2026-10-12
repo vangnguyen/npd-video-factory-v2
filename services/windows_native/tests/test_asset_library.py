@@ -272,8 +272,12 @@ class AssetLibraryHTTPTests(unittest.TestCase):
         self.assertIn('HttpOnly', headers['Set-Cookie']); self.assertIn('SameSite=Strict', headers['Set-Cookie'])
         for route in ['/api/assets', '/api/assets/unknown.jpg/file']:
             self.assertEqual(self.request('GET', route, headers={'Cookie': ''})[0], 401)
-        for query in ['kind=audio', 'page=zero', 'page=0', 'page_size=101', 'page=1&page=2', 'path=../secret']:
-            self.assertEqual(self.request('GET', '/api/assets?' + query)[0], 400)
+        for kind in ['audio', 'subtitle']:
+            with self.subTest(supported_kind=kind):
+                self.assertEqual(self.request('GET', '/api/assets?kind=' + kind)[0], 200)
+        for query in ['kind=unsupported', 'kind=audio&kind=video', 'page=zero', 'page=0', 'page_size=101', 'page=1&page=2', 'path=../secret']:
+            with self.subTest(invalid_query=query):
+                self.assertEqual(self.request('GET', '/api/assets?' + query)[0], 400)
         project = self.create(); body = {'revision': project['revision'], 'action': 'attach', 'asset_ids': ['unknown.jpg']}
         route = '/api/projects/' + project['id'] + '/asset-association'
         self.assertEqual(self.request('POST', route, body, headers={'X-VF-CSRF': 'wrong'})[0], 403)

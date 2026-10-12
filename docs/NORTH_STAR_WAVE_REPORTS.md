@@ -3793,3 +3793,19 @@ NEXT WAVE: continue original Mode B attention/ingest/audio/media/full E2E gaps a
 PROFILE / FRONTEND FOLLOW-UP: current lightweight v2 / full-effects v3 IDs invalidate new approval reuse of earlier previews; hash-verified retained render checkpoint reads permit matching historical profiles only. Studio 758 PASS; fresh native-source-gap-render-n4 effects/final/edge/QC/cold PASS.
 
 Kiểm tra profile/legacy cuối: 18 Native PASS; đọc checkpoint cũ không re-encode, duyệt preview cũ không cấp quyền render mới; các batch có phần chồng lặp.
+
+## Wave 3A / 8F / 15 — Native whole-file upload identity
+
+WAVE: 3A/8F/15 component
+STATUS: implemented/local-real signed HTTP/browser and fixture controller tested; full waves PARTIAL
+HEAD SHA: source parent 3c78c8e519aa1a2e0c77e224bd15d2c90c767f5b; exact final seal in external recovery/20261007/upload-source-hash-program-state.json
+CAPABILITIES COMPLETED: bounded full-file SHA before create/resume, source-bound exact intent retry, same-name/size distinction, unsent-tail guard, rights reset, Vietnamese source/status selector, human receipt summary with advanced raw evidence, meaningful MIME errors, six-role actual browser intake and scoped cold restore
+CAPABILITIES PARTIAL: production object-storage/worker/max-size/all-format/cross-process/lifecycle/full Mode A/B/Owner/A-B-C; 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED, 59 unclosed
+TESTS: Studio final 769 PASS; SHA independent-vector batch 5; initial focused 21 / initial Native19 included as overlapping history; final broadened Native 53 PASS after correction of pre-existing obsolete audio-kind rejection test
+REAL PROVIDER TESTS: none; actual local decoding/HTTP/browser/SQLite/backup/hash is separate from provider/Owner acceptance
+MOCK TESTS: generated media/public fixture actor/minimal controller DOM; partial fixture setup via signed HTTP; explicit 5-second first-large-response timing. Controller pause passes; browser pause success not claimed
+EVIDENCE: docs/NATIVE_UPLOAD_SOURCE_HASH.md; docs/north-star/upload-source-hash-evidence.json; native-upload-source-hash-n1/n2 and native-upload-hash-browser-n1/n2, exact recovered originals and two browser cold archives
+REGRESSIONS: initial metadata fixture labelling corrected without replacing historical fixture; old library test treated now-supported audio as invalid and is corrected. Existing accepted sources remain protected; final checks recorded by the seal
+EXTERNAL BLOCKERS: configured real providers/accounts/budgets, original Owner UAT and production acceptance remain separate; recursive scratch deletion automatically rejected as blocked by policy, roots/backups retained and no retry/bypass
+OWNER ACTION REQUIRED: none for continued safe implementation; listening/Phase10 UAT remains deferred; no paid/publish/deploy/main approval exercised
+NEXT WAVE: continue original full Mode B/Mode A media/ingest/UI/E2E and remaining North Star requirements

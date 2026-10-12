@@ -55,6 +55,11 @@ export const musicSummary = project => project?.document.music ? `${project.docu
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
+  UPLOAD_MIME_MAGIC_MISMATCH:'Nội dung file khác MIME đã chọn. Chọn đúng loại và MIME, rồi bắt đầu upload mới.',
+  UPLOAD_SOURCE_CHECKSUM_MISMATCH:'Nội dung file khác nguồn đã khóa. Chọn lại đúng file gốc; chưa lưu asset vào dự án.',
+  UPLOAD_PART_CHANGED_OR_MISSING:'Chunk đã lưu bị thay đổi hoặc thiếu. Giữ file gốc và kiểm tra upload trước khi tiếp tục.',
+  UPLOAD_CHUNK_CONFLICT:'Chunk này khác phần đã lưu. Chọn lại đúng file gốc trước khi tiếp tục.',
+  UPLOAD_INCOMPLETE_OR_BUSY:'Upload chưa nhận đủ file hoặc đang kiểm tra. Đọc lại trạng thái trước khi tiếp tục.',
   NARRATION_MEASURED_TIMING_REQUIRED:'Tạo lời đọc, nghe kết quả và áp dụng thời lượng đã đo trước khi duyệt preview.',
   NARRATION_CURRENT_AUDIBLE_PREVIEW_REVIEW_REQUIRED:'Tạo và xem preview có tiếng của phiên bản hiện tại trước khi duyệt.',
   NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED:'Duyệt preview có tiếng hiện tại trước khi render. Duyệt để tạo lời đọc chưa đủ.',

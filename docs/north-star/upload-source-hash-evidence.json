@@ -1,0 +1,1066 @@
+{
+  "schema_version": "north-star-native-upload-source-hash-v1",
+  "recorded_at": "2026-10-12T14:11:03.918514+00:00",
+  "source_parent": "3c78c8e519aa1a2e0c77e224bd15d2c90c767f5b",
+  "wave": "3A/8F/15 component; full original waves PARTIAL",
+  "tests": {
+    "whole_file_SHA_vectors_and_independent_engines": 5,
+    "Studio_focused_before_final_UI": 21,
+    "Native_initial_related": 19,
+    "Studio_final": 769,
+    "overlapping_batches_not_unique_total": true,
+    "Native_final_related": 53,
+    "Native_final_related_modules": 6
+  },
+  "test_logs": {
+    "upload-source-hash-algorithm-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-algorithm-n1.log",
+      "sha256": "5906502047e51343dedccb9056d1c2b05c8bf7eb3b77476051b46972d912ac4b",
+      "bytes": 574
+    },
+    "upload-source-hash-studio-focused-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-studio-focused-n1.log",
+      "sha256": "a114e84d518f1c3e0c3ecdf65d84ce7bb61ba69c936dd819d7b5e51087687c84",
+      "bytes": 3261
+    },
+    "upload-source-hash-studio-focused-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-studio-focused-n2.log",
+      "sha256": "384194d17b9f45652e1160030a4e1d32841ded4c9ca8d6cb963fb0e2332f444a",
+      "bytes": 2401
+    },
+    "upload-source-hash-native-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-native-n1.log",
+      "sha256": "1aea469b2b2940c0d2bd9099f2a4e779279d9491a7e3eeb28b96c0d3c6cdebcc",
+      "bytes": 124
+    },
+    "upload-source-hash-studio-full-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-studio-full-n1.log",
+      "sha256": "7e2ae76fb9735e0f180fa8d644bae1011350c2b71cafc9b9312ada24f5ff02c7",
+      "bytes": 79055
+    },
+    "upload-source-hash-studio-final-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-studio-final-n2.log",
+      "sha256": "5a145ea0eb69b2dea1a59965687348a600b7de08cba4b89f5aa83bae19be1f7a",
+      "bytes": 79272
+    },
+    "upload-source-hash-native-final-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-native-final-n2.log",
+      "sha256": "8d809b8e0d09ca3fa54419134652f98a357fec7b0b022dfeeaa9287e9026d7eb",
+      "bytes": 818
+    },
+    "upload-source-hash-rehearsal-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-rehearsal-n1.log",
+      "sha256": "003723f9f1b417dc2ee7d2108f8734265717edfc38a41d7e3cbc88c802bf9fbf",
+      "bytes": 61
+    },
+    "upload-source-hash-rehearsal-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-rehearsal-n2.log",
+      "sha256": "003723f9f1b417dc2ee7d2108f8734265717edfc38a41d7e3cbc88c802bf9fbf",
+      "bytes": 61
+    },
+    "upload-hash-browser-helper-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-hash-browser-helper-n1.log",
+      "sha256": "445b6eaef0e58008fbe015820eea198556108303c1194752d2ceaf98d4232f49",
+      "bytes": 23
+    },
+    "upload-hash-browser-helper-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-hash-browser-helper-n2.log",
+      "sha256": "445b6eaef0e58008fbe015820eea198556108303c1194752d2ceaf98d4232f49",
+      "bytes": 23
+    },
+    "upload-source-hash-native-final-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-source-hash-native-final-n3.log",
+      "sha256": "c18be41d7248a2136cd9bd156dd9bde42037ae5abe0d7a0366503738b24109ef",
+      "bytes": 159
+    }
+  },
+  "rehearsals": {
+    "native-upload-source-hash-n1": {
+      "files": {
+        "controller.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n1\\controller.json",
+          "sha256": "190788aeb8dda70610d393bd4a804ca326fc5a69b61c7f14cba28f2b6850d5aa",
+          "bytes": 11235
+        },
+        "evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n1\\evidence.json",
+          "sha256": "b70e5a284191b396a5795354c61d04c490455e4972a161a4763a6cb3a8761cb7",
+          "bytes": 12338
+        },
+        "owned-upload-sha-state.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n1\\owned-upload-sha-state.zip",
+          "sha256": "714e5553de0b6b0e5c0b3ebde040570be6b815053d1d282b18f0d87b3bb49b2f",
+          "bytes": 1980248
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n1\\project.json",
+          "sha256": "b4b7835722fb29418849acf691511daaad16fc1a59dbfd67de69fddd43182252",
+          "bytes": 13547
+        },
+        "wire-fixture.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n1\\wire-fixture.json",
+          "sha256": "d55e42033d68a16c346a972f2a35489bb1ec7a921632f60bbdf23c1b5ad5191e",
+          "bytes": 340676
+        }
+      },
+      "evidence.json": {
+        "schema_version": "native-upload-source-hash-rehearsal-v1",
+        "six_roles_actual_signed_ingest_and_dedup": true,
+        "controller": {
+          "scope": "actual_signed_local_HTTP_fixture_DOM_controller",
+          "fixture_human": true,
+          "browser_rendered": false,
+          "Owner_UAT": false,
+          "same_filename_and_size": true,
+          "whole_source_hashes": [
+            "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+            "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e"
+          ],
+          "new_sources": 2,
+          "same_file_replay_verified": true,
+          "calls": [
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads",
+              "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads/nup_24a2006e497340969ad16d19f893774f/chunks",
+              "bytes": 61
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads/nup_24a2006e497340969ad16d19f893774f/complete",
+              "source_sha256": null
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads",
+              "source_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e"
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads/nup_50f3bca7e7a9457b95358a5c5c6f52ad/chunks",
+              "bytes": 61
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads/nup_50f3bca7e7a9457b95358a5c5c6f52ad/complete",
+              "source_sha256": null
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads",
+              "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads/nup_2b645f27f70f408cb2787514a70af576/chunks",
+              "bytes": 61
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/211871113de24b8ca2b5fc28da42fa44/uploads/nup_2b645f27f70f408cb2787514a70af576/complete",
+              "source_sha256": null
+            }
+          ],
+          "receipts": [
+            {
+              "schema_version": "native-multipart-upload-v1",
+              "upload_id": "nup_24a2006e497340969ad16d19f893774f",
+              "workspace_id": "wsp_multipart_fixture",
+              "project_id": "211871113de24b8ca2b5fc28da42fa44",
+              "request": {
+                "schema_version": "native-multipart-upload-request-v1",
+                "revision": 7,
+                "kind": "subtitle",
+                "content_type": "application/x-subrip",
+                "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                "total_bytes": 61,
+                "expected_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "rights_confirmed": true,
+                "illustration": false
+              },
+              "request_sha256": "a0a990111aa1f0ac4f881639846308eaba932b9841d1d0d031c9cd84b0ec7e00",
+              "status": "completed",
+              "received_bytes": 61,
+              "chunk_bytes": 1048576,
+              "parts": [
+                {
+                  "ordinal": 0,
+                  "offset": 0,
+                  "bytes": 61,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+                }
+              ],
+              "parts_sha256": "e7097e163c88d370b91ec6fb685284e48daa7c912c3f4d5e88cf72b86eb8c2d8",
+              "deadline": "2026-10-13T12:53:42.444490+00:00",
+              "created_at": "2026-10-12T12:53:42.443491+00:00",
+              "updated_at": "2026-10-12T12:53:42.528488+00:00",
+              "failure_code": null,
+              "result": {
+                "asset": {
+                  "id": "164cbce312bc414da60bfd97a6ecac41.subtitle.srt",
+                  "original_id": "164cbce312bc414da60bfd97a6ecac41.srt",
+                  "kind": "subtitle",
+                  "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                  "content_type": "application/x-subrip",
+                  "cues": [
+                    {
+                      "start": 0,
+                      "end": 1,
+                      "text": "Tiếng Việt: Cần Giờ."
+                    }
+                  ],
+                  "duration_seconds": 1,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "bytes": 61,
+                  "source_bytes": 61,
+                  "source_mime": "application/x-subrip",
+                  "rights_confirmed": true,
+                  "source_type": "user_upload",
+                  "rights_status": "unknown",
+                  "license": null,
+                  "provider": "native-local-upload",
+                  "source_reference": "upload://164cbce312bc414da60bfd97a6ecac41",
+                  "generation_provenance": {},
+                  "source": "immutable_user_upload",
+                  "version": 1,
+                  "illustration": false,
+                  "canonical_role": "subtitle"
+                },
+                "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "source_bytes": 61,
+                "duplicate": true,
+                "attached_revision": 7,
+                "rights_status": "unknown",
+                "publishing_enabled": false
+              },
+              "publishing_enabled": false,
+              "idempotent_replay": false
+            },
+            {
+              "schema_version": "native-multipart-upload-v1",
+              "upload_id": "nup_50f3bca7e7a9457b95358a5c5c6f52ad",
+              "workspace_id": "wsp_multipart_fixture",
+              "project_id": "211871113de24b8ca2b5fc28da42fa44",
+              "request": {
+                "schema_version": "native-multipart-upload-request-v1",
+                "revision": 7,
+                "kind": "subtitle",
+                "content_type": "application/x-subrip",
+                "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                "total_bytes": 61,
+                "expected_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                "rights_confirmed": true,
+                "illustration": false
+              },
+              "request_sha256": "e81eb5db1e8da551bab9ce1d1c833bef0b5f63c36b1ffcba8eec9c54a3f23cd3",
+              "status": "completed",
+              "received_bytes": 61,
+              "chunk_bytes": 1048576,
+              "parts": [
+                {
+                  "ordinal": 0,
+                  "offset": 0,
+                  "bytes": 61,
+                  "sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e"
+                }
+              ],
+              "parts_sha256": "7cca9cfc4404b419b0ca83ff31536c9c37058f5412b907ad92496c4ab5707b1c",
+              "deadline": "2026-10-13T12:53:42.597334+00:00",
+              "created_at": "2026-10-12T12:53:42.596339+00:00",
+              "updated_at": "2026-10-12T12:53:42.678918+00:00",
+              "failure_code": null,
+              "result": {
+                "asset": {
+                  "id": "41e74de8a92b4c1599aef1d0e8b5b922.subtitle.srt",
+                  "original_id": "41e74de8a92b4c1599aef1d0e8b5b922.srt",
+                  "kind": "subtitle",
+                  "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                  "content_type": "application/x-subrip",
+                  "cues": [
+                    {
+                      "start": 0,
+                      "end": 1,
+                      "text": "Tiếng Việt: Cần Giờ?"
+                    }
+                  ],
+                  "duration_seconds": 1,
+                  "sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                  "source_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                  "bytes": 61,
+                  "source_bytes": 61,
+                  "source_mime": "application/x-subrip",
+                  "rights_confirmed": true,
+                  "source_type": "user_upload",
+                  "rights_status": "unknown",
+                  "license": null,
+                  "provider": "native-local-upload",
+                  "source_reference": "upload://41e74de8a92b4c1599aef1d0e8b5b922",
+                  "generation_provenance": {},
+                  "source": "immutable_user_upload",
+                  "version": 1,
+                  "illustration": false,
+                  "canonical_role": "subtitle"
+                },
+                "source_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                "source_bytes": 61,
+                "duplicate": false,
+                "attached_revision": 8,
+                "rights_status": "unknown",
+                "publishing_enabled": false
+              },
+              "publishing_enabled": false,
+              "idempotent_replay": false
+            },
+            {
+              "schema_version": "native-multipart-upload-v1",
+              "upload_id": "nup_2b645f27f70f408cb2787514a70af576",
+              "workspace_id": "wsp_multipart_fixture",
+              "project_id": "211871113de24b8ca2b5fc28da42fa44",
+              "request": {
+                "schema_version": "native-multipart-upload-request-v1",
+                "revision": 8,
+                "kind": "subtitle",
+                "content_type": "application/x-subrip",
+                "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                "total_bytes": 61,
+                "expected_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "rights_confirmed": true,
+                "illustration": false
+              },
+              "request_sha256": "b3f4c3b82273ddd947da9e014ac7ff255e5f46c473415d7393c861251de7c7ad",
+              "status": "completed",
+              "received_bytes": 61,
+              "chunk_bytes": 1048576,
+              "parts": [
+                {
+                  "ordinal": 0,
+                  "offset": 0,
+                  "bytes": 61,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+                }
+              ],
+              "parts_sha256": "e7097e163c88d370b91ec6fb685284e48daa7c912c3f4d5e88cf72b86eb8c2d8",
+              "deadline": "2026-10-13T12:53:42.726380+00:00",
+              "created_at": "2026-10-12T12:53:42.723807+00:00",
+              "updated_at": "2026-10-12T12:53:42.827962+00:00",
+              "failure_code": null,
+              "result": {
+                "asset": {
+                  "id": "164cbce312bc414da60bfd97a6ecac41.subtitle.srt",
+                  "original_id": "164cbce312bc414da60bfd97a6ecac41.srt",
+                  "kind": "subtitle",
+                  "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                  "content_type": "application/x-subrip",
+                  "cues": [
+                    {
+                      "start": 0,
+                      "end": 1,
+                      "text": "Tiếng Việt: Cần Giờ."
+                    }
+                  ],
+                  "duration_seconds": 1,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "bytes": 61,
+                  "source_bytes": 61,
+                  "source_mime": "application/x-subrip",
+                  "rights_confirmed": true,
+                  "source_type": "user_upload",
+                  "rights_status": "unknown",
+                  "license": null,
+                  "provider": "native-local-upload",
+                  "source_reference": "upload://164cbce312bc414da60bfd97a6ecac41",
+                  "generation_provenance": {},
+                  "source": "immutable_user_upload",
+                  "version": 1,
+                  "illustration": false,
+                  "canonical_role": "subtitle"
+                },
+                "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "source_bytes": 61,
+                "duplicate": true,
+                "attached_revision": 8,
+                "rights_status": "unknown",
+                "publishing_enabled": false
+              },
+              "publishing_enabled": false,
+              "idempotent_replay": false
+            }
+          ],
+          "provider_calls": 0
+        },
+        "cold_new_process_project_upload_receipts_exact": true,
+        "backup_sha256": "714e5553de0b6b0e5c0b3ebde040570be6b815053d1d282b18f0d87b3bb49b2f",
+        "generated_media": true,
+        "fixture_human": true,
+        "Owner_UAT": false,
+        "full_Mode_B_accepted": false,
+        "external_provider_calls": 0,
+        "paid_calls": 0,
+        "TTS_inferences": 0,
+        "published": false,
+        "production_deployed": false
+      }
+    },
+    "native-upload-source-hash-n2": {
+      "files": {
+        "controller.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n2\\controller.json",
+          "sha256": "33edcf79cb46e1ce2608a3304aea63c37e7dcd25e2341c65903af9d3a54b8858",
+          "bytes": 11269
+        },
+        "evidence.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n2\\evidence.json",
+          "sha256": "3409421f0c5dd32e317eaba6bdefd4bd3d0ff0f605523b1a98c2c550837ffc4b",
+          "bytes": 12374
+        },
+        "owned-upload-sha-state.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n2\\owned-upload-sha-state.zip",
+          "sha256": "02cee8ef6a68970bd4841a425ffaa97efdf8328fd306cbdd7c5145fe1ef54cbe",
+          "bytes": 1980248
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n2\\project.json",
+          "sha256": "d714e90a56ae51ae967ae6b4903c1537c454cc60d778a239c3795887f60e1d70",
+          "bytes": 13547
+        },
+        "wire-fixture.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-source-hash-n2\\wire-fixture.json",
+          "sha256": "d0959e668b11167d3ea0998f5bd7748de224308767c9e8b5be034eb25b783a5c",
+          "bytes": 340676
+        }
+      },
+      "evidence.json": {
+        "schema_version": "native-upload-source-hash-rehearsal-v1",
+        "six_roles_actual_signed_ingest_and_dedup": true,
+        "controller": {
+          "scope": "actual_signed_local_HTTP_fixture_DOM_controller",
+          "fixture_human": true,
+          "browser_rendered": false,
+          "Owner_UAT": false,
+          "same_filename_and_size": true,
+          "whole_source_hashes": [
+            "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+            "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e"
+          ],
+          "distinct_selected_sources": 2,
+          "new_assets": 1,
+          "same_file_replay_verified": true,
+          "calls": [
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads",
+              "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads/nup_cd2d4bb0f4634e689381178656867c46/chunks",
+              "bytes": 61
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads/nup_cd2d4bb0f4634e689381178656867c46/complete",
+              "source_sha256": null
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads",
+              "source_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e"
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads/nup_6383c44f6dbe41a6ad952dff3ac50934/chunks",
+              "bytes": 61
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads/nup_6383c44f6dbe41a6ad952dff3ac50934/complete",
+              "source_sha256": null
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads",
+              "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads/nup_bb15e358d2aa4af19fd40d19449c54de/chunks",
+              "bytes": 61
+            },
+            {
+              "method": "POST",
+              "path": "/api/projects/1c434e0341494e9da086c2610570bac4/uploads/nup_bb15e358d2aa4af19fd40d19449c54de/complete",
+              "source_sha256": null
+            }
+          ],
+          "receipts": [
+            {
+              "schema_version": "native-multipart-upload-v1",
+              "upload_id": "nup_cd2d4bb0f4634e689381178656867c46",
+              "workspace_id": "wsp_multipart_fixture",
+              "project_id": "1c434e0341494e9da086c2610570bac4",
+              "request": {
+                "schema_version": "native-multipart-upload-request-v1",
+                "revision": 7,
+                "kind": "subtitle",
+                "content_type": "application/x-subrip",
+                "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                "total_bytes": 61,
+                "expected_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "rights_confirmed": true,
+                "illustration": false
+              },
+              "request_sha256": "a0a990111aa1f0ac4f881639846308eaba932b9841d1d0d031c9cd84b0ec7e00",
+              "status": "completed",
+              "received_bytes": 61,
+              "chunk_bytes": 1048576,
+              "parts": [
+                {
+                  "ordinal": 0,
+                  "offset": 0,
+                  "bytes": 61,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+                }
+              ],
+              "parts_sha256": "e7097e163c88d370b91ec6fb685284e48daa7c912c3f4d5e88cf72b86eb8c2d8",
+              "deadline": "2026-10-13T12:57:21.460075+00:00",
+              "created_at": "2026-10-12T12:57:21.459068+00:00",
+              "updated_at": "2026-10-12T12:57:21.601424+00:00",
+              "failure_code": null,
+              "result": {
+                "asset": {
+                  "id": "21a6122deded45f9b34693404c0c1fed.subtitle.srt",
+                  "original_id": "21a6122deded45f9b34693404c0c1fed.srt",
+                  "kind": "subtitle",
+                  "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                  "content_type": "application/x-subrip",
+                  "cues": [
+                    {
+                      "start": 0,
+                      "end": 1,
+                      "text": "Tiếng Việt: Cần Giờ."
+                    }
+                  ],
+                  "duration_seconds": 1,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "bytes": 61,
+                  "source_bytes": 61,
+                  "source_mime": "application/x-subrip",
+                  "rights_confirmed": true,
+                  "source_type": "user_upload",
+                  "rights_status": "unknown",
+                  "license": null,
+                  "provider": "native-local-upload",
+                  "source_reference": "upload://21a6122deded45f9b34693404c0c1fed",
+                  "generation_provenance": {},
+                  "source": "immutable_user_upload",
+                  "version": 1,
+                  "illustration": false,
+                  "canonical_role": "subtitle"
+                },
+                "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "source_bytes": 61,
+                "duplicate": true,
+                "attached_revision": 7,
+                "rights_status": "unknown",
+                "publishing_enabled": false
+              },
+              "publishing_enabled": false,
+              "idempotent_replay": false
+            },
+            {
+              "schema_version": "native-multipart-upload-v1",
+              "upload_id": "nup_6383c44f6dbe41a6ad952dff3ac50934",
+              "workspace_id": "wsp_multipart_fixture",
+              "project_id": "1c434e0341494e9da086c2610570bac4",
+              "request": {
+                "schema_version": "native-multipart-upload-request-v1",
+                "revision": 7,
+                "kind": "subtitle",
+                "content_type": "application/x-subrip",
+                "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                "total_bytes": 61,
+                "expected_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                "rights_confirmed": true,
+                "illustration": false
+              },
+              "request_sha256": "e81eb5db1e8da551bab9ce1d1c833bef0b5f63c36b1ffcba8eec9c54a3f23cd3",
+              "status": "completed",
+              "received_bytes": 61,
+              "chunk_bytes": 1048576,
+              "parts": [
+                {
+                  "ordinal": 0,
+                  "offset": 0,
+                  "bytes": 61,
+                  "sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e"
+                }
+              ],
+              "parts_sha256": "7cca9cfc4404b419b0ca83ff31536c9c37058f5412b907ad92496c4ab5707b1c",
+              "deadline": "2026-10-13T12:57:21.692228+00:00",
+              "created_at": "2026-10-12T12:57:21.691228+00:00",
+              "updated_at": "2026-10-12T12:57:21.840817+00:00",
+              "failure_code": null,
+              "result": {
+                "asset": {
+                  "id": "6489350938f04e2481bbc7cc656b568d.subtitle.srt",
+                  "original_id": "6489350938f04e2481bbc7cc656b568d.srt",
+                  "kind": "subtitle",
+                  "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                  "content_type": "application/x-subrip",
+                  "cues": [
+                    {
+                      "start": 0,
+                      "end": 1,
+                      "text": "Tiếng Việt: Cần Giờ?"
+                    }
+                  ],
+                  "duration_seconds": 1,
+                  "sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                  "source_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                  "bytes": 61,
+                  "source_bytes": 61,
+                  "source_mime": "application/x-subrip",
+                  "rights_confirmed": true,
+                  "source_type": "user_upload",
+                  "rights_status": "unknown",
+                  "license": null,
+                  "provider": "native-local-upload",
+                  "source_reference": "upload://6489350938f04e2481bbc7cc656b568d",
+                  "generation_provenance": {},
+                  "source": "immutable_user_upload",
+                  "version": 1,
+                  "illustration": false,
+                  "canonical_role": "subtitle"
+                },
+                "source_sha256": "507919c144856c5cd2e22a28421cc93693cf874a6e0deb59a2ef2a10d696123e",
+                "source_bytes": 61,
+                "duplicate": false,
+                "attached_revision": 8,
+                "rights_status": "unknown",
+                "publishing_enabled": false
+              },
+              "publishing_enabled": false,
+              "idempotent_replay": false
+            },
+            {
+              "schema_version": "native-multipart-upload-v1",
+              "upload_id": "nup_bb15e358d2aa4af19fd40d19449c54de",
+              "workspace_id": "wsp_multipart_fixture",
+              "project_id": "1c434e0341494e9da086c2610570bac4",
+              "request": {
+                "schema_version": "native-multipart-upload-request-v1",
+                "revision": 8,
+                "kind": "subtitle",
+                "content_type": "application/x-subrip",
+                "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                "total_bytes": 61,
+                "expected_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "rights_confirmed": true,
+                "illustration": false
+              },
+              "request_sha256": "b3f4c3b82273ddd947da9e014ac7ff255e5f46c473415d7393c861251de7c7ad",
+              "status": "completed",
+              "received_bytes": 61,
+              "chunk_bytes": 1048576,
+              "parts": [
+                {
+                  "ordinal": 0,
+                  "offset": 0,
+                  "bytes": 61,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126"
+                }
+              ],
+              "parts_sha256": "e7097e163c88d370b91ec6fb685284e48daa7c912c3f4d5e88cf72b86eb8c2d8",
+              "deadline": "2026-10-13T12:57:21.894837+00:00",
+              "created_at": "2026-10-12T12:57:21.893837+00:00",
+              "updated_at": "2026-10-12T12:57:22.013480+00:00",
+              "failure_code": null,
+              "result": {
+                "asset": {
+                  "id": "21a6122deded45f9b34693404c0c1fed.subtitle.srt",
+                  "original_id": "21a6122deded45f9b34693404c0c1fed.srt",
+                  "kind": "subtitle",
+                  "filename": "Nội dung không phụ thuộc phần mở rộng.bin",
+                  "content_type": "application/x-subrip",
+                  "cues": [
+                    {
+                      "start": 0,
+                      "end": 1,
+                      "text": "Tiếng Việt: Cần Giờ."
+                    }
+                  ],
+                  "duration_seconds": 1,
+                  "sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                  "bytes": 61,
+                  "source_bytes": 61,
+                  "source_mime": "application/x-subrip",
+                  "rights_confirmed": true,
+                  "source_type": "user_upload",
+                  "rights_status": "unknown",
+                  "license": null,
+                  "provider": "native-local-upload",
+                  "source_reference": "upload://21a6122deded45f9b34693404c0c1fed",
+                  "generation_provenance": {},
+                  "source": "immutable_user_upload",
+                  "version": 1,
+                  "illustration": false,
+                  "canonical_role": "subtitle"
+                },
+                "source_sha256": "9ff0c4097d5eef5c2e46e0388124ff376e9bc1ec584e50f1b4fb94c669519126",
+                "source_bytes": 61,
+                "duplicate": true,
+                "attached_revision": 8,
+                "rights_status": "unknown",
+                "publishing_enabled": false
+              },
+              "publishing_enabled": false,
+              "idempotent_replay": false
+            }
+          ],
+          "provider_calls": 0
+        },
+        "cold_new_process_project_upload_receipts_exact": true,
+        "backup_sha256": "02cee8ef6a68970bd4841a425ffaa97efdf8328fd306cbdd7c5145fe1ef54cbe",
+        "generated_media": true,
+        "fixture_human": true,
+        "Owner_UAT": false,
+        "full_Mode_B_accepted": false,
+        "external_provider_calls": 0,
+        "paid_calls": 0,
+        "TTS_inferences": 0,
+        "published": false,
+        "production_deployed": false
+      }
+    },
+    "native-upload-hash-browser-n1": {
+      "files": {
+        "cleanup-policy.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\cleanup-policy.json",
+          "sha256": "a660099926f5d155c09ab6a1f8f87a5094d611a283354b38d74d3938763447f5",
+          "bytes": 257
+        },
+        "owned-browser-upload-state.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\owned-browser-upload-state.zip",
+          "sha256": "27294f0e15204a2ad22b20d091c903ea3afbcff451c157924b8b761fb69c0067",
+          "bytes": 1963836
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\project.json",
+          "sha256": "9284858411e018d673231cb84cffafde9dbe22aac354031f1356753396f0f6f7",
+          "bytes": 13390
+        },
+        "recovered-helper-state.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\recovered-helper-state.json",
+          "sha256": "cfe814e1579d3abd3f8984dfafaf0e6b5510d47a5ae8729930e2d09a132c4822",
+          "bytes": 773
+        },
+        "ui-actions.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\ui-actions.json",
+          "sha256": "7ca615d401bd36213b92d82f5d129bc5ee7dd519435db65275d804773c134a2a",
+          "bytes": 1155
+        },
+        "ui-completed-full.jpg": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\ui-completed-full.jpg",
+          "sha256": "f9a1a1dc9c0f9b7e9bc495911cdf3234843a8dfb573f3426b3885311b47a1634",
+          "bytes": 264044
+        },
+        "ui-dom.txt": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\ui-dom.txt",
+          "sha256": "118eb3f1c8d907626b6f0a70f6fcc9a44f84c52a08775432e1b39e4e16622de5",
+          "bytes": 11296
+        },
+        "ui-layout.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\ui-layout.json",
+          "sha256": "2780ddc53dde44dfc634875d7ea72580563efd962b26433d78a09465bf275319",
+          "bytes": 617
+        },
+        "ui-upload-history.jpg": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\ui-upload-history.jpg",
+          "sha256": "a4801369f18e26b10f32ec4ab1f8eca8a2b2471bcd31678cfb6dc826b10f511a",
+          "bytes": 106798
+        },
+        "uploads.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n1\\uploads.json",
+          "sha256": "8ce8f2a1c57011aa1348a04b42ecf6e07ffb081019d7a46fa3dbaa996c1e0f4b",
+          "bytes": 20437
+        }
+      },
+      "recovered-helper-state.json": {
+        "schema_version": "native-upload-browser-recovery-v1",
+        "helper_handle_missing": true,
+        "OS_process_and_listener_absent": true,
+        "owned_original_state_retained": true,
+        "root": "C:\\vf-upload-hash-browser-armqkxse\\state",
+        "original_sources_all_match_full_request_SHA": true,
+        "completed_uploads": 7,
+        "project_revision": 8,
+        "new_process_restore_exact": true,
+        "backup_sha256": "27294f0e15204a2ad22b20d091c903ea3afbcff451c157924b8b761fb69c0067",
+        "provider_calls": 0,
+        "Owner_UAT": false,
+        "tab_closed": true,
+        "viewport_reset": true,
+        "no_new_upload_or_provider_call_on_restore": true,
+        "initial_parent_directory_error_corrected_without_original_mutation": true,
+        "existing_restore_destination_corrected_to_new_child_path": true
+      },
+      "ui-actions.json": {
+        "six_role_uploads": [
+          {
+            "kind": "video",
+            "revision": 2
+          },
+          {
+            "kind": "audio",
+            "revision": 3
+          },
+          {
+            "kind": "image",
+            "revision": 4
+          },
+          {
+            "kind": "logo",
+            "revision": 5
+          },
+          {
+            "kind": "music",
+            "revision": 6
+          },
+          {
+            "kind": "subtitle",
+            "revision": 7
+          }
+        ],
+        "same_name_size_alternate_revision": 8,
+        "layout": [
+          {
+            "viewport": 1366,
+            "clientWidth": 1037,
+            "height": 1005.390625,
+            "pageClient": 1351,
+            "pageScroll": 1351,
+            "scrollWidth": 1037,
+            "width": 1037,
+            "x": 273,
+            "y": -35.25
+          },
+          {
+            "viewport": 1920,
+            "clientWidth": 1559,
+            "height": 1005.390625,
+            "pageClient": 1905,
+            "pageScroll": 1905,
+            "scrollWidth": 1559,
+            "width": 1559,
+            "x": 289,
+            "y": -27.5
+          },
+          {
+            "viewport": 2560,
+            "clientWidth": 1670,
+            "height": 1005.390625,
+            "pageClient": 2545,
+            "pageScroll": 2545,
+            "scrollWidth": 1670,
+            "width": 1670,
+            "x": 553.5,
+            "y": 161.5
+          }
+        ],
+        "console_errors": [],
+        "Owner_UAT": false
+      },
+      "cleanup-policy.json": {
+        "root": "C:/vf-upload-hash-browser-armqkxse",
+        "cleanup": "blocked by policy",
+        "automatic_execution_approval_rejected": true,
+        "root_and_verified_backup_retained": true,
+        "retry_or_bypass": false,
+        "old_rejected_roots_not_touched": true
+      }
+    },
+    "native-upload-hash-browser-n2": {
+      "files": {
+        "changed-tail-rejected-state.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\changed-tail-rejected-state.json",
+          "sha256": "1e5253f6844281b215af1449d901e9cced3b775e17370cf7f221bbf7dd4435c8",
+          "bytes": 331
+        },
+        "changed-tail-ui.txt": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\changed-tail-ui.txt",
+          "sha256": "b56ce36f1fa45ea4d75b658ccdfd016b8d7854ea7358e29d98eb5785169f5993",
+          "bytes": 7206
+        },
+        "first-large-chunk.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\first-large-chunk.json",
+          "sha256": "db9020003598c5af0947e01098374920e83ded162cd3f8d36ad1d33a9334bc36",
+          "bytes": 202
+        },
+        "owned-browser-upload-state.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\owned-browser-upload-state.zip",
+          "sha256": "35bc66f23eded030b2fe2057959719963ff291aeab8d0610f09e3ac4effc22be",
+          "bytes": 9681469
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\project.json",
+          "sha256": "4d3eea4a0c0f078e5db304c8bf5cdc99081ea62ba1f7d2d6f06b8cc787502b39",
+          "bytes": 3167
+        },
+        "recovered-helper-state.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\recovered-helper-state.json",
+          "sha256": "2ca51ccaf031e36531dd63fa740fbcce0d83d37f1f9d8789833f4a6e1450d85b",
+          "bytes": 768
+        },
+        "signed-partial-seed.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\signed-partial-seed.json",
+          "sha256": "0b23a600b7b4030b5331cd1e0b4a283cc0bc6665a751fafb36ac48a1b79bc773",
+          "bytes": 1609
+        },
+        "ui-final-dom.txt": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\ui-final-dom.txt",
+          "sha256": "7d14a0fe17c3b478bb5754042cbb72820d0002960516e5b6a5883e7ffe0e6e0a",
+          "bytes": 7374
+        },
+        "ui-final-proof.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\ui-final-proof.json",
+          "sha256": "eec702fedda6f08fa666c44ec34eb74f36bc087cc54fde4ef89ec8d5d2f8c930",
+          "bytes": 874
+        },
+        "ui-mime-guidance.jpg": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\ui-mime-guidance.jpg",
+          "sha256": "66188e9aa76bd8b3a5bda75192ebc2fea7e436dc313e11364b804a4665098945",
+          "bytes": 55891
+        },
+        "uploads.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-upload-hash-browser-n2\\uploads.json",
+          "sha256": "8f4bc2a2d0e778e0f7cd4862b10498829b8fe91118ee5972f02ecde96d931a0d",
+          "bytes": 7906
+        }
+      },
+      "recovered-helper-state.json": {
+        "schema_version": "native-upload-browser-resume-recovery-v1",
+        "helper_handle_missing": true,
+        "OS_process_and_listener_absent": true,
+        "root_retained": "C:\\vf-upload-hash-browser-cnziefza",
+        "backup_sha256": "35bc66f23eded030b2fe2057959719963ff291aeab8d0610f09e3ac4effc22be",
+        "new_process_restore_exact": true,
+        "completed_multi_chunk_uploads": 2,
+        "assets_added": 1,
+        "mime_magic_failure_saved_without_asset": true,
+        "browser_pause_success": false,
+        "partial_seed": "actual signed HTTP",
+        "changed_tail_wrote_no_remaining_bytes": true,
+        "correct_source_resumed_and_deduplicated": true,
+        "source_SHA_exact": true,
+        "Owner_UAT": false,
+        "provider_calls": 0,
+        "paid_calls": 0,
+        "tab_closed": true,
+        "viewport_reset": true
+      },
+      "ui-final-proof.json": {
+        "multi_chunk_upload_complete": true,
+        "browser_pause_success": false,
+        "partial_state_setup": "signed HTTP fixture",
+        "reload_source_tail_rejected": true,
+        "correct_source_resume_deduplicated": true,
+        "mime_magic_failure_guidance": true,
+        "layout": [
+          {
+            "viewport": 1366,
+            "clientWidth": 1037,
+            "height": 638.78125,
+            "pageClient": 1351,
+            "pageScroll": 1351,
+            "scrollWidth": 1037,
+            "width": 1037
+          },
+          {
+            "viewport": 1920,
+            "clientWidth": 1559,
+            "height": 638.78125,
+            "pageClient": 1905,
+            "pageScroll": 1905,
+            "scrollWidth": 1559,
+            "width": 1559
+          },
+          {
+            "viewport": 2560,
+            "clientWidth": 1670,
+            "height": 638.78125,
+            "pageClient": 2545,
+            "pageScroll": 2545,
+            "scrollWidth": 1670,
+            "width": 1670
+          }
+        ],
+        "console": [],
+        "Owner_UAT": false
+      }
+    }
+  },
+  "local_real_operations": [
+    "FFmpeg/FFprobe/PIL six-role decode",
+    "signed HTTP/SQLite immutable intake",
+    "actual browser real file chooser six roles",
+    "actual browser same-name/size different bytes",
+    "bounded whole-file SHA preflight",
+    "browser reload and unsent-tail mismatch refusal",
+    "browser exact-source resume/dedup",
+    "MIME/magic negative without new asset",
+    "three-width layout",
+    "separate-process restores"
+  ],
+  "fixtures": [
+    "generated test video/tone/images/subtitles",
+    "public editor identity",
+    "controller minimal DOM",
+    "explicit first-large-chunk five-second response delay",
+    "signed HTTP preparation of partial upload"
+  ],
+  "browser_pause_success": false,
+  "controller_pause_tests_passed": true,
+  "Owner_UAT": false,
+  "full_Mode_A_B_accepted": false,
+  "original_A_B_C_accepted": false,
+  "real_provider_acceptance_complete": false,
+  "production_deployed": false,
+  "published": false,
+  "external_provider_calls": 0,
+  "paid_calls": 0,
+  "TTS_inferences": 0,
+  "accepted_artifacts_replaced": false,
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "cleanup": {
+    "blocked_root": "C:/vf-upload-hash-browser-armqkxse",
+    "automatic_execution_approval_rejected": true,
+    "reason": "blocked by policy",
+    "retry_or_bypass": false,
+    "second_root_retained_with_verified_backup": "C:/vf-upload-hash-browser-cnziefza",
+    "historical_rejected_roots_untouched": true
+  },
+  "retained_initial_failures": [
+    "focused Node fixture missing new metadata labels; fixed without replacing old fixture",
+    "broader Native stale kind=audio rejection expectation; backend support pre-existed this increment",
+    "browser readonly File.files unavailable; no page-console error",
+    "label locator changed to observed combobox role",
+    "browser pause attempted after small upload already completed; not a pass",
+    "helper handles disappeared; OS process/listener absence confirmed and original state recovered",
+    "initial parent-directory recovery corrected without original mutation",
+    "existing restore destination refused; new child destination restored exactly",
+    "initial CLI CSRF key corrected before partial creation"
+  ]
+}

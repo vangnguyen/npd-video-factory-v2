@@ -1011,6 +1011,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-narration-rights.mjs'] = 'native-narration-rights.mjs'
         static['/native-stock.mjs'] = 'native-stock.mjs'
         static['/native-multipart-upload.mjs'] = 'native-multipart-upload.mjs'
+        static['/native-file-sha256.mjs'] = 'native-file-sha256.mjs'
         static['/native-audio-transcripts.mjs'] = 'native-audio-transcripts.mjs'
         static['/native-source-media-tracks.mjs'] = 'native-source-media-tracks.mjs'
         static.update({name:name[1:] for name in ('/native-narrated-timeline.mjs',
