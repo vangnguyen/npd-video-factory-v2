@@ -442,3 +442,8 @@ The signed Studio browser now reaches actual local render/QC through the origina
 ## Meta analytics API count-reader component
 
 The existing API sync/history/cost runtime now accepts explicit closed Meta read clients: linked Page/IG identity, exact media owner, lifetime Instagram six counts and Facebook node three counters, strict null/shape semantics, backoff and scoped operation guards.48 new API/SQLite tests plus107 existing analytics/wire/time cases pass. Native registry/token/collector/refresh/Studio, real account/permission/metric definition/unit coverage and original full Mode A/B/A-B-C/Owner/production remain open. Continue those safe implementation gaps; do not treat fixture counters as real channel feedback. See META_ANALYTICS_READ_COUNTS.md.
+
+
+## Native Meta analytics component
+
+Protected separate read profile/token, Native v3 collector/finite refresh and Studio controllers now use the existing API count kernel and approved publication receipt.20 new Native/90 legacy/780 Studio/71 API kernel tests pass. Both domain/route DTO exports pass; native kernel no longer requires SQLAlchemy. Continue signed HTTP/browser/operator, separate-process restore, qualified Meta winner/learning/Bridge, genuine accounts/metrics and all original Mode A/B/A-B-C/Owner/production gaps. All59 groups remain unclosed. See NATIVE_META_ANALYTICS.md.

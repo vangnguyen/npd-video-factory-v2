@@ -230,3 +230,15 @@ Studio772 and Native access/HTTP/RBAC23 PASS; retained pre-fix logout baseline f
 | 45/46 Winner/learning | Existing consumers keep unavailable Meta timing and metrics | Qualified real cohort/calibration and full personalized opportunity flow | P1; genuine history and factor definitions | 11/12/16 | Explainable sufficient evidence; no inferred velocity/time/revenue or irreversible action |
 
 48 new Meta API/SQLite contracts and107 existing analytics/wire/time regressions PASS. Every Meta publication receipt/response here is a fixture; no paid/real-provider/publish/deploy operation or Owner UAT occurred. Repository reopening is same-process component proof, not production cold recovery.
+
+
+## Native Meta analytics/finite-refresh controller component
+
+[NATIVE_META_ANALYTICS.md](NATIVE_META_ANALYTICS.md) and [evidence](north-star/native-meta-analytics-evidence.json) connect existing Meta count readers to protected Native profile/token, v2 read verification, v3 receipt/Owner/source/attempt-bound collection, finite separately approved refresh, immutable history/cost and Studio controllers. Canonical availability survives JSON key reordering; old YouTube/TikTok data remains readable. All primary statuses remain5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED;59 groups unclosed.
+
+| Requirement | Current source | Remaining behavior | Severity/dependency | Wave | Acceptance |
+| --- | --- | --- | --- | --- | --- |
+| 43/44 Analytics/sync | official_account_registry.py; official_account_tokens.py; official_analytics.py; official_analytics_refresh.py; Native Studio controls | Signed HTTP/browser/non-developer, separate-process restore, genuine OAuth/app/account/metrics and detailed units/coverage | P0/P1; protected runtime and authorized accounts | 10/15/16 | Real scoped nullable metrics, exact history and bounded consent; mocks never audience data |
+| 45/46/61 Winner/learning/Bridge | New v3 Meta source remains distinct; existing YT/TT consumers preserved | Qualified downstream Meta source/cohort/event integration and real calibration | P1; source basis and genuine observations | 11/12/14/16 | No inferred velocity/time/revenue or irreversible recommendations |
+
+Native Meta20 and related legacy90, Studio780 (including8 new captured Meta controller cases), API kernel71 PASS. Domain/route DTO exports for both platforms and owned-state archives pass, with lifecycle cleanup. No actual HTTP/browser/separate-process restore, Owner, real provider or production acceptance is inferred.

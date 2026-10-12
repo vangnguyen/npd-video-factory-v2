@@ -1,0 +1,306 @@
+{
+  "schema_version": "north-star-native-meta-analytics-v1",
+  "recorded_at": "2026-10-12T17:57:30.503167+00:00",
+  "source_parent": "5e9dee7191b046cc6dcff178c6987f00ce87f8c0",
+  "wave": "10 Native/Studio component; full original wave PARTIAL",
+  "tests": {
+    "Native_Meta": 20,
+    "Native_legacy": 90,
+    "Studio": 780,
+    "API_kernel": 71,
+    "new_Studio_Meta_cases_included": 8,
+    "Docker_tested": false
+  },
+  "test_logs": {
+    "native-meta-analytics-final.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-final.log",
+      "sha256": "bdfbc7bcbd1d477ad5e3edf849741dae91482ae0727c2a435bc3581bcb026fec",
+      "bytes": 4730,
+      "passed": 20
+    },
+    "native-meta-analytics-legacy-regression.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-legacy-regression.log",
+      "sha256": "e5dd1285921da5676c29279ae98a0aca0220374d5dc3caa4e157f045918353fc",
+      "bytes": 20237,
+      "passed": 90
+    },
+    "native-meta-analytics-studio-final.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-studio-final.log",
+      "sha256": "594fb31bf6bd33a4613e7b5cce8f24b999b0281172c9439dadb85e43227dec72",
+      "bytes": 80414,
+      "passed": 780
+    },
+    "native-meta-analytics-api-kernel.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-api-kernel.log",
+      "sha256": "a7986b68372031551acf6a4c0141aedd2417a19301c2fe7f8067c542c43f8835",
+      "bytes": 101,
+      "passed": 71
+    }
+  },
+  "domain_export": {
+    "proof": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\evidence.json",
+      "sha256": "633db333741be820e9b4db66b8b5ca936f9b6417a629723d76286b5a7856154e",
+      "bytes": 4658
+    },
+    "receipt": {
+      "Owner_UAT": false,
+      "actual_HTTP_tested": false,
+      "actual_browser_tested": false,
+      "cold_restore_tested": false,
+      "domain_controller_export_passed": true,
+      "full_Mode_A_B_ready": false,
+      "owned_roots_cleaned": true,
+      "paid_calls": 0,
+      "platforms": [
+        {
+          "backup": {
+            "backup_path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\instagram_reels\\owned-state.zip",
+            "bytes": 558045,
+            "database_status": {
+              "workflow.sqlite3": {
+                "active_operations": 0,
+                "counts": {
+                  "events": 52,
+                  "jobs": 1,
+                  "native_cost_operations": 24,
+                  "native_official_account_checks": 1,
+                  "native_official_account_events": 2,
+                  "native_official_analytics_attempts": 3,
+                  "native_official_analytics_events": 9,
+                  "native_official_analytics_refresh_events": 5,
+                  "native_official_analytics_refresh_occurrences": 2,
+                  "native_official_analytics_refresh_plans": 1,
+                  "native_official_analytics_responses": 9,
+                  "native_official_analytics_snapshots": 3,
+                  "native_official_analytics_syncs": 3,
+                  "native_official_meta_media_bindings": 1,
+                  "native_official_meta_preflights": 2,
+                  "native_official_meta_responses": 3,
+                  "native_official_publications": 1,
+                  "native_official_publish_approvals": 1,
+                  "native_official_publish_dispatches": 1,
+                  "native_official_publish_events": 6,
+                  "native_official_publish_intents": 3,
+                  "native_official_publish_processing": 0,
+                  "native_official_publish_read_backoffs": 0,
+                  "native_official_publish_receipts": 1,
+                  "native_official_publish_renewals": 0,
+                  "native_official_publish_responses": 0,
+                  "native_official_publish_sessions": 0,
+                  "native_official_publish_thumbnails": 0,
+                  "native_publication_events": 3,
+                  "native_publications": 1,
+                  "native_publishing_media_deliveries": 1,
+                  "native_publishing_media_operations": 6,
+                  "project_versions": 2,
+                  "projects": 1
+                },
+                "logical_sha256": "e57d9d939fc8b72d6826ad748b3cd0cdf940c9ff1f1d41bff24e7179101ce702",
+                "quick_check": "ok",
+                "user_version": 0
+              }
+            },
+            "entries": 12,
+            "manifest_sha256": "c3f2264635e3cae9ae4e3b1812ca208147cabbc6463c8a659208fcfe75ab2209",
+            "production_deployed": false,
+            "schema": "native-backup-receipt-v1",
+            "services_started": false,
+            "sha256": "52f910a183efc8b29706b176315f66c95d1e6a68f3ee743a7ee6347f651835c4"
+          },
+          "manual_snapshot": "noam_cd8c8ee6bdfc42fb8ec6f708bf2bf0b9",
+          "mock": true,
+          "owned_parent": "C:\\Users\\PC\\AppData\\Local\\Temp\\tmp3c51mfw2",
+          "platform": "instagram_reels",
+          "provider_requests": 9,
+          "public_fixture_sha256": "f1ab919e589a8af65cf54b1f47413eaf115a1715c349f290bb5098f66a46a7db",
+          "refresh_runs": 2,
+          "source_root": "C:\\Users\\PC\\AppData\\Local\\Temp\\tmp3c51mfw2\\state"
+        },
+        {
+          "backup": {
+            "backup_path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\facebook\\owned-state.zip",
+            "bytes": 570333,
+            "database_status": {
+              "workflow.sqlite3": {
+                "active_operations": 0,
+                "counts": {
+                  "events": 52,
+                  "jobs": 1,
+                  "native_cost_operations": 24,
+                  "native_official_account_checks": 1,
+                  "native_official_account_events": 2,
+                  "native_official_analytics_attempts": 3,
+                  "native_official_analytics_events": 9,
+                  "native_official_analytics_refresh_events": 5,
+                  "native_official_analytics_refresh_occurrences": 2,
+                  "native_official_analytics_refresh_plans": 1,
+                  "native_official_analytics_responses": 9,
+                  "native_official_analytics_snapshots": 3,
+                  "native_official_analytics_syncs": 3,
+                  "native_official_meta_media_bindings": 1,
+                  "native_official_meta_preflights": 3,
+                  "native_official_meta_responses": 5,
+                  "native_official_publications": 1,
+                  "native_official_publish_approvals": 1,
+                  "native_official_publish_dispatches": 1,
+                  "native_official_publish_events": 8,
+                  "native_official_publish_intents": 5,
+                  "native_official_publish_processing": 0,
+                  "native_official_publish_read_backoffs": 0,
+                  "native_official_publish_receipts": 1,
+                  "native_official_publish_renewals": 0,
+                  "native_official_publish_responses": 0,
+                  "native_official_publish_sessions": 0,
+                  "native_official_publish_thumbnails": 0,
+                  "native_publication_events": 3,
+                  "native_publications": 1,
+                  "native_publishing_media_deliveries": 1,
+                  "native_publishing_media_operations": 6,
+                  "project_versions": 2,
+                  "projects": 1
+                },
+                "logical_sha256": "629b7c7045dc36574af79452253a975d879ea2c70591f87a22062a8587472780",
+                "quick_check": "ok",
+                "user_version": 0
+              }
+            },
+            "entries": 12,
+            "manifest_sha256": "2903ae60ecde19853de9e6d60caef353b1962d014d4c50c6767ecc1d733dd3dc",
+            "production_deployed": false,
+            "schema": "native-backup-receipt-v1",
+            "services_started": false,
+            "sha256": "cd74a576194d2ca202a6c2ea977095da386863da5cb3e1308bdefbfff72bdb79"
+          },
+          "manual_snapshot": "noam_3791e6e4633942e0b71cb874d71eff96",
+          "mock": true,
+          "owned_parent": "C:\\Users\\PC\\AppData\\Local\\Temp\\tmp4pxge51r",
+          "platform": "facebook",
+          "provider_requests": 9,
+          "public_fixture_sha256": "2b6d6ab21a3582c688a307d11accd335c3613703a4e381bda53a266269a9cd0c",
+          "refresh_runs": 2,
+          "source_root": "C:\\Users\\PC\\AppData\\Local\\Temp\\tmp4pxge51r\\state"
+        }
+      ],
+      "production_deployed": false,
+      "publishing_enabled": false,
+      "real_provider_calls": 0
+    },
+    "exports": {
+      "instagram_reels": {
+        "public-fixture.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\instagram_reels\\public-fixture.json",
+          "sha256": "f1ab919e589a8af65cf54b1f47413eaf115a1715c349f290bb5098f66a46a7db",
+          "bytes": 59120
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\instagram_reels\\project.json",
+          "sha256": "c9a611640e022821628a4910aa6fb8b70cd8561b1423830b3afc412308d547d0",
+          "bytes": 3451
+        },
+        "cost.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\instagram_reels\\cost.json",
+          "sha256": "3de865f10b23583c0a145694d286284f40062f2c0b78d62b85da0183f4895a70",
+          "bytes": 23246
+        },
+        "backup.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\instagram_reels\\backup.json",
+          "sha256": "fde6d896f935178252e38da0178cb728d12b4aae87cdb2b55cf37bd03572ee6b",
+          "bytes": 1804
+        },
+        "owned-state.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\instagram_reels\\owned-state.zip",
+          "sha256": "52f910a183efc8b29706b176315f66c95d1e6a68f3ee743a7ee6347f651835c4",
+          "bytes": 558045
+        }
+      },
+      "facebook": {
+        "public-fixture.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\facebook\\public-fixture.json",
+          "sha256": "2b6d6ab21a3582c688a307d11accd335c3613703a4e381bda53a266269a9cd0c",
+          "bytes": 58612
+        },
+        "project.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\facebook\\project.json",
+          "sha256": "e36c4a2e5f83b14a3e7ea7e2ec07a8825b99d2eb3c75f96d26af4fa9d67deb58",
+          "bytes": 3451
+        },
+        "cost.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\facebook\\cost.json",
+          "sha256": "fab61ccdee4ef50c64e0d4c09db56a6e22a9ecd78e9b29ccd29a9fa885e68ceb",
+          "bytes": 23110
+        },
+        "backup.json": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\facebook\\backup.json",
+          "sha256": "49cc498196129a6eb766c448f409c7c71165ff45bda061992946b970e5940d14",
+          "bytes": 1797
+        },
+        "owned-state.zip": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-contract-n3\\facebook\\owned-state.zip",
+          "sha256": "cd74a576194d2ca202a6c2ea977095da386863da5cb3e1308bdefbfff72bdb79",
+          "bytes": 570333
+        }
+      }
+    }
+  },
+  "captured_public_fixture": {
+    "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\native-meta-analytics-v1.json",
+    "sha256": "7c77abeec167863c87df2e9089e4a4f6fb6185ab765c95ce806b05969a84d24f",
+    "bytes": 169357
+  },
+  "retained_failures": {
+    "native-meta-analytics-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-n1.log",
+      "sha256": "0fb3f87577fe332d094acdbe2a6d425eab8ae5b3572619b9785c662d7cc3cd4c",
+      "bytes": 1306
+    },
+    "native-meta-analytics-refresh-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-refresh-n1.log",
+      "sha256": "4501d24797c6553eadc4aa629b3a3bf34c3b2d22b8a432ad3634339b811265fd",
+      "bytes": 6406
+    },
+    "native-meta-analytics-studio-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-analytics-studio-n1.log",
+      "sha256": "756a261e69681a4b7225b5d77533693f4beb6c0a99a4218ba3ad9915f83c3e5c",
+      "bytes": 7761
+    }
+  },
+  "scope": {
+    "actual_HTTP_tested": false,
+    "actual_browser_tested": false,
+    "separate_process_cold_restore_tested": false,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "real_publishing": false,
+    "production_deployed": false,
+    "Owner_UAT": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "implemented": [
+    "protected separate Meta read profile/token",
+    "v2 read account verification",
+    "v3 receipt-bound Native collection",
+    "v3 finite refresh and immutable history/cost",
+    "Studio manual/finite read controls",
+    "canonical-order availability guards",
+    "Native kernel without SQLAlchemy"
+  ],
+  "remaining": [
+    "signed HTTP and actual browser/non-developer flows",
+    "separate-process exact restore",
+    "real scoped OAuth/app/account/metrics",
+    "qualified Meta winner/learning/Bridge downstream",
+    "full original Mode A/B/A-B-C/Owner/production"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

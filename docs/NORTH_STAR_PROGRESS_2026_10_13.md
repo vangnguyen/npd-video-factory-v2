@@ -13,3 +13,6 @@ Phần Meta còn mở: điều khiển/registry/collector/refresh/Studio Native;
 SOURCE_PRESERVED được chứng minh bằng nhánh riêng và cặp bundle khôi phục sau commit. SHA/trạng thái/bằng chứng cuối ở `recovery/20261007/meta-analytics-read-counts-program-state.json` của workspace.15 artifact lịch sử và source đang chạy được kiểm tra lại khi seal. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
 
 [Ma trận64 nhóm](NORTH_STAR_CAPABILITY_MATRIX.md) và [kế hoạch đóng gap](NORTH_STAR_GAP_CLOSURE_PLAN.md) giữ nguyên toàn bộ North Star. Chưa merge main, publish thật hoặc tự duyệt video của Owner.
+
+
+Mốc Native Meta: [NATIVE_META_ANALYTICS.md](NATIVE_META_ANALYTICS.md) nối cấu hình/token chỉ đọc riêng, xác minh tài khoản, thu thập/lịch làm mới hữu hạn, lịch sử/chi phí và điều khiển Studio.20 ca Meta Native,90 hồi quy Native,780 Studio (gồm8 ca Meta mới) và71 API kernel đạt. Hai bundle domain/DTO/backup giả lập đạt; chưa nghiệm thu HTTP/browser/cold restore tiến trình khác hay provider/Owner/production.59 nhóm còn mở; SHA/bundle cuối ở recovery/20261007/native-meta-analytics-program-state.json.

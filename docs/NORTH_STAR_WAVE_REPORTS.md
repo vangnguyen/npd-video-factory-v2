@@ -3859,3 +3859,20 @@ REGRESSIONS: existing strict DTO/wire contracts preserved; YouTube/TikTok/time t
 EXTERNAL BLOCKERS: genuine authorized accounts/OAuth, detailed version/account metric acceptance and original Owner/production gates remain separate
 OWNER ACTION REQUIRED: none for continued safe implementation; UAT deferred; no paid/publish/deploy/main approval exercised
 NEXT WAVE: connect Meta Native read registry/token/collector/finite refresh/Studio and continue all original North Star gaps
+
+
+## Wave 10 — Native Meta analytics and finite refresh
+
+WAVE:10 Native/Studio component
+STATUS: implemented/mock-tested domain and controller path; full original wave PARTIAL
+HEAD SHA: source parent5e9dee7191b046cc6dcff178c6987f00ce87f8c0; final external seal recovery/20261007/native-meta-analytics-program-state.json
+CAPABILITIES COMPLETED: independent protected Meta read token/profile; v2 verification/v3 collection and finite refresh; history/cost/Owner/source/attempt guards; Studio source selection, consent, nullable metrics and canonical JSON ordering; no Native SQLAlchemy dependency
+CAPABILITIES PARTIAL: signed HTTP/browser/non-developer, separate-process recovery, qualified Meta downstream, actual app/OAuth/account/metrics/Owner/full Mode A/B/A-B-C/production;59 groups remain
+TESTS: Native new20/legacy90 PASS; Studio780 PASS including8 new cases; API kernel71 PASS; no Docker
+REAL PROVIDER TESTS: none; no genuine audience observation
+MOCK TESTS: explicit publication/metrics transports and CI actor; captured actual Native domain/route DTOs, controller fake DOM and owned archives
+EVIDENCE: NATIVE_META_ANALYTICS.md; north-star/native-meta-analytics-evidence.json; native-meta-analytics-contract-n3; retained failures
+REGRESSIONS: old YT/TT contracts and publishing tests pass; source seal verifies15 accepted artifacts and running source unchanged
+EXTERNAL BLOCKERS: real account/OAuth/version/permission/metric definitions and Owner/production gates remain separate
+OWNER ACTION REQUIRED: none for safe continuation; UAT deferred; no paid/publish/deploy/main approval exercised
+NEXT WAVE: signed Native HTTP/browser/cold restore and qualified Meta downstream; all original North Star gaps remain in scope
