@@ -11,6 +11,50 @@ from app.publishing_models import PublishingTargetBinding
 from app.publishing_credentials import target_digest
 from app.analytics_official import AnalyticsHTTPClient,resolve_credential,SCOPES
 from app.publishing_wire import OfficialHTTPClient
+from app import analytics_meta
+from app.analytics_meta import PROVIDER_KEYS
+
+
+class MetaReadAccount(StrictModel):
+    schema_version:Literal['native-meta-analytics-account-v1']='native-meta-analytics-account-v1'
+    account_ref:str=Field(pattern=r'^npac_[a-f0-9]{32}$')
+    target:PublishingTargetBinding
+    credential_alias:str=Field(pattern=r'^[a-z][a-z0-9-]{3,79}$')
+    token_file:str=Field(min_length=1,max_length=1000,repr=False)
+    api_version:str=Field(pattern=r'^v[1-9][0-9]{0,2}\.0$')
+    page_id:str=Field(pattern=r'^[1-9][0-9]{0,31}$')
+    login_type:Literal['facebook_login']='facebook_login'
+    read_enabled:StrictBool=False
+    publishing_enabled:Literal[False]=False
+
+    @field_validator('publishing_enabled',mode='before')
+    @classmethod
+    def disabled(cls,value):
+        if value is not False:raise ValueError('Publishing remains explicitly disabled')
+        return value
+
+    @model_validator(mode='after')
+    def scoped(self):
+        if (self.target.platform not in analytics_meta.PLATFORMS
+            or self.target.provider_key!=PROVIDER_KEYS[self.target.platform]
+            or self.target.platform=='facebook' and self.page_id!=self.target.target_account_id):
+            raise ValueError('Exact Meta read target required')
+        analytics_meta.object_id(self.target.platform,self.target.target_account_id)
+        return self
+
+    def public_profile(self):
+        return {'api_version':self.api_version,'page_id':self.page_id,'login_type':self.login_type}
+
+
+def validate_meta_profile(value,target):
+    if not isinstance(value,dict) or set(value)!={'api_version','page_id','login_type'}:
+        raise ValueError('Exact Meta read profile required')
+    from app.meta_publishing_protocol import api_version,numeric_id
+    api_version(value['api_version']);numeric_id(value['page_id'])
+    if (value['login_type']!='facebook_login' or target.platform not in analytics_meta.PLATFORMS
+        or target.platform=='facebook' and value['page_id']!=target.target_account_id):
+        raise ValueError('Scoped Meta read profile required')
+    return value
 
 class Account(StrictModel):
     account_ref:str=Field(pattern=r'^npac_[a-f0-9]{32}$')
@@ -55,7 +99,7 @@ class Registry(StrictModel):
     schema_version:Literal['native-official-account-registry-v1']='native-official-account-registry-v1'
     version:StrictInt=Field(ge=1,le=1)
     workspace_id:str=Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
-    accounts:list[Account|OAuthAccount]=Field(default_factory=list,max_length=50)
+    accounts:list[Account|OAuthAccount|MetaReadAccount]=Field(default_factory=list,max_length=50)
 
     @model_validator(mode='after')
     def unique(self):
@@ -67,7 +111,7 @@ class Registry(StrictModel):
 
 class AccountFactory:
     def __init__(self,account,root,workspace,*,owner_read_enabled=False,transport=None,resolver=None,registry_file=None,registry_sha256=None):
-        if type(owner_read_enabled) is not bool or type(account) not in (Account,OAuthAccount) or account.target.workspace_id!=workspace:
+        if type(owner_read_enabled) is not bool or type(account) not in (Account,OAuthAccount,MetaReadAccount) or account.target.workspace_id!=workspace:
             raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         if type(account) is OAuthAccount:
             from .google_analytics_selection_resolver import AnalyticsSelectionResolver
@@ -78,9 +122,11 @@ class AccountFactory:
             raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_INVALID',400)
         self.registry_file=protected_path(registry_file,self.root) if registry_file is not None else None
         self.registry_sha256=registry_sha256;self.frozen_registry_file=self.registry_file;self.frozen_registry_sha256=registry_sha256
-        self.path=protected_path(account.token_file,root) if type(account) is Account else None
+        self.path=protected_path(account.token_file,root) if type(account) in (Account,MetaReadAccount) else None
         self.frozen_path=self.path
-        self.client=AnalyticsHTTPClient(account.target.platform,network_enabled=owner_read_enabled and account.read_enabled,transport=transport)
+        self.client=(analytics_meta.MetaAnalyticsHTTPClient(account.target.platform,api_version=account.api_version,
+            network_enabled=owner_read_enabled and account.read_enabled,transport=transport) if type(account) is MetaReadAccount else
+            AnalyticsHTTPClient(account.target.platform,network_enabled=owner_read_enabled and account.read_enabled,transport=transport))
         if resolver is not None and not callable(resolver):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_RESOLVER_INVALID',400)
         self.resolver=resolver;self.read_enabled=owner_read_enabled and account.read_enabled
         self.frozen=self.account.model_dump(mode='json');self.sha256=digest({**self.frozen,**({'registry_sha256':registry_sha256} if registry_sha256 is not None else {})})
@@ -90,7 +136,7 @@ class AccountFactory:
 
     def check(self):
         try:
-            if type(self.account) not in (Account,OAuthAccount):raise ValueError()
+            if type(self.account) not in (Account,OAuthAccount,MetaReadAccount):raise ValueError()
             parsed=type(self.account).model_validate(self.account.model_dump(mode='json'))
             if type(parsed) is OAuthAccount:
                 from .google_analytics_selection_resolver import AnalyticsSelectionResolver
@@ -102,7 +148,8 @@ class AccountFactory:
                 or not self.registry_file.is_file() or not 1<=self.registry_file.stat().st_size<=262144
                 or file_sha(self.registry_file)!=self.registry_sha256):raise ValueError()
         except Exception:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED') from None
-        if (type(self.client) is not AnalyticsHTTPClient or self.client is not self.frozen_client
+        expected_client=analytics_meta.MetaAnalyticsHTTPClient if type(parsed) is MetaReadAccount else AnalyticsHTTPClient
+        if (type(self.client) is not expected_client or self.client is not self.frozen_client
             or type(self.client.wire) is not OfficialHTTPClient or self.client.wire is not self.frozen_wire
             or self.client.wire.platform!='analytics_'+parsed.target.platform or self.root.absolute()!=self.frozen_root
             or self.resolver is not self.frozen_resolver or self.read_enabled is not self.frozen_enabled
@@ -110,7 +157,8 @@ class AccountFactory:
             or parsed.model_dump(mode='json')!=self.frozen
             or digest({**parsed.model_dump(mode='json'),**({'registry_sha256':self.registry_sha256} if self.registry_sha256 is not None else {})})!=self.sha256
             or parsed.target.workspace_id!=self.workspace or self.path!=self.frozen_path
-            or type(parsed) is Account and protected_path(parsed.token_file,self.root)!=self.path
+            or type(parsed) in (Account,MetaReadAccount) and protected_path(parsed.token_file,self.root)!=self.path
+            or type(parsed) is MetaReadAccount and self.client.api_version!=parsed.api_version
             or self.client.platform!=parsed.target.platform):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
         return parsed
 
@@ -123,14 +171,22 @@ class AccountFactory:
             'status':'CONFIGURED' if enabled else 'NOT_CONFIGURED','credential_verified':False,
             'credential_present':mounted,
             'mode':'fixture' if self.client.mock else 'official','external_reads_enabled':enabled and not self.client.mock,
-            'publishing_enabled':False,'token_returned':False,'account_verified':False,'real_provider_tested':False}
+            'publishing_enabled':False,'token_returned':False,'account_verified':False,'real_provider_tested':False,
+            **({'meta_read_profile':value.public_profile()} if type(value) is MetaReadAccount else {})}
 
     def credential(self,query=None,*,now=None):
         value=self.check()
         if not self.read_enabled or not self.client.enabled:raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_READ_DISABLED')
         if type(value) is OAuthAccount and not self.resolver.available(mock=self.client.mock):raise WorkflowError('NATIVE_GOOGLE_ANALYTICS_SELECTION_REQUIRED')
-        resolver=self.resolver or (lambda target:token_load(self.path,self.root,target,value.credential_alias))
-        credential=resolve_credential(resolver,value.target,query,now=now)
+        meta=type(value) is MetaReadAccount
+        resolver=self.resolver or (lambda target:token_load(self.path,self.root,target,value.credential_alias,
+            **({'api_version':value.api_version,'page_id':value.page_id} if meta else {})))
+        if meta:
+            if query is not None:raise WorkflowError('ANALYTICS_QUERY_UNSUPPORTED',400)
+            credential=analytics_meta.resolve_credential(resolver,value.target,now=now)
+            if (credential.api_version,credential.page_id)!=(value.api_version,value.page_id):
+                raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_CONFIGURATION_CHANGED')
+        else:credential=resolve_credential(resolver,value.target,query,now=now)
         self.check()
         return credential
 

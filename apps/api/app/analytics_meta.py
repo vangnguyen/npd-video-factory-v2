@@ -15,7 +15,7 @@ from .analytics_providers import AnalyticsRateLimited
 from .meta_publishing_protocol import api_version, numeric_id
 from .publishing_credentials import target_digest
 from .publishing_models import PublishingTargetBinding
-from .publishing_profiles import PROVIDER_KEYS
+from .meta_publishing_credentials import PROVIDERS as PROVIDER_KEYS
 from .publishing_wire import (OfficialHTTPClient, OfficialRequest, OfficialResponse,
     PublishingWireError, bearer_headers, official_url)
 

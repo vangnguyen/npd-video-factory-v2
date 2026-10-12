@@ -14,9 +14,12 @@ from .contracts import WorkflowError
 from app.models import StrictModel
 from app.publishing_wire import bearer_headers
 from app.analytics_official import AnalyticsOAuthCredential,SCOPES
+from app import analytics_meta
 
 PREFIX=b'VF-NATIVE-OAUTH-ACCESS-1\n'
 ENTROPY=b'NPD-Video-Factory/native-scoped-oauth-access-token/v1'
+META_PREFIX=b'VF-NATIVE-META-ANALYTICS-ACCESS-1\n'
+META_ENTROPY=b'NPD-Video-Factory/native-scoped-meta-analytics-access-token/v1'
 
 def unique_pairs(items):
     value={}
@@ -46,8 +49,25 @@ class AccessToken(StrictModel):
     @model_validator(mode='after')
     def valid(self):
         bearer_headers(self.token)
-        if len(set(self.scopes))!=len(self.scopes) or not set(self.scopes)<=SCOPES[self.platform]:raise ValueError('Read scopes required')
+        allowed=analytics_meta.SCOPES[self.platform]|{'pages_show_list'} if self.platform in analytics_meta.PLATFORMS else SCOPES[self.platform]
+        if len(set(self.scopes))!=len(self.scopes) or not set(self.scopes)<=allowed:raise ValueError('Read scopes required')
         return self
+
+
+class MetaAccessToken(AccessToken):
+    schema_version:Literal['native-meta-analytics-access-token-v1']='native-meta-analytics-access-token-v1'
+    platform:Literal['instagram_reels','facebook']
+    api_version:str=Field(pattern=r'^v[1-9][0-9]{0,2}\.0$')
+    page_id:str=Field(pattern=r'^[1-9][0-9]{0,31}$')
+
+
+def parse_token(value):
+    if isinstance(value,StrictModel):value=value.model_dump(mode='python')
+    if not isinstance(value,dict):raise ValueError('Explicit scoped token required')
+    tag=value.get('schema_version','native-oauth-access-token-v1')
+    if tag=='native-oauth-access-token-v1':return AccessToken.model_validate(value)
+    if tag=='native-meta-analytics-access-token-v1':return MetaAccessToken.model_validate(value)
+    raise ValueError('Unknown scoped token version')
 
 def protected_path(path,root):
     if not Path(path).is_absolute():raise WorkflowError('NATIVE_OAUTH_ABSOLUTE_SECRET_PATH_REQUIRED',400)
@@ -62,9 +82,11 @@ def save(path,root,value):
     """Explicit local operator primitive; refuses replacing an existing token."""
     from .assemblyai_connection import _dpapi,_restrict_file
     path=protected_path(path,root)
-    try:parsed=AccessToken.model_validate(value)
+    try:parsed=parse_token(value)
     except Exception:raise WorkflowError('NATIVE_OAUTH_TOKEN_INVALID',400) from None
-    raw=parsed.model_dump_json().encode();encrypted=PREFIX+_dpapi(raw,entropy=ENTROPY,description='Video Factory scoped OAuth access')
+    meta=type(parsed) is MetaAccessToken
+    raw=parsed.model_dump_json().encode();encrypted=(META_PREFIX if meta else PREFIX)+_dpapi(raw,
+        entropy=META_ENTROPY if meta else ENTROPY,description='Video Factory scoped Meta analytics access' if meta else 'Video Factory scoped OAuth access')
     path.parent.mkdir(parents=True,exist_ok=True);temporary=path.parent/('.native-oauth-'+uuid.uuid4().hex+'.part')
     try:
         with temporary.open('xb') as handle:
@@ -78,16 +100,23 @@ def save(path,root,value):
         'credential_alias':parsed.credential_alias,'credential_binding_sha256':parsed.credential_binding_sha256,
         'token_saved':True,'token_returned':False,'external_calls':0,'publishing_enabled':False}
 
-def load(path,root,target,alias):
+def load(path,root,target,alias,*,api_version=None,page_id=None):
     from .assemblyai_connection import _dpapi
     try:
         path=protected_path(path,root)
         if not path.is_file() or path.stat().st_size>32768:raise ValueError()
         raw=path.read_bytes()
-        if not raw.startswith(PREFIX):raise ValueError()
-        decoded=_dpapi(raw[len(PREFIX):],decrypt=True,entropy=ENTROPY)
-        parsed=AccessToken.model_validate(json.loads(decoded,object_pairs_hook=unique_pairs))
+        meta=target.platform in analytics_meta.PLATFORMS
+        prefix=META_PREFIX if meta else PREFIX
+        if not raw.startswith(prefix):raise ValueError()
+        decoded=_dpapi(raw[len(prefix):],decrypt=True,entropy=META_ENTROPY if meta else ENTROPY)
+        parsed=parse_token(json.loads(decoded,object_pairs_hook=unique_pairs))
+        if (type(parsed) is MetaAccessToken) is not meta or path.read_bytes()!=raw:raise ValueError()
         if (parsed.workspace_id!=target.workspace_id or parsed.credential_alias!=alias or parsed.platform!=target.platform
             or parsed.credential_binding_sha256!=target.credential_binding_sha256):raise ValueError()
+        if meta:
+            if parsed.api_version!=api_version or parsed.page_id!=page_id:raise ValueError()
+            return analytics_meta.MetaAnalyticsCredential(target,parsed.api_version,parsed.page_id,
+                parsed.expires_at,frozenset(parsed.scopes),parsed.token)
         return AnalyticsOAuthCredential(target,parsed.expires_at,frozenset(parsed.scopes),parsed.token)
     except Exception:raise WorkflowError('NATIVE_OAUTH_TOKEN_UNAVAILABLE',503) from None

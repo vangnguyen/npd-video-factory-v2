@@ -8,13 +8,14 @@ from .backup import guard
 from .contracts import WorkflowError,digest
 from .costs import CostLedger
 from .store import now
-from .official_account_registry import AccountFactory
+from .official_account_registry import AccountFactory,MetaReadAccount,validate_meta_profile
 from .meta_connection import NativeMetaAccountFactory
 from app.models import StrictModel
 from app.analytics_official import AnalyticsOfficialError,account_request,confirm_account,response_digest
 from app.publishing_wire import PublishingWireError
 from app.publishing_credentials import target_digest
 from app.publishing_models import PublishingTargetBinding
+from app import analytics_meta
 
 class Verify(StrictModel):
     schema_version:Literal['native-official-account-check-request-v1']='native-official-account-check-request-v1'
@@ -77,7 +78,8 @@ class NativeOfficialAccounts:
             snapshot=json.loads(value.pop('snapshot_json'));raw=value.pop('result_json');result=json.loads(raw) if raw else None
             if (value['workspace_id']!=self.workspace or digest(snapshot)!=value['snapshot_sha256'] or snapshot['workspace_id']!=self.workspace
                 or snapshot['project_id']!=value['project_id'] or snapshot['account_ref']!=value['account_ref']
-                or digest(snapshot['request'])!=value['request_fingerprint'] or snapshot['schema_version']!='native-official-account-check-snapshot-v1'):raise ValueError()
+                or digest(snapshot['request'])!=value['request_fingerprint']
+                or snapshot['schema_version'] not in ('native-official-account-check-snapshot-v1','native-official-account-check-snapshot-v2')):raise ValueError()
             Verify.model_validate({**snapshot['request'],'request_key':'internal-account-check-key'})
             if (type(snapshot['mock']) is not bool or type(snapshot['project_revision']) is not int
                 or snapshot['project_revision']!=snapshot['request']['revision']
@@ -85,14 +87,18 @@ class NativeOfficialAccounts:
                 or not re.fullmatch(r'[a-f0-9]{64}',snapshot['document_sha256'])):raise ValueError()
             target=PublishingTargetBinding.model_validate(snapshot['target'])
             if target.workspace_id!=self.workspace or snapshot['target_binding_sha256']!=target_digest(target):raise ValueError()
-            if target.platform in ('facebook','instagram_reels'):
+            meta_read=snapshot['schema_version']=='native-official-account-check-snapshot-v2'
+            if meta_read:
+                validate_meta_profile(snapshot['meta_read_profile'],target)
+                if 'meta' in snapshot:raise ValueError()
+            elif target.platform in ('facebook','instagram_reels'):
                 from .meta_account_evidence import validate
                 validate(snapshot,result)
             elif 'meta' in snapshot or result is not None and 'meta' in result:raise ValueError()
             if value['status'] not in {'queued','running','succeeded','failed','not_configured','cancelled','outcome_unknown'}:raise ValueError()
             if (value['status']=='succeeded')!=(result is not None):raise ValueError()
             if result is not None:
-                if (digest(result)!=value['result_sha256'] or result['schema_version']!='native-official-account-check-result-v1'
+                if (digest(result)!=value['result_sha256'] or result['schema_version']!=('native-official-account-check-result-v2' if meta_read else 'native-official-account-check-result-v1')
                     or any(result[n]!=value[n] for n in ('check_id','workspace_id','project_id','account_ref','snapshot_sha256'))
                     or result['target_binding_sha256']!=snapshot['target_binding_sha256'] or result['account_match'] is not True
                     or result['read_only'] is not True or result['publishing_enabled'] is not False
@@ -102,8 +108,8 @@ class NativeOfficialAccounts:
                     or result['operation']!='account_lookup' or type(result['response_status']) is not int or result['response_status']!=200
                     or not re.fullmatch(r'[a-f0-9]{64}',result['response_sha256'])):raise ValueError()
             value.pop('key_sha256');value.pop('claim_id')
-            return {**value,'schema_version':'native-official-account-check-v1','snapshot':snapshot,'result':result,'publishing_enabled':False,'token_returned':False}
-        except (ValueError,KeyError,TypeError):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_EVIDENCE_CHANGED') from None
+            return {**value,'schema_version':'native-official-account-check-v2' if meta_read else 'native-official-account-check-v1','snapshot':snapshot,'result':result,'publishing_enabled':False,'token_returned':False}
+        except (ValueError,KeyError,TypeError,PublishingWireError):raise WorkflowError('NATIVE_OFFICIAL_ACCOUNT_EVIDENCE_CHANGED') from None
 
     def create(self,project,account_ref,payload,*,actor):
         self.check_workspace();request=payload.model_dump(mode='json',exclude={'request_key'});fp=digest(request);key=digest(payload.request_key)
@@ -122,6 +128,8 @@ class NativeOfficialAccounts:
             if type(factory) is NativeMetaAccountFactory:
                 from .meta_account_evidence import source
                 snapshot['meta']=source(factory,self.clock)
+            elif type(factory.account) is MetaReadAccount:
+                snapshot.update(schema_version='native-official-account-check-snapshot-v2',meta_read_profile=public['meta_read_profile'])
             status='queued' if public['status']=='CONFIGURED' else 'not_configured';stamp=now();identity='nack_'+uuid.uuid4().hex
             con.execute('INSERT INTO native_official_account_checks VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 (identity,self.workspace,project,account_ref,key,fp,digest(snapshot),json.dumps(snapshot),status,0,None,None,None,
@@ -131,7 +139,7 @@ class NativeOfficialAccounts:
 
     def linked(self,con,row):
         value=self.read(row)
-        if value['snapshot']['target']['platform'] in ('facebook','instagram_reels'):
+        if value['snapshot']['target']['platform'] in ('facebook','instagram_reels') and value['schema_version']=='native-official-account-check-v1':
             from .meta_account_evidence import links
             links(self,con,value)
         return value
@@ -194,14 +202,16 @@ class NativeOfficialAccounts:
                     self.event(con,row,'account.check.confirmed','worker',mock=result['mock'],external_call=result['external_call'],response_sha256=result['response_sha256'])
                 return self.get(project,identity)
             credential=factory.credential(now=self.clock())
-            request=account_request(credential)
+            meta=credential.target.platform in analytics_meta.PLATFORMS
+            request=(analytics_meta.account_request if meta else account_request)(credential)
             operation=self.costs.begin(project_id=project,provider='official-'+credential.target.platform,model=None,operation='account_lookup.'+identity,
                 request_sha256=digest({'check_id':identity,'snapshot_sha256':value['snapshot_sha256'],'operation':'account_lookup'}),estimated_cost=None,
                 external_call=not factory.client.mock,paid=False)
             self.admission(project,identity,claim);sent=True
             response=asyncio.run(factory.client.request(request));self.costs.settle(operation,status='response_received',response_sha256=response_digest(response))
-            confirmed=confirm_account(response,credential.target);self.admission(project,identity,claim)
-            result={'schema_version':'native-official-account-check-result-v1','check_id':identity,'workspace_id':self.workspace,'project_id':project,'account_ref':value['account_ref'],
+            confirmed=(analytics_meta.confirm_account(response,credential.target,page_id=credential.page_id) if meta else
+                confirm_account(response,credential.target));self.admission(project,identity,claim)
+            result={'schema_version':'native-official-account-check-result-v2' if meta else 'native-official-account-check-result-v1','check_id':identity,'workspace_id':self.workspace,'project_id':project,'account_ref':value['account_ref'],
                 'snapshot_sha256':value['snapshot_sha256'],'target_binding_sha256':snapshot['target_binding_sha256'],'account_match':confirmed['account_match'],
                 'operation':'account_lookup','response_sha256':response_digest(response),'response_status':response.status,'cost_operation_id':operation,
                 'mock':factory.client.mock,'external_call':not factory.client.mock,'read_only':True,'verified_at':self.clock().isoformat(),
