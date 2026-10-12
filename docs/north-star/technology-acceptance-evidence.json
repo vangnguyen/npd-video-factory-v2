@@ -1,0 +1,366 @@
+{
+  "schema_version": "north-star-technology-acceptance-v1",
+  "recorded_at": "2026-10-12T04:33:06.468337+00:00",
+  "source_parent": "415a09c3628b386280c4f0cbb25dca5f9ebae635",
+  "authority": "Master Spec multi-niche/profile/template/variant sections; original Waves6/7/8/16",
+  "implementation": [
+    "optional versioned frozen render labels with generic defaults/brand overrides",
+    "legacy absent-field output independent of new catalog",
+    "education template purpose while old purposes remain valid",
+    "literal/brand/digest/config validation and atomic admission",
+    "configured non-property speech/render/variants without niche branches"
+  ],
+  "tests": {
+    "Native_related": 47,
+    "Native_modules": 8,
+    "new_Native_labels": 6,
+    "Native_production_regression": 36,
+    "Native_production_modules": 4,
+    "total_distinct_Native": 83,
+    "Static_HTTP_included_in_36": 3,
+    "separate_narration_preview_8_already_included_in_36": true,
+    "Studio_Renderer_API_not_rerun_this_increment": true
+  },
+  "test_logs": {
+    "technology-render-labels-related-n3.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-render-labels-related-n3.log",
+      "sha256": "36f793d7ee7d3dfd9e5277c894b9ee088fe71a7700e7fd8b7adcbf00950ab6cf",
+      "bytes": 152
+    },
+    "technology-labels-production-regression-n2.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-labels-production-regression-n2.log",
+      "sha256": "6c5b75b796eb4662a595a14e89773e21d194a2f3d4b6c045e6466d3b26155c95",
+      "bytes": 141
+    },
+    "technology-labels-narration-preview-n1.log": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-labels-narration-preview-n1.log",
+      "sha256": "b2b458c6bdcab84b0b4056f1b9300fc29a3d6579417b34673b70de0f098505e0",
+      "bytes": 112
+    }
+  },
+  "local_TTS": {
+    "jobs": 1,
+    "model_scene_inference_calls": 2,
+    "voice_duration_seconds": 3.97,
+    "profile_sha256": "f2d848766784e7bd892680f933a799ec812c1c8acff62b019ac777aa1292c4d3",
+    "voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+    "speed": 1,
+    "retries": 0,
+    "network_blocked": true,
+    "word_alignment": "none",
+    "voice_metadata": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-master-n1\\voice.json",
+      "sha256": "0d456569565e03336ece5795dabc034a19210ee9339def3d2abc1d32d371c4cd",
+      "bytes": 668
+    },
+    "master_original_evidence": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-master-n1\\evidence.json",
+      "sha256": "61841454659bb15c4072f8e9e3e9a8ae10496283b3cb12efc6ff233ab1a6d72e",
+      "bytes": 5982
+    },
+    "original_evidence_calls_field_means_one_job_invocation_not_model_calls": true
+  },
+  "original_technology_master": {
+    "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-master-n1",
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-master-n1\\owned-master-backup.zip",
+      "sha256": "f230045ec683d96ea8c59a9e0c6409f40b39dc1d76b276bb29ecbf36c4686172",
+      "bytes": 27691260
+    },
+    "final": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-master-n1\\final.mp4",
+      "sha256": "496195a598a8fc5eb4e08fe290c4f59de8888e10e974e4a0658df96728b5295b",
+      "bytes": 151225
+    },
+    "research_manual_previous_official_W3C_source": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-master-n1\\research-evidence.json",
+      "sha256": "a54b15143b5f53fda01a09e141fb5cf6a516e01c44229aef8298ca96e9a50aef",
+      "bytes": 420
+    }
+  },
+  "labeled_master": {
+    "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-labeled-master-n1",
+    "new_inference_calls": 0,
+    "no_fresh_TTS_attempts_verified_in_backup": true,
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-labeled-master-n1\\owned-master-backup.zip",
+      "sha256": "abc118f6d4b3c2f0451fd097e6beb6a4b8f63bc4e055f90491dbcfe066e88a99",
+      "bytes": 53478045
+    },
+    "evidence": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-labeled-master-n1\\evidence.json",
+      "sha256": "a94079c33ea6cc4d341026b4f414198cd93ee677ba6aab4f61c312101aa8ecf0",
+      "bytes": 4337
+    },
+    "final": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-labeled-master-n1\\final.mp4",
+      "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+      "bytes": 151218
+    }
+  },
+  "six_variants": {
+    "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2",
+    "human_HTTP_requests": 246,
+    "finals": 6,
+    "previews": 6,
+    "unique_canvases": 4,
+    "new_inference_calls": 0,
+    "fresh_TTS_child_dispatch_blocked": true,
+    "all_full_QC_passed": true,
+    "verified_export_files": 169,
+    "evidence": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\evidence.json",
+      "sha256": "3f89ffd4f7347b75d84a5dd24b0971bdceca14263d80a7a59ad4c8348d7eec08",
+      "bytes": 28585
+    },
+    "backup": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\owned-narrated-variants.zip",
+      "sha256": "84c7a22e12948a59568f41103f2492dc39633a3a8224b20172672756393829c0",
+      "bytes": 209990345
+    },
+    "cold_process": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\new-process-replay.json",
+      "sha256": "1765009a386fe0d1e9a3dad5874dc73292b60ee2b26da42d61c8a77ed541e432",
+      "bytes": 196
+    },
+    "formats": [
+      {
+        "profile": {
+          "profile_ref": "youtube-landscape@1",
+          "label": "YouTube · 16:9",
+          "platform": "youtube",
+          "aspect_ratio": "16:9",
+          "width": 1920,
+          "height": 1080
+        },
+        "project_id": "5c8d3ff81e615a798aa4e28a19e74c46",
+        "source_voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+        "duration_seconds": 6.07,
+        "final": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-landscape-1\\final.mp4",
+          "sha256": "d24498cb836f1c2e183e2c7787faa5c0a3795dfc024df64840075604bde6e41a",
+          "bytes": 142489
+        },
+        "preview": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-landscape-1\\preview.mp4",
+          "sha256": "d24498cb836f1c2e183e2c7787faa5c0a3795dfc024df64840075604bde6e41a",
+          "bytes": 142489
+        },
+        "QC": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-landscape-1\\qc.json",
+          "sha256": "3f7ee66a41dbde521c95247e6d6f7b0bd6dabc9b52b41f5865c36822fe102a67",
+          "bytes": 29305
+        },
+        "review_frame": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-landscape-1\\review-frame.png",
+          "sha256": "dfdac5d2ba39eb01453df6370e5212c98a108a2595019f896b1e21f8e4f3f34d",
+          "bytes": 128636
+        }
+      },
+      {
+        "profile": {
+          "profile_ref": "youtube-shorts@1",
+          "label": "YouTube Shorts · 9:16",
+          "platform": "youtube",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "project_id": "0e5fcaa81365533aa50e6029ce222493",
+        "source_voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+        "duration_seconds": 6.07,
+        "final": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-shorts-1\\final.mp4",
+          "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+          "bytes": 151218
+        },
+        "preview": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-shorts-1\\preview.mp4",
+          "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+          "bytes": 151218
+        },
+        "QC": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-shorts-1\\qc.json",
+          "sha256": "0044c6fd05244774fb963b80fa036ab844b6c7f8f6daed641d1ef4323accfff3",
+          "bytes": 29334
+        },
+        "review_frame": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\youtube-shorts-1\\review-frame.png",
+          "sha256": "ecd590cded9550d62ac174cf7cf84b5d7c853f50e04aecb1418a316f06f5acc3",
+          "bytes": 156983
+        }
+      },
+      {
+        "profile": {
+          "profile_ref": "tiktok-short@1",
+          "label": "TikTok · 9:16",
+          "platform": "tiktok",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "project_id": "400bdcca3d1257989ef096c39d4dec53",
+        "source_voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+        "duration_seconds": 6.07,
+        "final": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\tiktok-short-1\\final.mp4",
+          "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+          "bytes": 151218
+        },
+        "preview": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\tiktok-short-1\\preview.mp4",
+          "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+          "bytes": 151218
+        },
+        "QC": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\tiktok-short-1\\qc.json",
+          "sha256": "a59e40a57ed57549dc54ccf9ff45b8117ebd9c13b0f63d5041dc13b7fc1cae69",
+          "bytes": 29334
+        },
+        "review_frame": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\tiktok-short-1\\review-frame.png",
+          "sha256": "ecd590cded9550d62ac174cf7cf84b5d7c853f50e04aecb1418a316f06f5acc3",
+          "bytes": 156983
+        }
+      },
+      {
+        "profile": {
+          "profile_ref": "instagram-reel@1",
+          "label": "Instagram Reels · 9:16",
+          "platform": "instagram",
+          "aspect_ratio": "9:16",
+          "width": 1080,
+          "height": 1920
+        },
+        "project_id": "fe20134348c7513d9fdcbc2c2ec58488",
+        "source_voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+        "duration_seconds": 6.07,
+        "final": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\instagram-reel-1\\final.mp4",
+          "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+          "bytes": 151218
+        },
+        "preview": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\instagram-reel-1\\preview.mp4",
+          "sha256": "0ba5b2dcff65ec2ac10e0308be32eb1c75de5c050c14dd4d0f7afe309d9b2d1f",
+          "bytes": 151218
+        },
+        "QC": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\instagram-reel-1\\qc.json",
+          "sha256": "247734489a3e4ff6d8b3059732d6251256dce1edd53cb1417162e0f64b7f7731",
+          "bytes": 29334
+        },
+        "review_frame": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\instagram-reel-1\\review-frame.png",
+          "sha256": "ecd590cded9550d62ac174cf7cf84b5d7c853f50e04aecb1418a316f06f5acc3",
+          "bytes": 156983
+        }
+      },
+      {
+        "profile": {
+          "profile_ref": "social-square@1",
+          "label": "Social · 1:1",
+          "platform": null,
+          "aspect_ratio": "1:1",
+          "width": 1080,
+          "height": 1080
+        },
+        "project_id": "c1eaa53e3fd45495822b69e58ff67c50",
+        "source_voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+        "duration_seconds": 6.07,
+        "final": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-square-1\\final.mp4",
+          "sha256": "ff4f475894eb0e446c227521ca57e8e87df3807582bac9804f5ab299881403dd",
+          "bytes": 137619
+        },
+        "preview": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-square-1\\preview.mp4",
+          "sha256": "ff4f475894eb0e446c227521ca57e8e87df3807582bac9804f5ab299881403dd",
+          "bytes": 137619
+        },
+        "QC": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-square-1\\qc.json",
+          "sha256": "a9f685cfc5bf0d35bd460daaccfcdd4bb7ef445ea98c68b598e5f5359212e7fe",
+          "bytes": 29328
+        },
+        "review_frame": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-square-1\\review-frame.png",
+          "sha256": "7b11bc2dae2a56565c0adc07163aaf921e94590ac8c90e051b1de8e0c0e66c27",
+          "bytes": 119892
+        }
+      },
+      {
+        "profile": {
+          "profile_ref": "social-feed@1",
+          "label": "Feed · 4:5",
+          "platform": null,
+          "aspect_ratio": "4:5",
+          "width": 1080,
+          "height": 1350
+        },
+        "project_id": "01af2e2ef9f753c1bc54b8811106601c",
+        "source_voice_sha256": "26a75b5cae08ca51ca86d62b79839528a8e0ba2563f5b7469f4db664121db632",
+        "duration_seconds": 6.07,
+        "final": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-feed-1\\final.mp4",
+          "sha256": "eeb10e6956a5018f08bec2b87b9974371b32d5085231e1350b481292070a3828",
+          "bytes": 142835
+        },
+        "preview": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-feed-1\\preview.mp4",
+          "sha256": "eeb10e6956a5018f08bec2b87b9974371b32d5085231e1350b481292070a3828",
+          "bytes": 142835
+        },
+        "QC": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-feed-1\\qc.json",
+          "sha256": "933ee83eac742884c085bf5805c90e20b855404da5c5b9b69133e2b7bf36a350",
+          "bytes": 29344
+        },
+        "review_frame": {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n2\\social-feed-1\\review-frame.png",
+          "sha256": "48a1d88d06265dfebf558655e6a8e1768c071f9f288059dc3ba855408d323f7e",
+          "bytes": 131723
+        }
+      }
+    ]
+  },
+  "qualification_limits": [
+    "manual editorial script/owned graphics and manually supplied source paraphrase",
+    "no automated research/idea/script/stock/AI media/trend run",
+    "HTTP fixture approvals; no actual browser/non-developer/Owner listening/legal acceptance",
+    "other niches/languages/voices/channel admin/platform preferences/cache/production and original A/B/C remain"
+  ],
+  "retained_before_fix": {
+    "original_technology_family": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-narrated-six-variants-n1",
+    "legacy_illustration_phrase_retained_not_silently_replaced": true
+  },
+  "cleanup": {
+    "ordinary_master_rebind_temporary_roots_cleaned_after_export": true,
+    "four_new_family_working_roots_retained_after_policy_block": true,
+    "policy_block": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\technology-owned-fixture-teardown-policy-block-n1.json",
+      "sha256": "cf76a6c397f2e2c607bed961f762a43cf0f23bfe90ab2b7a20db245b1615adcb",
+      "bytes": 464
+    },
+    "blocked_action_retried_or_bypassed": false
+  },
+  "safety": {
+    "remote_provider_calls": 0,
+    "paid_calls": 0,
+    "real_published": false,
+    "production_deployed": false,
+    "Owner_UAT": false,
+    "historical_artifacts_replaced": false,
+    "historical_data_deleted": false,
+    "main_merged": false
+  },
+  "program_ready_claims": {
+    "full_wave_complete": false,
+    "MULTI_NICHE_READY": false,
+    "MODE_A_READY": false,
+    "IMPLEMENTATION_COMPLETE": false,
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": false,
+    "PRODUCTION_DEPLOYED": false,
+    "VIDEO_FACTORY_NORTH_STAR_READY": false
+  }
+}

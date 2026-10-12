@@ -28,7 +28,7 @@ class BrandingTests(unittest.TestCase):
     def test_preserved_seed_profiles_and_added_ai_templates_reference_assets_and_locked_voice(self):
         values=branding.catalog(); self.assertEqual(len(values["templates"]),15)
         self.assertTrue({f'{family}-{seconds}' for family in ('property','news','personal','event') for seconds in (30,45,60)} <= {v['id'] for v in values['templates']})
-        self.assertEqual({v["purpose"] for v in values["templates"]},{"property_presentation","news_update","personal_brand","event_promo"})
+        self.assertEqual({v["purpose"] for v in values["templates"]},{"property_presentation","news_update","personal_brand","event_promo","education"})
         self.assertEqual({v["duration_seconds"] for v in values["templates"]},{30,45,60})
         for profile in values["brands"]:
             self.assertIsNone(profile["logo"]); self.assertIsNone(profile["music_profile"]["default_track"])

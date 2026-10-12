@@ -101,6 +101,9 @@ class Store:
         if doc.get('channel_profile') is not None:
             from .channel_profiles import resolve
             resolve(doc)
+        if 'render_labels' in doc:
+            from .render_labels import resolve
+            resolve(doc)
         return {**dict(row), "document": doc, "input": project_input(doc, row["revision"]),
                 "approval": json.loads(row["approval"]) if row["approval"] else None}
 
@@ -175,6 +178,8 @@ class Store:
             frozen=resolve(doc)
             if content_profile is not None and content_profile['id']!=frozen['content_profile']['id']:raise WorkflowError('CHANNEL_CONTENT_PROFILE_CONFLICT',400)
             doc['content_profile']=copy.deepcopy(frozen['content_profile']);doc['brand_template']=copy.deepcopy(frozen['brand_template'])
+            from .render_labels import bind
+            bind(doc)
         elif niche is not None:doc['niche']=niche
         stamp = now()
         con.execute("INSERT INTO projects VALUES(?,?,?,?,?,?)",
@@ -539,6 +544,8 @@ class Store:
             project=self.editable(con,identifier,revision); doc=project["document"]
             before_shots = copy.deepcopy(doc)
             previous=doc.get("edit_plan"); doc["brand_template"]=selection
+            from .render_labels import bind
+            bind(doc)
             try:
                 validate_bindings(doc,complete=True)
                 complete=bool(doc.get("proposal"))

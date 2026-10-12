@@ -61,7 +61,12 @@ def run(args):
         batch=send('POST',base+'/narrated-variants',body);write(out/'created-family.json',batch);assert len(batch['result']['variants'])==6
         replay=send('POST',base+'/narrated-variants',body);assert replay['idempotent_replay'] and {k:v for k,v in replay.items() if k!='idempotent_replay'}=={k:v for k,v in batch.items() if k!='idempotent_replay'}
         receipts=[]
-        with patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No new inference is permitted')):
+        original_run=subprocess.run
+        def without_tts_child(command,*args,**kwargs):
+            if isinstance(command,(list,tuple)) and 'services.windows_native.tts_child' in command:
+                raise AssertionError('Variant cannot dispatch a fresh TTS child')
+            return original_run(command,*args,**kwargs)
+        with patch('services.windows_native.pipeline.synthesize',side_effect=AssertionError('No new inference is permitted')),patch('subprocess.run',side_effect=without_tts_child):
             for descriptor in batch['result']['variants']:
                 identifier=descriptor['project_id'];child_base='/api/projects/'+identifier;directory=out/descriptor['profile']['profile_ref'].replace('@','-');directory.mkdir()
                 child=send('GET',child_base);write(directory/'initial-project.json',child);assert child['approval'] is None and child['jobs']==[]
@@ -81,6 +86,7 @@ def run(args):
                 queued=send('POST',child_base+'/jobs',{'revision':child['revision'],'kind':'render','request_key':uuid.uuid4().hex});assert server.runner.run_one()
                 job=server.store.get_job(queued['id']);assert job['status']=='succeeded',job;write(directory/'job.json',job)
                 source=root/'jobs'/job['id'];manifest=json.loads((source/'render-manifest.json').read_bytes());qc=job['result']['qc']
+                assert not list((source/'attempts').glob('tts-*'))
                 assert qc['passed'] and qc['full_quality']['status']=='passed'
                 assert manifest['render_profile']['width']==descriptor['profile']['width'] and manifest['render_profile']['height']==descriptor['profile']['height']
                 assert file_sha(source/'voice.wav')==ref['voice_audio_sha256']
@@ -115,7 +121,7 @@ def run(args):
         'apps/studio-web/native-narrated-variants.mjs','apps/studio-web/native-narration.mjs','apps/studio-web/native.mjs','apps/studio-web/native.html','apps/studio-web/tests/native-narrated-variants.test.mjs','scripts/north_star_native_narrated_variants.py']
     write(out/'evidence.json',{'schema_version':'native-narrated-variants-rehearsal-v1','genuine_previously_generated_local_pcm_reused':True,'approval_decisions_explicit_signed_fixtures':True,
         'human_http_requests':len(requests),'child_projects':6,'audible_previews':6,'final_renders':6,'actual_canvases':4,'all_full_qc_passed':True,'original_master_and_media_unchanged':True,
-        'new_inference_calls':0,'paid_operations':0,'external_provider_calls':0,'publishing_enabled':False,'speech_quality_accepted':False,'rights_independently_verified':False,'owner_uat_accepted':False,'production_deployed':False,
+        'new_inference_calls':0,'fresh_tts_child_dispatch_blocked':True,'fresh_tts_attempts_observed':0,'paid_operations':0,'external_provider_calls':0,'publishing_enabled':False,'speech_quality_accepted':False,'rights_independently_verified':False,'owner_uat_accepted':False,'production_deployed':False,
         'source_sha256':{name:file_sha(ROOT/name) for name in names},'exports':{p.relative_to(out).as_posix():{'sha256':file_sha(p),'bytes':p.stat().st_size} for p in out.rglob('*') if p.is_file()}})
     print(json.dumps({'status':'NARRATED_SIX_FORMAT_FAMILY_RECOVERY_PASS','children':6,'previews':6,'renders':6,'new_inference_calls':0}))
 

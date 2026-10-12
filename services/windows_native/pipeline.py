@@ -506,7 +506,8 @@ def render(config, snapshot, out, *, preview_only=False):
             raise WorkflowError("BRAND_HEADING_EXCEEDS_SAFE_AREA")
         draw.multiline_text((text_x, title_y), "\n".join(lines), font=title_font, spacing=12, fill=palette.text)
         if asset["illustration"]:
-            draw.text((text_x,geometry['illustration_y']), "Phối cảnh minh họa", font=label_font, fill=palette.accent)
+            from .render_labels import resolve as illustration_label
+            draw.text((text_x,geometry['illustration_y']), illustration_label(doc), font=label_font, fill=palette.accent)
         if edit_plan:
             draw.rounded_rectangle((safe_left-10,caption_top,width-safe_right+10,height-safe_bottom-10),radius=18,fill=palette.caption_background,outline=palette.caption_border,width=2)
             footer=edit_plan["cta"] if options.get("cta_marker") else " · ".join(brand.project_disclaimers)
@@ -686,6 +687,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
         **({'canonical_music_loop':music_loop} if music_loop is not None else {}),
         "brand_template":doc.get("brand_template"),"duration_policy":template.duration_policy if template else "legacy_measured_voice_minimum_25s",
+        **({'render_labels':doc['render_labels']} if 'render_labels' in doc else {}),
         "cta_hold_after_voice_seconds":voice_placement['tail_after_source_voice_seconds'],
         "voice_placement":voice_placement,"official_brand_assets_claimed":False,
         **({'production_quality':doc['production_quality'],'speech_quality':speech_qc,'render_profile':render_profile} if strict_quality else {}),

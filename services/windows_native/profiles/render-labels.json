@@ -1,0 +1,9 @@
+{
+  "schema_version": "native-render-label-catalog-v1",
+  "defaults": {"profile_ref": "generic-illustration@1", "illustration_label": "Minh họa"},
+  "brand_overrides": [
+    {"brand_id": "vf-reference", "profile_ref": "property-illustration@1", "illustration_label": "Phối cảnh minh họa"},
+    {"brand_id": "vang-nguyen", "profile_ref": "property-illustration@1", "illustration_label": "Phối cảnh minh họa"},
+    {"brand_id": "vf-ai-education", "profile_ref": "technology-illustration@1", "illustration_label": "Minh họa kỹ thuật"}
+  ]
+}

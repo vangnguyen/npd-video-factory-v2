@@ -136,7 +136,7 @@
     {
       "id": "ai-education",
       "name": "Giải thích công nghệ / AI",
-      "purpose": "news_update",
+      "purpose": "education",
       "scene_label": "GIẢI THÍCH",
       "duration_policy": "fit_narration_preserve_voice_speed"
     }

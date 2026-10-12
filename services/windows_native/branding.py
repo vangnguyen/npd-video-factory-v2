@@ -80,7 +80,7 @@ class BrandProfile(Strict):
 class VideoTemplate(Strict):
     id: str=Field(pattern=r"^[a-z][a-z0-9-]{2,59}$")
     name: str=Field(min_length=1,max_length=120)
-    purpose: Literal["property_presentation","news_update","personal_brand","event_promo"]
+    purpose: Literal["property_presentation","news_update","personal_brand","event_promo","education"]
     scene_label: str=Field(min_length=1,max_length=40)
     duration_seconds: Literal[30,45,60]
     width: Literal[1080,1920]=1080
