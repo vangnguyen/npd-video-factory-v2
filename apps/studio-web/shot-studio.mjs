@@ -128,6 +128,7 @@ export function initializeShotStudio({api,getProject,getGuards,getReviewedVision
     if($('native-official-publications-card'))$('video-review-body').append($('native-official-publications-card'));
     if($('native-official-publication-queue-card'))$('video-review-body').append($('native-official-publication-queue-card'));
     if($('native-official-analytics-card'))$('video-review-body').append($('native-official-analytics-card'));
+    if($('native-official-refresh-card'))$('video-review-body').append($('native-official-refresh-card'));
     if($('native-official-winners-card'))$('video-review-body').append($('native-official-winners-card'));
     if($('native-official-learning-card'))$('video-review-body').append($('native-official-learning-card'));
     if($('native-qualified-learning-card'))$('video-review-body').append($('native-qualified-learning-card'));
