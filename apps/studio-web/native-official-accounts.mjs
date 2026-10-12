@@ -1,4 +1,5 @@
 // Public account bindings and explicit read checks; no OAuth secret input or publishing action.
+import {analyticsMetaProfile,analyticsPublic} from './native-platform-analytics.mjs';
 export function initializeNativeOfficialAccounts({api,getState,root=document,onMessage=()=>{},uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-accounts-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-account-'+id;return n;};
@@ -25,15 +26,16 @@ export function initializeNativeOfficialAccounts({api,getState,root=document,onM
       ||!checksum(a.configuration_sha256)||!checksum(a.target_binding_sha256)||!['CONFIGURED','NOT_CONFIGURED'].includes(a.status)
       ||!['fixture','official'].includes(a.mode)||a.publishing_enabled!==false||a.token_returned!==false||a.account_verified!==false||a.credential_verified!==false
       ||typeof a.external_reads_enabled!=='boolean'||a.mode==='fixture'&&a.external_reads_enabled)throw new Error('Cấu hình tài khoản không đúng không gian hoặc trạng thái chỉ đọc.');
-    if(['facebook','instagram_reels'].includes(target.platform))validateMetaAccount(a,s);return a;}
+    if(['facebook','instagram_reels'].includes(target.platform)){if(a.meta_read_profile){analyticsPublic(a);analyticsMetaProfile(a.meta_read_profile,target);}else validateMetaAccount(a,s);}return a;}
   function validateRow(r){const s=getState();
-    if(r?.schema_version!=='native-official-account-check-v1'||r.workspace_id!==s.workspace_id||r.project_id!==s.project?.id||!/^nack_[a-f0-9]{32}$/.test(r.check_id??'')
+    if(!['native-official-account-check-v1','native-official-account-check-v2'].includes(r?.schema_version)||r.workspace_id!==s.workspace_id||r.project_id!==s.project?.id||!/^nack_[a-f0-9]{32}$/.test(r.check_id??'')
       ||!checksum(r.request_fingerprint)||!checksum(r.snapshot_sha256)||r.publishing_enabled!==false||r.token_returned!==false
       ||r.snapshot?.workspace_id!==s.workspace_id||r.snapshot?.project_id!==s.project.id||r.snapshot?.account_ref!==r.account_ref||typeof r.snapshot.mock!=='boolean')throw new Error('Lịch sử xác minh không đúng dự án.');
     if(!['queued','running','succeeded','failed','not_configured','cancelled','outcome_unknown'].includes(r.status)||(r.status==='succeeded')!==Boolean(r.result))throw new Error('Trạng thái xác minh không hợp lệ.');
-    if(r.result&&(r.result.schema_version!=='native-official-account-check-result-v1'||r.result.check_id!==r.check_id||r.result.project_id!==s.project.id||r.result.workspace_id!==s.workspace_id||r.result.account_match!==true
+    if(r.result&&(r.result.schema_version!==(r.schema_version==='native-official-account-check-v2'?'native-official-account-check-result-v2':'native-official-account-check-result-v1')||r.result.check_id!==r.check_id||r.result.project_id!==s.project.id||r.result.workspace_id!==s.workspace_id||r.result.account_match!==true
       ||r.result.read_only!==true||r.result.publishing_enabled!==false||r.result.token_returned!==false||r.result.mock!==r.snapshot.mock||typeof r.result.external_call!=='boolean'||r.result.external_call===r.result.mock))throw new Error('Bằng chứng xác minh tài khoản không hợp lệ.');
-    if(['facebook','instagram_reels'].includes(r.snapshot?.target?.platform))validateMetaAccountRow(r,s);return r;}
+    if(r.schema_version==='native-official-account-check-v2'){analyticsPublic(r);analyticsMetaProfile(r.snapshot.meta_read_profile,r.snapshot.target);if(r.snapshot.schema_version!=='native-official-account-check-snapshot-v2'||Object.hasOwn(r.snapshot,'meta'))throw new Error('Bằng chứng đọc Meta không đúng định dạng.');}
+    else if(['facebook','instagram_reels'].includes(r.snapshot?.target?.platform))validateMetaAccountRow(r,s);return r;}
   async function invoke(fn){if(working)return;const version=generation,expected=context();working=true;controls();
     try{const apply=await fn();if(version===generation&&expected===context())apply();}
     catch(error){if(version===generation&&expected===context())onMessage(error.message,true);}

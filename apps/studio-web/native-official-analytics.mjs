@@ -1,6 +1,6 @@
 // Explicit receipt-bound read consent. Initialization and rendering make no requests.
 import {nativeAnalyticsMetrics,nativeAnalyticsValue} from './native-analytics.mjs';
-import {analyticsCounter,analyticsVersion,analyticsPost,analyticsPublic,analyticsCounterBinding,analyticsCounterResult,analyticsReportLabel} from './native-platform-analytics.mjs';
+import {analyticsCounter,analyticsMeta,analyticsMetricScope,analyticsMetaProfile,analyticsVersion,analyticsPost,analyticsPublic,analyticsCounterBinding,analyticsCounterResult,analyticsReportLabel} from './native-platform-analytics.mjs';
 export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=document,onMessage=()=>{},onWorking=()=>{},onSelection=()=>{},uuid=()=>crypto.randomUUID()}){
   const card=root.getElementById('native-official-analytics-card');card.replaceChildren();
   const node=(tag,text,id)=>{const n=root.createElement(tag);if(text)n.textContent=text;if(id)n.id='native-official-analytics-'+id;return n;};
@@ -25,7 +25,7 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
   const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),pubId=v=>typeof v==='string'&&/^nopu_[a-f0-9]{32}$/.test(v),syncId=v=>typeof v==='string'&&/^noas_[a-f0-9]{32}$/.test(v);
   const publication=()=>getBinding()?.publication??null;
   const platform=()=>publication()?.snapshot?.target?.platform,counter=()=>analyticsCounter(platform());
-  const unsupported=()=>Boolean(platform()&&!['youtube','tiktok'].includes(platform()));
+  const unsupported=()=>Boolean(platform()&&!['youtube','tiktok','instagram_reels','facebook'].includes(platform()));
   const context=()=>{const s=getState(),p=publication();return JSON.stringify([s.workspace_id,s.project?.id,s.project?.revision,s.project?.archived,s.dirty,s.active,s.canManage,p?.publication_id,p?.snapshot_sha256,p?.status]);};
   const endpoint=s=>'/api/projects/'+s.project.id+'/official-analytics';
   const sameTarget=(a,b)=>['workspace_id','profile_id','profile_version','platform','provider_key','target_account_id','credential_binding_sha256'].every(k=>a?.[k]===b?.[k]);
@@ -39,10 +39,10 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
     if(!s.canManage||!validSource()||runtime?.enabled!==true||a?.status!=='CONFIGURED'||!sameTarget(a.target,binding.target)
       ||(a.mode==='fixture')!==binding.mock||!sha(a.configuration_sha256)||ack.checked!==true||binding.mock&&mockAck.checked!==true
       ||!Number.isInteger(count)||count<1||count>3||count>1&&retryAck.checked!==true||!counter()&&(to<from||(to-from)/86400000>365)
-      ||counter()&&(!binding.remote_post_ids.includes(post.value)||!analyticsPost(post.value,'tiktok')))throw new Error('Kiểm tra bằng chứng, cấu hình, ngày và xác nhận quyền đọc.');
+      ||counter()&&(!binding.remote_post_ids.includes(post.value)||!analyticsPost(post.value,platform())))throw new Error('Kiểm tra bằng chứng, cấu hình, ngày và xác nhận quyền đọc.');
     return{schema_version:analyticsVersion('request',platform()),publication_id:binding.publication_id,expected_publication_snapshot_sha256:binding.publication_snapshot_sha256,
       expected_receipt_sha256:binding.receipt_sha256,account_ref:a.account_ref,expected_configuration_sha256:a.configuration_sha256,
-      query:counter()?null:{start_date:start.value,end_date:end.value,include_revenue:revenue.checked===true},...(counter()?{metric_scope:'cumulative_video_counters',remote_post_id:post.value}:{}),acknowledged_read_only:true,
+      query:counter()?null:{start_date:start.value,end_date:end.value,include_revenue:revenue.checked===true},...(counter()?{metric_scope:analyticsMetricScope(platform()),remote_post_id:post.value,...(analyticsMeta(platform())?{platform:platform()}:{})}:{}),acknowledged_read_only:true,
       acknowledged_protocol_mock:binding.mock,acknowledged_bounded_retries:count>1&&retryAck.checked===true,max_attempts:count,valid_for_seconds:900};}
   function controls(){const s=getState(),blocked=working||s.busy,p=publication();config.disabled=blocked||!s.canManage;source.disabled=blocked||!s.project||p?.status!=='completed'||unsupported();
     if(unsupported())status.textContent='Analytics của nền tảng này chưa được cấu hình trong Studio. Chưa có dữ liệu khán giả.';
@@ -64,13 +64,14 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
   function validateRow(value,s){analyticsPublic(value);const remote=counter()?value?.snapshot?.request?.remote_post_id:binding?.remote_post_id;if(value?.schema_version!==analyticsVersion('sync',platform())||!syncId(value.sync_id)||value.workspace_id!==s.workspace_id||value.project_id!==s.project.id
     ||value.publication_id!==binding?.publication_id||!sha(value.snapshot_sha256)||typeof value.mock!=='boolean'||value.mock!==binding.mock||value.token_returned!==false||value.publishing_enabled!==false
     ||value.snapshot?.schema_version!==analyticsVersion('consent',platform())||value.snapshot?.mock!==value.mock||value.snapshot?.request?.publication_id!==binding.publication_id
-    ||counter()&&(value.snapshot.request.schema_version!==analyticsVersion('request','tiktok')||value.snapshot.request.query!==null||value.snapshot.request.metric_scope!=='cumulative_video_counters'||!binding.remote_post_ids.includes(remote))
+    ||counter()&&(value.snapshot.request.schema_version!==analyticsVersion('request',platform())||value.snapshot.request.query!==null||value.snapshot.request.metric_scope!==analyticsMetricScope(platform())||!binding.remote_post_ids.includes(remote))
     ||value.snapshot?.request?.expected_publication_snapshot_sha256!==binding.publication_snapshot_sha256||value.snapshot?.request?.expected_receipt_sha256!==binding.receipt_sha256
     ||value.snapshot?.source?.receipt_sha256!==binding.receipt_sha256||value.snapshot?.source?.publication_snapshot_sha256!==binding.publication_snapshot_sha256
     ||value.snapshot?.source?.receipt_mock!==binding.mock||value.snapshot?.source?.remote_post_id!==remote||!sameTarget(value.snapshot?.target,binding.target)
     ||value.snapshot?.publishing_authority!==false||value.snapshot?.recurring_authority!==false
     ||!['queued','running','retry_scheduled','succeeded','not_configured','failed','cancelled','outcome_unknown'].includes(value.status))throw new Error('Lịch sử analytics không đúng phạm vi.');
-    if(value.result){const r=value.result;if(counter())analyticsCounterResult(r,value.snapshot.request);if(r.schema_version!==analyticsVersion('snapshot',platform())||r.workspace_id!==s.workspace_id||r.project_id!==s.project.id||r.publication_id!==binding.publication_id
+    if(analyticsMeta(platform())){analyticsMetaProfile(value.snapshot.meta_read_profile,value.snapshot.target);if(value.snapshot.request.platform!==platform())throw new Error('Yêu cầu Meta không đúng nền tảng.');}
+    if(value.result){const r=value.result;if(counter())analyticsCounterResult(r,value.snapshot.request,value.snapshot.meta_read_profile);if(r.schema_version!==analyticsVersion('snapshot',platform())||r.workspace_id!==s.workspace_id||r.project_id!==s.project.id||r.publication_id!==binding.publication_id
       ||r.sync_id!==value.sync_id||r.mock!==value.mock||r.external_call!==!value.mock||r.real_audience_observation!==!value.mock||r.source_kind!==(value.mock?'official_protocol_mock':'official_provider')
       ||r.snapshot_sha256!==value.snapshot_sha256||r.result_snapshot_id!==value.result_snapshot_id||r.remote_post_id!==remote
       ||!sameQuery(r.evidence?.query,value.snapshot.request.query)||typeof r.collected_at!=='string'||!Number.isFinite(Date.parse(r.collected_at))
@@ -83,8 +84,8 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
       for(const metric of nativeAnalyticsMetrics){const box=node('div');box.append(node('strong',metric.label),node('p',nativeAnalyticsValue(r.metrics[metric.id],metric.id)));metrics.append(box);}
     }else if(selected)status.textContent=selected.status+(selected.failure_code?' · '+selected.failure_code:'')+'. Không tạo dữ liệu thay thế.';onSelection();controls();}
   async function readConfig(){if(!getState().canManage)return;await run(async(s,accept)=>{const value=await api('/api/connections/official-analytics');if(!accept())return;
-    analyticsPublic(value);if(!['native-official-analytics-capabilities-v1','native-official-analytics-capabilities-v2'].includes(value?.schema_version)||value.workspace_id!==s.workspace_id||typeof value.enabled!=='boolean'||value.default_enabled!==false||value.publishing_enabled!==false||value.token_returned!==false||value.fixture_fallback!==false||!Array.isArray(value.accounts)||value.accounts.length>50)throw new Error('Cấu hình analytics không hợp lệ.');
-    for(const a of value.accounts)if(!/^npac_[a-f0-9]{32}$/.test(a.account_ref??'')||!sha(a.configuration_sha256)||a.target?.workspace_id!==s.workspace_id||!['youtube','tiktok'].includes(a.target?.platform)||value.schema_version.endsWith('-v1')&&a.target.platform!=='youtube'||!['official','fixture'].includes(a.mode)||a.token_returned!==false||a.publishing_enabled!==false)throw new Error('Tài khoản analytics không hợp lệ.');
+    analyticsPublic(value);if(!['native-official-analytics-capabilities-v1','native-official-analytics-capabilities-v2','native-official-analytics-capabilities-v3'].includes(value?.schema_version)||value.workspace_id!==s.workspace_id||typeof value.enabled!=='boolean'||value.default_enabled!==false||value.publishing_enabled!==false||value.token_returned!==false||value.fixture_fallback!==false||!Array.isArray(value.accounts)||value.accounts.length>50)throw new Error('Cấu hình analytics không hợp lệ.');
+    for(const a of value.accounts){if(!/^npac_[a-f0-9]{32}$/.test(a.account_ref??'')||!sha(a.configuration_sha256)||a.target?.workspace_id!==s.workspace_id||!['youtube','tiktok','instagram_reels','facebook'].includes(a.target?.platform)||value.schema_version.endsWith('-v1')&&a.target.platform!=='youtube'||!value.schema_version.endsWith('-v3')&&analyticsMeta(a.target.platform)||!['official','fixture'].includes(a.mode)||a.token_returned!==false||a.publishing_enabled!==false)throw new Error('Tài khoản analytics không hợp lệ.');if(analyticsMeta(a.target.platform))analyticsMetaProfile(a.meta_read_profile,a.target);}
     runtime=value;accounts=value.accounts.filter(a=>a.target.platform===platform());account.replaceChildren();for(const a of accounts){const option=node('option',a.credential_alias+' · '+a.status+(a.mode==='fixture'?' · mô phỏng':''));option.value=a.account_ref;account.append(option);}
     if(accounts.length)account.value=accounts[0].account_ref;status.textContent=value.enabled?'Runtime đã cho phép đọc; cần quyền riêng cho từng yêu cầu.':'Đọc analytics tự động đang tắt.';});}
   async function readSource(){await run(async(s,accept)=>{const p=publication();if(unsupported())throw new Error('Analytics của nền tảng này chưa được cấu hình.');if(p?.status!=='completed')throw new Error('Chọn biên nhận xuất bản hoàn tất trước.');const value=await api(endpoint(s)+'/source/'+p.publication_id);if(!accept())return;
