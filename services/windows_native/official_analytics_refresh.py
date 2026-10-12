@@ -6,7 +6,7 @@ from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,ValidationError,field_validator,model_validator
 from .contracts import WorkflowError,digest
 from .official_analytics import NativeOfficialAnalytics
-from .official_analytics_models import Collect,CounterCollect,Cancel,parse_collect
+from .official_analytics_models import Collect,CounterCollect,MetaCollect,Cancel,parse_collect
 from .official_analytics_platforms import version
 from .official_account_registry import AccountFactory
 from .official_publications import utc
@@ -66,24 +66,47 @@ class CounterRefreshCreate(RefreshCreate):
         if int(value)>2**63-1:raise ValueError('Actual TikTok post ID required')
         return value
 
+
+class MetaRefreshCreate(RefreshCreate):
+    schema_version:Literal['native-official-analytics-refresh-request-v3']='native-official-analytics-refresh-request-v3'
+    platform:Literal['instagram_reels','facebook']
+    query:None=Field(...)
+    metric_scope:Literal['lifetime_media_insights','cumulative_video_node_counters']
+    remote_post_id:str=Field(pattern=r'^[1-9][0-9]{0,31}$')
+    @field_validator('query',mode='before')
+    @classmethod
+    def dates(cls,value):
+        if value is not None:raise ValueError('Meta media counters have no reporting interval')
+        return value
+    @model_validator(mode='after')
+    def scoped(self):
+        expected='lifetime_media_insights' if self.platform=='instagram_reels' else 'cumulative_video_node_counters'
+        if self.metric_scope!=expected:raise ValueError('Exact Meta metric scope required')
+        return self
+
+
+def request_platform(value):
+    return value.platform if type(value) is MetaRefreshCreate else 'tiktok' if type(value) is CounterRefreshCreate else 'youtube'
+
 def parse_refresh(value):
     if not isinstance(value,dict):raise ValueError('Explicit refresh request required')
     tag=value.get('schema_version','native-official-analytics-refresh-request-v1')
     if tag=='native-official-analytics-refresh-request-v1':return RefreshCreate.model_validate(value)
     if tag=='native-official-analytics-refresh-request-v2':return CounterRefreshCreate.model_validate(value)
+    if tag=='native-official-analytics-refresh-request-v3':return MetaRefreshCreate.model_validate(value)
     raise ValueError('Unknown refresh request version')
 
 def typed(value,kind):
     try:
-        if type(value) is not kind and not (kind is RefreshCreate and type(value) is CounterRefreshCreate):raise ValueError()
+        if type(value) is not kind and not (kind is RefreshCreate and type(value) in (CounterRefreshCreate,MetaRefreshCreate)):raise ValueError()
         return parse_refresh(value.model_dump(mode='python',warnings=False)) if kind is RefreshCreate else kind.model_validate(value.model_dump(mode='python',warnings=False))
     except (ValueError,TypeError,ValidationError):raise WorkflowError('NATIVE_OFFICIAL_REFRESH_FIELDS_INVALID',400) from None
 
 def collector_payload(payload,key,*,seconds=None):
     value=payload.model_dump(mode='json')
-    counter=type(payload) is CounterRefreshCreate
-    value={name:value[name] for name in (CounterCollect if counter else Collect).model_fields}
-    value.update(schema_version=version('request','tiktok' if counter else 'youtube'),request_key=key)
+    kind=MetaCollect if type(payload) is MetaRefreshCreate else CounterCollect if type(payload) is CounterRefreshCreate else Collect
+    value={name:value[name] for name in kind.model_fields}
+    value.update(schema_version=version('request',request_platform(payload)),request_key=key)
     if seconds is not None:value['valid_for_seconds']=seconds
     return parse_collect(value)
 
@@ -137,7 +160,7 @@ class NativeOfficialAnalyticsRefresh:
         try:
             value=dict(row);policy=json.loads(value.pop('policy_json'))
             request=parse_refresh({**policy['request'],'request_key':'internal-finite-official-refresh-key'})
-            platform='tiktok' if type(request) is CounterRefreshCreate else 'youtube'
+            platform=request_platform(request)
             if (set(policy)!={'schema_version','plan_id','workspace_id','project_id','publication_id','request','authority','mock','source','target_binding_sha256','credential_proof','approved_at','automatic_consent_renewal','publishing_enabled','fixed_report_query'}
                 or not same(policy['request'],request.model_dump(mode='json',exclude={'request_key'}))
                 or digest(policy)!=row['policy_sha256'] or policy['schema_version']!=version('refresh-policy',platform)
@@ -167,7 +190,7 @@ class NativeOfficialAnalyticsRefresh:
         except (KeyError,TypeError,ValueError,ValidationError):raise WorkflowError('NATIVE_OFFICIAL_REFRESH_EVIDENCE_CHANGED') from None
     def occurrences(self,con,row,value):
         items=[];request=parse_refresh({**value['policy']['request'],'request_key':'internal-occurrence-proof-key'})
-        platform='tiktok' if type(request) is CounterRefreshCreate else 'youtube'
+        platform=request_platform(request)
         for record in con.execute('SELECT * FROM native_official_analytics_refresh_occurrences WHERE plan_id=? ORDER BY ordinal',(row['plan_id'],)):
             try:
                 item=json.loads(record['occurrence_json']);ordinal=len(items)+1

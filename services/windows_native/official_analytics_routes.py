@@ -5,6 +5,7 @@ from pydantic import ValidationError
 from .contracts import WorkflowError,digest
 from .official_analytics_models import Collect,Cancel,parse_collect
 from .official_analytics_platforms import version,receipt_posts
+from app import analytics_meta
 BASE=r'/api/projects/([a-f0-9]{32})/official-analytics'
 IDENTITY=r'(noas_[a-f0-9]{32})'
 
@@ -23,7 +24,9 @@ def get(handler,path):
             'publication_id':publication_id,'publication_snapshot_sha256':publication['snapshot_sha256'],'receipt_sha256':digest(publication['receipt']),
             'target':publication['snapshot']['target'],'mock':publication['mock'],'remote_post_id':publication['receipt']['remote_post_id'],
             'receipt_qualified':True,'published':publication['published'],'publishing_enabled':False,'token_returned':False,'real_provider_tested':False,
-            **({'remote_post_ids':posts,'metric_scope':'cumulative_video_counters'} if platform=='tiktok' else {})}
+            **({'remote_post_ids':posts,'metric_scope':'cumulative_video_counters'} if platform=='tiktok' else
+               {'remote_post_ids':posts,'metric_scope':'lifetime_media_insights' if platform=='instagram_reels' else 'cumulative_video_node_counters'}
+               if platform in analytics_meta.PLATFORMS else {})}
     match=re.fullmatch(BASE+r'(?:/'+IDENTITY+r')?',path)
     if not match:raise WorkflowError('ROUTE_NOT_FOUND',404)
     project,identity=match.groups()

@@ -13,18 +13,19 @@ from datetime import datetime, timedelta, timezone
 from pydantic import ValidationError
 from .contracts import WorkflowError, digest
 from .costs import CostLedger
-from .official_analytics_models import Collect, CounterCollect, Cancel, parse_collect
+from .official_analytics_models import Collect, CounterCollect, MetaCollect, Cancel, parse_collect
 from .official_analytics_platforms import (PROVIDERS, COST_PROVIDERS, version, validate_request,
-    selected_post, counter_evidence, validate_counter_result)
+    selected_post, counter_evidence, validate_counter_result,validate_meta_result,valid_video_id)
 from .official_publications import NativeOfficialPublications, utc
-from .official_account_registry import AccountFactory
+from .official_account_registry import AccountFactory,MetaReadAccount,validate_meta_profile
 from .analytics_features import capture
 from .store import now
 from app.analytics_models import NormalizedMetrics, VideoFeatureMetadata
 from app.analytics_official import (AnalyticsOfficialError, AnalyticsRateLimited, account_request,
     confirm_account, youtube_video_request, confirm_youtube_video, youtube_report_request,
     youtube_metrics, response_digest, YT_MAPPING, resolve_credential, tiktok_video_request,
-    tiktok_metrics, video_id as valid_video_id)
+    tiktok_metrics)
+from app import analytics_meta
 from app.publishing_wire import PublishingWireError
 from app.publishing_models import PublishingTargetBinding
 from app.publishing_credentials import target_digest
@@ -36,7 +37,7 @@ TABLES = ('native_official_analytics_syncs', 'native_official_analytics_attempts
 
 def typed(value, cls):
     try:
-        if type(value) is not cls and not (cls is Collect and type(value) is CounterCollect):
+        if type(value) is not cls and not (cls is Collect and type(value) in (CounterCollect,MetaCollect)):
             raise TypeError()
         return (parse_collect(value.model_dump(mode='python', warnings=False)) if cls is Collect
                 else cls.model_validate(value.model_dump(mode='python', warnings=False)))
@@ -89,9 +90,11 @@ class NativeOfficialAnalytics:
         counter = any(f.account.target.platform == 'tiktok' for f in self.accounts.factories.values())
         with self.store.transaction() as con:
             counter = counter or con.execute("SELECT 1 FROM native_official_analytics_syncs WHERE json_extract(snapshot_json,'$.schema_version')='native-official-analytics-consent-v2' LIMIT 1").fetchone() is not None
-        return {'schema_version': version('capabilities', 'tiktok' if counter else 'youtube'), 'workspace_id': self.workspace,
-            'enabled': self.enabled, 'default_enabled': False, 'supported_platforms': ['youtube', 'tiktok'] if counter else ['youtube'],
-            'accounts': [f.public() for _, f in sorted(self.accounts.factories.items()) if f.account.target.platform in PROVIDERS],
+            meta=any(f.account.target.platform in analytics_meta.PLATFORMS and type(f) is AccountFactory for f in self.accounts.factories.values())
+            meta=meta or con.execute("SELECT 1 FROM native_official_analytics_syncs WHERE json_extract(snapshot_json,'$.schema_version')='native-official-analytics-consent-v3' LIMIT 1").fetchone() is not None
+        return {'schema_version': version('capabilities', 'facebook' if meta else 'tiktok' if counter else 'youtube'), 'workspace_id': self.workspace,
+            'enabled': self.enabled, 'default_enabled': False, 'supported_platforms': list(PROVIDERS) if meta else ['youtube', 'tiktok'] if counter else ['youtube'],
+            'accounts': [f.public() for _, f in sorted(self.accounts.factories.items()) if type(f) is AccountFactory and f.account.target.platform in PROVIDERS],
             'separate_read_consent_required': True, 'automatic_refresh': False, 'publishing_enabled': False,
             'fixture_fallback': False, 'real_provider_tested': False, 'token_returned': False}
 
@@ -165,7 +168,7 @@ class NativeOfficialAnalytics:
                 or features.publishing_time is not None or features.evidence['source_is_dry_run'] is not False
                 or features.evidence['publication_protocol_mock'] is not snapshot['mock']
                 or snapshot['source']['receipt_mock'] is not snapshot['mock'] or valid_video_id(target.platform,snapshot['source']['remote_post_id']) != snapshot['source']['remote_post_id']
-                or type(request) is CounterCollect and request.remote_post_id != snapshot['source']['remote_post_id']
+                or type(request) in (CounterCollect,MetaCollect) and request.remote_post_id != snapshot['source']['remote_post_id']
                 or snapshot['publishing_authority'] is not False or snapshot['recurring_authority'] is not False
                 or deadline != min(created+timedelta(seconds=request.valid_for_seconds), utc(datetime.fromisoformat(snapshot['authority']['expires_at'])))
                 or deadline <= created or type(value['attempts']) is not int or not 0 <= value['attempts'] <= request.max_attempts
@@ -173,6 +176,8 @@ class NativeOfficialAnalytics:
                 or (value['status'] == 'running') != (value['claim_id'] is not None)
                 or (value['status'] == 'succeeded') != (value['result_snapshot_id'] is not None)):
                 raise ValueError()
+            if target.platform in analytics_meta.PLATFORMS:validate_meta_profile(snapshot['meta_read_profile'],target)
+            elif 'meta_read_profile' in snapshot:raise ValueError()
             for name in ('publication_snapshot_sha256','receipt_sha256','dry_run_snapshot_sha256','job_snapshot_sha256','job_result_sha256','final_sha256'):
                 if not re.fullmatch(r'[a-f0-9]{64}', snapshot['source'][name]): raise ValueError()
             if (value['status']=='retry_scheduled') != (value['next_at'] is not None):raise ValueError()
@@ -217,6 +222,9 @@ class NativeOfficialAnalytics:
                 'source': source, 'target': public['target'], 'target_binding_sha256': public['target_binding_sha256'],
                 'configuration_sha256': factory.sha256, 'mock': publication['mock'], 'consented_at': instant.isoformat(),
                 'deadline': deadline.isoformat(), 'publishing_authority': False, 'recurring_authority': False}
+            if publication['snapshot']['target']['platform'] in analytics_meta.PLATFORMS:
+                if type(factory.account) is not MetaReadAccount:raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_ACCOUNT_NOT_CONFIGURED')
+                snapshot['meta_read_profile']=public['meta_read_profile']
             status = 'queued' if self.enabled and public['status'] == 'CONFIGURED' else 'not_configured'
             identity, stamp = 'noas_'+uuid.uuid4().hex, now()
             self.identity(authority=authority)
@@ -318,7 +326,9 @@ class NativeOfficialAnalytics:
             fresh = factory.credential(request.query, now=self.clock())
             if fresh != credential: raise WorkflowError('NATIVE_OFFICIAL_ANALYTICS_CREDENTIAL_CHANGED')
             self.admission(project,identity,claim)
-            resolve_credential(lambda _:fresh,factory.account.target,request.query,now=self.clock())
+            if factory.account.target.platform in analytics_meta.PLATFORMS:
+                analytics_meta.resolve_credential(lambda _:fresh,factory.account.target,now=self.clock())
+            else:resolve_credential(lambda _:fresh,factory.account.target,request.query,now=self.clock())
             sent = True; response = asyncio.run(factory.client.request(wire_request))
             self.costs.settle(cost, status='response_received', response_sha256=response_digest(response))
             summary = parser(response, credential, request)
@@ -345,18 +355,26 @@ class NativeOfficialAnalytics:
         try:
             value, request, _ = self.admission(project, identity, claim)
             remote = value['snapshot']['source']['remote_post_id']
-            account_id, _ = self.fetch(project,identity,claim,'account_lookup',account_request,lambda response,credential,_:confirm_account(response,credential.target))
             platform = value['snapshot']['target']['platform']
+            meta=platform in analytics_meta.PLATFORMS
+            account_id, _ = self.fetch(project,identity,claim,'account_lookup',analytics_meta.account_request if meta else account_request,
+                lambda response,credential,_:analytics_meta.confirm_account(response,credential.target,page_id=credential.page_id) if meta else confirm_account(response,credential.target))
             if platform == 'youtube':
                 video_id, _ = self.fetch(project,identity,claim,'video_ownership',lambda credential:youtube_video_request(credential,remote),
                     lambda response,credential,_: self.video_proof(response,credential.target,remote))
                 report_id, report = self.fetch(project,identity,claim,'report',lambda credential:youtube_report_request(credential,remote,request.query),
                     lambda response,_,payload:self.metrics_report(response,payload.query))
                 response_refs = [account_id,video_id,report_id]
-            else:
+            elif platform=='tiktok':
                 report_id, report = self.fetch(project,identity,claim,'report',lambda credential:tiktok_video_request(credential,remote),
                     lambda response,_,payload:self.counter_report(response,remote))
                 response_refs = [account_id,report_id]
+            else:
+                video_id,_=self.fetch(project,identity,claim,'video_ownership',lambda credential:analytics_meta.ownership_request(credential,remote),
+                    lambda response,credential,_:self.meta_video_proof(response,credential.target,remote))
+                report_id,report=self.fetch(project,identity,claim,'report',lambda credential:analytics_meta.metrics_request(credential,remote),
+                    lambda response,credential,_:self.meta_report(response,credential,remote))
+                response_refs=[account_id,video_id,report_id]
             value, _, _ = self.admission(project, identity, claim)
             result_id, stamp = 'noam_'+uuid.uuid4().hex, utc(self.clock()).isoformat()
             result = {'schema_version':version('snapshot', platform),'result_snapshot_id':result_id,'sync_id':identity,
@@ -394,6 +412,16 @@ class NativeOfficialAnalytics:
         metrics,evidence=tiktok_metrics(response,remote)
         return {'metrics':metrics.model_dump(mode='json'),'evidence':counter_evidence(evidence)}
 
+    @staticmethod
+    def meta_video_proof(response,target,remote):
+        analytics_meta.confirm_ownership(response,target,remote)
+        return {'video_ownership_confirmed':True,'remote_post_id':remote,'target_binding_sha256':target_digest(target)}
+
+    @staticmethod
+    def meta_report(response,credential,remote):
+        metrics,evidence=analytics_meta.metrics(response,credential.target,remote,api_version=credential.api_version)
+        return {'metrics':metrics.model_dump(mode='json'),'evidence':evidence}
+
     def failure(self, project, identity, claim, error):
         code = error.code if isinstance(error,(WorkflowError,AnalyticsOfficialError,PublishingWireError)) else 'NATIVE_OFFICIAL_ANALYTICS_COLLECTION_FAILED'
         with self.store.transaction() as con:
@@ -416,7 +444,7 @@ class NativeOfficialAnalytics:
             if row is None: raise ValueError()
             result=json.loads(row['result_json']);metrics=NormalizedMetrics.model_validate(result['metrics'])
             platform=value['snapshot']['target']['platform']
-            operations=('account_lookup','video_ownership','report') if platform=='youtube' else ('account_lookup','report')
+            operations=('account_lookup','report') if platform=='tiktok' else ('account_lookup','video_ownership','report')
             if (digest(result)!=row['result_sha256'] or result['schema_version']!=version('snapshot',platform)
                 or any(row[k]!=value[k] or result[k]!=value[k] for k in ('sync_id','workspace_id','project_id','publication_id','snapshot_sha256'))
                 or result['result_snapshot_id']!=row['result_snapshot_id'] or result['collected_at']!=row['collected_at']
@@ -429,7 +457,7 @@ class NativeOfficialAnalytics:
                 or result['publication_receipt_sha256']!=value['snapshot']['request']['expected_receipt_sha256']
                 or result['remote_post_id']!=value['snapshot']['source']['remote_post_id']
                 or len(result['response_refs'])!=len(operations) or len(set(result['response_refs']))!=len(operations)
-                or any(getattr(metrics,k) is not None for k in ('impressions','reach','completion_rate','saves','clicks','ctr','rpm','observation_window_hours'))):raise ValueError()
+                or platform not in analytics_meta.PLATFORMS and any(getattr(metrics,k) is not None for k in ('impressions','reach','completion_rate','saves','clicks','ctr','rpm','observation_window_hours'))):raise ValueError()
             attempt=con.execute('SELECT * FROM native_official_analytics_attempts WHERE attempt_id=?',(result['attempt_id'],)).fetchone()
             if attempt is None or attempt['status']!='succeeded' or any(attempt[k]!=value[k] for k in ('sync_id','workspace_id','project_id','snapshot_sha256')):raise ValueError()
             for response_id,operation in zip(result['response_refs'],operations):
@@ -451,7 +479,9 @@ class NativeOfficialAnalytics:
                     or cost['request_sha256']!=digest({'sync_id':value['sync_id'],'snapshot_sha256':value['snapshot_sha256'],'attempt_id':result['attempt_id'],'operation':operation})
                     or json.loads(cost['receipt'])['provider_response_sha256']!=response['response_sha256']):raise ValueError()
             report=result['evidence'];query=value['snapshot']['request']['query']
-            if platform=='tiktok':
+            if platform in analytics_meta.PLATFORMS:
+                validate_meta_result(result['metrics'],report,platform,value['snapshot']['meta_read_profile']['api_version'])
+            elif platform=='tiktok':
                 validate_counter_result(result['metrics'],report)
             elif (report['query']!=query or report['coverage_end_date'] is not None or report['observed_window_hours'] is not None
                 or report['completion_rate_supported'] is not False or report['rpm_derived'] is not False

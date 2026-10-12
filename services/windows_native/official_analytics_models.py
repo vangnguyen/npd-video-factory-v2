@@ -70,6 +70,25 @@ class CounterCollect(Collect):
         return value
 
 
+class MetaCollect(Collect):
+    schema_version:Literal['native-official-analytics-request-v3']='native-official-analytics-request-v3'
+    platform:Literal['instagram_reels','facebook']
+    query:None=Field(...)
+    metric_scope:Literal['lifetime_media_insights','cumulative_video_node_counters']
+    remote_post_id:str=Field(pattern=r'^[1-9][0-9]{0,31}$')
+
+    @field_validator('query',mode='before')
+    @classmethod
+    def dates(cls,value):
+        if value is not None:raise ValueError('Meta media counters have no reporting date interval')
+        return value
+
+    @model_validator(mode='after')
+    def scoped(self):
+        expected='lifetime_media_insights' if self.platform=='instagram_reels' else 'cumulative_video_node_counters'
+        if self.metric_scope!=expected:raise ValueError('Exact Meta metric scope required')
+        return self
+
 def parse_collect(value):
     """Closed version dispatch; an unknown version never falls back to v1."""
     if not isinstance(value, dict):
@@ -79,4 +98,6 @@ def parse_collect(value):
         return Collect.model_validate(value)
     if version == 'native-official-analytics-request-v2':
         return CounterCollect.model_validate(value)
+    if version == 'native-official-analytics-request-v3':
+        return MetaCollect.model_validate(value)
     raise ValueError('Unknown analytics request version')
