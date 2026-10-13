@@ -227,6 +227,52 @@ async def test_cancel_during_provider_call_wins_and_never_resurrects_transcript(
 
 
 @pytest.mark.asyncio
+async def test_optional_immutable_provider_binding_drift_prevents_dispatch_and_preserves_legacy(tmp_path):
+    from app.uploaded_audio_service import provider_binding
+    env=await stack(tmp_path)
+    try:
+        legacy=provider_binding(env.provider)
+        assert 'immutable_binding' not in legacy
+        env.provider.immutable_binding={'schema_version':'owned-runtime-proof.v1','sha256':'a'*64}
+        bound=provider_binding(env.provider)
+        assert {k:v for k,v in bound.items() if k!='immutable_binding'}==legacy
+        bound['immutable_binding']['sha256']='f'*64
+        assert env.provider.immutable_binding['sha256']=='a'*64
+        row=await env.service.create(env.project.project_id,env.request,'usr:fixture-editor')
+        env.provider.immutable_binding={'schema_version':'owned-runtime-proof.v1','sha256':'b'*64}
+        await env.service.process(row.job['job_id'])
+        result=await env.service.repository.get(env.project.project_id,row.audio_id)
+        assert result.current is None and result.job['status']=='failed' and env.provider.calls==0
+        env.provider.immutable_binding={'bad':float('nan')}
+        with pytest.raises(AudioConflict,match='BINDING_INVALID'):provider_binding(env.provider)
+    finally:await env.engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_opted_in_provider_observes_durable_cancel_without_late_evidence(tmp_path):
+    env=await stack(tmp_path)
+    class Cancellable(MockASR):
+        supports_durable_cancellation=True
+        async def transcribe(self,path,*,metadata,checksum_sha256,execution_trace=None,is_cancelled=None):
+            assert is_cancelled is not None
+            self.calls+=1;self.started.set()
+            await self.release.wait()
+            assert await is_cancelled()
+            raise RuntimeError('owned durable cancellation; no provider result')
+    try:
+        provider=Cancellable();provider.release=asyncio.Event();env.service.provider=provider
+        row=await env.service.create(env.project.project_id,env.request,'usr:fixture-editor')
+        task=asyncio.create_task(env.service.process(row.job['job_id']))
+        await asyncio.wait_for(provider.started.wait(),5)
+        await env.service.cancel(env.project.project_id,row.audio_id,'usr:fixture-editor')
+        provider.release.set();await task
+        saved=await env.service.repository.get(env.project.project_id,row.audio_id)
+        assert saved.current is None and saved.job['status']=='cancelled' and provider.calls==1
+        assert not await rows(env)
+    finally:await env.engine.dispose()
+
+
+@pytest.mark.asyncio
 async def test_running_crash_handoff_requires_attention_and_queued_is_recoverable(tmp_path):
     env=await stack(tmp_path)
     try:
@@ -541,3 +587,136 @@ async def test_registered_mime_tamper_cannot_change_dispatch_or_source_playback(
             assert job.status=='failed' and job.error_json['code']=='AUDIO_METADATA_CHANGED'
         assert env.provider.calls==0 and not await rows(env)
     finally: await env.engine.dispose()
+
+
+@pytest.fixture
+def sql_local_custody(tmp_path):
+    # Independent synthetic binaries/model are never executed or loaded.
+    from test_local_uploaded_audio_provider import custody
+    root=tmp_path/'synthetic-local-custody';root.mkdir()
+    fixture=custody.__wrapped__(root)
+    try:yield next(fixture)
+    finally:fixture.close()
+
+
+def rejected_cpu_fixture():
+    from test_local_uploaded_audio_provider import ExplicitCpuFixture
+    class RejectedCpuFixture(ExplicitCpuFixture):
+        async def transcribe(self,*args,**kwargs):
+            await super().transcribe(*args,**kwargs)
+            raise ValueError('EXPLICIT FIXTURE NORMALIZER REJECTION, ZERO MODEL INFERENCE')
+    return RejectedCpuFixture
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('reason',['projection','normalization'])
+async def test_local_rejected_result_keeps_request_scoped_raw_evidence_in_sql(tmp_path,sql_local_custody,reason):
+    from app import local_uploaded_audio_provider as local
+    from test_local_uploaded_audio_provider import fixture_decoder, ExplicitCpuFixture
+    env=await stack(tmp_path/'sql')
+    try:
+        provider=local.LocalUploadedAudioProvider(**sql_local_custody.kwargs)
+        env.service.provider=provider
+        cpu=ExplicitCpuFixture if reason=='projection' else rejected_cpu_fixture()
+        cpu.calls=0;cpu.wait=None;cpu.outside=reason=='projection'
+        with patch.object(local,'bounded_process',side_effect=fixture_decoder()),patch.object(local,'LocalCpuTranscriptionProvider',cpu):
+            queued=await env.service.create(env.project.project_id,env.request,'usr:fixture-editor')
+            await env.service.process(queued.job['job_id'])
+        result=await env.service.repository.get(env.project.project_id,queued.audio_id)
+        assert result.job['status']=='failed' and result.current is None and not await rows(env)
+        async with env.sessions() as session:
+            parent=await session.get(UploadedAudioORM,queued.audio_id)
+            evidence=parent.original_evidence_json
+            assert parent.original_evidence_sha256==digest(evidence)
+            assert parent.current_version==0 and parent.claim_id is None
+            assert evidence['source_sha256']==env.request.source_sha256 and evidence['source_size_bytes']==len(env.raw)
+            assert evidence['immutable_binding']==parent.configuration_json['provider']['immutable_binding']
+        assert evidence['schema_version']=='sql-local-audio-evidence.v1' and evidence['model_result']['fixture']
+        assert evidence['model_result_sha256']==digest(evidence['model_result'])
+        assert evidence['decoded_audio_clock_sha256']==digest(evidence['decoded_audio_clock'])
+        assert evidence['source_projection_validated'] is False and evidence['human_accepted'] is False
+        assert evidence['publishing_enabled'] is False
+        assert evidence['provider_result_normalized']==(reason=='projection')
+        assert evidence['source_checksum_verified_before_inference'] is True
+        assert evidence['source_checksum_verified_after_result']==(True if reason=='projection' else None)
+        assert evidence['rejection_code']==('LOCAL_AUDIO_PROVIDER_OUTSIDE_DECODED_CLOCK' if reason=='projection' else 'LOCAL_AUDIO_NORMALIZATION_REJECTED')
+        provider.raw_result={'unrelated_job_diagnostic':True}
+        await env.service.process(queued.job['job_id'])
+        async with env.sessions() as session:
+            assert (await session.get(UploadedAudioORM,queued.audio_id)).original_evidence_json==evidence
+        assert cpu.calls==1
+    finally:
+        cpu.outside=False
+        await env.engine.dispose()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('tamper',['source','size','binding','digest','nonfinite','approval','model_digest'])
+async def test_local_exception_mixed_request_or_invalid_evidence_never_persists(tmp_path,sql_local_custody,tamper):
+    from app import local_uploaded_audio_provider as local
+    from test_local_uploaded_audio_provider import fixture_decoder
+    env=await stack(tmp_path/'sql')
+    try:
+        provider=local.LocalUploadedAudioProvider(**sql_local_custody.kwargs);env.service.provider=provider
+        original=provider.transcribe;cpu=rejected_cpu_fixture();cpu.calls=0;cpu.wait=None
+        async def mixed(*args,**kwargs):
+            try:return await original(*args,**kwargs)
+            except local.LocalAudioEvidenceRejected as exc:
+                if tamper=='source':exc.evidence['source_sha256']='f'*64
+                elif tamper=='size':exc.evidence['source_size_bytes']+=1
+                elif tamper=='binding':exc.evidence['immutable_binding']['cpu_threads']=4
+                elif tamper=='nonfinite':exc.evidence['model_result']['invalid']=float('nan')
+                elif tamper=='approval':exc.evidence['human_accepted']=True
+                elif tamper=='model_digest':exc.evidence['model_result_sha256']='f'*64
+                if tamper not in {'digest','nonfinite'}:exc.evidence_sha256=digest(exc.evidence)
+                if tamper=='digest':exc.evidence_sha256='f'*64
+                # Wrong shared diagnostics must never repair this carrier.
+                provider.raw_result={'unrelated_shared_result':True}
+                raise
+        provider.transcribe=mixed
+        with patch.object(local,'bounded_process',side_effect=fixture_decoder()),patch.object(local,'LocalCpuTranscriptionProvider',cpu):
+            queued=await env.service.create(env.project.project_id,env.request,'usr:fixture-editor')
+            await env.service.process(queued.job['job_id'])
+        result=await env.service.repository.get(env.project.project_id,queued.audio_id)
+        assert result.job['status']=='failed' and result.current is None and not await rows(env)
+        async with env.sessions() as session:
+            parent=await session.get(UploadedAudioORM,queued.audio_id)
+            assert parent.original_evidence_json is None and parent.original_evidence_sha256 is None
+        assert cpu.calls==1
+    finally:await env.engine.dispose()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('revoke',['cancel','lease'])
+async def test_local_rejected_evidence_after_revocation_cannot_commit_late(tmp_path,sql_local_custody,revoke):
+    from app import local_uploaded_audio_provider as local
+    from test_local_uploaded_audio_provider import fixture_decoder
+    env=await stack(tmp_path/'sql');release=asyncio.Event();captured=asyncio.Event()
+    try:
+        provider=local.LocalUploadedAudioProvider(**sql_local_custody.kwargs);env.service.provider=provider
+        original=provider.transcribe;cpu=rejected_cpu_fixture();cpu.calls=0;cpu.wait=None
+        async def paused(*args,**kwargs):
+            try:return await original(*args,**kwargs)
+            except local.LocalAudioEvidenceRejected:
+                captured.set();await release.wait();raise
+        provider.transcribe=paused
+        with patch.object(local,'bounded_process',side_effect=fixture_decoder()),patch.object(local,'LocalCpuTranscriptionProvider',cpu):
+            queued=await env.service.create(env.project.project_id,env.request,'usr:fixture-editor')
+            work=asyncio.create_task(env.service.process(queued.job['job_id']))
+            await asyncio.wait_for(captured.wait(),5)
+            if revoke=='cancel':await env.service.cancel(env.project.project_id,queued.audio_id,'usr:fixture-editor')
+            else:
+                async with env.sessions() as session:
+                    parent=await session.get(UploadedAudioORM,queued.audio_id)
+                    parent.lease_expires_at=utc_now()-timedelta(seconds=1);await session.commit()
+            release.set();await work
+        result=await env.service.repository.get(env.project.project_id,queued.audio_id)
+        assert result.job['status']==('cancelled' if revoke=='cancel' else 'failed')
+        assert result.current is None and not await rows(env)
+        async with env.sessions() as session:
+            parent=await session.get(UploadedAudioORM,queued.audio_id)
+            assert parent.original_evidence_json is None and parent.current_version==0
+        assert cpu.calls==1
+    finally:
+        release.set()
+        await env.engine.dispose()

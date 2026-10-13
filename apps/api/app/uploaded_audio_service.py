@@ -1,6 +1,8 @@
 """Durable, provider-neutral audio jobs and explicit immutable human revisions."""
 import copy
+import json
 import math
+import re
 import asyncio
 from contextlib import suppress
 from dataclasses import asdict
@@ -36,7 +38,7 @@ def provider_binding(provider):
     profile = getattr(provider, 'asr_prompt_profile', getattr(provider, 'profile', None))
     if hasattr(profile, 'model_dump'):
         profile = profile.model_dump(mode='json')
-    return {'provider_key':provider.key,'model':provider.model,'external_call':provider.external_call,
+    binding = {'provider_key':provider.key,'model':provider.model,'external_call':provider.external_call,
         'paid':provider.paid,'language':getattr(provider,'language',None),
         'response_format':getattr(provider,'response_format',None),
         'timestamp_granularities':list(getattr(provider,'timestamp_granularities',())),
@@ -46,6 +48,16 @@ def provider_binding(provider):
         'max_duration_seconds':getattr(provider,'max_duration_seconds',None),
         'provider_http_timeout_seconds':getattr(provider,'provider_http_timeout_seconds',None),
         'controller_hard_timeout_seconds':getattr(provider,'controller_hard_timeout_seconds',None)}
+    immutable = getattr(provider, 'immutable_binding', None)
+    if immutable is not None:
+        if not isinstance(immutable, dict):
+            raise AudioConflict('AUDIO_PROVIDER_BINDING_INVALID')
+        try:
+            digest(immutable)
+        except (ValueError, TypeError):
+            raise AudioConflict('AUDIO_PROVIDER_BINDING_INVALID') from None
+        binding['immutable_binding'] = copy.deepcopy(immutable)
+    return binding
 
 
 def snapshot_evidence(value, receipt):
@@ -53,6 +65,39 @@ def snapshot_evidence(value, receipt):
         'segments':[asdict(s) for s in value.segments],
         'provenance':{**copy.deepcopy(value.provenance),'provider_safety_receipt':receipt.model_dump(mode='json')},
         'actual_cost_vnd':str(value.actual_cost_vnd) if value.actual_cost_vnd is not None else None}
+
+
+def rejected_local_evidence(exc, request, configuration, source_size_bytes):
+    """Validate the captured exception, never a mutable provider singleton."""
+    from .local_uploaded_audio_provider import LocalAudioEvidenceRejected
+    if not isinstance(exc, LocalAudioEvidenceRejected) or configuration is None:
+        return None
+    try:
+        value = copy.deepcopy(exc.evidence)
+        binding = configuration['provider']
+        encoded = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
+        valid = (len(encoded) <= 32*1024*1024 and digest(value) == exc.evidence_sha256
+            and value['schema_version'] == 'sql-local-audio-evidence.v1'
+            and binding['provider_key'] == 'local-faster-whisper'
+            and binding['external_call'] is False and binding['paid'] is False
+            and value['source_sha256'] == request.source_sha256
+            and type(value['source_size_bytes']) is int and value['source_size_bytes'] == source_size_bytes
+            and value['immutable_binding'] == binding['immutable_binding']
+            and isinstance(value['model_result'], dict) and digest(value['model_result']) == value['model_result_sha256']
+            and isinstance(value['decoded_audio_clock'], dict) and digest(value['decoded_audio_clock']) == value['decoded_audio_clock_sha256']
+            and isinstance(value['pcm_sha256'], str) and re.fullmatch('[a-f0-9]{64}', value['pcm_sha256']) is not None
+            and type(value['provider_result_normalized']) is bool and value['source_projection_validated'] is False
+            and value['source_checksum_verified_before_inference'] is True
+            and (value['source_checksum_verified_after_result'] is None or value['source_checksum_verified_after_result'] is True)
+            and (value.get('original_source_unchanged') is not True or value['source_checksum_verified_after_result'] is True)
+            and type(value['provider_billed_cost_vnd']) is int and value['provider_billed_cost_vnd'] == 0
+            and value['operating_electricity_hardware_cost_vnd'] is None
+            and value['human_accepted'] is False and value['publishing_enabled'] is False
+            and value['rejection_code'] == exc.code
+            and isinstance(exc.code, str) and re.fullmatch('LOCAL_AUDIO_[A-Z0-9_]{1,100}', exc.code) is not None)
+    except (ValueError, TypeError, KeyError, OverflowError, AttributeError, RecursionError):
+        return None
+    return value if valid else None
 
 
 def normalize_evidence(evidence, parent, *, created_at):
@@ -194,7 +239,7 @@ class UploadedAudioService:
                 parent.lease_expires_at=utc_now()+timedelta(seconds=lease_seconds)
                 session.add(PostgresJobStore._event(row=job,event_type='uploaded_audio.claimed',actor_ref=request.actor_ref))
         heartbeat=asyncio.create_task(self.heartbeat(job_id,request.audio_id,claim_id,lease_seconds))
-        evidence = None
+        evidence = None; configuration = None; source_size_bytes = None
         try:
             async with self.session_factory() as session:
                 parent = await self.repository.parent(session,project_id,request.audio_id)
@@ -202,6 +247,7 @@ class UploadedAudioService:
                     raise AudioConflict('AUDIO_JOB_CHANGED')
                 configuration = copy.deepcopy(parent.configuration_json)
                 media_json = copy.deepcopy(parent.media_metadata_json)
+                source_size_bytes = parent.source_size_bytes
                 if (digest(self.binding())!=request.provider_binding_sha256
                     or configuration['provider']!=self.binding()
                     or request.source_sha256!=parent.source_sha256):
@@ -228,6 +274,15 @@ class UploadedAudioService:
                     timestamp_granularities=tuple(getattr(self.provider,'timestamp_granularities',())),
                     asr_prompt_profile=profile,rights_required=self.provider.external_call,rights=payload.get('rights',[]))
                 kwargs = {'expected_asr_prompt_profile':profile} if hasattr(self.provider,'asr_prompt_profile') else {}
+                if getattr(self.provider, 'supports_durable_cancellation', False) is True:
+                    async def is_cancelled():
+                        async with self.session_factory() as session:
+                            row = await session.get(UploadedAudioORM, request.audio_id)
+                            current_job = await session.get(JobORM, job_id)
+                            return (row is None or current_job is None or current_job.status != 'running'
+                                or row.claim_id != claim_id or not live_lease(row)
+                                or row.configuration_json != configuration)
+                    kwargs['is_cancelled'] = is_cancelled
                 dispatched = False
                 async def dispatch_once():
                     nonlocal dispatched
@@ -275,13 +330,16 @@ class UploadedAudioService:
             finally:
                 owner.cleanup()
         except Exception as exc:
+            if evidence is None:
+                evidence = rejected_local_evidence(exc, request, configuration, source_size_bytes)
             code = ('AUDIO_PROVIDER_NOT_CONFIGURED' if isinstance(exc,ProviderNotConfigured) else
                 'AUDIO_PROVIDER_SAFETY_BLOCKED' if isinstance(exc,ProviderSafetyBlocked) else
                 exc.code if isinstance(exc,AudioConflict) else 'AUDIO_TRANSCRIPTION_FAILED')
             from .provider_safety import ProviderTransientError
             unknown = code=='AUDIO_PROVIDER_OUTCOME_UNKNOWN' or isinstance(exc,(ProviderTransientError,TimeoutError))
             await self.fail(job_id,'AUDIO_PROVIDER_OUTCOME_UNKNOWN' if unknown else code,evidence=evidence,
-                attention=unknown,expected_claim_id=claim_id)
+                attention=unknown,expected_claim_id=claim_id,expected_configuration=configuration,
+                expected_request=request.model_dump(mode='json'))
         finally:
             heartbeat.cancel()
             with suppress(asyncio.CancelledError):
@@ -305,7 +363,8 @@ class UploadedAudioService:
                 # extend custody in memory while the database is unavailable.
                 return
 
-    async def fail(self, job_id, code, *, evidence=None, attention=False, expected_claim_id=None, only_expired=False):
+    async def fail(self, job_id, code, *, evidence=None, attention=False, expected_claim_id=None, only_expired=False,
+                   expected_configuration=None, expected_request=None):
         if evidence is not None:
             try:
                 digest(evidence)
@@ -327,6 +386,10 @@ class UploadedAudioService:
                     return
                 if only_expired and live_lease(parent):
                     return
+                if evidence is not None and (expected_claim_id is not None and not live_lease(parent)
+                    or expected_configuration is not None and parent.configuration_json != expected_configuration
+                    or expected_request is not None and job.request_json != expected_request):
+                    evidence = None
                 job.status='needs_attention' if attention else 'failed';job.stage='failed';job.updated_at=utc_now()
                 job.error_json={'code':code,'message':'Audio recognition requires review; source preserved',
                     'failed_stage':'analyzing_audio','retryable':False}

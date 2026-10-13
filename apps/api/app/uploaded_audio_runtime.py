@@ -1,5 +1,5 @@
 """Explicit ASR selection shared by API/worker; the default has no fake speech."""
-from .auto_edit_providers import ContractOnlyTranscriptionProvider
+from .auto_edit_providers import ContractOnlyTranscriptionProvider, ProviderNotConfigured
 from .openai_transcription_provider import OpenAITranscriptionProvider
 from .assemblyai_transcription_provider import AssemblyAITranscriptionProvider
 from .assemblyai_asr_profile import assemblyai_asr_profile
@@ -7,6 +7,18 @@ from .asr_prompt_profile import profile_for_id
 
 
 def provider_from_settings(settings):
+    if settings.transcription_provider == 'local_cpu':
+        if getattr(settings, 'local_asr_enabled', False) is not True:
+            return ContractOnlyTranscriptionProvider()
+        from .local_uploaded_audio_provider import LocalUploadedAudioProvider
+        try:
+            return LocalUploadedAudioProvider(manifest=settings.local_asr_runtime_manifest,
+                manifest_sha256=settings.local_asr_runtime_manifest_sha256, decoder=settings.ffmpeg_path,
+                decoder_sha256=settings.local_asr_decoder_sha256, language=settings.local_asr_language,
+                model_key=settings.local_asr_model_key, decoder_timeout_seconds=settings.local_asr_decoder_timeout_seconds,
+                max_file_bytes=settings.local_asr_max_file_bytes, max_duration_seconds=settings.local_asr_max_duration_seconds)
+        except (OSError, ValueError, TypeError, KeyError, ProviderNotConfigured):
+            return ContractOnlyTranscriptionProvider()
     if settings.transcription_provider == 'openai':
         return OpenAITranscriptionProvider(model=settings.openai_transcription_model,
             credential_alias=settings.openai_transcription_credential_alias,

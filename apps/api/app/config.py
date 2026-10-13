@@ -62,6 +62,15 @@ class Settings(BaseSettings):
     auto_edit_fixture_enabled: bool = True
     auto_edit_derived_timing_enabled: bool = False
     transcription_provider: str = "fixture"
+    local_asr_enabled: bool = False
+    local_asr_runtime_manifest: Path | None = None
+    local_asr_runtime_manifest_sha256: str = ""
+    local_asr_decoder_sha256: str = ""
+    local_asr_language: Literal["vi", "en", "auto"] = "auto"
+    local_asr_model_key: Literal["base", "small"] = "base"
+    local_asr_decoder_timeout_seconds: int = Field(default=60, ge=1, le=120)
+    local_asr_max_file_bytes: int = Field(default=25_000_000, ge=1, le=25_000_000)
+    local_asr_max_duration_seconds: float = Field(default=1800, gt=0, le=1800, allow_inf_nan=False)
     openai_transcription_model: str = ""
     openai_transcription_prompt_profile_id: str = ""
     openai_transcription_credential_alias: str = "secret://openai/codex-video"
@@ -336,8 +345,16 @@ class Settings(BaseSettings):
             raise ValueError("deterministic media fixtures must be disabled in production")
         if self.app_env == "production" and self.analytics_fixture_enabled:
             raise ValueError("deterministic analytics fixtures must be disabled in production")
-        if self.transcription_provider not in {"fixture", "contract", "openai", "assemblyai"}:
-            raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract, openai or assemblyai")
+        if self.transcription_provider not in {"fixture", "contract", "openai", "assemblyai", "local_cpu"}:
+            raise ValueError("TRANSCRIPTION_PROVIDER must be fixture, contract, openai, assemblyai or local_cpu")
+        if self.local_asr_enabled:
+            if self.transcription_provider != 'local_cpu' or self.local_asr_runtime_manifest is None \
+                    or not self.local_asr_runtime_manifest.is_absolute() or not Path(self.ffmpeg_path).is_absolute():
+                raise ValueError('LOCAL_ASR_EXPLICIT_RUNTIME_AND_DECODER_REQUIRED')
+            import re
+            if not re.fullmatch('[a-f0-9]{64}', self.local_asr_runtime_manifest_sha256) \
+                    or not re.fullmatch('[a-f0-9]{64}', self.local_asr_decoder_sha256):
+                raise ValueError('LOCAL_ASR_EXPLICIT_CUSTODY_HASH_REQUIRED')
         if self.content_generation_provider not in {"fixture", "contract", "responses"}:
             raise ValueError("CONTENT_GENERATION_PROVIDER must be contract, offline fixture or responses")
         if self.content_generation_credential_alias != "secret://openai/video-factory-content-generation":
