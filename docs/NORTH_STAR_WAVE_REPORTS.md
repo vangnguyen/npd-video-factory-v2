@@ -4086,3 +4086,19 @@ SOURCE_PRESERVED=YES is established only by final source seal. PHASE10_TECHNICAL
 
 
 2026-10-14 — [SQL storyboard child variants / bounded consumers](SQL_STORYBOARD_BOUNDED_CONSUMERS_REVIEW.md): S2 tạo sáu draft child, không chuyển approval/rights; source/lease/copy/history và child/master độc lập được kiểm chứng. Selected custody/audio/production/TTS download bounded và final current guards đã ghép; ba integration regressions sửa với21 narrow PASS, log243 PASS/3 FAIL gốc giữ nguyên, không suy thành một full PASS run. Bảy legacy caller và uploaded graph/API/Studio/render đang tiếp tục song song. Đã xóa chỉ5 synthetic WAV tái tạo được trong3 subtree,460,865,762 logical bytes; không chạm nguồn/evidence/model/accepted/protected roots. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED,59 chưa đóng; Owner UAT deferred. No main merge/publish/deploy/new model/provider/paid calls.
+
+2026-10-14 — [SQL variants/Studio/media](SQL_VARIANT_STUDIO_MEDIA_REVIEW.md): uploaded/mixed graph, all seven known bounded callers, scoped family API/Studio and imported source review integrated; Studio963 PASS, initial raw-fixture EOL failure preserved/fixed with original assertions. S5 disabled core32 PASS + independent8 overlap; paired runtime/API activation ongoing. Historical Source/mixed16 renders/QC acrossfourgeometries belong926ca61; currentS5 narrowfour16:9 renders/QC andtwo fresh restores belongd3d27d4. Tone/manual-caption/automated-approval fixtures, no new ASR/TTS/provider/paid operations or Owner acceptance. Matrix5 REAL/58 PARTIAL/1 NOT_VERIFIED,59 unclosed. Full-shell SQL browser and original voiced/full A/B/C/provider/production remain open.
+
+WAVE: 3/7/8 and Wave16 component regression
+STATUS: PARTIAL; whole original requirements unchanged
+HEAD SHA: 13c57c0a7fbf3af4152bb0a656851524f6a84540 (source parent of this documentation seal)
+CAPABILITIES COMPLETED: scoped S3 import, bounded known application callers/artifact response, S4 family/main/Studio, imported child review, disabled S5 custody; source-bound local render regressions
+CAPABILITIES PARTIAL: paired S5 runtime/API, full-shell real SQL browser, six-target voiced/full original Mode A/B and A/B/C
+TESTS: Studio963/current main1; backend and independent scope counts in portable index; overlaps are not summed
+REAL PROVIDER TESTS: none new; historical local genuine ASR remains separately source-bound
+MOCK TESTS: labeled ASGI/controller/manual transcript/scenes/approval and synthetic PCM protocol fixtures
+EVIDENCE: docs/north-star/sql-variant-studio-media-evidence.json; immutable source ZIP/Git/accepted artifacts sealed separately
+REGRESSIONS: original session/crypto/EOL failures retained and narrowly repaired; no all-provider/global PASS claim
+EXTERNAL BLOCKERS: genuine provider credentials/acceptance, actual compatible production stack, Owner UAT/deployment as applicable
+OWNER ACTION REQUIRED: none for current safe implementation; UAT remains deferred and required for Phase10/full acceptance
+NEXT WAVE: paired S5 activation + actual isolated full-shell SQL review, then current voiced original acceptance and remaining safe Master Spec gaps
