@@ -3987,3 +3987,31 @@ NEXT WAVE: remaining original Auto Edit, media resolution/cache/providers, platf
 The browser n2 process ended without its final export. After verifying its exact process and listener had stopped, its original retained state was exported offline, without restarting it. The source root is retained for recovery. Browser n1 and fresh cold roots use owned lifecycle cleanup. Eight older policy-blocked cleanup roots remain untouched; no rejected delete was retried or bypassed.
 
 SOURCE_PRESERVED=YES is justified by the final branch/bundle seal. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO. Matrix remains 5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED, 59 unclosed groups. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 5A/8D/8F/15 component
+
+STATUS: IMPLEMENTED_AND_MOCK_TESTED; local file/SQLite/process/restore tested; full waves PARTIAL
+
+HEAD SHA: parent 7fb0806f1eea110559b7bbffa6fd6a535f2e356e; final in recovery/20261007/stock-foundation-program-state.json
+
+CAPABILITIES COMPLETED: bound stock cache, mode/config rotation guards, Native orientation normalization, Windows long-path cache, durable Native cooldown/quota, atomic wire leases, zero-wire wait accounting, backup custody guards
+
+CAPABILITIES PARTIAL: SQL worker-wide quota/retry parity, global quota accounting, cache byte/entry limits/eviction and crash staging retention, observed provider health, complete automated Source B-roll resolution/fallback, genuine provider/legal admission/Owner/full Mode A/B/production acceptance
+
+TESTS: Native73 PASS across8 affected modules; API35 PASS across3 modules;27 new Native cases are included; targeted agent batches overlap and are not added
+
+REAL PROVIDER TESTS: none; no API/OAuth secret, model inference or paid operation; actual local Windows file I/O, SQLite, restart/fresh process, concurrent workers and backup restore tested
+
+MOCK TESTS: all provider replies, quotas, credentials, identities and media fixtures; clock advancement simulates long waits; denied transports prevent unintended network
+
+EVIDENCE: [indexed evidence](north-star/stock-foundation-evidence.json); original contamination/any/cooldown repro, repaired tests, final Native/API logs and portable evidence ZIP
+
+REGRESSIONS: old project/asset/timeline/history and fixture provenance retained; no automatic attachment, publishing or transferred approval; B-roll/resolution/backup suites pass; final source seal rechecks accepted artifacts and live source
+
+EXTERNAL BLOCKERS: real stock credentials/legal admission/Owner/provider/production gates remain; broad cache/fallback and platform requirements still have code gaps
+
+OWNER ACTION REQUIRED: none for safe continuation; real publishing/deployment/provider spending remain disabled; deferred UAT is unchanged
+
+NEXT WAVE: standalone uploaded-audio ASR/transcript SQL path, shared SQL stock quota parity and original complete media resolution/cache/provider/platform requirements
+
+SOURCE_PRESERVED=YES is established by final preservation seal. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO. Matrix remains5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED,59 unclosed. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

@@ -1,0 +1,209 @@
+{
+  "schema_version": "north-star-stock-foundation-evidence.v1",
+  "recorded_at": "2026-10-13T08:26:16.162065+00:00",
+  "source_parent": "7fb0806f1eea110559b7bbffa6fd6a535f2e356e",
+  "Master_Spec_sections": [
+    29,
+    30,
+    52,
+    59,
+    63,
+    64,
+    79,
+    80
+  ],
+  "waves": "5A/8D/8F/15 component; full waves remain PARTIAL",
+  "tests": {
+    "Native": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-foundation-native-final-n1.log",
+      "sha256": "adc06ab4813e9b3f1ee66a0ee5977f6eafd1fcea2853a8f1ddb0531e7202345f",
+      "bytes": 16283,
+      "passed": 73,
+      "modules": 8,
+      "scope": "affected stock/cache/cooldown/backup/B-roll/resolution"
+    },
+    "API": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-foundation-api-final-n1.log",
+      "sha256": "aa8a3b84be73c5912b81479c3e36279d2229b58b09c9ad18d9222d2a0c4ae27f",
+      "bytes": 102,
+      "passed": 35,
+      "modules": 3,
+      "scope": "stock provider, media planning and B-roll"
+    }
+  },
+  "new_Native_tests": 27,
+  "new_tests_and_agent_batches_overlap_final_tests": true,
+  "previous_Studio811_not_rerun_for_backend_only_change": true,
+  "cache_v2": {
+    "actual_mode_config_credential_root_workspace_bound": true,
+    "legacy_schema1_retained_unread": true,
+    "fixture_never_relabelled_official": true,
+    "same_binding_restart_cache_hit_zero_wire": true,
+    "any_alias_changes_no_journal_DTO_or_historical_fingerprint": true,
+    "actual_Windows_final_cache_path_over260_write_restart_hit_tested": true,
+    "containment_and_link_validation_preserved": true,
+    "plaintext_secret_persisted": false
+  },
+  "Native_provider_gate": {
+    "durable_cooldown_across_jobs_and_fresh_process": true,
+    "wire_lease_seconds": 45,
+    "API_CDN_request_classes_separate": true,
+    "no_DB_lock_over_network": true,
+    "zero_wire_wait_retains_retry_budget": true,
+    "unique_existing_claim_in_cost_intent": true,
+    "headers_only_observed_no_health_inference": true,
+    "quota_monthly_fixture_days": 31,
+    "valid_successful_API_remaining0_reset_respected_exactly": true,
+    "maximum_supported_future_days": 366,
+    "fixture_clock_long_waits_not_wall_clock_soak": true,
+    "cached_metadata_CDN_remains_usable": true,
+    "SQL_worker_durable_quota_parity_complete": false
+  },
+  "backup": {
+    "wire_lease_blocks_snapshot": true,
+    "idle_cooldown_does_not_block_snapshot": true,
+    "exact_cooldown_rows_and_evidence_hash_cold_restore_tested": true,
+    "full_production_backup_restore_accepted": false,
+    "root_bound_dispatch_after_changed_root_not_certified": true
+  },
+  "fixtures": {
+    "all_provider_responses_quota_credentials_media_and_identity": true,
+    "actual_local_SQLite_files_concurrency_and_processes": true,
+    "new_model_inferences": 0,
+    "real_provider_acceptance_complete": false,
+    "Owner_UAT": false,
+    "full_original_Mode_A_B_C_accepted": false
+  },
+  "cleanup": {
+    "old_policy_blocked_roots": 8,
+    "old_blocked_roots_touched": false,
+    "rejected_delete_retried_or_bypassed": false,
+    "intermediate_Windows_long_path_cleanup_failure_root_retained": "C:\\Users\\PC\\AppData\\Local\\Temp\\vf-stock-cache-tests-z3ly4kqc",
+    "retained_root_files": [
+      {
+        "path": "C:\\Users\\PC\\AppData\\Local\\Temp\\vf-stock-cache-tests-z3ly4kqc\\explicit-owned-cache-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\73aca6e9fe06f5ae786cb1697a8af1f590f4307b52ee72f99b498d3048eb5de3\\pexels\\0dd1169df0da49c7b64fbc3bc173028500a2678324f2f3b66b6b4e248ab9508c.json",
+        "bytes": 702,
+        "sha256": "ed3eabd85b308ddb1e792dd098b75b4ef08030621dad802d34919efe04e69d41"
+      }
+    ],
+    "retained_root_bytes": 702,
+    "intermediate_failure_was_OS_not_policy": true,
+    "intermediate_root_delete_retried": false,
+    "final_owned_test_roots_lifecycle_cleaned": true,
+    "retained_root_inventory_observed_with_native_Windows_file_enumeration": true
+  },
+  "remaining_code_gaps": [
+    "SQL durable provider quota/retry parity",
+    "global quota accounting",
+    "cache bytes/entries/eviction",
+    "crash staging retention",
+    "observed provider health",
+    "complete automated Source B-roll resolution/fallback",
+    "standalone uploaded-audio SQL transcript workflow"
+  ],
+  "primary_documentation": [
+    {
+      "title": "RFC9110 Retry-After",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html#name-retry-after"
+    },
+    {
+      "title": "Pexels API rate-limit headers",
+      "url": "https://www.pexels.com/api/documentation/"
+    }
+  ],
+  "new_real_provider_calls": 0,
+  "paid_operations": 0,
+  "production_deployed": false,
+  "real_publishing": false,
+  "accepted_artifacts_replaced": false,
+  "portable_evidence_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-foundation-evidence-n1.zip",
+    "sha256": "2e7ac9e803c987427629ef78eeaa4c22ddff2e1daf4f1a00614316d402b61b61",
+    "bytes": 11472
+  },
+  "portable_archive_entries": 11,
+  "artifact_files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cache-mode-repro-n1.log",
+      "sha256": "07e23cf7fa94286d2324de0982be2b363c982560e18adffe2081abb00e27c8f7",
+      "bytes": 834
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-controls-repro-n1.log",
+      "sha256": "58606d41c6351da8ce906c6762c64735322a7f2f68279b61c68f0e95c45dfe35",
+      "bytes": 672
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cache-binding-native-regressions-n1.log",
+      "sha256": "20f3260be11fbe7f8367d569e9c5e2bfb87f8233b3e82e01c7c2e6bb63e704e3",
+      "bytes": 5852
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cache-binding-native-regressions-n2.log",
+      "sha256": "1fe24601ca1a1eeff2c81041a378d0d804265191c71a4ead8aa491e6f5d1e38f",
+      "bytes": 6100
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cooldown-new-n1.log",
+      "sha256": "a56c5d12425e9199516a0ccc257f9f2471a5bcd2638d969b7287fc7636398771",
+      "bytes": 7399
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cooldown-new-n2.log",
+      "sha256": "aac985868404a0d05a5ea4272bfd35db40f6ca7396833bbf9e46a071eb804c53",
+      "bytes": 2204
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cooldown-monthly-n1.log",
+      "sha256": "899cb6f13de35e396c87b313fc3cfe13dc3a9b44217e9db6a8599b588afd1e61",
+      "bytes": 2697
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cooldown-native-final-n1.log",
+      "sha256": "ed617a0a0e64872e87729504e4d6167b1fc9c1a16460dd4a6ed5fd2720d36d02",
+      "bytes": 6006
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-cooldown-backup-new-n1.log",
+      "sha256": "c0184ede38b90446686d41b43eb4343e7ee23f607edc9d1cfe77fac8ef0139bc",
+      "bytes": 597
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-foundation-native-final-n1.log",
+      "sha256": "adc06ab4813e9b3f1ee66a0ee5977f6eafd1fcea2853a8f1ddb0531e7202345f",
+      "bytes": 16283
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-foundation-api-final-n1.log",
+      "sha256": "aa8a3b84be73c5912b81479c3e36279d2229b58b09c9ad18d9222d2a0c4ae27f",
+      "bytes": 102
+    }
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "program_states": {
+    "PHASE10_READY": "NO",
+    "AUTO_EDIT_MODE_READY": "NO",
+    "MEDIA_INTELLIGENCE_READY": "NO",
+    "GENERATIVE_MEDIA_READY": "NO",
+    "MULTI_NICHE_READY": "NO",
+    "PUBLISHING_READY": "NO",
+    "ANALYTICS_READY": "NO",
+    "WINNER_DETECTION_READY": "NO",
+    "LEARNING_LOOP_READY": "NO",
+    "TREND_RADAR_READY": "NO",
+    "AGENT_HUB_BRIDGE_READY": "NO",
+    "PRODUCTION_HARDENING_READY": "NO",
+    "IMPLEMENTATION_COMPLETE": "NO",
+    "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+    "PRODUCTION_DEPLOYED": "NO",
+    "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+    "SOURCE_PRESERVED": "YES",
+    "PHASE10_TECHNICALLY_READY": "YES",
+    "OWNER_UAT_REQUIRED": "YES"
+  }
+}
