@@ -83,7 +83,8 @@ async def test_decode_persistence_restart_no_secret_and_no_external_request(tmp_
     assert len(calls)==1
 
 
-@pytest.mark.parametrize("body",[b"",b"private-provider-error",wav(0),wav(rate=24000),wav(channels=2),wav()[:-20]])
+@pytest.mark.parametrize("body",[b"",b"private-provider-error",wav(0),wav(rate=24000),wav(channels=2),wav()[:-20]],
+    ids=["empty", "provider-error", "silent", "wrong-rate", "stereo", "truncated"])
 async def test_bad_empty_or_truncated_audio_fail_closed(tmp_path,body):
     async def handler(_):return response(provider,body)
     provider=VieNeuTTSProvider(profile(),local_execution_enabled=True,transport=httpx.MockTransport(handler))
