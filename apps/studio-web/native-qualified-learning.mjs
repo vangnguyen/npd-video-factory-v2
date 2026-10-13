@@ -13,8 +13,9 @@ export function initializeNativeQualifiedLearning({api,getState,getBinding,root=
   const[ack,ackLabel]=check('Tôi hiểu đây là khuyến nghị để xem xét; không cho phép tự thay đổi media hoặc ngân sách.','ack'),
     [mock,mockLabel]=check('Tôi hiểu lịch sử mô phỏng không dùng để xếp hạng tín hiệu thật.','mock-ack');
   const link=node('a','Mở Trend Radar');link.href='/trends';detail.className='native-publication-evidence';consumers.className='native-analytics-metrics';
+  const evidenceBox=node('details');evidenceBox.className='production-details';evidenceBox.append(node('summary','Chi tiết kỹ thuật'),detail);
   card.append(node('summary','Đưa bằng chứng học vào kế hoạch'),node('p','Chọn bằng chứng đã lưu, xác nhận rồi tạo khuyến nghị cho Radar, ý tưởng, media và mẫu phụ đề. Không tự đọc API nền tảng, thay đổi timeline hay xuất bản.'),
-    status,ackLabel,mockLabel,create,templates,link,consumers,suggestions,detail);
+    status,ackLabel,mockLabel,create,templates,link,consumers,suggestions,evidenceBox);
   let selection='',namespace='',generation=0,working=false,selected=null;const keys=new Map();
   const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),id=(v,p)=>typeof v==='string'&&new RegExp('^'+p+'_[a-f0-9]{32}$').test(v),finite=v=>typeof v==='number'&&Number.isFinite(v),
     learning=()=>getBinding()?.learning??null,base='/api/trends/learning/qualified';

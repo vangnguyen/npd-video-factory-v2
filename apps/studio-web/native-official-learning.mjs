@@ -16,8 +16,9 @@ export function initializeNativeOfficialLearning({api,getState,getBinding,root=d
   const policyBox=node('details');policyBox.append(node('summary','Chính sách học'));for(const[k,[min,max]]of Object.entries(ranges)){const n=node('input',null,k.replaceAll('_','-'));n.type='number';n.min=String(min);n.max=String(max);n.step=k==='minimum_score_difference'?'0.1':'1';n.dataset.vfPermission='manage';fields[k]=n;policyBox.append(labeled(fieldNames[k],n));}
   const[ack,ackLabel]=check('Tôi hiểu đây là liên hệ mô tả để xem xét, không chứng minh nguyên nhân hoặc cho phép hành động tự động.','ack'),
     [mockAck,mockLabel]=check('Tôi hiểu đây là lịch sử mô phỏng API; không dùng làm phản hồi khán giả thật.','mock-ack');
+  const evidenceBox=node('details');evidenceBox.className='production-details';evidenceBox.append(node('summary','Chi tiết kỹ thuật'),detail);
   card.append(node('summary','Học từ hiệu quả đã ghi nhận'),node('p','Khuyến nghị cần các video khác nhau trong nhóm và nhóm đối chiếu. Dữ liệu thiếu để trống; không tự đọc API, thay đổi ngân sách hoặc xuất bản.'),
-    config,source,status,policyBox,ackLabel,mockLabel,create,history,list,more,read,fresh,recommendations,detail);
+    config,source,status,policyBox,ackLabel,mockLabel,create,history,list,more,read,fresh,recommendations,evidenceBox);
   let scope='',generation=0,working=false,runtime=null,binding=null,selected=null,rows=[],cursor=null;const keys=new Map(),unknownKeys=new Set();
   const finite=v=>typeof v==='number'&&Number.isFinite(v),sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),id=(v,p)=>typeof v==='string'&&new RegExp('^'+p+'_[a-f0-9]{32}$').test(v),
     assessment=()=>getBinding()?.assessment??null,endpoint=s=>'/api/projects/'+s.project.id+'/official-learning';

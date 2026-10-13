@@ -18,9 +18,10 @@ export function initializeNativeOfficialAnalytics({api,getState,getBinding,root=
     [retryAck,retryLabel]=check('Tôi cho phép số lần thử hữu hạn đã chọn khi API trả giới hạn hoặc lỗi máy chủ.','retry-ack'),
     [revenue,revenueLabel]=check('Đọc doanh thu ước tính nếu tài khoản có quyền OAuth phù hợp.','revenue');
   const startLabel=labeled('Ngày đầu của báo cáo',start),endLabel=labeled('Ngày cuối của báo cáo',end),postLabel=labeled('ID bài đăng thực có trong biên nhận',post);
+  const evidenceBox=node('details');evidenceBox.className='production-details';evidenceBox.append(node('summary','Chi tiết kỹ thuật'),detail);
   card.append(node('summary','Analytics từ biên nhận nền tảng'),node('p','Đọc tự động mặc định tắt. Mỗi yêu cầu có thời hạn tối đa 15 phút hoặc đến khi quyền hiện tại hết hạn. Chỉ số không có dữ liệu sẽ để trống.'),
     config,source,status,labeled('Tài khoản đọc đã cấu hình',account),postLabel,startLabel,endLabel,revenueLabel,
-    labeled('Số lần thử tối đa',attempts),ackLabel,mockLabel,retryLabel,create,history,list,more,read,cancel,fresh,metrics,detail);
+    labeled('Số lần thử tối đa',attempts),ackLabel,mockLabel,retryLabel,create,history,list,more,read,cancel,fresh,metrics,evidenceBox);
   let scope='',generation=0,working=false,runtime=null,accounts=[],binding=null,rows=[],cursor=null,selected=null;const keys=new Map(),unknownKeys=new Set();
   const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),pubId=v=>typeof v==='string'&&/^nopu_[a-f0-9]{32}$/.test(v),syncId=v=>typeof v==='string'&&/^noas_[a-f0-9]{32}$/.test(v);
   const publication=()=>getBinding()?.publication??null;

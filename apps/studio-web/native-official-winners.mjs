@@ -19,8 +19,9 @@ export function initializeNativeOfficialWinners({api,getState,getBinding,root=do
   for(const[k,n]of Object.entries(fields))policyBox.append(labeled(fieldNames[k],n));for(const[k,n]of Object.entries(weights))policyBox.append(labeled(names[k],n));
   const[ack,ackLabel]=check('Tôi hiểu đây là khuyến nghị; đánh giá không thay đổi video, ngân sách hoặc xuất bản.','ack'),
     [mockAck,mockLabel]=check('Tôi hiểu dữ liệu mô phỏng API không phải phản hồi khán giả thật.','mock-ack');
+  const evidenceBox=node('details');evidenceBox.className='production-details';evidenceBox.append(node('summary','Chi tiết kỹ thuật'),detail);
   card.append(node('summary','Đánh giá video nổi bật'),node('p','Đối chiếu các video khác trong cùng phạm vi báo cáo, kênh, định dạng và ngách. Chỉ số thiếu để trống; không tự đọc API hoặc thay đổi nội dung.'),
-    config,source,status,policyBox,ackLabel,mockLabel,create,history,list,more,read,fresh,factors,detail);
+    config,source,status,policyBox,ackLabel,mockLabel,create,history,list,more,read,fresh,factors,evidenceBox);
   let scope='',generation=0,working=false,runtime=null,binding=null,rows=[],cursor=null,selected=null;const keys=new Map(),unknownKeys=new Set();
   const sha=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v),id=(v,prefix)=>typeof v==='string'&&new RegExp('^'+prefix+'_[a-f0-9]{32}$').test(v),finite=v=>typeof v==='number'&&Number.isFinite(v);
   const stable=v=>JSON.stringify(v,(_,child)=>child&&typeof child==='object'&&!Array.isArray(child)?Object.fromEntries(Object.keys(child).sort().map(k=>[k,child[k]])):child);
