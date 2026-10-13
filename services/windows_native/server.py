@@ -564,6 +564,9 @@ class LocalServer(ThreadingHTTPServer):
             official_vision=lambda:self.official_vision)
         from .studio_media_resolution import NativeStudioMediaResolution
         self.media_resolution=NativeStudioMediaResolution(self.media_planner,self.generation,self.stock)
+        from .source_broll_resolution import NativeSourceBrollResolution
+        self.source_broll_resolution=NativeSourceBrollResolution(self.store,config,self.stock,self.generation,
+            workspace_id=self.publications.workspace_id,official_vision=lambda:self.official_vision)
         if bridge_auth_registry is not None:self.bridge.load_auth_registry(bridge_auth_registry)
         if bridge_http_enabled and bridge_webhook_registry is None:raise WorkflowError('NATIVE_BRIDGE_WEBHOOK_REGISTRY_REQUIRED',400)
         if bridge_webhook_registry is not None:self.bridge.load_webhook_registry(bridge_webhook_registry,owner_http_enabled=bridge_http_enabled)
@@ -724,6 +727,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/media-resolutions(?:/nmr_[a-f0-9]{32})?',path):
             from .studio_media_resolution_routes import get
+            return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/auto-edit/broll-resolutions(?:/nbr_[a-f0-9]{32})?',path):
+            from .source_broll_resolution_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
         generation_file=re.fullmatch(r'/api/projects/([a-f0-9]{32})/generation/([a-f0-9]{32})/file',path)
         if generation_file:
@@ -905,7 +911,7 @@ class Handler(BaseHTTPRequestHandler):
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
                 "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
-                "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
+                "native_source_timeline":True,"native_source_broll_resolution":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
                 "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
                 "native_local_asr_phowhisper":local_asr_status(self.server.config.local_asr_manifest,model_key='phowhisper-small')['configured'],
@@ -1016,6 +1022,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-render-thumbnail.mjs'] = 'native-render-thumbnail.mjs'
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
+        static['/native-source-broll-resolution.mjs'] = 'native-source-broll-resolution.mjs'
         static['/native-scene-review.mjs'] = 'native-scene-review.mjs'
         static['/native-scene-assessments.mjs'] = 'native-scene-assessments.mjs'
         static['/native-source-crop-review.mjs'] = 'native-source-crop-review.mjs'
@@ -1230,6 +1237,9 @@ class Handler(BaseHTTPRequestHandler):
             action=getattr(narrated_timeline_editor,narrated_timeline_route[2])
             return self.reply(action(self.server.store,narrated_timeline_route[1],self.read_body(max_bytes=64000),self.server.publications.workspace_id),headers={'Cache-Control':'no-store'})
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/auto-edit/broll-resolutions(?:/nbr_[a-f0-9]{32}/(?:step|apply))?',self.path):
+            from .source_broll_resolution_routes import post
+            return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
         scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews',self.path)
         scene_assessments = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-assessments',self.path)
@@ -1261,7 +1271,13 @@ class Handler(BaseHTTPRequestHandler):
             if set(body) != {'revision','action','payload'} or type(body.get('revision')) is not int or body.get('action') not in {'create','select','apply'}:
                 raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400)
             action = {'create':source_broll.create,'select':source_broll.select,'apply':source_broll.apply}[body['action']]
-            return self.reply(action(self.server.store,self.server.config,broll_route[1],body['revision'],body['payload'],official_vision=lambda:self.server.official_vision))
+            options={}
+            if body['action']=='create':
+                current=self.server.store.get(broll_route[1])
+                budget=(current['document'].get('cost_policy') or {}).get('max_ai_cost_vnd','0')
+                options['resolver_context']=self.server.source_broll_resolution.planning_context(max_ai_cost_vnd=budget)
+            return self.reply(action(self.server.store,self.server.config,broll_route[1],body['revision'],body['payload'],
+                official_vision=lambda:self.server.official_vision,**options))
         if source_timeline_route:
             from .auto_edit_timeline import create, edit, restore
             from .source_linked_edit import edit as linked_edit

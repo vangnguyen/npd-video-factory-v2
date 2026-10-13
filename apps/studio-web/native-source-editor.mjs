@@ -3,6 +3,7 @@ import {waveformPath} from './waveform.mjs';
 import {timelineHistory} from './timeline-history.mjs';
 import {sourceBrollRequest,sourceBrollMarkup} from './native-source-broll.mjs';
 import {initializeSourceBrollReview} from './native-source-broll-review.mjs';
+import {initializeSourceBrollResolution} from './native-source-broll-resolution.mjs';
 import {initializeSceneReview} from './native-scene-review.mjs';
 import {initializeSourceCropReview} from './native-source-crop-review.mjs';
 import {initializeSourceThumbnailReview} from './native-source-thumbnail-review.mjs';
@@ -84,7 +85,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
   toolbar.innerHTML='<button type="button" data-source-history="undo">Hoàn tác</button><button type="button" data-source-history="redo">Làm lại</button><label>Zoom<input data-source-zoom type="range" min="0.5" max="4" step="0.25" value="1"></label><label class="check"><input data-source-snap type="checkbox" checked> Bám mốc 0,25s</label><label>Playhead (s)<input data-source-playhead type="number" min="0" step="0.01" value="0"></label><output data-source-position>0.00s</output><p class="hint">Kéo clip trong cùng track để đổi vị trí. Shot nguồn được sắp lại liền nhau cùng âm thanh và phụ đề; kiểm tra lại B-roll, preview và duyệt bản mới.</p>';
   $('advanced-tracks').before(toolbar);
   if(!document.querySelector('link[data-source-editor-style]')){const link=document.createElement('link');link.rel='stylesheet';link.href='/native-source-editor.css';link.dataset.sourceEditorStyle='true';document.head.append(link);}
-  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null,style=null,trackingUI=null;
+  let working=false,dirty=false,dirtyForm=null,selectedId=null,zoom=1,playhead=0,versions=[],historyKey=null,catalog=null,shownKey=null,thumbnailReview=null,visual=null,dragDrop=null,style=null,trackingUI=null,brollResolution=null;
   const state=()=>sourceState(getProject());
   const selected=()=>getClip(state(),selectedId);
   const visualRoot=document.createElement('section');visualRoot.id='native-source-visual';
@@ -103,7 +104,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     onDirty:v=>{if(v){dirty=true;dirtyForm='style';onDirty(true);}else if(dirtyForm==='style'){dirty=false;dirtyForm=null;onDirty(false);}if(style)controls();},onMessage,
     onSave:async(values,binding)=>{await run(()=>send(sourceClipAction(getProject(),binding.clip_id,'set_clip_properties',values)),{allowDirty:true});const p=getProject();
       return p?.id===binding.project_id&&p.revision===binding.revision+1&&state()?.version===binding.timeline_version+1&&(getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
-  const blocked=()=>working||trackingUI?.isWorking()||sceneReview.isWorking()||thumbnailReview?.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
+  const blocked=()=>working||brollResolution?.isWorking()||trackingUI?.isWorking()||sceneReview.isWorking()||thumbnailReview?.isWorking()||getGuards().canEdit===false||getGuards().busy||getProject()?.archived||(getGuards().dirty&&!dirty)||(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
   const sceneRoot=document.createElement('section');
   const sceneReview=initializeSceneReview({root:sceneRoot,api,getReviewedVision,onProject,onMessage,onWorking,onDraftsCreated,
     getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
@@ -113,6 +114,12 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
     busy:working||getGuards().busy||thumbnailReview?.isWorking(),active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   const cropRoot=document.createElement('section');
+  const brollResolutionRoot=document.createElement('details');
+  brollResolution=initializeSourceBrollResolution({root:brollResolutionRoot,api,onProject,onMessage,onWorking,
+    getState:()=>({project:getProject(),workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,
+      canManage:getGuards().canManage===true,dirty:dirty||getGuards().dirty,
+      busy:working||getGuards().busy||sceneReview.isWorking()||thumbnailReview?.isWorking()||trackingUI?.isWorking(),
+      active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
   const cropReview=initializeSourceCropReview({root:cropRoot,getReviewedVision,onMessage,getState:()=>({project:getProject(),
     workspace_id:getGuards().workspace_id??'wsp_native_local',canEdit:getGuards().canEdit!==false,dirty:dirty||getGuards().dirty,
     busy:working||getGuards().busy||thumbnailReview?.isWorking(),active:(getProject()?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status))})});
@@ -150,7 +157,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     brollReview.sync();
     sceneReview.sync();
     cropReview.sync();
-    thumbnailReview.sync();visual.sync();style?.sync();dragDrop?.sync();
+    thumbnailReview.sync();visual.sync();style?.sync();dragDrop?.sync();brollResolution?.sync();
   }
   function renderAdvanced(){
     toolbar.hidden=!isSourceProject(getProject());
@@ -193,6 +200,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     host.querySelector('[data-source-style-host]')?.append(styleRoot);style.sync();
     host.insertAdjacentHTML('beforeend',sourceBrollMarkup(p,{workspaceId:getGuards().workspace_id??'wsp_native_local'}));
     host.querySelector('[data-broll-review-host]').append(reviewRoot);
+    host.append(brollResolutionRoot);
     host.append(sceneRoot);
     host.insertAdjacentHTML('beforeend',sourceReframeMarkup(p));
     host.append(cropRoot);
@@ -303,7 +311,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
         (getGuards().workspace_id??'wsp_native_local')===binding.workspace_id;}});
   for(const player of getPlayers())player.addEventListener('timeupdate',()=>{if(!isSourceProject(getProject())||player.hidden)return;playhead=player.currentTime;toolbar.querySelector('[data-source-position]').value=`${num(playhead)}s`;});
   void api('/api/auto-edit/subtitle-templates').then(value=>{catalog=value;shownKey=null;if(isSourceProject(getProject())&&!dirty)renderSelected(true);}).catch(error=>onMessage(error.message,true));
-  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,clipStyle:style,dragDrop,subjectTracking:trackingUI,isWorking:()=>working||sceneReview.isWorking()||thumbnailReview.isWorking()||trackingUI.isWorking(),
+  return {selectShot(id){if(dirty){onMessage('Lưu hoặc bỏ chỉnh sửa hình trước khi chọn shot khác.',true);return;}selectedId=id;renderSelected();},renderAdvanced,controls,visualProperties:visual,clipStyle:style,dragDrop,subjectTracking:trackingUI,isWorking:()=>working||brollResolution.isWorking()||sceneReview.isWorking()||thumbnailReview.isWorking()||trackingUI.isWorking(),
     readyForApproval:()=>isSourceProject(getProject())&&getPreview()?.status==='READY'&&getPreview()?.timeline_sha256===state().sha256,
     render:()=>renderSelected()};
 }

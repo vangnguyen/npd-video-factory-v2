@@ -119,6 +119,9 @@ def database_status(path):
                     (time.time(),)).fetchone()[0]
             for name in ('native_media_resolution_bindings','native_media_resolutions'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
+            for name in ('native_source_broll_resolution_bindings','native_source_broll_resolutions',
+                         'native_source_broll_resolution_events','native_source_broll_resolution_requests'):
+                if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_stock_jobs' in tables:busy+=con.execute("SELECT count(*) FROM native_stock_jobs WHERE status IN ('queued','running','retry_scheduled')").fetchone()[0]
             for name in ('native_generation_bindings','native_generation_jobs','native_generation_events','native_generation_recovery_requests','native_generation_reference_admissions','native_generation_media','native_generation_results','native_generation_imports'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]

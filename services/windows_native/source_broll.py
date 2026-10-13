@@ -5,7 +5,7 @@ This bridge dispatches no external providers. Missing tiers remain explicit.
 """
 import copy
 from datetime import datetime,timezone
-from decimal import Decimal
+from decimal import Decimal,InvalidOperation
 import json
 import uuid
 from pydantic import Field
@@ -160,22 +160,43 @@ def _persist(store,con,project,plan,action):
         'canonical_timeline_mutated':False,'approval_invalidated':True,'source_media_mutated':False})
 
 
-def create(store,config,project_id,revision,body,*,official_vision=None):
+def create(store,config,project_id,revision,body,*,official_vision=None,resolver_context=None):
     try:payload=Create.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400) from None
+    if resolver_context is not None:
+        if (not isinstance(resolver_context,dict) or set(resolver_context) not in ({'workspace_id','provider_status','max_ai_cost_vnd'},
+            {'workspace_id','provider_status','max_ai_cost_vnd','resolver_priority'})
+            or not isinstance(resolver_context['workspace_id'],str) or not resolver_context['workspace_id'] or not isinstance(resolver_context['provider_status'],dict)
+            or set(resolver_context['provider_status'])!={'stock','ai_image','ai_video','semantic_vision'}
+            or any(value not in {'CONFIGURED','NOT_CONFIGURED'} for value in resolver_context['provider_status'].values())):
+            raise WorkflowError('AUTO_EDIT_BROLL_RESOLVER_CONTEXT_INVALID',400)
+        try:
+            budget=Decimal(str(resolver_context['max_ai_cost_vnd']))
+            if not budget.is_finite() or budget<0:raise ValueError()
+        except (InvalidOperation,ValueError):raise WorkflowError('AUTO_EDIT_BROLL_RESOLVER_CONTEXT_INVALID',400) from None
+        if 'resolver_priority' in resolver_context:
+            priority=resolver_context['resolver_priority']
+            if not isinstance(priority,list):raise WorkflowError('AUTO_EDIT_BROLL_RESOLVER_CONTEXT_INVALID',400)
+            required=priority[:-1] if priority[-1:]==['motion_graphic'] else priority
+            if len(required)!=5 or set(required)!={'user_asset','licensed_stock','internal_library','ai_image','ai_video'}:
+                raise WorkflowError('AUTO_EDIT_BROLL_RESOLVER_CONTEXT_INVALID',400)
+        if payload.reviewed_vision:resolver_context=None
     if payload.reviewed_vision:official_vision=reviewed.bind_reader(store,config,project_id,requests=payload.reviewed_vision,getter=official_vision)
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);_cas(project,payload.expected_version)
         snapshot,analysis=context(project);assets=shared_assets(project,config,rights_overrides=getattr(store,'rights_overrides',None))
         configuration=MediaPlanRequest(analysis_id=analysis.analysis_id,
             transcript_id=analysis.transcript.transcript_id if analysis.transcript else None,
-            purpose='supporting_broll',brand_context=payload.brand_context,max_ai_cost_vnd=Decimal('0'))
+            purpose='supporting_broll',brand_context=payload.brand_context,
+            max_ai_cost_vnd=Decimal(str(resolver_context['max_ai_cost_vnd'])) if resolver_context is not None else Decimal('0'),
+            **({'resolver_priority':resolver_context['resolver_priority']} if resolver_context is not None and 'resolver_priority' in resolver_context else {}))
         vision_context=reviewed.prepare(store,config,project,analysis,assets,payload.reviewed_vision,source_con=con,getter=official_vision) if payload.reviewed_vision else None
         algorithm=reviewed.ALGORITHM if vision_context is not None else ALGORITHM
         fingerprint=digest({'algorithm':algorithm,'analysis':analysis.model_dump(mode='json'),
             'configuration':configuration.model_dump(mode='json'),
             'assets':{identifier:{'sha256':asset.checksum_sha256,'filename':asset.filename,'provenance':asset.provenance}
-                for identifier,asset in assets.items()},**({'reviewed_vision':vision_context} if vision_context is not None else {})})
+                for identifier,asset in assets.items()},**({'reviewed_vision':vision_context} if vision_context is not None else {}),
+                **({'resolver_context':resolver_context} if resolver_context is not None else {})})
         existing=[record for record in project['document'].get('source_broll_plans',[]) if record['plan']['fingerprint']==fingerprint]
         if existing:
             cached=max(existing,key=lambda item:item['plan']['version'])
@@ -184,7 +205,9 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
         identifier='mpl_'+uuid.uuid4().hex[:24]
         items=build_plan_items(media_plan_id=identifier,fingerprint=fingerprint,analysis=analysis,vision=None,
             payload=configuration,source_asset=assets[analysis.asset_id],supporting_assets=list(assets.values()),
-            stock_candidates={},stock_available=False,image_available=False,video_available=False,
+            stock_candidates={},stock_available=resolver_context is not None and resolver_context['provider_status']['stock']=='CONFIGURED',
+            image_available=resolver_context is not None and resolver_context['provider_status']['ai_image']=='CONFIGURED',
+            video_available=resolver_context is not None and resolver_context['provider_status']['ai_video']=='CONFIGURED',
             image_cost_vnd=None,video_cost_vnd=None)
         if vision_context is not None:items=reviewed.items(identifier,fingerprint,analysis,assets,configuration,vision_context)
         scene_vision=reviewed.scene_view(analysis,assets,vision_context) if vision_context is not None else None
@@ -192,9 +215,10 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
         plan=MediaPlanRead(media_plan_id=identifier,workspace_id='native-local',project_id='prj_'+project_id,
             project_version_id=None,analysis_id=analysis.analysis_id,vision_analysis_id=scene_vision.vision_analysis_id if scene_vision else None,status='draft',
             fingerprint=fingerprint,version=1,configuration=configuration,
-            provider_status={key:'NOT_CONFIGURED' for key in ('stock','ai_image','ai_video','semantic_vision')},
-            items=items,media_assets=[],resolution_jobs=[],projected_ai_cost_vnd=0,max_ai_cost_vnd=0,
-            needs_approval=False,publishing_blocked=True,unresolved_items=len(items),error_code=None,
+            provider_status=resolver_context['provider_status'] if resolver_context is not None else {key:'NOT_CONFIGURED' for key in ('stock','ai_image','ai_video','semantic_vision')},
+            items=items,media_assets=[],resolution_jobs=[],projected_ai_cost_vnd=0,max_ai_cost_vnd=configuration.max_ai_cost_vnd,
+            needs_approval=any(item.needs_approval for item in items) if resolver_context is not None else False,
+            publishing_blocked=True,unresolved_items=len(items),error_code=None,
             provenance={'algorithm':algorithm,'source_asset_sha256':analysis.provenance['source_asset_checksum'],
                 'transcript_id':analysis.transcript.transcript_id if analysis.transcript else None,
                 'provider_dispatches':0,'recommendation_only':True,'requires_manual_selection_and_apply':True,
@@ -231,7 +255,8 @@ def select(store,config,project_id,revision,body,*,official_vision=None):
     return timeline_view(store,project_id)
 
 
-def apply(store,config,project_id,revision,body,*,official_vision=None):
+def apply(store,config,project_id,revision,body,*,official_vision=None,on_applied=None):
+    if on_applied is not None and not callable(on_applied):raise WorkflowError('AUTO_EDIT_BROLL_APPLICATION_HOOK_INVALID',400)
     try:payload=Apply.model_validate(body)
     except ValueError:raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400) from None
     if len(set(payload.item_ids))!=len(payload.item_ids):raise WorkflowError('AUTO_EDIT_BROLL_REQUEST_INVALID',400)
@@ -264,4 +289,7 @@ def apply(store,config,project_id,revision,body,*,official_vision=None):
             'sha256':digest(changed.model_dump(mode='json'))}
         resolve_assets(config,check)
         _save(store,con,project,changed,'auto_edit_broll_applied_review_required')
+        if on_applied is not None:
+            current=store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())
+            on_applied(con,current,current['document']['canonical_timeline'])
     return timeline_view(store,project_id)

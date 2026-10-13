@@ -108,7 +108,19 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         for item in plan.items:register(item.media_plan_item_id)
         for item in plan.media_assets:register(item.media_asset_id)
         if plan.resolution_jobs:raise WorkflowError('AUTO_EDIT_EXTERNAL_PLAN_REBINDING_UNSUPPORTED',400)
-        if reviewed_plan(plan):inherited_reviewed[plan.media_plan_id]=record
+        history=plan.provenance.get('inherited_reviewed_source_history')
+        if history is not None:
+            if (not isinstance(history,dict) or not isinstance(history.get('original_plan'),dict)
+                or digest(history['original_plan'])!=history.get('original_plan_sha256')
+                or history['original_plan'].get('project_id')!='prj_'+source_id
+                or history.get('new_asset_semantic_review_performed') is not False
+                or history.get('source_intent_recommendation_only') is not True
+                or plan.provenance.get('semantic_vision_used_for_new_assets') is not False):
+                raise WorkflowError('AUTO_EDIT_BROLL_INHERITED_HISTORY_INVALID')
+            # A reviewed derivative contains exact original evidence. Archive
+            # the whole record before generic identity rebinding can touch it.
+            inherited_reviewed[plan.media_plan_id]=record
+        elif reviewed_plan(plan):inherited_reviewed[plan.media_plan_id]=record
     def rewrite(value):
         if isinstance(value,str):return mapping.get(value,value)
         if isinstance(value,list):return [rewrite(item) for item in value]
