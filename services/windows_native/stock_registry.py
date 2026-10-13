@@ -29,16 +29,27 @@ class StockRegistry(StrictModel):
 
 class StockFactory:
     def __init__(self,key,credential,*,owner_enabled=False,transport=None):
-        self.key=key;self.credential=credential;self.enabled=bool(owner_enabled and credential.enabled)
+        self.key=key;self.credential=credential;self._owner_enabled=bool(owner_enabled)
+        self.enabled=bool(owner_enabled and credential.enabled)
         import httpx
         self.mode='fixture' if isinstance(transport,httpx.MockTransport) else 'official';self.transport=transport
         self.sha256=digest({'provider':key,'key_sha256':hashlib.sha256(credential.api_key.encode()).hexdigest(),
             'enabled':self.enabled,'mode':self.mode,'schema_version':'native-stock-provider-config-v1'})
 
     def create(self,root,scope):
+        # The frozen job/configuration hash must describe the actual credential,
+        # enablement and transport origin, even after an in-process mutation.
+        import httpx
+        mode='fixture' if isinstance(self.transport,httpx.MockTransport) else 'official'
+        enabled=bool(self._owner_enabled and self.credential.enabled)
+        actual=digest({'provider':self.key,'key_sha256':hashlib.sha256(self.credential.api_key.encode()).hexdigest(),
+            'enabled':enabled,'mode':mode,'schema_version':'native-stock-provider-config-v1'})
+        if self.sha256!=actual or self.mode!=mode or self.enabled!=enabled:
+            raise WorkflowError('NATIVE_STOCK_PROVIDER_CONFIGURATION_CHANGED')
         adapter={'pexels':PexelsStockMediaProvider,'pixabay':PixabayStockMediaProvider}[self.key]
         return adapter(api_key=self.credential.api_key,enabled=self.enabled,cache_root=root/'stock-cache',cache_scope=scope,
-            timeout_seconds=10,max_download_bytes=250*1024*1024,transport=self.transport)
+            timeout_seconds=10,max_download_bytes=250*1024*1024,transport=self.transport,
+            cache_configuration_sha256=self.sha256)
 
 
 def load(path,root,workspace,*,owner_enabled=False):

@@ -11,6 +11,7 @@ from datetime import datetime,timezone
 from decimal import Decimal
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -43,8 +44,17 @@ def digest(value):
     return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
 
 
+def cache_io_path(path):
+    """Windows long-path IO only; callers validate ordinary path containment first."""
+    path=Path(path).absolute();value=str(path)
+    if os.name=='nt' and len(value)>=240 and not value.startswith('\\\\?\\'):
+        return Path('\\\\?\\UNC\\'+value[2:] if value.startswith('\\\\') else '\\\\?\\'+value)
+    return path
+
+
 def linked(path):
-    return any(p.is_symlink() or getattr(p,'is_junction',lambda:False)() for p in [path,*path.parents])
+    return any((item:=cache_io_path(p)).is_symlink() or getattr(item,'is_junction',lambda:False)()
+        for p in [path,*path.parents])
 
 
 class CredentialTransport(httpx.AsyncBaseTransport):
@@ -71,22 +81,42 @@ class OfficialStockProvider:
     source_host=''
 
     def __init__(self,*,api_key='',enabled=False,cache_root:Path,cache_scope=None,transport=None,
-                 timeout_seconds=20,max_download_bytes=250*1024*1024):
+                 timeout_seconds=20,max_download_bytes=250*1024*1024,cache_configuration_sha256=None):
         if not 1<=timeout_seconds<=60 or not 1<=max_download_bytes<=250*1024*1024:
             raise ValueError('STOCK_BOUNDS_INVALID')
         if not isinstance(api_key,str) or len(api_key)>8192 or any(c in api_key for c in '\r\n'):
             raise ValueError('STOCK_CREDENTIAL_INVALID')
+        if cache_configuration_sha256 is not None and (not isinstance(cache_configuration_sha256,str)
+                or not re.fullmatch(r'[a-f0-9]{64}',cache_configuration_sha256)):
+            raise ValueError('STOCK_CACHE_CONFIGURATION_INVALID')
         self.configured=bool(enabled and api_key);self._api_key=api_key
         self.cache_root=Path(cache_root);self.cache_scope=cache_scope
         self.timeout_seconds=timeout_seconds;self.max_download_bytes=max_download_bytes
         self._transport=transport;self._client=None;self._cache_lock=asyncio.Lock()
         self.mock_transport_used=isinstance(transport,httpx.MockTransport)
+        self.cache_configuration_sha256=cache_configuration_sha256
+        self.cache_mode='fixture' if self.mock_transport_used else 'official'
+        self.cache_binding_sha256=digest(self._cache_binding())
+        self._frozen_cache_identity=(self.cache_binding_sha256,self.cache_mode,self.cache_configuration_sha256)
+
+    def _cache_binding(self):
+        """Hash execution identity; neither the secret nor filesystem path is cached."""
+        return {'schema_version':'stock-response-cache-binding.v2','provider':self.key,
+            'credential_sha256':hashlib.sha256(self._api_key.encode()).hexdigest(),
+            'configured':self.configured,'execution_mode':'fixture' if isinstance(self._transport,httpx.MockTransport) else 'official',
+            'root_sha256':digest(str(self.cache_root.resolve())),
+            'timeout_seconds':self.timeout_seconds,'max_download_bytes':self.max_download_bytes,
+            'configuration_sha256':self.cache_configuration_sha256}
 
     async def aclose(self):
         if self._client:await self._client.aclose();self._client=None
 
     def _require(self):
         if not self.configured:raise MediaProviderNotConfigured('STOCK_PROVIDER_NOT_CONFIGURED')
+        if ((self.cache_binding_sha256,self.cache_mode,self.cache_configuration_sha256)!=self._frozen_cache_identity
+                or digest(self._cache_binding())!=self.cache_binding_sha256
+                or self.mock_transport_used!=(self.cache_mode=='fixture')):
+            raise StockProviderFailure('STOCK_CACHE_CONFIGURATION_CHANGED')
         scope=self.cache_scope or SCOPE.get()
         if not isinstance(scope,str) or not 1<=len(scope)<=200:raise ValueError('STOCK_WORKSPACE_SCOPE_REQUIRED')
         return scope
@@ -135,16 +165,21 @@ class OfficialStockProvider:
         return path
 
     async def _json(self,path,params):
-        scope=self._require();key=digest({'provider':self.key,'path':path,'params':params,'schema':1})
+        scope=self._require();key=digest({'provider':self.key,'path':path,'params':params,'schema':2,
+            'binding_sha256':self.cache_binding_sha256})
         file=self._cache_path(scope,key)
         async with self._cache_lock:
-            if file.exists():
-                if file.stat().st_size>JSON_LIMIT+2048:raise StockProviderFailure('STOCK_CACHE_INVALID')
+            actual=cache_io_path(file)
+            if actual.exists():
+                if actual.stat().st_size>JSON_LIMIT+2048:raise StockProviderFailure('STOCK_CACHE_INVALID')
                 try:
-                    cached=json.loads(file.read_bytes())
-                    bound=(cached['schema']==1 and cached['scope']==digest(scope) and cached['key']==key
+                    cached=json.loads(actual.read_bytes())
+                    bound=(type(cached['schema']) is int and cached['schema']==2
+                        and cached['scope']==digest(scope) and cached['key']==key and cached['provider']==self.key
+                        and cached['binding_sha256']==self.cache_binding_sha256 and cached['execution_mode']==self.cache_mode
+                        and cached['configuration_sha256']==self.cache_configuration_sha256 and isinstance(cached['response'],dict)
                         and cached['sha256']==digest(cached['response']) and isinstance(cached['created_at'],(int,float))
-                        and not isinstance(cached['created_at'],bool))
+                        and not isinstance(cached['created_at'],bool) and math.isfinite(cached['created_at']))
                 except (ValueError,KeyError,TypeError):raise StockProviderFailure('STOCK_CACHE_INVALID') from None
                 if not bound:raise StockProviderFailure('STOCK_CACHE_INVALID')
                 if 0<=time.time()-cached['created_at']<CACHE_SECONDS:return cached['response']
@@ -153,16 +188,27 @@ class OfficialStockProvider:
             try:body=json.loads(raw)
             except ValueError:raise StockProviderFailure('STOCK_RESPONSE_INVALID') from None
             if not isinstance(body,dict):raise StockProviderFailure('STOCK_RESPONSE_INVALID')
-            cached={'schema':1,'scope':digest(scope),'key':key,'created_at':time.time(),'response':body,'sha256':digest(body)}
-            file.parent.mkdir(parents=True,exist_ok=True)
+            cached={'schema':2,'scope':digest(scope),'key':key,'provider':self.key,
+                'binding_sha256':self.cache_binding_sha256,'execution_mode':self.cache_mode,
+                'configuration_sha256':self.cache_configuration_sha256,
+                'created_at':time.time(),'response':body,'sha256':digest(body)}
+            cache_io_path(file.parent).mkdir(parents=True,exist_ok=True)
             if linked(file):raise StockProviderFailure('STOCK_CACHE_PATH_INVALID')
-            temporary=file.with_name(file.name+'.'+uuid.uuid4().hex+'.tmp')
+            temporary=cache_io_path(file.with_name('.'+uuid.uuid4().hex+'.tmp'))
             try:
                 with temporary.open('xb') as handle:
                     handle.write(json.dumps(cached,ensure_ascii=False,separators=(',',':')).encode());handle.flush();os.fsync(handle.fileno())
-                os.replace(temporary,file)
+                os.replace(temporary,actual)
             finally:temporary.unlink(missing_ok=True)
             return body
+
+    @staticmethod
+    def _orientation(value):
+        # Native journals preserve their original "any" DTO/fingerprint. The
+        # neutral provider contract uses "unknown" to omit an orientation filter.
+        if value not in {'portrait','landscape','square','unknown','any'}:
+            raise ValueError('STOCK_SEARCH_INVALID')
+        return 'unknown' if value=='any' else value
 
     def _query(self,query,orientation,limit):
         if (not isinstance(query,str) or not query.strip() or len(query)>500 or orientation not in {'portrait','landscape','square','unknown'}
@@ -186,6 +232,8 @@ class OfficialStockProvider:
             media_type=media_type,semantic_score=None,rights_status='licensed',production_eligible=False,
             estimated_cost_vnd=Decimal(0),provenance={'provider':self.key,'authorized_source':True,'external_call':True,
                 'paid':False,'fixture':self.mock_transport_used,'mock_transport_used':self.mock_transport_used,
+                'cache_binding_sha256':self.cache_binding_sha256,'cache_execution_mode':self.cache_mode,
+                'cache_configuration_sha256':self.cache_configuration_sha256,
                 'real_provider_tested':False,'download_url':download,'provider_result_rank':rank,
                 'query':query,'description':item.get('alt') if self.key=='pexels' else item.get('tags'),
                 'licensing_basis':'provider content license; third-party/personality/trademark rights not independently verified',
@@ -239,6 +287,7 @@ class PexelsStockMediaProvider(OfficialStockProvider):
         except (KeyError,TypeError,ValueError,AttributeError):raise StockProviderFailure('STOCK_METADATA_INVALID') from None
 
     async def _search(self,kind,query,orientation,limit):
+        orientation=self._orientation(orientation)
         query=self._query(query,orientation,limit);params={'query':query,'per_page':limit}
         if orientation!='unknown':params['orientation']=orientation
         body=await self._json('/v1/search' if kind=='image' else '/v1/videos/search',params)
@@ -271,6 +320,7 @@ class PixabayStockMediaProvider(OfficialStockProvider):
         except (KeyError,TypeError,ValueError,AttributeError):raise StockProviderFailure('STOCK_METADATA_INVALID') from None
 
     async def _search(self,kind,query,orientation,limit):
+        orientation=self._orientation(orientation)
         query=self._query(query,orientation,limit)
         if len(query)>100:raise ValueError('PIXABAY_QUERY_MAX_100_CHARACTERS')
         params={'q':query,'per_page':max(3,limit),'safesearch':'true'}
