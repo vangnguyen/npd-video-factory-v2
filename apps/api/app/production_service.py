@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+# Import the additive ORM before schema creation; default providers do no reuse.
+from .sql_tts_artifact_reuse_db import TTSArtifactReuseORM
+
 import copy
 import hashlib
 import json
@@ -430,60 +433,89 @@ class ProductionRenderProcessor:
 
             await self.repository.set_render_progress(render_id, 25)
             narration_path = workdir / "narration.wav"
-            plan = snapshot.metadata.get("narration_plan")
-            synthesis = self.audio_engine.synthesize_narration
-            extra = {}
-            if plan and hasattr(self.audio_engine, "synthesize_planned_narration"):
-                synthesis = self.audio_engine.synthesize_planned_narration
-                extra["plan"] = plan
-            tts_provider = self.tts_provider
-            if hasattr(tts_provider, "for_render_voice") and audio_mix.config.voice.enabled:
-                tts_provider = tts_provider.for_render_voice(audio_mix.config.voice)
-            if hasattr(tts_provider, "bind_render_scope") and audio_mix.config.voice.enabled:
+            from .sql_tts_artifact_reuse import prepared_final_audio,canonical_audio_binding
+            canonical_audio_input=canonical_audio_binding(render,snapshot_json,subtitles,audio_mix.config)
+            if render.render_kind=='final':
+                narration_manifest,mix_manifest=await prepared_final_audio(repository=self.repository,
+                    assets=self.asset_repository,storage=self.object_storage,render=render,snapshot=snapshot_json,
+                    subtitles=subtitles,config=audio_mix.config,workdir=workdir)
+                narration_path=workdir/'narration.wav'
+                mixed_audio_path=workdir/'audio-mix.wav'
+                if narration_manifest.get('caption_schedule'):
+                    from .production_models import SubtitleCue
+                    subtitles=subtitles.model_copy(update={'cues':[SubtitleCue.model_validate(c)
+                        for c in narration_manifest['caption_schedule']]})
+                    subtitle_qc=validate_subtitles(subtitles.cues,subtitles.style,snapshot.duration_seconds)
+            else:
+                plan = snapshot.metadata.get("narration_plan")
+                synthesis = self.audio_engine.synthesize_narration
+                extra = {}
+                if plan and hasattr(self.audio_engine, "synthesize_planned_narration"):
+                    synthesis = self.audio_engine.synthesize_planned_narration
+                    extra["plan"] = plan
+                tts_provider = self.tts_provider
+                if hasattr(tts_provider, "for_render_voice") and audio_mix.config.voice.enabled:
+                    tts_provider = tts_provider.for_render_voice(audio_mix.config.voice)
                 async def before_unit():
                     await self._check_cancelled(render_id)
                     from .content_service import ContentService
                     current = await ContentService(self.platform).latest(render.project_id)
                     if current is None or current.project_version_id != snapshot.metadata.get("content_version_id"):
                         raise RenderCancelledError("TTS_CONTENT_VERSION_STALE")
-                tts_provider = tts_provider.bind_render_scope(workspace_id=project.workspace_id,
-                    project_id=render.project_id, content_version_id=snapshot.metadata.get("content_version_id"),
-                    render_id=render_id, before_unit=before_unit)
-            narration_manifest = await synthesis(
-                tts_provider,
-                cues=subtitles.cues,
-                config=audio_mix.config,
-                duration_seconds=snapshot.duration_seconds,
-                output_path=narration_path,
-                workdir=workdir,
-                **extra,
-            )
-            if narration_manifest.get("caption_schedule"):
-                from .production_models import SubtitleCue
-                # Render the explicitly labeled estimated segment schedule; do
-                # not change stored words/text or invent an alignment capability.
-                subtitles = subtitles.model_copy(update={"cues":[SubtitleCue.model_validate(c)
-                    for c in narration_manifest["caption_schedule"]]})
-                subtitle_qc = validate_subtitles(subtitles.cues, subtitles.style, snapshot.duration_seconds)
-            await self._check_cancelled(render_id)
-            originals = [(clip, asset_paths[clip.asset_id][1])
-                for track in snapshot.tracks if track.kind == "original_audio" and not track.muted and not track.disabled
-                for clip in track.clips if not clip.disabled and clip.asset_id in asset_paths]
-            if originals:
-                combined = workdir / "narration-and-original.wav"
-                narration_manifest["original_audio"] = await self.audio_engine.mix_original(
-                    narration_path=narration_path, clips=originals, duration_seconds=snapshot.duration_seconds,
-                    gain_db=audio_mix.config.original_audio_gain_db or 0, output_path=combined)
-                narration_path = combined
-            mixed_audio_path = workdir / "audio-mix.wav"
-            mix_manifest = await self.audio_engine.mix(
-                narration_path=narration_path,
-                music_path=music_path,
-                cues=subtitles.cues,
-                config=audio_mix.config,
-                duration_seconds=snapshot.duration_seconds,
-                output_path=mixed_audio_path,
-            )
+                if hasattr(tts_provider, "bind_render_scope") and audio_mix.config.voice.enabled:
+                    tts_provider = tts_provider.bind_render_scope(workspace_id=project.workspace_id,
+                        project_id=render.project_id, content_version_id=snapshot.metadata.get("content_version_id"),
+                        render_id=render_id, before_unit=before_unit)
+                reuse_binding=getattr(tts_provider,'artifact_reuse_binding',None) if audio_mix.config.voice.enabled else None
+                if audio_mix.config.voice.enabled and reuse_binding is not None:
+                    from .sql_tts_artifact_reuse import ReusingTTSProvider,TTSArtifactReuseRepository
+                    content_id=snapshot.metadata.get('content_version_id')
+                    content=await self.platform.get_version(content_id) if content_id else None
+                    if content is not None and (content.workspace_id,content.project_id)==(render.workspace_id,render.project_id):
+                        target=canonical_audio_input
+                        async def reuse_guard():
+                            await self._check_cancelled(render_id)
+                            await self.repository.assert_audio_reuse_current(render_id,target)
+                            await before_unit()
+                        tts_provider=ReusingTTSProvider(tts_provider,repository=TTSArtifactReuseRepository(self.repository.session_factory),
+                            platform=self.platform,assets=self.asset_repository,storage=self.object_storage,render=render,
+                            content=content,voice_config=audio_mix.config.voice,guard=reuse_guard,target_binding=target)
+                narration_manifest = await synthesis(
+                    tts_provider,
+                    cues=subtitles.cues,
+                    config=audio_mix.config,
+                    duration_seconds=snapshot.duration_seconds,
+                    output_path=narration_path,
+                    workdir=workdir,
+                    **extra,
+                )
+                if narration_manifest.get("caption_schedule"):
+                    from .production_models import SubtitleCue
+                    # Render the explicitly labeled estimated segment schedule; do
+                    # not change stored words/text or invent an alignment capability.
+                    subtitles = subtitles.model_copy(update={"cues":[SubtitleCue.model_validate(c)
+                        for c in narration_manifest["caption_schedule"]]})
+                    subtitle_qc = validate_subtitles(subtitles.cues, subtitles.style, snapshot.duration_seconds)
+                await self._check_cancelled(render_id)
+                originals = [(clip, asset_paths[clip.asset_id][1])
+                    for track in snapshot.tracks if track.kind == "original_audio" and not track.muted and not track.disabled
+                    for clip in track.clips if not clip.disabled and clip.asset_id in asset_paths]
+                if originals:
+                    combined = workdir / "narration-and-original.wav"
+                    narration_manifest["original_audio"] = await self.audio_engine.mix_original(
+                        narration_path=narration_path, clips=originals, duration_seconds=snapshot.duration_seconds,
+                        gain_db=audio_mix.config.original_audio_gain_db or 0, output_path=combined)
+                    narration_path = combined
+                mixed_audio_path = workdir / "audio-mix.wav"
+                mix_manifest = await self.audio_engine.mix(
+                    narration_path=narration_path,
+                    music_path=music_path,
+                    cues=subtitles.cues,
+                    config=audio_mix.config,
+                    duration_seconds=snapshot.duration_seconds,
+                    output_path=mixed_audio_path,
+                )
+            narration_manifest['canonical_audio_binding']=canonical_audio_input
             subtitle_path = workdir / "subtitles.srt"
             _write_srt(subtitle_path, subtitles.cues)
 
@@ -540,6 +572,8 @@ class ProductionRenderProcessor:
                     project_version_id=source_project_version_id, path=path,
                     asset_class="render", kind="tts-provider-source", content_type="audio/wav")
                 unit["provider_audio_asset_id"] = registered.asset_id
+                from .sql_tts_artifact_reuse import asset_proof
+                unit["provider_audio_asset_proof"] = asset_proof(registered)
             evidence_manifest = _evidence_manifest(
                 manifest,
                 narration=narration_manifest,
@@ -553,6 +587,7 @@ class ProductionRenderProcessor:
             evidence_path.write_text(json.dumps(evidence_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
             await self.repository.set_render_progress(render_id, 94)
             supporting_assets: dict[str, str] = {}
+            supporting_proofs: dict[str, dict] = {}
             for path, asset_class, kind, content_type in (
                 (workdir / "narration.wav", "render", "narration-track", "audio/wav"),
                 (mixed_audio_path, "render", "audio-mix", "audio/wav"),
@@ -569,6 +604,9 @@ class ProductionRenderProcessor:
                     content_type=content_type,
                 )
                 supporting_assets[kind] = registered.asset_id
+                if kind in {'narration-track','audio-mix'}:
+                    from .sql_tts_artifact_reuse import asset_proof
+                    supporting_proofs[kind] = asset_proof(registered)
             output_asset = await self._persist_asset(
                 render,
                 project_version_id=source_project_version_id,
@@ -578,6 +616,7 @@ class ProductionRenderProcessor:
                 content_type="video/mp4",
             )
             evidence_manifest["supporting_asset_ids"] = supporting_assets
+            evidence_manifest["supporting_audio_proofs"] = supporting_proofs
             evidence_manifest["output_asset_id"] = output_asset.asset_id
             evidence_manifest["output_checksum_sha256"] = output_asset.checksum_sha256
             completed = await self.repository.complete_render(
@@ -683,27 +722,42 @@ class ProductionRenderProcessor:
 
     async def _record_costs(self, render: RenderJobRead, *, narration=None) -> None:
         narration = narration or {}
-        sources = [unit["provider_evidence"] for unit in narration.get("timing", []) if unit.get("provider_evidence")]
+        prepared_reuse=narration.get('prepared_audio_reuse')
+        reused = [unit['raw_audio_reuse'] for unit in narration.get('timing',[]) if unit.get('raw_audio_reuse')]
+        sources = [unit["provider_evidence"] for unit in narration.get("timing", [])
+            if unit.get("provider_evidence") and not unit.get('raw_audio_reuse') and not unit.get('prepared_audio_reused')]
         native_provider = narration.get("provider", "tts-unreported")
         # Preserve the historical local accounting channel for explicit fixtures,
         # with the actual fixture identity retained in evidence. Unknown/external
         # implementations must never be classified as zero-cost eSpeak by class name.
         local = native_provider in {"espeak-ng", "espeak", "deterministic-wave", "fixture-vi", "disabled"}
         tts_key = sources[0]["profile"]["provider_key"] if sources else ("espeak" if local else native_provider)
-        zero = Decimal("0") if local and not sources else None
+        all_reused = bool(prepared_reuse) or bool(reused) and len(reused)==len(narration.get('timing',[]))
+        zero = Decimal("0") if all_reused or local and not sources else None
+        if all_reused:
+            historical=next((u['provider_evidence'] for u in narration.get('timing',[]) if u.get('provider_evidence')),None)
+            if historical is not None:
+                tts_key=historical['profile']['provider_key']
         await self.platform.record_provider_operation(
             workspace_id=render.workspace_id,
             project_id=render.project_id,
             job_id=None,
             provider_key=tts_key,
             capability="tts",
-            operation=f"tts.v2-08.{render.render_id}",
-            model=sources[0]["profile"]["model"] if sources else None,
+            operation=f"tts-artifact-reuse.v1.{render.render_id}" if all_reused else f"tts.v2-08.{render.render_id}",
+            model=sources[0]["profile"]["model"] if sources else historical['profile']['model'] if all_reused and historical else None,
             estimated_cost=zero,
             actual_cost=zero,
             metadata={"render_id": render.render_id, "scene_aligned": True, "currency": "VND",
-                "provider_evidence": sources, "billing_status": "UNKNOWN" if zero is None else "LOCAL_ZERO_COST",
+                "provider_evidence": sources, "billing_status": 'NO_ADDITIONAL_PROVIDER_CALL' if all_reused else "UNKNOWN" if zero is None else "LOCAL_ZERO_COST",
                 "native_provider": native_provider,
+                'raw_audio_reuse':reused,'prepared_audio_reuse':prepared_reuse,
+                'provider_call_performed':False if all_reused else None,
+                'additional_provider_billed_cost_vnd':0 if all_reused else None,
+                'operating_cost_vnd':None,'past_provider_billing_rewritten':False,
+                'fresh_provider_measurement':False if all_reused else None,
+                'fixture':True if any(u.get('raw_audio_reuse',u.get('raw_audio_cache_origin',{})).get('transport_mode')=='fixture'
+                    for u in narration.get('timing',[])) else None,
                 "human_quality_accepted": False},
         )
         await self.platform.record_provider_operation(

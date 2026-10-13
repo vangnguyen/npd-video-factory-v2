@@ -39,6 +39,31 @@ class VieNeuTTSProvider:
         if self._guard:
             await self._guard()
 
+    @property
+    def artifact_reuse_binding(self):
+        """Pinned public configuration only; never contact the local service."""
+        from . import tts_evidence
+        if not self.enabled:
+            raise TTSNotConfiguredError('VIENEU_LOCAL_EXECUTION_DISABLED')
+        server = Path(__file__).resolve().parents[3] / 'scripts/vieneu-local-server.py'
+        try:
+            current = hashlib.sha256(server.read_bytes()).hexdigest()
+            adapter_sha = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+            contract_sha = hashlib.sha256(Path(tts_evidence.__file__).read_bytes()).hexdigest()
+        except OSError:
+            raise TTSNotConfiguredError('VIENEU_REUSE_RUNTIME_UNAVAILABLE') from None
+        if current != self.server_sha or self.model != self.profile.model or self.voice != self.profile.voice_id:
+            raise ValueError('VIENEU_REUSE_RUNTIME_CHANGED')
+        return {'schema_version':'vieneu-raw-artifact-binding.v1','provider_key':'vieneu-tts',
+            'profile_sha256':self.profile.sha256,'model_revision':self.profile.model_revision,
+            'runtime_version':self.profile.runtime_version,'sdk_commit':self.profile.sdk_commit,
+            'normalization_layer':self.profile.parameters.normalization_layer,
+            'server_source_sha256':current,
+            'adapter_source_sha256':adapter_sha,
+            'evidence_contract_sha256':contract_sha,
+            'transport_mode':'fixture' if self.transport is not None else 'configured',
+            'live_runtime_health_verified':False,'credential_reads':0}
+
     def for_render_voice(self, config):
         if config.speed != 1 or config.instructions:
             raise TTSNotConfiguredError("VIENEU_STYLE_OR_SPEED_UNSUPPORTED")

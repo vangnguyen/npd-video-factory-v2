@@ -301,6 +301,11 @@ class ProductionRepository:
     ) -> RenderJobRead:
         async with self.session_factory() as session:
             async with session.begin():
+                # Feature capture writes the project row. Take that writer lock
+                # before the package, matching final completion/version writes.
+                await session.execute(update(VideoProjectORM).where(VideoProjectORM.project_id==project_id)
+                    .values(updated_at=VideoProjectORM.updated_at))
+                await session.get(VideoProjectORM,project_id,with_for_update=True,populate_existing=True)
                 package = await self._locked_package(session, project_id)
                 await self._assert_current_timeline(session, package, expected_timeline_version)
                 self._assert_package_versions(package, expected_subtitle_version, expected_audio_version)
@@ -431,6 +436,107 @@ class ProductionRepository:
                 row.updated_at = utc_now()
             return _render_read(row)
 
+    async def assert_audio_reuse_current(self, render_id, target):
+        """Check the same canonical package and current human review after awaits."""
+        async with self.session_factory() as session:
+            row=await session.get(ProductionRenderJobORM,render_id)
+            package=await session.get(ProductionPackageORM,row.package_id) if row else None
+            await self._assert_audio_reuse_current_locked(session,row,package,target)
+
+    async def _assert_audio_reuse_current_locked(self, session, row, package, target):
+        """Same check, also usable while completion holds writer locks."""
+        if row is None or package is None or row.status!='running' or row.cancellation_requested \
+                or row.invalidated_at is not None:
+            raise ApprovalBoundaryError('TTS_REUSE_RENDER_NOT_CURRENT')
+        observed=(row.workspace_id,row.project_id,row.timeline_version_id,row.subtitle_version_id,row.audio_version_id)
+        if observed!=tuple(target['identity']):
+            raise ApprovalBoundaryError('TTS_REUSE_TARGET_CHANGED')
+        await self._assert_current_timeline(session,package,row.timeline_version)
+        self._assert_package_versions(package,row.subtitle_version,row.audio_version)
+        if (package.timeline_version_id,package.current_subtitle_version_id,package.current_audio_version_id) != observed[2:]:
+            raise ApprovalBoundaryError('TTS_REUSE_TARGET_CHANGED')
+        from .timeline_db import TimelineVersionORM
+        from .sql_tts_artifact_reuse import digest
+        timeline=await session.get(TimelineVersionORM,row.timeline_version_id)
+        subtitle=await session.get(SubtitleVersionORM,row.subtitle_version_id)
+        audio=await session.get(AudioMixVersionORM,row.audio_version_id)
+        if timeline is None or subtitle is None or audio is None \
+                or digest(timeline.snapshot_json)!=target['timeline_sha256'] \
+                or digest({'cues':subtitle.cues_json,'style':subtitle.style_json})!=target['subtitle_sha256'] \
+                or digest(audio.config_json)!=target['audio_config_sha256']:
+            raise ApprovalBoundaryError('TTS_REUSE_CANONICAL_INPUT_CHANGED')
+        content_id=(timeline.snapshot_json.get('metadata') or {}).get('content_version_id')
+        if content_id is not None:
+            from .db import ProjectVersionORM
+            latest_content=await session.scalar(select(ProjectVersionORM).where(
+                ProjectVersionORM.project_id==row.project_id,ProjectVersionORM.workspace_id==row.workspace_id,
+                ProjectVersionORM.label=='mvp1-content').order_by(ProjectVersionORM.ordinal.desc()).limit(1))
+            if latest_content is None or latest_content.project_version_id!=content_id:
+                raise ApprovalBoundaryError('TTS_REUSE_CONTENT_VERSION_STALE')
+        if row.render_kind=='final':
+            approval=await session.get(ProductionApprovalORM,row.approval_id)
+            if approval is None:
+                raise ApprovalBoundaryError('TTS_REUSE_APPROVAL_CHANGED')
+            self._assert_approval_current(package,approval)
+            if target.get('review_manifest_sha256'):
+                reviewed=await session.get(ProductionRenderJobORM,approval.preview_render_id)
+                if reviewed is None or digest(reviewed.manifest_json)!=target['review_manifest_sha256']:
+                    raise ApprovalBoundaryError('TTS_REUSE_REVIEW_EVIDENCE_CHANGED')
+
+    async def approved_tts_reuse_units(self, render_id):
+        """A final may reuse only the exact raw units in its approved review."""
+        async with self.session_factory() as session:
+            row=await session.get(ProductionRenderJobORM,render_id)
+            if row is None or row.render_kind!='final':
+                return None
+            package=await session.get(ProductionPackageORM,row.package_id)
+            approval=await session.get(ProductionApprovalORM,row.approval_id)
+            if package is None or approval is None:
+                raise ApprovalBoundaryError('TTS_REUSE_APPROVAL_CHANGED')
+            self._assert_approval_current(package,approval)
+            reviewed=await session.get(ProductionRenderJobORM,approval.preview_render_id)
+            if reviewed is None or reviewed.render_kind!='review' or reviewed.qc_status!='passed' \
+                    or reviewed.status!='awaiting_review' or reviewed.workspace_id!=row.workspace_id \
+                    or reviewed.project_id!=row.project_id:
+                raise ApprovalBoundaryError('TTS_REUSE_REVIEW_NOT_AVAILABLE')
+            units=reviewed.manifest_json.get('narration',{}).get('timing',[])
+            managed=any(unit.get('raw_audio_reuse') or unit.get('raw_audio_cache_origin') for unit in units)
+            if not managed:
+                return None  # Preserve explicitly uncached legacy providers.
+            from .sql_tts_artifact_reuse import digest,validate_evidence
+            pins=[]
+            for unit in units:
+                origin=unit.get('raw_audio_reuse') or unit.get('raw_audio_cache_origin')
+                if not origin or origin.get('schema_version')!='sql-raw-tts-reuse.v1' or not unit.get('provider_evidence'):
+                    raise ApprovalBoundaryError('TTS_REUSE_REVIEW_UNIT_REQUIRED')
+                evidence=validate_evidence(unit['provider_evidence'])
+                if origin.get('original_evidence_sha256')!=digest(unit['provider_evidence']):
+                    raise ApprovalBoundaryError('TTS_REUSE_REVIEW_UNIT_CHANGED')
+                pins.append({'input_fingerprint':origin['input_fingerprint'],'audio_sha256':evidence.audio_sha256,
+                    'original_evidence_sha256':digest(unit['provider_evidence'])})
+            return {'review_render_id':reviewed.render_id,'manifest_sha256':digest(reviewed.manifest_json),'units':pins}
+
+    async def approved_audio_reuse_source(self, render_id):
+        """Provider-neutral read of the exact prepared audio that was approved."""
+        async with self.session_factory() as session:
+            row=await session.get(ProductionRenderJobORM,render_id)
+            package=await session.get(ProductionPackageORM,row.package_id) if row else None
+            approval=await session.get(ProductionApprovalORM,row.approval_id) if row else None
+            if row is None or package is None or approval is None or row.render_kind!='final':
+                raise ApprovalBoundaryError('TTS_REUSE_APPROVED_REVIEW_REQUIRED')
+            self._assert_approval_current(package,approval)
+            reviewed=await session.get(ProductionRenderJobORM,approval.preview_render_id)
+            if reviewed is None or reviewed.render_kind!='review' or reviewed.status!='awaiting_review' \
+                    or reviewed.qc_status!='passed' or reviewed.cancellation_requested or reviewed.invalidated_at is not None \
+                    or (reviewed.workspace_id,reviewed.project_id,reviewed.timeline_version_id,
+                        reviewed.subtitle_version_id,reviewed.audio_version_id)!=(row.workspace_id,row.project_id,
+                        row.timeline_version_id,row.subtitle_version_id,row.audio_version_id):
+                raise ApprovalBoundaryError('TTS_REUSE_APPROVED_AUDIO_BINDING_CHANGED')
+            import copy
+            from .sql_tts_artifact_reuse import digest
+            return {'review_render_id':reviewed.render_id,'manifest':copy.deepcopy(reviewed.manifest_json),
+                'manifest_sha256':digest(reviewed.manifest_json),'approval_id':approval.approval_id}
+
     async def set_render_progress(self, render_id: str, progress: int) -> None:
         async with self.session_factory() as session:
             await session.execute(
@@ -459,13 +565,36 @@ class ProductionRepository:
     ) -> RenderJobRead | None:
         async with self.session_factory() as session:
             async with session.begin():
-                row = await session.get(ProductionRenderJobORM, render_id, with_for_update=True)
+                hint = await session.get(ProductionRenderJobORM, render_id)
+                if hint is None:
+                    return None
+                # Serialize with version creation (project lock) and approval
+                # replacement (package lock), then reload the render. SQLite's
+                # no-op UPDATE provides the corresponding writer transaction.
+                prepared=(manifest.get('narration') or {}).get('prepared_audio_reuse')
+                package=None
+                if hint.render_kind=='final' and prepared is not None:
+                    await session.execute(update(VideoProjectORM).where(
+                        VideoProjectORM.project_id==hint.project_id,VideoProjectORM.workspace_id==hint.workspace_id
+                    ).values(updated_at=VideoProjectORM.updated_at))
+                    await session.get(VideoProjectORM,hint.project_id,with_for_update=True,populate_existing=True)
+                    await session.execute(update(ProductionPackageORM).where(
+                        ProductionPackageORM.package_id==hint.package_id).values(updated_at=ProductionPackageORM.updated_at))
+                    package=await session.get(ProductionPackageORM,hint.package_id,with_for_update=True,populate_existing=True)
+                row = await session.get(ProductionRenderJobORM, render_id, with_for_update=True,populate_existing=True)
                 if row is None:
                     return None
                 if row.cancellation_requested or row.status == "stale":
                     row.status = "stale" if row.status == "stale" else "cancelled"
                     row.updated_at = utc_now()
                     return _render_read(row)
+                if row.render_kind=='final' and prepared is not None:
+                    import copy
+                    target=copy.deepcopy((manifest.get('narration') or {}).get('canonical_audio_binding'))
+                    if not isinstance(target,dict) or prepared.get('schema_version')!='sql-approved-prepared-audio-reuse.v1':
+                        raise ApprovalBoundaryError('TTS_REUSE_COMPLETION_PROOF_REQUIRED')
+                    target['review_manifest_sha256']=prepared.get('source_review_manifest_sha256')
+                    await self._assert_audio_reuse_current_locked(session,row,package,target)
                 row.status = "awaiting_review" if row.render_kind == "review" else "ready"
                 row.progress = 100
                 row.output_asset_id = output_asset_id
