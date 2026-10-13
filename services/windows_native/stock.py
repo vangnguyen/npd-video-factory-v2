@@ -3,8 +3,9 @@
 Separate worker and owned SQLite state, no Agent Hub database or media queue
 dependency. Metadata remains provider evidence, not independent legal clearance.
 """
-import asyncio,base64,copy,hashlib,json,re,threading,time,uuid
-from datetime import datetime
+import asyncio,base64,copy,hashlib,json,math,re,threading,time,uuid
+from datetime import datetime,timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import urlsplit
 from .backup import guard
@@ -21,6 +22,27 @@ from app.stock_media_providers import StockProviderFailure,stock_request_scope,P
 VERSION='native-stock-job-v1';ID=re.compile(r'^nstk_[a-f0-9]{32}$')
 STATUSES={'queued','running','retry_scheduled','succeeded','failed','not_configured','cancelled'}
 PROVIDERS={'pexels':PexelsStockMediaProvider,'pixabay':PixabayStockMediaProvider}
+WIRE_LEASE_SECONDS=45
+MAX_COOLDOWN_SECONDS=366*86400
+COOLDOWN_FAILURE='NATIVE_STOCK_PROVIDER_COOLDOWN'
+LEASE_FAILURE='NATIVE_STOCK_PROVIDER_WIRE_BUSY'
+
+
+def retry_delay(headers,observed_at):
+    """Bounded Retry-After seconds/date and absolute rate-limit reset epoch."""
+    value=headers.get('Retry-After')
+    if value:
+        value=value.strip()
+        if len(value)<=128:
+            if value.isdigit():return float(min(MAX_COOLDOWN_SECONDS,int(value)))
+            try:
+                stamp=parsedate_to_datetime(value)
+                if stamp.tzinfo is not None:return min(MAX_COOLDOWN_SECONDS,max(0.,stamp.timestamp()-observed_at))
+            except (TypeError,ValueError,OverflowError):pass
+    value=headers.get('X-RateLimit-Reset')
+    if value and len(value)<=128 and value.isdigit():
+        return float(min(MAX_COOLDOWN_SECONDS,max(0,int(value)-observed_at)))
+    return 5.
 
 
 class NativeStock:
@@ -38,7 +60,11 @@ class NativeStock:
             CREATE TABLE IF NOT EXISTS native_stock_imports (stock_id TEXT PRIMARY KEY,workspace_id TEXT NOT NULL,project_id TEXT NOT NULL,
                 request_sha256 TEXT NOT NULL,key_sha256 TEXT NOT NULL,result_json TEXT NOT NULL,result_sha256 TEXT NOT NULL,created_at TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS native_stock_events (sequence INTEGER PRIMARY KEY AUTOINCREMENT,stock_id TEXT NOT NULL,
-                project_id TEXT NOT NULL,action TEXT NOT NULL,actor_ref TEXT NOT NULL,evidence_json TEXT NOT NULL,created_at TEXT NOT NULL);''')
+                project_id TEXT NOT NULL,action TEXT NOT NULL,actor_ref TEXT NOT NULL,evidence_json TEXT NOT NULL,created_at TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS native_stock_provider_cooldowns (scope_sha256 TEXT PRIMARY KEY,workspace_id TEXT NOT NULL,
+                cache_scope_sha256 TEXT NOT NULL,provider TEXT NOT NULL,provider_mode TEXT NOT NULL,configuration_sha256 TEXT NOT NULL,
+                request_class TEXT NOT NULL,cooldown_until REAL NOT NULL,lease_id TEXT,lease_until REAL,evidence_json TEXT NOT NULL,
+                evidence_sha256 TEXT NOT NULL,updated_at TEXT NOT NULL);''')
             binding=con.execute("SELECT workspace_id FROM native_stock_bindings WHERE name='workspace'").fetchone()
             if ((binding and binding[0]!=workspace_id) or con.execute('SELECT 1 FROM native_stock_jobs WHERE workspace_id!=? LIMIT 1',(workspace_id,)).fetchone()
                 or con.execute('SELECT 1 FROM native_stock_imports WHERE workspace_id!=? LIMIT 1',(workspace_id,)).fetchone()):raise WorkflowError('NATIVE_STOCK_WORKSPACE_MISMATCH',400)
@@ -187,15 +213,109 @@ class NativeStock:
             con.execute("UPDATE native_stock_jobs SET status='cancelled',next_at=NULL,updated_at=? WHERE stock_id=?",(now(),identity))
             self.event(con,row,'stock.request.cancelled',actor,external_call=False);return self.read(self.row(con,project,identity))
 
-    async def call(self,adapter,kind,request,candidate,counter):
-        async def count(_request):counter['wire_attempts']+=1
-        adapter._http().event_hooks['request'].append(count)
+    def wire_scope(self,snapshot,request_class):
+        return {'workspace_id':self.workspace,'cache_scope_sha256':self.cache_scope,'provider':snapshot['provider'],
+            'provider_mode':snapshot['provider_mode'],'configuration_sha256':snapshot['provider_configuration_sha256'],
+            'request_class':request_class}
+
+    def cooldown_row(self,con,scope):
+        identity=digest(scope);row=con.execute('SELECT * FROM native_stock_provider_cooldowns WHERE scope_sha256=?',(identity,)).fetchone()
+        if row is None:return None
+        try:
+            if any(row[key]!=value for key,value in scope.items()) or row['workspace_id']!=self.workspace:raise ValueError()
+            until=row['cooldown_until'];lease_until=row['lease_until'];evidence=json.loads(row['evidence_json'])
+            if not isinstance(until,(int,float)) or not math.isfinite(until) or until<0 or digest(evidence)!=row['evidence_sha256']:raise ValueError()
+            if (row['lease_id'] is None)!=(lease_until is None):raise ValueError()
+            if row['lease_id'] is not None and (not re.fullmatch(r'[a-f0-9]{32}',row['lease_id']) or not math.isfinite(lease_until) or lease_until<=0):raise ValueError()
+            if until and (not isinstance(evidence,dict) or evidence.get('scope')!=scope or evidence.get('blocked_until')!=until
+                or evidence.get('schema_version')!='native-stock-provider-cooldown.v1' or evidence.get('wire_observed') is not True
+                or evidence.get('semantic_health_assessment') is not False or not ID.fullmatch(evidence.get('source_stock_id',''))
+                or type(evidence.get('retry_delay_seconds')) not in (int,float) or not 0<=evidence['retry_delay_seconds']<=MAX_COOLDOWN_SECONDS
+                or type(evidence.get('observed_at')) not in (int,float) or not math.isfinite(evidence['observed_at'])
+                or abs(evidence['observed_at']+evidence['retry_delay_seconds']-until)>1e-6
+                or not (evidence.get('status_code') in (429,500,502,503,504) or
+                    evidence.get('basis')=='successful_api_quota_exhaustion' and scope['request_class']=='api'
+                    and type(evidence.get('status_code')) is int and 200<=evidence['status_code']<300
+                    and type(evidence.get('remaining')) is int and evidence['remaining']==0 and evidence.get('reset_epoch')==until
+                    and until>evidence['observed_at'])):raise ValueError()
+        except (TypeError,ValueError,KeyError):raise WorkflowError('NATIVE_STOCK_PROVIDER_COOLDOWN_INVALID') from None
+        return row
+
+    def wire_admit(self,snapshot,request_class,stock_id,counter):
+        scope=self.wire_scope(snapshot,request_class);identity=digest(scope);stamp=float(self.clock());lease=uuid.uuid4().hex
+        with self.store.transaction() as con:
+            row=self.cooldown_row(con,scope)
+            if row is None:
+                con.execute('INSERT INTO native_stock_provider_cooldowns VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                    (identity,*scope.values(),0.,None,None,'{}',digest({}),now()))
+            else:
+                if row['cooldown_until']>stamp:
+                    counter['deferred_until']=row['cooldown_until']
+                    raise StockProviderFailure(COOLDOWN_FAILURE,retryable=True,retry_after_seconds=row['cooldown_until']-stamp)
+                if row['lease_id'] is not None and row['lease_until']>stamp:
+                    counter['deferred_until']=row['lease_until']
+                    raise StockProviderFailure(LEASE_FAILURE,retryable=True,retry_after_seconds=row['lease_until']-stamp)
+            con.execute('UPDATE native_stock_provider_cooldowns SET lease_id=?,lease_until=?,updated_at=? WHERE scope_sha256=?',
+                (lease,stamp+WIRE_LEASE_SECONDS,now(),identity))
+        counter['wire_leases'][lease]=(scope,stock_id);counter['wire_attempts']+=1
+        return lease
+
+    def wire_release(self,scope,lease,*,status=None,headers=None,stock_id=None):
+        identity=digest(scope);stamp=float(self.clock())
+        with self.store.transaction() as con:
+            row=self.cooldown_row(con,scope)
+            if row is None or row['lease_id']!=lease:return
+            throttled=status==429 or status in (500,502,503,504) and headers and (headers.get('Retry-After') or headers.get('X-RateLimit-Reset'))
+            quota=False;reset=None
+            # Pexels documents quota headers on successful responses and a
+            # UNIX monthly reset: https://www.pexels.com/api/documentation/
+            if scope['request_class']=='api' and type(status) is int and 200<=status<300 and headers:
+                remaining=headers.get('X-RateLimit-Remaining');value=headers.get('X-RateLimit-Reset')
+                if remaining and len(remaining)<=32 and remaining.isdigit() and int(remaining)==0 and value and len(value)<=32 and value.isdigit():
+                    reset=int(value)
+                    quota=stamp<reset<=stamp+MAX_COOLDOWN_SECONDS
+            throttled=bool(throttled or quota)
+            if throttled:
+                delay=reset-stamp if quota else retry_delay(headers,stamp);blocked=stamp+delay
+                if blocked>=row['cooldown_until']:
+                    evidence={'schema_version':'native-stock-provider-cooldown.v1','scope':scope,'observed_at':stamp,
+                        'blocked_until':blocked,'retry_delay_seconds':delay,'status_code':status,'source_stock_id':stock_id,
+                        'wire_observed':True,'semantic_health_assessment':False,
+                        'basis':'successful_api_quota_exhaustion' if quota else 'retryable_wire_response',
+                        'remaining':0 if quota else None,'reset_epoch':reset if quota else None}
+                    con.execute('UPDATE native_stock_provider_cooldowns SET cooldown_until=?,evidence_json=?,evidence_sha256=? WHERE scope_sha256=?',
+                        (blocked,json.dumps(evidence),digest(evidence),identity))
+                    job=self.row(con,self.read(con.execute('SELECT * FROM native_stock_jobs WHERE stock_id=?',(stock_id,)).fetchone())['project_id'],stock_id)
+                    self.event(con,job,'stock.provider.cooldown.observed','native-stock-worker',scope_sha256=identity,
+                        request_class=scope['request_class'],status_code=status,blocked_until=blocked,evidence_sha256=digest(evidence))
+            con.execute('UPDATE native_stock_provider_cooldowns SET lease_id=NULL,lease_until=NULL,updated_at=? WHERE scope_sha256=? AND lease_id=?',
+                (now(),identity,lease))
+            return max(row['cooldown_until'],blocked) if throttled else None
+
+    async def call(self,adapter,kind,request,candidate,counter,*,snapshot,stock_id):
+        async def admit(wire_request):
+            host=wire_request.url.host
+            request_class='api' if host==adapter.api_host else 'cdn:'+host if host in adapter.cdn_hosts else None
+            if request_class is None:raise WorkflowError('NATIVE_STOCK_WIRE_SCOPE_INVALID')
+            lease=self.wire_admit(snapshot,request_class,stock_id,counter)
+            wire_request.extensions['vf_native_stock_wire_lease']=lease
+        async def observed(response):
+            lease=response.request.extensions.get('vf_native_stock_wire_lease');bound=counter['wire_leases'].get(lease)
+            if bound is None:raise WorkflowError('NATIVE_STOCK_WIRE_LEASE_INVALID')
+            until=self.wire_release(bound[0],lease,status=response.status_code,headers=response.headers,stock_id=bound[1])
+            if until is not None:counter['observed_cooldown_until']=max(counter.get('observed_cooldown_until',0),until)
+            counter['wire_leases'].pop(lease,None)
+        client=adapter._http();client.event_hooks['request'].append(admit);client.event_hooks['response'].append(observed)
         try:
             with stock_request_scope(self.cache_scope):
                 async with asyncio.timeout(35):
                     if kind=='search':return await (adapter.search_images if request['media_type']=='image' else adapter.search_videos)(request['query'],orientation=request['orientation'],limit=request['limit'])
                     return await adapter.download_asset(StockMediaCandidateRead.model_validate(candidate))
-        finally:await adapter.aclose()
+        finally:
+            try:await adapter.aclose()
+            finally:
+                for lease,(scope,_) in list(counter['wire_leases'].items()):self.wire_release(scope,lease)
+                counter['wire_leases'].clear()
 
     def process(self):
         if self.stop.is_set():return None
@@ -209,7 +329,7 @@ class NativeStock:
             value=self.read(row);snapshot=value['snapshot'];claim=uuid.uuid4().hex;attempt=row['attempts']+1
             con.execute("UPDATE native_stock_jobs SET status='running',attempts=?,claim_id=?,lease_until=?,next_at=NULL,updated_at=? WHERE stock_id=?",(attempt,claim,self.clock()+600,now(),row['stock_id']))
             self.event(con,row,'stock.request.claimed','native-stock-worker',attempt=attempt)
-        result=None;asset=None;operation=None;failure=None;retryable=False;delay=5*2**(attempt-1);counter={'wire_attempts':0}
+        result=None;asset=None;operation=None;failure=None;retryable=False;delay=5*2**(attempt-1);counter={'wire_attempts':0,'wire_leases':{}}
         try:
             factory=self.factories.get(snapshot['provider'])
             if factory is None or not factory.enabled:raise MediaProviderNotConfigured()
@@ -221,9 +341,10 @@ class NativeStock:
                     _,source=self.source(con,row['project_id'],snapshot['request'])
                     if source!=snapshot['source_candidate']:raise WorkflowError('NATIVE_STOCK_SELECTION_CHANGED')
             operation=self.costs.begin(project_id=row['project_id'],provider=snapshot['provider'],model='stock-api.v1',
-                operation='stock.'+row['kind']+'.'+row['stock_id']+'.'+str(attempt),request_sha256=row['request_fingerprint'],estimated_cost=0,external_call=True,paid=False)
+                operation='stock.'+row['kind']+'.'+row['stock_id']+'.'+str(attempt)+'.'+claim,
+                request_sha256=row['request_fingerprint'],estimated_cost=0,external_call=True,paid=False)
             adapter=factory.create(self.store.root,self.cache_scope)
-            output=asyncio.run(self.call(adapter,row['kind'],snapshot['request'],snapshot['source_candidate'],counter))
+            output=asyncio.run(self.call(adapter,row['kind'],snapshot['request'],snapshot['source_candidate'],counter,snapshot=snapshot,stock_id=row['stock_id']))
             mock=snapshot['provider_mode']=='fixture'
             result={'schema_version':'native-stock-result-v1','stock_id':row['stock_id'],'workspace_id':self.workspace,'project_id':row['project_id'],
                 'kind':row['kind'],'provider':snapshot['provider'],'mock':mock,'actual_provider_calls':0 if mock else counter['wire_attempts'],
@@ -250,7 +371,9 @@ class NativeStock:
                     full_native_media_validation_passed=True)
             self.costs.settle(operation,status='response_received',actual_cost=None,response_sha256=digest(result))
         except MediaProviderNotConfigured:failure='NATIVE_STOCK_NOT_CONFIGURED'
-        except StockProviderFailure as error:failure=error.code;retryable=error.retryable;delay=max(delay,error.retry_after_seconds or 0)
+        except StockProviderFailure as error:
+            failure=error.code;retryable=error.retryable
+            delay=max(delay,error.retry_after_seconds or 0,counter.get('observed_cooldown_until',0)-self.clock())
         except WorkflowError as error:failure=error.code
         except TimeoutError:failure='NATIVE_STOCK_TIMEOUT';retryable=True
         except Exception:failure='NATIVE_STOCK_PROVIDER_FAILED'
@@ -263,11 +386,13 @@ class NativeStock:
                 current=self.row(con,row['project_id'],row['stock_id'])
                 if current['claim_id']!=claim or current['status']!='running':return row['stock_id']
                 if self.stop.is_set():failure='NATIVE_STOCK_WORKER_INTERRUPTED';retryable=True
-                status='not_configured' if failure=='NATIVE_STOCK_NOT_CONFIGURED' else 'retry_scheduled' if failure and retryable and attempt<3 else 'failed' if failure else 'succeeded'
-                next_at=self.clock()+min(3600,delay) if status=='retry_scheduled' else None
+                deferred=failure in (COOLDOWN_FAILURE,LEASE_FAILURE)
+                attempts=attempt-1 if deferred and counter['wire_attempts']==0 else attempt
+                status='not_configured' if failure=='NATIVE_STOCK_NOT_CONFIGURED' else 'retry_scheduled' if failure and retryable and (deferred or attempt<3) else 'failed' if failure else 'succeeded'
+                next_at=(counter.get('deferred_until') if deferred else self.clock()+min(MAX_COOLDOWN_SECONDS,delay)) if status=='retry_scheduled' else None
                 result=None if failure else result
-                con.execute('UPDATE native_stock_jobs SET status=?,claim_id=NULL,lease_until=NULL,next_at=?,result_json=?,result_sha256=?,failure_code=?,updated_at=? WHERE stock_id=? AND claim_id=?',
-                    (status,next_at,json.dumps(result,ensure_ascii=False) if result is not None else None,digest(result) if result is not None else None,failure,now(),row['stock_id'],claim))
+                con.execute('UPDATE native_stock_jobs SET status=?,attempts=?,claim_id=NULL,lease_until=NULL,next_at=?,result_json=?,result_sha256=?,failure_code=?,updated_at=? WHERE stock_id=? AND claim_id=?',
+                    (status,attempts,next_at,json.dumps(result,ensure_ascii=False) if result is not None else None,digest(result) if result is not None else None,failure,now(),row['stock_id'],claim))
                 checked=self.read(self.row(con,row['project_id'],row['stock_id']))
                 self.event(con,current,'stock.request.'+status,'native-stock-worker',attempt=attempt,failure_code=failure,
                     actual_provider_calls=0 if snapshot['provider_mode']=='fixture' else counter['wire_attempts'],fixture=snapshot['provider_mode']=='fixture')
