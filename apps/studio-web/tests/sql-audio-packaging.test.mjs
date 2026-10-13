@@ -7,6 +7,7 @@ test('SQL Studio deployment copies all direct ES modules and permits verified lo
   const [script,docker,nginx]=await Promise.all(['studio.js','Dockerfile','nginx.conf'].map(p=>readFile(new URL(p,root),'utf8')));
   const modules=[...script.matchAll(/from\s+["']\/([^"'?]+\.mjs)(?:\?[^"']*)?["']/g)].map(m=>m[1]);
   assert.ok(modules.includes('uploaded-audio-review.mjs'));
+  assert.ok(modules.includes('stock-planning-review.mjs'));
   assert.match(docker,/^COPY \*\.mjs \/usr\/share\/nginx\/html\//m);
   for(const name of modules)assert.ok((await stat(new URL(name,root))).isFile(),name);
   assert.match(nginx,/media-src 'self' blob:/);

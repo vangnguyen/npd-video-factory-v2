@@ -15,6 +15,16 @@
 .uploaded-audio-word { display: grid; grid-template-columns: minmax(140px, 2fr) repeat(2, minmax(90px, 1fr)) auto; align-items: end; gap: 8px; margin: 8px 0; }
 [data-audio-warning]:not(:empty), [data-audio-provider] { border-left: 3px solid #cf941c; padding-left: 10px; }
 @media (max-width: 650px) { .uploaded-audio-word { grid-template-columns: 1fr 1fr; } }
+#stock-planning-review { margin-bottom: 16px; overflow-wrap: anywhere; }
+#stock-planning-review > summary { cursor: pointer; font-size: 18px; font-weight: 700; padding: 14px 16px; }
+[data-stock-planning-body] { display: grid; gap: 10px; padding: 0 16px 16px; font-size: 14px; }
+[data-stock-planning-body] label { display: grid; gap: 5px; }
+[data-stock-planning-body] label:has(> input[type="checkbox"]) { display: flex; align-items: center; flex-direction: row-reverse; justify-content: flex-end; }
+[data-stock-planning-body] p { margin: 0; line-height: 1.6; }
+[data-stock-planning-body] select { min-width: 0; width: 100%; max-width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 7px; font: inherit; }
+[data-stock-planning-body] button { min-height: 36px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #edf5f8; font: inherit; cursor: pointer; }
+[data-stock-planning-body] button:disabled { opacity: .5; cursor: not-allowed; }
+[data-stock-planning-history] { padding-left: 24px; line-height: 1.7; }
 .studio-shell .sidebar { width: 226px; padding: 24px 16px; gap: 30px; }
 .studio-main { padding: 0 22px 28px; }
 .studio-topbar { min-height: 82px; }

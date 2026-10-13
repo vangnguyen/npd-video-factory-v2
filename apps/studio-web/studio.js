@@ -29,6 +29,7 @@ import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
 import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
 import {initializeChannelLearning} from '/channel-learning.mjs';
 import {initializeUploadedAudioReview} from '/uploaded-audio-review.mjs?v=sql-audio-1';
+import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-stock-1';
 
 const state = {
   workspaceId: null,
@@ -88,11 +89,22 @@ const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-revi
   mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0,
     dirty: state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onUploaded: () => loadProject(), onCanonicalSaved: () => loadProject()});
+const stockReview = initializeStockPlanningReview({root: $('#stock-planning-review'), api,
+  getState: () => ({...state, busy: state.projectLoading > 0,
+    dirty: audioReview.isDirty() || state.transcriptDrafts.size > 0
+      || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  onMessage: toast, onPlanUpdated: plan => {
+    if (plan.project_id !== state.projectId || plan.workspace_id !== state.workspaceId) return;
+    state.mediaPlans = [plan, ...state.mediaPlans.filter(item => item.media_plan_id !== plan.media_plan_id)];
+    if (state.timeline) renderBrowser();
+  }});
 document.addEventListener('input', event => {
   if (event.target.closest('#multi-input-workbench') || event.target.closest('[data-transcript-text]')) audioReview.sync();
+  stockReview.sync();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
+  stockReview.sync();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -207,10 +219,12 @@ async function loadProjectList() {
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
   if (audioReview.isDirty()) {toast('Lưu/bỏ sửa hoặc đối chiếu yêu cầu audio trước khi tải lại dự án.', true); return;}
+  if (stockReview.isPending()) {toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi tải lại dự án.', true); return;}
   const loadedProjectId = state.projectId;
   state.projectLoading++;
   $('#project-select').disabled = true;
   audioReview.sync();
+  stockReview.sync();
   multiInput.setBusy(true);
   stopPreviewPolling();
   stopProductionPolling();
@@ -294,12 +308,14 @@ async function loadProject({ quiet = false } = {}) {
     state.projectLoading--;
     $('#project-select').disabled = state.projectLoading > 0;
     audioReview.sync();
+    stockReview.sync();
   }
   if (state.projectId === loadedProjectId) await audioReview.reload();
 }
 
 function renderNoProject(title, description) {
   audioReview.sync();
+  stockReview.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -311,6 +327,7 @@ function renderNoProject(title, description) {
 
 function render() {
   audioReview.sync();
+  stockReview.sync();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -1324,12 +1341,17 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if (stockReview.isPending()) {
+    event.target.value = state.projectId ?? '';
+    return toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi đổi dự án.', true);
+  }
   if (audioReview.isDirty()) {
     event.target.value = state.projectId ?? '';
     return toast('Lưu/bỏ sửa hoặc đối chiếu yêu cầu audio trước khi đổi dự án.', true);
   }
   state.projectId = event.target.value || null;
   audioReview.sync();
+  stockReview.sync();
   window.localStorage.setItem("npd-studio-project", state.projectId ?? "");
   await loadProject();
 });
@@ -1664,6 +1686,7 @@ $("#preview-video").addEventListener("timeupdate", (event) => setPlayhead(event.
 
 window.addEventListener("beforeunload", () => {
   audioReview.dispose();
+  stockReview.dispose();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
