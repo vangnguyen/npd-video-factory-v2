@@ -31,3 +31,6 @@ Mốc [SQL/API Meta counter feedback](META_COUNTER_SQL_FEEDBACK.md): thuật to�
 
 
 Mốc [Meta webhook qua tiến trình độc lập](NATIVE_META_WEBHOOK_PROCESSES.md):8 bộ bằng chứng local (6 ca đạt ban đầu,2 ca sửa và chạy lại đạt),5 chốt bảo vệ Native đạt. HTTP/chữ ký/schema/ledger chạy thật trên local; mất phản hồi, khởi động lại bộ nhận, ngắt tiến trình gửi, xoay khóa, Retry-After và bên nhận offline đều được kiểm chứng. Meta/video/identity vẫn giả lập; chưa dùng Hub/HTTPS production/provider thật/Owner. Còn thiếu toàn bộ phạm vi thao tác /v1 theo Master và full A/B/C/production;59 nhóm vẫn mở. Bundle/mã nguồn cuối: recovery/20261007/native-meta-webhook-processes-program-state.json.
+
+
+Mốc [API /v1 theo Master](SERVICE_API_V1.md): nối đủ18 thao tác và đường hỗ trợ tới engine hiện có; quyền rõ theo workspace, chữ ký riêng, xác thực reviewer/owner độc lập, timeline chung, lấy preview/render và biên nhận chống lặp.16 mới/52 hồi quy API/2 auth Native đạt. Cấu hình Hub lỗi chỉ tắt lớp tích hợp; migration bổ sung chỉ thử trên SQLite riêng. Hai luồng có trace HTTP thật trên ASGI nhưng mọi media/provider/audio/QC/identity vẫn giả lập; không nghiệm thu Owner/full A/B/C/provider/production. Native parity, toàn bộ sự kiện và xử lý kết quả lệnh chưa rõ còn mở;59 nhóm chưa đóng. Bundle/mã nguồn cuối: recovery/20261007/service-api-program-state.json.

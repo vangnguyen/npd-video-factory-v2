@@ -1,0 +1,127 @@
+{
+  "schema_version": "north-star-service-api-evidence-v1",
+  "recorded_at": "2026-10-13T03:55:41.653742+00:00",
+  "source_parent": "c31c7369b37b4dcc744ccd7cafa14600d04f8d95",
+  "tests": {
+    "API_new": 16,
+    "API_regression": 52,
+    "Native_auth": 2
+  },
+  "test_logs": {
+    "API_new": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-links-new-final.log",
+      "sha256": "0e5e5efead5525d14171a1a119decb7ca7f14508c4badc621b55083e746477ad",
+      "bytes": 112,
+      "passed": 16
+    },
+    "API_regression": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-regression-final.log",
+      "sha256": "4514391a0cafa8cf2800ce018bf3cb9bc8fd9a331181fe9f412e028acab944e0",
+      "bytes": 113,
+      "passed": 52
+    },
+    "Native_auth": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-native-auth-final.log",
+      "sha256": "6207b454cc19244d26de20133b8a76491c9ee12ce27cfac7804c7777a5b81ded",
+      "bytes": 543,
+      "passed": 2
+    }
+  },
+  "fixture_flows": [
+    {
+      "scenario": "uploaded-media-orchestration",
+      "accepted_fixture_trace": true,
+      "HTTP_requests": 24,
+      "file": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-flows-links-final\\uploaded-media-orchestration.json",
+        "sha256": "c122833a5178e2e8c9acc395c28a3cb0f91ed6d71befdcb6dac8b6ea25f13d78",
+        "bytes": 256114
+      }
+    },
+    {
+      "scenario": "trend-content-orchestration",
+      "accepted_fixture_trace": true,
+      "HTTP_requests": 9,
+      "file": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-flows-links-final\\trend-content-orchestration.json",
+        "sha256": "983c7146cbb0c7db9b5d75759e95dd1ca655f292f4558d4658bd436534850e96",
+        "bytes": 159131
+      }
+    },
+    {
+      "scenario": "human-boundary-denials",
+      "accepted_fixture_trace": true,
+      "HTTP_requests": 2,
+      "file": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-flows-links-final\\human-boundary-denials.json",
+        "sha256": "deb402d42033b2786f2706e880d0a944ba1bf4e5b4c1e342d831a93da733ae22",
+        "bytes": 1310
+      }
+    }
+  ],
+  "portable_flow_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-api-flow-evidence-n1.zip",
+    "sha256": "84aa251086f7701a945bd67d7d3d9292225a59f3b6dae79850eccdedf4a45c5e",
+    "bytes": 44071,
+    "entries": 6,
+    "all_bytes_verified": true,
+    "media_copied": false
+  },
+  "scope": {
+    "Master_example_operations": 18,
+    "full_Master_example_endpoint_coverage": true,
+    "actual_signed_ASGI_and_owned_SQLite": true,
+    "existing_production_engines_reused": true,
+    "workspace_capabilities_default_deny": true,
+    "no_service_to_human_principal_conversion": true,
+    "approval_dual_service_and_human_reviewer_auth": true,
+    "publication_dual_service_and_human_owner_auth": true,
+    "canonical_timeline_shared_with_existing_UI": true,
+    "immutable_idempotent_response_and_uncertain_no_redispatch": true,
+    "human_actor_refs_server_bound": true,
+    "optional_Hub_invalid_custody_does_not_break_core": true,
+    "additive_migration_owned_SQLite_verified": true,
+    "production_migration_run": false,
+    "production_PostgreSQL_verified": false,
+    "Native_full_service_command_parity_verified": false,
+    "complete_new_command_webhook_event_coverage_verified": false,
+    "automatic_uncertain_outcome_reconciliation": false,
+    "provider_media_audio_mix_render_QC_identity_are_fixtures": true,
+    "new_browser_verified": false,
+    "real_Agent_Hub": false,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "retained_attempts": [
+    "service-api-initial-n1.log",
+    "service-api-flows-n1.log",
+    "service-api-flows-n2.log",
+    "service-api-flows-n3.log",
+    "service-api-flows-n4.log",
+    "service-api-combined-n5.log",
+    "service-api-media-flow-n6.log",
+    "service-api-media-flow-n7.log",
+    "service-api-media-flow-n8.log",
+    "service-api-media-flow-n9.log",
+    "service-api-media-flow-n10.log",
+    "service-api-media-flow-n11.log",
+    "service-api-new-n12.log",
+    "service-api-new-final.log",
+    "service-api-flows-final"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}
