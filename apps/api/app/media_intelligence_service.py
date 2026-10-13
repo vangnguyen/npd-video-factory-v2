@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import re
@@ -67,6 +68,8 @@ from . import stock_planner_retry as stock_planner
 from .auto_edit_models import AutoEditAnalysisRead
 from .vision_models import VisionAnalysisRead
 from .object_storage import sha256_file
+from .frozen_storage_read import frozen_asset_read, completed_read, MAX_SOURCE_BYTES
+from .bounded_storage_download import StorageDownloadError
 
 
 MEDIA_RESOLUTION_QUEUE_KEY = "npd:video-factory:v2:media-resolution:queued"
@@ -424,8 +427,19 @@ class MediaPlanningService:
             raise ValueError('STOCK_PLANNER_SOURCE_STORAGE_NOT_CONFIGURED')
         with tempfile.TemporaryDirectory(prefix='vf-sp-') as owned:
             path = Path(owned) / 'source'
-            await self.object_storage.download_file(object_key=source.object_key, destination=path)
-            if sha256_file(path) != binding['source_file_sha256']:
+            try:
+                proof=frozen_asset_read(AssetRead.model_validate(inputs['source_asset']),
+                    workspace_id=plan.workspace_id,project_id=plan.project_id,storage=self.object_storage,
+                    maximum=MAX_SOURCE_BYTES)
+                await proof.download(self.object_storage,path)
+                checksum=await completed_read(asyncio.to_thread(sha256_file,path))
+            except StorageDownloadError as error:
+                if error.code in {'STORAGE_DOWNLOAD_HASH_MISMATCH','STORAGE_DOWNLOAD_SIZE_MISMATCH','STORAGE_DOWNLOAD_SIZE_LIMIT'}:
+                    raise ValueError('STOCK_PLANNER_SOURCE_FILE_CHANGED') from None
+                raise ValueError('STOCK_PLANNER_SOURCE_DOWNLOAD_FAILED') from None
+            except Exception:
+                raise ValueError('STOCK_PLANNER_SOURCE_DOWNLOAD_FAILED') from None
+            if checksum != binding['source_file_sha256']:
                 raise ValueError('STOCK_PLANNER_SOURCE_FILE_CHANGED')
         # The object download is awaited. Recheck current database versions
         # after it completes so an edit during that wait cannot start a wire.

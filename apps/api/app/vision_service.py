@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 from decimal import Decimal
@@ -7,6 +8,9 @@ from pathlib import Path
 
 from .auto_edit_repository import AutoEditRepository
 from .object_storage import ObjectStorageProvider, sha256_file
+from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES
+from .bounded_storage_download import StorageDownloadError
+from .media_validation import safe_upload_filename
 from .provider_safety import (
     ProviderCallContext,
     ProviderExecutionTrace,
@@ -83,6 +87,7 @@ class VisionAnalysisService:
                 separators=(",", ":"),
             ).encode("utf-8")
         ).hexdigest()
+        source_provider_identity = self._source_provider_identity()
         vision_analysis_id, created = await self.repository.create_analysis(
             base_analysis=base,
             asset=asset,
@@ -108,11 +113,9 @@ class VisionAnalysisService:
             return existing
         await self.repository.mark_running(vision_analysis_id)
         self.staging_root.mkdir(parents=True, exist_ok=True)
-        local_path = self.staging_root / f"{vision_analysis_id}-{asset.filename}"
+        local_path = self.staging_root / f"{vision_analysis_id}-{safe_upload_filename(asset.filename)}"
         try:
-            await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
-            if sha256_file(local_path) != asset.checksum_sha256:
-                raise ValueError("downloaded Vision source checksum does not match the asset record")
+            await self._download_vision_source(base,asset,local_path,expected_provider_identity=source_provider_identity)
             operation_key = (
                 payload.acceptance_operation_id
                 if self.provider.external_call and payload.acceptance_operation_id
@@ -272,6 +275,42 @@ class VisionAnalysisService:
 
     async def get(self, vision_analysis_id: str) -> VisionAnalysisRead | None:
         return await self.repository.get_analysis(vision_analysis_id)
+
+    def _source_provider_identity(self):
+        return tuple(getattr(self.provider,name,None) for name in (
+            'key','model','external_call','paid','credential_alias','estimated_cost_vnd',
+            'max_frames','image_detail','input_token_ceiling','max_output_tokens'))
+
+    async def _download_vision_source(self,base,asset,path,*,expected_provider_identity=None):
+        identity=expected_provider_identity or self._source_provider_identity();custody=asset_custody(asset)
+        base_evidence=base.model_dump(mode='json')
+        project=await self.platform.get_project(base.project_id)
+        if project is None or project.workspace_id!=base.workspace_id:
+            raise ValueError('VISION_SOURCE_SCOPE_CHANGED')
+        if self._source_provider_identity()!=identity:
+            raise ValueError('VISION_SOURCE_PROVIDER_CHANGED')
+        project_scope={name:getattr(project,name) for name in (
+            'project_id','workspace_id','status','version','current_version_id')}
+        try:
+            proof=frozen_asset_read(asset,workspace_id=base.workspace_id,project_id=base.project_id,
+                storage=self.object_storage,maximum=MAX_SOURCE_BYTES)
+            await proof.download(self.object_storage,path)
+            if await completed_read(asyncio.to_thread(sha256_file,path))!=asset.checksum_sha256:
+                raise ValueError('VISION_SOURCE_BYTES_CHANGED')
+        except StorageDownloadError as error:
+            if error.code in {'STORAGE_DOWNLOAD_HASH_MISMATCH','STORAGE_DOWNLOAD_SIZE_MISMATCH','STORAGE_DOWNLOAD_SIZE_LIMIT'}:
+                raise ValueError('downloaded Vision source checksum does not match the asset record') from None
+            raise ValueError('VISION_SOURCE_DOWNLOAD_FAILED') from None
+        except Exception:
+            raise ValueError('VISION_SOURCE_DOWNLOAD_FAILED') from None
+        snapshot=await self.auto_edit_repository.read_source_snapshot(project_id=base.project_id,
+            asset_ids=(asset.asset_id,),analysis_id=base.analysis_id)
+        latest=snapshot['analysis'];current=snapshot['assets'].get(asset.asset_id)
+        if current is None or asset_custody(current)!=custody or latest is None \
+                or latest.model_dump(mode='json')!=base_evidence \
+                or snapshot['project']!=project_scope \
+                or self._source_provider_identity()!=identity:
+            raise ValueError('VISION_SOURCE_CUSTODY_CHANGED')
 
     async def list(self, project_id: str) -> list[VisionAnalysisRead]:
         if await self.platform.get_project(project_id) is None:

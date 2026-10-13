@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import shutil
 from pathlib import Path
 from typing import Protocol
@@ -10,7 +11,9 @@ from jsonschema import Draft202012Validator
 
 from .auto_edit_repository import AutoEditRepository
 from .media_intelligence_repository import MediaIntelligenceRepository
-from .object_storage import ObjectStorageProvider, validate_object_key, sha256_file
+from .object_storage import ObjectStorageProvider, LocalObjectStorageProvider, validate_object_key, sha256_file
+from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES
+from .bounded_storage_download import StorageDownloadError
 from .platform_models import AssetRead, AssetRegister
 from .repositories import PlatformRepository
 from .timeline_logic import TimelineEditError, apply_operations, build_initial_timeline
@@ -33,6 +36,31 @@ from .timeline_proxy import (
 
 PREVIEW_QUEUE_KEY = "npd:video-factory:v2:preview:queued"
 PREVIEW_PROCESSING_KEY = "npd:video-factory:v2:preview:processing"
+
+
+class LegacyLocalPreviewRead:
+    """Read registered project-scoped Local assets without rewriting their keys."""
+
+    def __init__(self, asset, *, preview, storage):
+        if (type(storage) is not LocalObjectStorageProvider or asset.storage_provider != 'local'
+                or asset.workspace_id != preview.workspace_id or asset.project_id != preview.project_id
+                or type(asset.size_bytes) is not int or not 0 < asset.size_bytes <= MAX_SOURCE_BYTES
+                or not isinstance(asset.checksum_sha256, str)
+                or re.fullmatch('[a-f0-9]{64}', asset.checksum_sha256) is None):
+            raise ValueError('PREVIEW_LEGACY_LOCAL_PROOF_INVALID')
+        self.prefix = f'projects/{preview.project_id}/'
+        self.object_key = validate_object_key(asset.object_key)
+        if self.object_key != asset.object_key or not self.object_key.startswith(self.prefix):
+            raise ValueError('PREVIEW_LEGACY_LOCAL_SCOPE_CHANGED')
+        self.size_bytes = asset.size_bytes
+        self.checksum_sha256 = asset.checksum_sha256
+
+    async def download(self, storage, destination):
+        if type(storage) is not LocalObjectStorageProvider:
+            raise ValueError('PREVIEW_LEGACY_LOCAL_PROVIDER_CHANGED')
+        await completed_read(storage.download_file(object_key=self.object_key, destination=destination,
+            max_bytes=MAX_SOURCE_BYTES, expected_size_bytes=self.size_bytes,
+            expected_sha256=self.checksum_sha256, expected_prefix=self.prefix), cancel_operation=True)
 
 
 class QueueClient(Protocol):
@@ -265,6 +293,7 @@ class PreviewService:
         try:
             workdir.mkdir(parents=True, exist_ok=True)
             assets: dict[str, tuple[AssetRead, Path]] = {}
+            source_custodies = {}
             asset_ids = {
                 clip.asset_id
                 for track in version.snapshot.tracks
@@ -280,11 +309,11 @@ class PreviewService:
                     raise RuntimeError(f"timeline asset is unavailable: {asset_id}")
                 suffix = Path(asset.filename).suffix[:12] or ".bin"
                 destination = workdir / f"{asset.asset_id}{suffix}"
-                await self.object_storage.download_file(object_key=asset.object_key, destination=destination)
-                if sha256_file(destination) != asset.checksum_sha256:
-                    raise RuntimeError("PREVIEW_SOURCE_CHECKSUM_MISMATCH")
+                source_custodies[asset.asset_id] = asset_custody(asset)
+                await self._download_preview_asset(preview,asset,destination)
                 assets[asset.asset_id] = (asset, destination)
             await self.repository.set_preview_progress(preview_id, 35)
+            await self._assert_preview_sources_current(preview, assets, expected_custodies=source_custodies)
             result = await self.renderer.render(
                 snapshot=version.snapshot,
                 assets=assets,
@@ -371,3 +400,64 @@ class PreviewService:
         for identifier in identifiers:
             await self.queue.rpush(PREVIEW_QUEUE_KEY, identifier)
         return len(identifiers)
+
+    async def _download_preview_asset(self,preview,asset,path):
+        asset=asset.model_copy(deep=True)
+        custody=asset_custody(asset)
+        try:
+            if asset.object_key.startswith(f'projects/{preview.project_id}/'):
+                proof=LegacyLocalPreviewRead(asset,preview=preview,storage=self.object_storage)
+            else:
+                proof=frozen_asset_read(asset,workspace_id=preview.workspace_id,project_id=preview.project_id,
+                    storage=self.object_storage,maximum=MAX_SOURCE_BYTES)
+            await proof.download(self.object_storage,path)
+            if await completed_read(asyncio.to_thread(sha256_file,path))!=asset.checksum_sha256:
+                raise RuntimeError('PREVIEW_SOURCE_CHECKSUM_MISMATCH')
+        except StorageDownloadError as error:
+            if error.code in {'STORAGE_DOWNLOAD_HASH_MISMATCH','STORAGE_DOWNLOAD_SIZE_MISMATCH','STORAGE_DOWNLOAD_SIZE_LIMIT'}:
+                raise RuntimeError('PREVIEW_SOURCE_CHECKSUM_MISMATCH') from None
+            raise RuntimeError('PREVIEW_SOURCE_DOWNLOAD_FAILED') from None
+        except Exception:
+            raise RuntimeError('PREVIEW_SOURCE_DOWNLOAD_FAILED') from None
+        snapshot=await self.auto_edit_repository.read_source_snapshot(project_id=preview.project_id,
+            asset_ids=(asset.asset_id,),preview_id=preview.preview_id)
+        self._check_preview_source_snapshot(preview,{asset.asset_id:(asset,path)},snapshot,
+            expected_custodies={asset.asset_id:custody})
+
+    async def _assert_preview_sources_current(self, preview, assets, *, expected_custodies=None):
+        """Recheck after the final progress await, before invoking any renderer."""
+        custodies=expected_custodies if expected_custodies is not None else {
+            asset.asset_id:asset_custody(asset) for asset,_ in assets.values()}
+        for asset, path in assets.values():
+            try:
+                checksum = await completed_read(asyncio.to_thread(sha256_file, path))
+            except (OSError, ValueError):
+                raise RuntimeError('PREVIEW_SOURCE_DOWNLOAD_FAILED') from None
+            if checksum != asset.checksum_sha256:
+                raise RuntimeError('PREVIEW_SOURCE_CHECKSUM_MISMATCH')
+        snapshot=await self.auto_edit_repository.read_source_snapshot(project_id=preview.project_id,
+            asset_ids=tuple(assets),preview_id=preview.preview_id)
+        self._check_preview_source_snapshot(preview,assets,snapshot,expected_custodies=custodies)
+
+    @staticmethod
+    def _check_preview_source_snapshot(preview,assets,snapshot,*,expected_custodies):
+        project=snapshot['project'];timeline=snapshot['timeline'];current_preview=snapshot['preview']
+        if project is None or project['workspace_id']!=preview.workspace_id or project['project_id']!=preview.project_id:
+            raise RuntimeError('PREVIEW_SOURCE_SCOPE_CHANGED')
+        for asset, _ in assets.values():
+            current=snapshot['assets'].get(asset.asset_id)
+            if current is None or asset_custody(current)!=expected_custodies[asset.asset_id]:
+                raise RuntimeError('PREVIEW_SOURCE_CUSTODY_CHANGED')
+        if (timeline is None or timeline['workspace_id']!=preview.workspace_id
+                or timeline['project_id']!=preview.project_id or timeline['timeline_id']!=preview.timeline_id
+                or timeline['current_version_id']!=preview.timeline_version_id
+                or timeline['current_version']!=preview.timeline_version):
+            raise PreviewCancelledError('PREVIEW_TIMELINE_CHANGED')
+        if (current_preview is None or current_preview['workspace_id']!=preview.workspace_id
+                or current_preview['project_id']!=preview.project_id or current_preview['preview_id']!=preview.preview_id
+                or current_preview['timeline_id']!=preview.timeline_id
+                or current_preview['timeline_version_id']!=preview.timeline_version_id
+                or current_preview['timeline_version']!=preview.timeline_version
+                or current_preview['status']!='running' or current_preview['cancellation_requested']
+                or current_preview['invalidated_at'] is not None):
+            raise PreviewCancelledError('PREVIEW_CANCELLED')

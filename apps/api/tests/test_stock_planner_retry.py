@@ -198,8 +198,11 @@ async def test_transcript_edit_during_awaited_source_verification_prevents_first
     env,adapter,payload,calls,stamp=await prepared(tmp_path,{})
     entered=asyncio.Event();resume=asyncio.Event();actual=env['storage']
     class WaitingStorageFixture:
-        async def download_file(self, *, object_key, destination):
-            await actual.download_file(object_key=object_key,destination=destination)
+        name=actual.name
+        async def download_file(self, *, object_key, destination, max_bytes=None,
+                expected_size_bytes=None, expected_sha256=None, expected_prefix=None):
+            await actual.download_file(object_key=object_key,destination=destination,max_bytes=max_bytes,
+                expected_size_bytes=expected_size_bytes,expected_sha256=expected_sha256,expected_prefix=expected_prefix)
             entered.set();await resume.wait()
     env['planner'].object_storage=WaitingStorageFixture()
     try:
