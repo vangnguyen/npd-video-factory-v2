@@ -36,6 +36,9 @@ from .auto_edit_providers import (
 )
 from .auto_edit_repository import AutoEditRepository
 from .auto_edit_routes import router as auto_edit_router
+from .uploaded_audio_routes import router as uploaded_audio_router
+from .uploaded_audio_service import UploadedAudioService
+from .uploaded_audio_runtime import provider_from_settings as uploaded_audio_provider
 from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .artifacts import (
     ArtifactAccessError,
@@ -298,6 +301,10 @@ async def lifespan(app: FastAPI):
         provider_safety=app.state.provider_safety_controller,
         derived_timing_enabled=settings.auto_edit_derived_timing_enabled,
     )
+    app.state.uploaded_audio_service = UploadedAudioService(
+        session_factory=session_factory,platform=platform,object_storage=object_storage,queue=redis,
+        provider=uploaded_audio_provider(settings),staging_root=settings.analysis_staging_root / 'uploaded-audio',
+        provider_safety=app.state.provider_safety_controller)
     if settings.vision_provider == "fixture":
         vision_provider = DeterministicVisionProvider()
     elif settings.vision_provider == "openai":
@@ -444,6 +451,7 @@ _human_route_dependencies = [Depends(authorize_human_request)]
 app.include_router(platform_router, dependencies=_human_route_dependencies)
 app.include_router(trend_router, dependencies=_human_route_dependencies)
 app.include_router(auto_edit_router, dependencies=_human_route_dependencies)
+app.include_router(uploaded_audio_router, dependencies=_human_route_dependencies)
 app.include_router(vision_router, dependencies=_human_route_dependencies)
 app.include_router(media_intelligence_router, dependencies=_human_route_dependencies)
 app.include_router(timeline_router, dependencies=_human_route_dependencies)
@@ -1132,6 +1140,9 @@ async def capabilities() -> dict[str, object]:
         "archive_ingestion_enabled": False,
         "public_ingress_approved": False,
         "auto_edit_analysis": True,
+        "uploaded_audio_transcription": "independent_async_versioned_evidence",
+        "uploaded_audio_default_provider": "not_configured",
+        "uploaded_audio_canonical_caption_edit": "explicit_review_required",
         "auto_edit_timeline": True,
         "timeline_versioning": True,
         "timeline_optimistic_concurrency": True,

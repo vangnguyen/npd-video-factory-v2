@@ -73,10 +73,12 @@ class JobStatus(StrEnum):
     SUCCEEDED = "succeeded"  # explicit content proposal applied; not human/video acceptance
     FAILED = "failed"
     CANCELLED = "cancelled"
+    NEEDS_ATTENTION = "needs_attention"
 
 
 class JobStage(StrEnum):
     QUEUED = "queued"
+    ANALYZING_AUDIO = "analyzing_audio"
     SCRIPTING = "scripting"
     STORYBOARDING = "storyboarding"
     GENERATING_VOICE = "generating_voice"
@@ -91,6 +93,7 @@ class JobStage(StrEnum):
 
 STAGE_ORDER: dict[JobStage, int] = {
     JobStage.QUEUED: 0,
+    JobStage.ANALYZING_AUDIO: 10,
     JobStage.SCRIPTING: 10,
     JobStage.STORYBOARDING: 20,
     JobStage.GENERATING_VOICE: 30,
@@ -146,6 +149,14 @@ class ContentGenerationJobInput(StrictModel):
     actor_ref: str = Field(min_length=1, max_length=160)
 
 
+class UploadedAudioJobInput(StrictModel):
+    kind: Literal['uploaded_audio_transcription'] = 'uploaded_audio_transcription'
+    audio_id: str = Field(pattern=r'^aud_[a-f0-9]{24}$')
+    source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    provider_binding_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    actor_ref: str = Field(min_length=1, max_length=160)
+
+
 class JobRecord(StrictModel):
     job_id: str
     workspace_id: str | None = None
@@ -154,7 +165,7 @@ class JobRecord(StrictModel):
     status: JobStatus
     stage: JobStage
     progress: int = Field(ge=0, le=100)
-    request: VideoJobCreate | ContentGenerationJobInput
+    request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput
     artifacts: list[Artifact] = Field(default_factory=list)
     error: JobError | None = None
     created_at: datetime
@@ -165,7 +176,7 @@ class JobRecord(StrictModel):
         cls,
         *,
         job_id: str,
-        request: VideoJobCreate,
+        request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput,
         workspace_id: str | None = None,
         project_id: str | None = None,
         project_version_id: str | None = None,

@@ -27,6 +27,8 @@ from app.bridge_service import (
     webhook_scheduler,
 )
 from app.auto_edit_repository import AutoEditRepository
+from app.uploaded_audio_service import UploadedAudioService, AUDIO_QUEUE
+from app.uploaded_audio_runtime import provider_from_settings as uploaded_audio_provider
 from app.media_intelligence_repository import MediaIntelligenceRepository
 from app.media_intelligence_service import (
     MEDIA_RESOLUTION_PROCESSING_KEY,
@@ -313,6 +315,27 @@ async def run_content_generation_queue(redis, service):
             await service.process(item[1])
 
 
+async def run_uploaded_audio_queue(redis, service):
+    while True:
+        item = await redis.blpop(AUDIO_QUEUE, timeout=5)
+        if item:
+            try:
+                await service.process(item[1])
+            except Exception:
+                # Durable rows remain auditable/recoverable. Do not disclose
+                # provider/connection exceptions or stop unrelated workers.
+                logger.warning('uploaded_audio_job_processing_failed')
+
+
+async def recover_uploaded_audio_queue(service):
+    while True:
+        try:
+            await service.recover()
+        except Exception:
+            logger.warning('uploaded_audio_recovery_failed')
+        await asyncio.sleep(30)
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -344,6 +367,14 @@ async def main() -> None:
         mode=settings.content_generation_provider,
         provider=create_storyboard_content_provider(settings, controller=content_bindings["controller"], credential_resolver=content_bindings["credential_resolver"], admission_error=content_bindings.get("admission_error")))
     await content_generation.recover()
+    audio_safety = DurableProviderSafetyController(provider_safety_policy_from_settings(settings),
+        repository=lane_repository,provider_definitions=[p.model_dump(mode='json') for p in await platform.list_providers()],
+        operation_lease_seconds=settings.provider_operation_lease_seconds,
+        operation_retention_days=settings.provider_operation_retention_days)
+    uploaded_audio = UploadedAudioService(session_factory=session_factory,platform=platform,
+        object_storage=object_storage,queue=redis,provider=uploaded_audio_provider(settings),
+        staging_root=settings.analysis_staging_root / 'uploaded-audio',provider_safety=audio_safety)
+    await uploaded_audio.recover()
     await recover_inflight(redis)
     providers = create_media_provider_bundle(settings)
     media_resolution_service = MediaResolutionService(
@@ -418,6 +449,8 @@ async def main() -> None:
         tasks = [
             run_video_queue(redis, store, config=config),
             run_content_generation_queue(redis, content_generation),
+            run_uploaded_audio_queue(redis, uploaded_audio),
+            recover_uploaded_audio_queue(uploaded_audio),
             run_media_resolution_queue(redis, media_resolution_service),
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),
