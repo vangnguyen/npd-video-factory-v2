@@ -42,7 +42,9 @@ from .media_security import (
     utc_now as media_security_utc_now,
 )
 from .media_validation import MediaValidationError, safe_upload_filename, sniff_media
-from .object_storage import ObjectStorageProvider, validate_object_key
+from .object_storage import ObjectStorageProvider, validate_object_key, sha256_file
+from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES
+from .bounded_storage_download import StorageDownloadError
 from .platform_models import AssetRegister
 from .provider_safety import (
     ProviderCallContext,
@@ -469,6 +471,7 @@ class AutoEditAnalysisService:
         profile_binding, profile_kwargs = prepared['profile_binding'], prepared['profile_kwargs']
         asr_prompt_profile = prepared['asr_prompt_profile']
         transcription_provider = self.transcription_provider
+        source_provider_identity = self._source_provider_identity()
         if job_guard is not None:
             await job_guard.before_execute(prepared)
         if analysis_id_override is None:
@@ -487,13 +490,12 @@ class AutoEditAnalysisService:
         elif getattr(transcription_provider, 'supports_durable_cancellation', False):
             profile_kwargs = {**profile_kwargs, 'is_cancelled': job_guard.is_cancelled}
         self.staging_root.mkdir(parents=True, exist_ok=True)
-        local_path = local_path_override or self.staging_root / f"{analysis_id}-{asset.filename}"
+        local_path = local_path_override or self.staging_root / f"{analysis_id}-{safe_upload_filename(asset.filename)}"
         local_result_evidence = None
         try:
             if local_source_snapshot is None:
-                await self.object_storage.download_file(object_key=asset.object_key, destination=local_path)
-                if hashlib.sha256(local_path.read_bytes()).hexdigest() != asset.checksum_sha256:
-                    raise ValueError("source checksum changed")
+                await self._download_analysis_source(prepared,project_id,payload,local_path,job_guard=job_guard,
+                    expected_provider_identity=source_provider_identity)
             else:
                 await verify_file(local_path, local_source_snapshot)
                 if local_binding is not None:
@@ -762,6 +764,41 @@ class AutoEditAnalysisService:
 
     async def get(self, analysis_id: str) -> AutoEditAnalysisRead | None:
         return await self.repository.get_analysis(analysis_id)
+
+    def _source_provider_identity(self):
+        return tuple(tuple(getattr(provider,name,None) for name in (
+            'key','model','external_call','paid','credential_alias','estimated_cost_vnd','algorithm_version',
+            'max_file_bytes','max_duration_seconds'))
+            for provider in (self.transcription_provider,self.signal_provider))
+
+    async def _download_analysis_source(self,prepared,project_id,payload,path,*,job_guard=None,expected_provider_identity=None):
+        """Admit registered source bytes, then recheck inputs before analysis."""
+        asset=prepared['asset'];identity=expected_provider_identity or self._source_provider_identity();custody=asset_custody(asset)
+        project=await self.platform.get_project(project_id)
+        if project is None or project.project_id!=project_id:
+            raise ValueError('AUTO_EDIT_SOURCE_SCOPE_CHANGED')
+        if self._source_provider_identity()!=identity:
+            raise ValueError('AUTO_EDIT_SOURCE_PROVIDER_CHANGED')
+        try:
+            proof=frozen_asset_read(asset,workspace_id=project.workspace_id,project_id=project_id,
+                storage=self.object_storage,maximum=MAX_SOURCE_BYTES)
+            await proof.download(self.object_storage,path)
+            if await completed_read(asyncio.to_thread(sha256_file,path))!=asset.checksum_sha256:
+                raise ValueError('AUTO_EDIT_SOURCE_BYTES_CHANGED')
+        except StorageDownloadError as error:
+            if error.code in {'STORAGE_DOWNLOAD_HASH_MISMATCH','STORAGE_DOWNLOAD_SIZE_MISMATCH','STORAGE_DOWNLOAD_SIZE_LIMIT'}:
+                raise ValueError('source checksum changed') from None
+            raise ValueError('AUTO_EDIT_SOURCE_DOWNLOAD_FAILED') from None
+        except Exception:
+            raise ValueError('AUTO_EDIT_SOURCE_DOWNLOAD_FAILED') from None
+        current=await self.prepare(project_id,payload)
+        if asset_custody(current['asset'])!=custody or current['fingerprint']!=prepared['fingerprint'] \
+                or current['source_media']!=prepared['source_media'] or self._source_provider_identity()!=identity:
+            raise ValueError('AUTO_EDIT_SOURCE_CUSTODY_CHANGED')
+        if job_guard is not None:
+            await job_guard.before_execute(current)
+            if await job_guard.is_cancelled():
+                raise asyncio.CancelledError()
 
     async def list(self, project_id: str) -> list[AutoEditAnalysisRead]:
         if await self.platform.get_project(project_id) is None:

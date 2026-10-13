@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -37,6 +37,7 @@ from .db import AssetORM, ProjectVersionORM, VideoProjectORM, utc_now
 from .media_security import MediaScanResult
 from .platform_models import AssetRead
 from .service_outcome_context import capture
+from .timeline_db import TimelineORM, PreviewJobORM
 
 
 def _new_id(prefix: str) -> str:
@@ -574,149 +575,191 @@ class AutoEditRepository:
 
     async def get_analysis(self, analysis_id: str, *, transcript_id: str | None = None) -> AutoEditAnalysisRead | None:
         async with self.session_factory() as session:
-            analysis = await session.get(AutoEditAnalysisORM, analysis_id)
-            if analysis is None:
-                return None
-            transcript_row = await session.scalar(
-                select(TranscriptORM)
-                .where(TranscriptORM.analysis_id == analysis_id)
-                .where(TranscriptORM.transcript_id==transcript_id if transcript_id is not None else True)
-                .order_by(TranscriptORM.version.desc())
+            return await self._analysis_read(session, analysis_id, transcript_id=transcript_id)
+
+    async def read_source_snapshot(self, *, project_id, asset_ids, analysis_id=None, preview_id=None):
+        """Read one coherent custody graph without changing global isolation.
+
+        This is a point-in-time read proof, not a job lease or approval. SQLite
+        needs explicit BEGIN because its legacy driver does not begin on SELECT.
+        PostgreSQL isolation/read-only options apply only to this owned session.
+        """
+        identifiers = tuple(sorted(set(asset_ids)))
+        async with self.session_factory() as session:
+            dialect = session.get_bind().dialect.name
+            if dialect == 'sqlite':
+                await session.execute(text('BEGIN'))
+            elif dialect == 'postgresql':
+                await session.connection(execution_options={'isolation_level': 'REPEATABLE READ'})
+                await session.execute(text('SET TRANSACTION READ ONLY'))
+            else:
+                raise ValueError('SOURCE_SNAPSHOT_DIALECT_NOT_SUPPORTED')
+            project = await session.get(VideoProjectORM, project_id)
+            rows = (await session.scalars(select(AssetORM).where(AssetORM.asset_id.in_(identifiers))
+                .order_by(AssetORM.asset_id))).all()
+            analysis = await self._analysis_read(session, analysis_id) if analysis_id else None
+            preview = await session.get(PreviewJobORM, preview_id) if preview_id else None
+            timeline = await session.get(TimelineORM, preview.timeline_id) if preview else None
+            return {
+                'project': {'project_id': project.project_id, 'workspace_id': project.workspace_id,
+                    'status': project.status, 'version': project.version,
+                    'current_version_id': project.current_version_id} if project else None,
+                'assets': {row.asset_id: _asset_read(row) for row in rows},
+                'analysis': analysis,
+                'preview': {'preview_id': preview.preview_id, 'workspace_id': preview.workspace_id,
+                    'project_id': preview.project_id, 'timeline_id': preview.timeline_id,
+                    'timeline_version_id': preview.timeline_version_id, 'timeline_version': preview.timeline_version,
+                    'status': preview.status, 'cancellation_requested': preview.cancellation_requested,
+                    'invalidated_at': preview.invalidated_at} if preview else None,
+                'timeline': {'workspace_id': timeline.workspace_id, 'project_id': timeline.project_id,
+                    'timeline_id': timeline.timeline_id, 'current_version_id': timeline.current_version_id,
+                    'current_version': timeline.current_version} if timeline else None,
+            }
+
+    async def _analysis_read(self, session, analysis_id, *, transcript_id=None):
+        analysis = await session.get(AutoEditAnalysisORM, analysis_id)
+        if analysis is None:
+            return None
+        transcript_row = await session.scalar(
+            select(TranscriptORM)
+            .where(TranscriptORM.analysis_id == analysis_id)
+            .where(TranscriptORM.transcript_id==transcript_id if transcript_id is not None else True)
+            .order_by(TranscriptORM.version.desc())
+        )
+        if transcript_id is not None and transcript_row is None:return None
+        transcript_read: TranscriptRead | None = None
+        if transcript_row:
+            segment_rows = (
+                await session.scalars(
+                    select(TranscriptSegmentORM)
+                    .where(TranscriptSegmentORM.transcript_id == transcript_row.transcript_id)
+                    .order_by(TranscriptSegmentORM.ordinal)
+                )
+            ).all()
+            word_rows = (
+                await session.scalars(
+                    select(TranscriptWordORM)
+                    .where(TranscriptWordORM.transcript_id == transcript_row.transcript_id)
+                    .order_by(TranscriptWordORM.ordinal)
+                )
+            ).all()
+            words_by_segment: dict[str, list[TranscriptWordRead]] = {}
+            for word in word_rows:
+                words_by_segment.setdefault(word.segment_id, []).append(
+                    TranscriptWordRead(
+                        word_id=word.word_id,
+                        ordinal=word.ordinal,
+                        start_seconds=word.start_seconds,
+                        end_seconds=word.end_seconds,
+                        text=word.text,
+                        confidence=word.confidence,
+                    )
+                )
+            transcript_read = TranscriptRead(
+                transcript_id=transcript_row.transcript_id,
+                analysis_id=analysis_id,
+                asset_id=transcript_row.asset_id,
+                version=transcript_row.version,
+                is_original_evidence=transcript_row.is_original_evidence,
+                provider_key=transcript_row.provider_key,
+                language=transcript_row.language,
+                confidence=transcript_row.confidence,
+                segments=[
+                    TranscriptSegmentRead(
+                        segment_id=segment.segment_id,
+                        ordinal=segment.ordinal,
+                        start_seconds=segment.start_seconds,
+                        end_seconds=segment.end_seconds,
+                        text=segment.text,
+                        speaker=segment.speaker,
+                        confidence=segment.confidence,
+                        words=words_by_segment.get(segment.segment_id, []),
+                    )
+                    for segment in segment_rows
+                ],
+                provenance=transcript_row.provenance_json,
+                created_at=transcript_row.created_at,
             )
-            if transcript_id is not None and transcript_row is None:return None
-            transcript_read: TranscriptRead | None = None
-            if transcript_row:
-                segment_rows = (
-                    await session.scalars(
-                        select(TranscriptSegmentORM)
-                        .where(TranscriptSegmentORM.transcript_id == transcript_row.transcript_id)
-                        .order_by(TranscriptSegmentORM.ordinal)
-                    )
-                ).all()
-                word_rows = (
-                    await session.scalars(
-                        select(TranscriptWordORM)
-                        .where(TranscriptWordORM.transcript_id == transcript_row.transcript_id)
-                        .order_by(TranscriptWordORM.ordinal)
-                    )
-                ).all()
-                words_by_segment: dict[str, list[TranscriptWordRead]] = {}
-                for word in word_rows:
-                    words_by_segment.setdefault(word.segment_id, []).append(
-                        TranscriptWordRead(
-                            word_id=word.word_id,
-                            ordinal=word.ordinal,
-                            start_seconds=word.start_seconds,
-                            end_seconds=word.end_seconds,
-                            text=word.text,
-                            confidence=word.confidence,
-                        )
-                    )
-                transcript_read = TranscriptRead(
-                    transcript_id=transcript_row.transcript_id,
-                    analysis_id=analysis_id,
-                    asset_id=transcript_row.asset_id,
-                    version=transcript_row.version,
-                    is_original_evidence=transcript_row.is_original_evidence,
-                    provider_key=transcript_row.provider_key,
-                    language=transcript_row.language,
-                    confidence=transcript_row.confidence,
-                    segments=[
-                        TranscriptSegmentRead(
-                            segment_id=segment.segment_id,
-                            ordinal=segment.ordinal,
-                            start_seconds=segment.start_seconds,
-                            end_seconds=segment.end_seconds,
-                            text=segment.text,
-                            speaker=segment.speaker,
-                            confidence=segment.confidence,
-                            words=words_by_segment.get(segment.segment_id, []),
-                        )
-                        for segment in segment_rows
-                    ],
-                    provenance=transcript_row.provenance_json,
-                    created_at=transcript_row.created_at,
-                )
-            scene_rows = (
-                await session.scalars(
-                    select(SceneORM).where(SceneORM.analysis_id == analysis_id).order_by(SceneORM.ordinal)
-                )
-            ).all()
-            silence_rows = (
-                await session.scalars(
-                    select(SilenceDecisionORM)
-                    .where(SilenceDecisionORM.analysis_id == analysis_id)
-                    .order_by(SilenceDecisionORM.start_seconds)
-                )
-            ).all()
-            highlight_rows = (
-                await session.scalars(
-                    select(HighlightORM)
-                    .where(HighlightORM.analysis_id == analysis_id)
-                    .order_by(HighlightORM.rank)
-                )
-            ).all()
-            return AutoEditAnalysisRead(
-                analysis_id=analysis.analysis_id,
-                workspace_id=analysis.workspace_id,
-                project_id=analysis.project_id,
-                project_version_id=analysis.project_version_id,
-                asset_id=analysis.asset_id,
-                status=analysis.status,
-                fingerprint=analysis.fingerprint,
-                configuration=AutoEditAnalysisRequest.model_validate(analysis.configuration_json),
-                source_media=MediaMetadata.model_validate(analysis.source_media_json),
-                transcript=transcript_read,
-                scenes=[
-                    SceneRead(
-                        scene_id=row.scene_id,
-                        ordinal=row.ordinal,
-                        start_seconds=row.start_seconds,
-                        end_seconds=row.end_seconds,
-                        semantic_label=row.semantic_label,
-                        description=row.description,
-                        subjects=row.subjects_json,
-                        quality_score=row.quality_score,
-                        motion_score=row.motion_score,
-                        speech_score=row.speech_score,
-                        confidence=row.confidence,
-                        evidence=row.evidence_json,
-                    )
-                    for row in scene_rows
-                ],
-                silence_decisions=[
-                    SilenceDecisionRead(
-                        decision_id=row.decision_id,
-                        start_seconds=row.start_seconds,
-                        end_seconds=row.end_seconds,
-                        padding_before_seconds=row.padding_before_seconds,
-                        padding_after_seconds=row.padding_after_seconds,
-                        enabled=row.enabled,
-                        reason=row.reason,
-                        conflicts_with_speech=row.conflicts_with_speech,
-                        evidence=row.evidence_json,
-                    )
-                    for row in silence_rows
-                ],
-                highlights=[
-                    HighlightRead(
-                        highlight_id=row.highlight_id,
-                        rank=row.rank,
-                        highlight_score=row.highlight_score,
-                        reason=row.reason,
-                        recommended_start=row.recommended_start,
-                        recommended_end=row.recommended_end,
-                        recommended_platform=row.recommended_platform,
-                        scene_id=row.scene_id,
-                        evidence=row.evidence_json,
-                    )
-                    for row in highlight_rows
-                ],
-                error_code=analysis.error_code,
-                provenance=analysis.provenance_json,
-                created_at=analysis.created_at,
-                updated_at=analysis.updated_at,
+        scene_rows = (
+            await session.scalars(
+                select(SceneORM).where(SceneORM.analysis_id == analysis_id).order_by(SceneORM.ordinal)
             )
+        ).all()
+        silence_rows = (
+            await session.scalars(
+                select(SilenceDecisionORM)
+                .where(SilenceDecisionORM.analysis_id == analysis_id)
+                .order_by(SilenceDecisionORM.start_seconds)
+            )
+        ).all()
+        highlight_rows = (
+            await session.scalars(
+                select(HighlightORM)
+                .where(HighlightORM.analysis_id == analysis_id)
+                .order_by(HighlightORM.rank)
+            )
+        ).all()
+        return AutoEditAnalysisRead(
+            analysis_id=analysis.analysis_id,
+            workspace_id=analysis.workspace_id,
+            project_id=analysis.project_id,
+            project_version_id=analysis.project_version_id,
+            asset_id=analysis.asset_id,
+            status=analysis.status,
+            fingerprint=analysis.fingerprint,
+            configuration=AutoEditAnalysisRequest.model_validate(analysis.configuration_json),
+            source_media=MediaMetadata.model_validate(analysis.source_media_json),
+            transcript=transcript_read,
+            scenes=[
+                SceneRead(
+                    scene_id=row.scene_id,
+                    ordinal=row.ordinal,
+                    start_seconds=row.start_seconds,
+                    end_seconds=row.end_seconds,
+                    semantic_label=row.semantic_label,
+                    description=row.description,
+                    subjects=row.subjects_json,
+                    quality_score=row.quality_score,
+                    motion_score=row.motion_score,
+                    speech_score=row.speech_score,
+                    confidence=row.confidence,
+                    evidence=row.evidence_json,
+                )
+                for row in scene_rows
+            ],
+            silence_decisions=[
+                SilenceDecisionRead(
+                    decision_id=row.decision_id,
+                    start_seconds=row.start_seconds,
+                    end_seconds=row.end_seconds,
+                    padding_before_seconds=row.padding_before_seconds,
+                    padding_after_seconds=row.padding_after_seconds,
+                    enabled=row.enabled,
+                    reason=row.reason,
+                    conflicts_with_speech=row.conflicts_with_speech,
+                    evidence=row.evidence_json,
+                )
+                for row in silence_rows
+            ],
+            highlights=[
+                HighlightRead(
+                    highlight_id=row.highlight_id,
+                    rank=row.rank,
+                    highlight_score=row.highlight_score,
+                    reason=row.reason,
+                    recommended_start=row.recommended_start,
+                    recommended_end=row.recommended_end,
+                    recommended_platform=row.recommended_platform,
+                    scene_id=row.scene_id,
+                    evidence=row.evidence_json,
+                )
+                for row in highlight_rows
+            ],
+            error_code=analysis.error_code,
+            provenance=analysis.provenance_json,
+            created_at=analysis.created_at,
+            updated_at=analysis.updated_at,
+        )
 
     async def list_analyses(self, project_id: str) -> list[AutoEditAnalysisRead]:
         async with self.session_factory() as session:
