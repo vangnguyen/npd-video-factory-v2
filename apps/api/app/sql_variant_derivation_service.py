@@ -1,7 +1,6 @@
 """Explicit local derivative operation, no startup IO or implicit execution."""
 import asyncio
 import copy
-from .sql_variant_derivation_repository import target_key
 from .sql_variant_repository import SqlVariantError
 from .local_video_transcription_provider import completed_io
 
@@ -24,7 +23,7 @@ class SqlStoryboardDerivationService:
         try:
             await self.repository.guard(workspace, master, family_id, receipt.receipt_id, claim_id)
             value = claim['input']
-            items = {old: {**copy.deepcopy(source), 'target_key': target_key(workspace,
+            items = {old: {**copy.deepcopy(source), 'target_key': self.repository.target_key(workspace,
                 value['planned_project_id'], value['member_id'], old, source['content_type'])}
                 for old, source in value['source_assets'].items()}
             copies = await self.copier.copy(items)

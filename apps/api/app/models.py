@@ -167,6 +167,9 @@ class AutoEditAnalysisJobInput(StrictModel):
     actor_ref: str = Field(min_length=1, max_length=160)
 
 
+from .sql_variant_import_job import VariantEvidenceImportInput
+
+
 class JobRecord(StrictModel):
     job_id: str
     workspace_id: str | None = None
@@ -175,18 +178,26 @@ class JobRecord(StrictModel):
     status: JobStatus
     stage: JobStage
     progress: int = Field(ge=0, le=100)
-    request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput | AutoEditAnalysisJobInput
+    request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput | AutoEditAnalysisJobInput | VariantEvidenceImportInput
     artifacts: list[Artifact] = Field(default_factory=list)
     error: JobError | None = None
     created_at: datetime
     updated_at: datetime
+
+    @model_validator(mode='after')
+    def imported_evidence_never_dispatches(self):
+        if isinstance(self.request, VariantEvidenceImportInput) and (
+            self.status != JobStatus.AWAITING_REVIEW or self.stage != JobStage.AWAITING_REVIEW
+            or self.progress != 100 or self.artifacts or self.error is not None):
+            raise ValueError('SQL_VARIANT_IMPORT_JOB_STATE_INVALID')
+        return self
 
     @classmethod
     def new(
         cls,
         *,
         job_id: str,
-        request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput | AutoEditAnalysisJobInput,
+        request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput | AutoEditAnalysisJobInput | VariantEvidenceImportInput,
         workspace_id: str | None = None,
         project_id: str | None = None,
         project_version_id: str | None = None,

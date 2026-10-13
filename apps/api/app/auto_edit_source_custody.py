@@ -25,21 +25,30 @@ async def trusted_video_in_session(session, project_id, asset_id, storage_name, 
     if (asset.asset_class != 'source' or asset.kind != 'video' or not asset.content_type.startswith('video/')
         or asset.storage_provider != storage_name or not 0 < asset.size_bytes <= max_bytes):
         raise ValueError('AUTO_EDIT_VIDEO_SOURCE_REQUIRED_OR_LIMIT')
-    upload = await session.get(UploadSessionORM, asset.provenance.get('source_reference', ''))
-    if (asset.provenance.get('source_type') != 'user_upload' or upload is None or upload.asset_id != asset_id
-        or upload.project_id != project_id or upload.workspace_id != project.workspace_id
-        or upload.status not in {'completed', 'completed_duplicate'} or upload.quarantine_state != 'trusted'
-        or upload.trusted_at is None or upload.scan_checksum_sha256 != asset.checksum_sha256):
-        raise ValueError('AUTO_EDIT_VIDEO_TRUSTED_UPLOAD_REQUIRED')
-    media = MediaMetadata.model_validate(asset.provenance.get('media_metadata'))
+    derivative = None
+    upload = None
+    if asset.provenance.get('source_type') == 'verified_variant_derivative':
+        from .sql_variant_uploaded_custody import trusted_derivative_source
+        media, derivative = await trusted_derivative_source(session, project, asset)
+        intake_metadata = media.model_dump(mode='json')
+    else:
+        upload = await session.get(UploadSessionORM, asset.provenance.get('source_reference', ''))
+        if (asset.provenance.get('source_type') != 'user_upload' or upload is None or upload.asset_id != asset_id
+            or upload.project_id != project_id or upload.workspace_id != project.workspace_id
+            or upload.status not in {'completed', 'completed_duplicate'} or upload.quarantine_state != 'trusted'
+            or upload.trusted_at is None or upload.scan_checksum_sha256 != asset.checksum_sha256):
+            raise ValueError('AUTO_EDIT_VIDEO_TRUSTED_UPLOAD_REQUIRED')
+        media = MediaMetadata.model_validate(asset.provenance.get('media_metadata'))
+        intake_metadata = upload.media_metadata_json
     if (media.media_kind != 'video' or media.video_codec is None or media.duration_seconds is None
         or not math.isfinite(media.duration_seconds) or media.duration_seconds <= 0 or media.detected_content_type != asset.content_type
-        or upload.media_metadata_json != media.model_dump(mode='json')):
+        or intake_metadata != media.model_dump(mode='json')):
         raise ValueError('AUTO_EDIT_VIDEO_METADATA_CHANGED')
     return {'project_id': project_id, 'workspace_id': project.workspace_id, 'asset_id': asset_id,
         'source_sha256': asset.checksum_sha256, 'source_size_bytes': asset.size_bytes,
         'storage_provider': asset.storage_provider, 'object_key': asset.object_key,
-        'media_metadata': media.model_dump(mode='json'), 'upload_id': upload.upload_id}
+        'media_metadata': media.model_dump(mode='json'), 'upload_id': upload.upload_id if upload else None,
+        **({'derivative_custody': derivative} if derivative is not None else {})}
 
 
 async def verify_file(path, snapshot):
