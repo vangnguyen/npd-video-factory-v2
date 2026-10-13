@@ -1,0 +1,25 @@
+{
+  "schema_version": "actual-variant-import-video-jobs-read.v1",
+  "method": "GET",
+  "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/analysis-jobs",
+  "status": 200,
+  "body": [],
+  "headers": {
+    "content-length": "2",
+    "content-type": "application/json",
+    "cache-control": "no-store",
+    "x-request-id": "b3cf3df662d44b04b841f09ca5cc2ff7",
+    "x-correlation-id": "b3cf3df662d44b04b841f09ca5cc2ff7",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "referrer-policy": "no-referrer"
+  },
+  "body_bytes": 2,
+  "body_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "fixture_notice": "Actual read-only SQLite child getter: imported scenes are canonical saved analysis, not copied master async jobs.",
+  "model_inferences": 0,
+  "provider_calls": 0,
+  "renderer_calls": 0,
+  "external_network_calls": 0,
+  "paid_operations": 0
+}

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {webcrypto, createHash} from 'node:crypto';
+import {verifyVariantReceipt} from '../verified-variant-source.mjs';
 import {audioRole, uploadedSpeechAssets, validateAudioRead, audioCreatePayload, audioTextPayload,
   audioWordsPayload, audioRestorePayload, audioByteHash, audioRevisionMatches, compatibleAudioBinding, audioCaptionPayload,
   boundedAudioBytes, initializeUploadedAudioReview} from '../uploaded-audio-review.mjs';
@@ -10,10 +11,24 @@ import {audioRole, uploadedSpeechAssets, validateAudioRead, audioCreatePayload, 
 // The source is owned silent PCM WAV. It is not real provider or Owner acceptance.
 const captured = JSON.parse(readFileSync(new URL('./fixtures/sql-uploaded-audio/read.json', import.meta.url), 'utf8'));
 const wav = readFileSync(new URL('./fixtures/sql-uploaded-audio/source.wav', import.meta.url));
+const importedCapture = JSON.parse(readFileSync(new URL('./fixtures/sql-variant-import-review/read.json', import.meta.url), 'utf8'));
+const importedWav = readFileSync(new URL('./fixtures/sql-variant-import-review/source.wav', import.meta.url));
 const clone = structuredClone, key = 'sql-audio-ui-request-00001';
 const capabilities = {human_write_enabled: true, uploaded_audio_transcription: 'independent_async_versioned_evidence',
   transcription_provider: 'contract', asr_external_execution_enabled: false, asr_paid_execution_enabled: false};
 function fixture() {return clone(captured);}
+function importedFixture() {
+  const c=importedCapture,r=c.responses;
+  return {state:{workspaceId:c.context.workspace_id,projectId:c.context.project_id,
+    principal:{subject:c.context.viewer_subject,token_id:'explicit-import-ui-session',expires_at:'2100-01-01T00:00:00Z',platform_role:'editor'},
+    busy:false,dirty:false,assets:clone(r.assets.body),timeline:clone(r.timeline.body)},
+    original:clone(r.audio.body),words:clone(r.word_edit.body)};
+}
+async function provedImport(data=importedFixture()) {
+  const asset=data.state.assets.find(a=>a.asset_id===data.original.asset_id);
+  data.state.verifiedVariantReceipts=[await verifyVariantReceipt(importedCapture.responses.receipt.body,data.state,asset,webcrypto)];
+  return data;
+}
 function textEdit(value = captured.original) {return [{segment_id: value.current.segments[0].segment_id, text: 'Chữ do người dùng sửa.'}];}
 function wordEdit(value = captured.original) {
   const s = value.current.segments[0]; return [{segment_id: s.segment_id, start_seconds: s.start_seconds,
@@ -24,7 +39,7 @@ function requestResult(state, body) {
   const row = clone(captured.original); row.audio_id = audioId; row.current = row.original = null; row.versions = [];
   row.job.status = 'queued'; row.job.request.audio_id = audioId; return row;
 }
-function harness({transport, fetcher, values = [captured.original], storageMap = new Map(), storageImpl, canonicalSaved} = {}) {
+function harness({transport, fetcher, values = [captured.original], dataSet, storageMap = new Map(), storageImpl, canonicalSaved} = {}) {
   class Element {
     constructor(tag) {this.tagName = tag; this.children = []; this.attributes = {}; this.listeners = {}; this.value = ''; this.checked = false; this.disabled = false; this.hidden = false;}
     append(...nodes) {this.children.push(...nodes);}
@@ -39,7 +54,7 @@ function harness({transport, fetcher, values = [captured.original], storageMap =
   }
   const all = n => [n, ...n.children.flatMap(all)];
   const dom = {createElement: tag => new Element(tag)}, root = dom.createElement('details');
-  const data = fixture(), calls = [], media = [], messages = [], created = [], revoked = [], timeouts = new Map(); let timerId = 0;
+  const data = dataSet ? clone(dataSet) : fixture(), calls = [], media = [], messages = [], created = [], revoked = [], timeouts = new Map(); let timerId = 0;
   const api = async (path, options) => {
     const body = options?.body ? JSON.parse(options.body) : null; calls.push({path, method: options?.method ?? 'GET', body});
     if (transport) {const result = await transport(path, body, data); if (result !== undefined) return result;}
@@ -110,6 +125,116 @@ test('captured SQL HTTP history uses actual source checksum and immutable origin
   for (const row of [original, text, words, restored]) assert.equal(validateAudioRead(row, state), row);
   assert.deepEqual(original.original, restored.original); assert.equal(restored.current.version, 4);
   assert.equal(restored.current.provenance.restored_from_transcript_id, original.original.transcript_id);
+});
+test('actual imported ASGI source and child audit validate without masquerading as upload or ASR job',async()=>{
+  const manifest=JSON.parse(readFileSync(new URL('./fixtures/sql-variant-import-review/manifest.json',import.meta.url),'utf8'));
+  for(const f of manifest.files){const raw=readFileSync(new URL(`./fixtures/sql-variant-import-review/${f.name}`,import.meta.url));
+    assert.equal(raw.length,f.bytes);assert.equal(createHash('sha256').update(raw).digest('hex'),f.sha256);}
+  assert.equal(manifest.model_inferences,0);assert.equal(manifest.provider_calls,0);assert.equal(manifest.renderer_calls,0);
+  assert.equal(manifest.owner_acceptance,false);assert.equal(importedCapture.responses.audio_range.status,206);
+  const plain=importedFixture();assert.equal(uploadedSpeechAssets(plain.state).length,1);
+  assert.throws(()=>validateAudioRead(plain.original,plain.state),/biên nhận/);
+  const {state,original,words}=await provedImport();
+  assert.equal(await audioByteHash(importedWav,webcrypto),original.source_sha256);
+  assert.equal(validateAudioRead(original,state),original);assert.equal(validateAudioRead(words,state),words);
+  assert.equal(original.job.request.kind,'variant_evidence_import');assert.match(original.job.job_id,/^job_vimport_/);
+  assert.equal(original.job.request.provider_binding_sha256,undefined);assert.equal(original.job.request.provider_calls,0);
+  assert.deepEqual(original.original,words.original);assert.equal(words.current.version,3);
+  assert.throws(()=>audioCreatePayload(state,original.asset_id,key,true),/không gửi ASR/);
+  assert.equal(audioRevisionMatches(words,original,'words',importedCapture.word_edit_request,state.principal.subject),true);
+});
+test('imported receipts reject foreign scopes, authority promotion, altered maps and unverified copied JSON',async()=>{
+  for(const mutation of[r=>r.workspace_id='wsp_foreign',r=>r.state='pending',r=>r.input_sha256='f'.repeat(64),
+    r=>r.safety.approval_inherited=true,r=>r.result.safety.publishing_enabled=true,r=>r.result.raw_evidence_rewritten=true,
+    r=>r.result.new_provider_billed_cost_vnd=1,r=>r.result.child_project_id='prj_other',
+    r=>r.result.asset_map[Object.keys(r.result.asset_map)[0]]='ast_foreign_copy']){
+    const data=importedFixture(),asset=data.state.assets.find(a=>a.asset_id===data.original.asset_id),r=clone(importedCapture.responses.receipt.body);mutation(r);
+    await assert.rejects(verifyVariantReceipt(r,data.state,asset,webcrypto));
+  }
+  const data=await provedImport();data.state.verifiedVariantReceipts=clone(data.state.verifiedVariantReceipts);
+  assert.throws(()=>validateAudioRead(data.original,data.state),/biên nhận/);
+});
+test('receipt verification preserves the exact pre-hash response when caller mutates its object during crypto await',async()=>{
+  const data=importedFixture(),asset=data.state.assets.find(a=>a.asset_id===data.original.asset_id);
+  const receipt=clone(importedCapture.responses.receipt.body),before=clone(receipt);let changed=false;
+  const cryptoImpl={subtle:{digest:async(algorithm,bytes)=>{
+    const output=await webcrypto.subtle.digest(algorithm,bytes);
+    if(!changed){changed=true;receipt.result.identity_map['aud_'+'f'.repeat(24)]='aud_'+'e'.repeat(24);}return output;
+  }}};
+  const proof=await verifyVariantReceipt(receipt,data.state,asset,cryptoImpl);
+  assert.deepEqual(proof.receipt,before);assert.notDeepEqual(receipt,before);
+});
+test('asset version changed during receipt digest cannot be rebound into the verified source proof',async()=>{
+  const data=importedFixture(),asset=data.state.assets.find(a=>a.asset_id===data.original.asset_id);let changed=false;
+  const cryptoImpl={subtle:{digest:async(algorithm,bytes)=>{
+    const output=await webcrypto.subtle.digest(algorithm,bytes);if(!changed){changed=true;asset.version++;}return output;
+  }}};
+  data.state.verifiedVariantReceipts=[await verifyVariantReceipt(importedCapture.responses.receipt.body,data.state,asset,cryptoImpl)];
+  assert.throws(()=>validateAudioRead(data.original,data.state),/biên nhận/);
+});
+test('import audit cannot become queued work, alias master job or invent call/actor/source authority',async()=>{
+  const {state,original}=await provedImport();
+  for(const mutate of[r=>r.job.request.kind='uploaded_audio_transcription',r=>r.job.job_id='job_saved_audio_fixture',
+    r=>r.job.job_id='job_vimport_'+'a'.repeat(32),r=>r.job.status='queued',r=>r.job.stage='running',r=>r.job.progress=0,
+    r=>r.job.request.provider_calls=false,r=>r.job.request.actor_ref=state.principal.subject,
+    r=>r.job.request.receipt_id='vfr_'+'a'.repeat(32),r=>r.job.request.input_sha256='a'.repeat(64),
+    r=>r.job.artifacts.push({kind:'audio',name:'unverified.wav'})]){
+    const value=clone(original);mutate(value);assert.throws(()=>validateAudioRead(value,state));
+  }
+  for(const change of[s=>s.assets.find(a=>a.kind==='audio').version++,s=>s.timeline.snapshot.metadata.sql_variant_derivative.family_id='vfa_'+'a'.repeat(32)]){
+    const data=await provedImport();change(data.state);assert.throws(()=>validateAudioRead(data.original,data.state));
+  }
+});
+test('controller reads imported saved history and verifies playback with GET only; forged queue stays zero ASR',async()=>{
+  const data=importedFixture(),r=importedCapture.responses;
+  const h=harness({dataSet:data,values:[data.original],transport:path=>path===r.receipt.path?clone(r.receipt.body):undefined,
+    fetcher:()=>new Response(importedWav,{status:200,headers:r.audio_source.headers})});
+  assert.equal(h.calls.length,0);await h.click('read');
+  assert.match(h.get('job').textContent,/Bằng chứng đã nhập/);assert.equal(h.get('queue').disabled,true);
+  assert.equal(h.textInput().value,data.original.current.segments[0].text);assert.equal(h.get('history').children.length,2);
+  assert.equal(h.timeouts.size,0);h.check('request-ack');await h.click('queue');
+  assert.equal(h.calls.some(v=>v.method==='POST'),false);
+  await h.click('listen');assert.equal(h.created.length,1);assert.equal(h.media[0].path,r.audio_source.path);
+  assert.equal(h.calls.every(v=>v.method==='GET'),true);assert.equal(h.get('player').hidden,false);
+});
+test('actual imported word CAS appends child history and requires fresh timeline after saved callback',async()=>{
+  const data=importedFixture(),r=importedCapture.responses;
+  const h=harness({dataSet:data,values:[data.original],transport:(path,body)=>{
+    if(path===r.receipt.path)return clone(r.receipt.body);
+    if(body){assert.deepEqual(body,importedCapture.word_edit_request);return clone(r.word_edit.body);}
+    return undefined;
+  },canonicalSaved:current=>{current.state.timeline=clone(r.timeline_after.body);}});
+  await h.click('read');const nodes=h.all(),field=nodes.find(n=>n.tagName==='input'&&n.type==='text');
+  field.value='Lời';field.listeners.input();h.get('note').value=importedCapture.word_edit_request.edit.note;
+  h.check('word-ack');await h.click('save-words');
+  assert.equal(h.calls.filter(v=>v.method==='POST').length,1);assert.equal(h.data.canonicalSaved,1);
+  assert.equal(h.get('history').children.length,3);assert.equal(h.textInput().value,r.word_edit.body.current.segments[0].text);
+  assert.deepEqual(data.original.original,r.word_edit.body.original);assert.equal(h.state.timeline.current_version,2);
+});
+test('imported audio forged word events still deny viewer, Studio drafts and changed canonical version',async()=>{
+  for(const mutate of[s=>s.principal.platform_role='viewer',s=>s.dirty=true,s=>s.timeline.current_version=9]){
+    const data=importedFixture(),r=importedCapture.responses;mutate(data.state);
+    const h=harness({dataSet:data,values:[data.original],transport:path=>path===r.receipt.path?clone(r.receipt.body):undefined});
+    await h.click('read');const word=h.all().find(n=>n.tagName==='input'&&n.type==='text');
+    word.value='Lời';word.listeners.input();h.check('word-ack');await h.click('save-words');
+    assert.equal(h.calls.some(c=>c.method==='POST'),false);assert.equal(h.created.length,0);
+  }
+});
+test('late imported receipt after session change is discarded and cannot expose history or send ASR',async()=>{
+  const data=importedFixture(),r=importedCapture.responses;let h;
+  h=harness({dataSet:data,values:[data.original],transport:path=>{
+    if(path===r.receipt.path){h.state.principal.token_id='changed-import-session';return clone(r.receipt.body);}return undefined;
+  }});
+  await h.click('read');assert.equal(h.get('history').children.length,0);
+  assert.equal(h.calls.some(c=>c.method==='POST'),false);assert.equal(h.media.length,0);
+});
+test('imported playback refuses same-hash version or provenance drift during original byte read',async()=>{
+  for(const change of[a=>a.version++,a=>a.provenance.parent_record_sha256='f'.repeat(64)]){
+    const data=importedFixture(),r=importedCapture.responses;let h;
+    h=harness({dataSet:data,values:[data.original],transport:path=>path===r.receipt.path?clone(r.receipt.body):undefined,
+      fetcher:()=>{change(h.state.assets.find(a=>a.kind==='audio'));return new Response(importedWav,{status:200,headers:r.audio_source.headers});}});
+    await h.click('read');await h.click('listen');assert.equal(h.created.length,0);assert.equal(h.get('player').hidden,true);
+  }
 });
 test('audio picker keeps explicit speech uploads and excludes music, video, foreign and unregistered sources', () => {
   const {state} = fixture(); assert.equal(uploadedSpeechAssets(state).length, 1);

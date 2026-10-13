@@ -1,4 +1,5 @@
 // SQL uploaded speech: immutable evidence and explicit human revisions only.
+import {isVerifiedVariantSource, verifiedVariantReceipt, verifiedVariantImportJobId, loadVariantReceipt} from './verified-variant-source.mjs';
 const sha = /^[a-f0-9]{64}$/, ids = {audio: /^aud_[a-f0-9]{24}$/, transcript: /^trn_[a-f0-9]{24}$/,
   segment: /^seg_[a-f0-9]{24}$/, word: /^wrd_[a-f0-9]{24}$/};
 const ranks = {viewer: 10, editor: 20, reviewer: 30, owner: 40};
@@ -25,7 +26,7 @@ export function audioRole(state) {
 export function uploadedSpeechAssets(state) {
   return (state.assets ?? []).filter(a => a.project_id === state.projectId && a.workspace_id === state.workspaceId
     && a.asset_class === 'source' && a.kind === 'audio' && mimeTypes.includes(a.content_type)
-    && sha.test(a.checksum_sha256) && a.provenance?.source_type === 'user_upload'
+    && sha.test(a.checksum_sha256) && (a.provenance?.source_type === 'user_upload' || isVerifiedVariantSource(a, state))
     && a.provenance?.media_metadata?.media_kind === 'audio' && Number.isFinite(duration(a)) && duration(a) > 0 && duration(a) <= 3600);
 }
 function assetFor(state, id) {
@@ -40,7 +41,7 @@ function scope(state) {
 function revisionScope(state, assetId) {
   const asset = assetFor(state, assetId);
   return JSON.stringify([scope(state), asset.asset_id, asset.checksum_sha256, asset.size_bytes,
-    asset.provenance?.media_metadata, state.timeline?.timeline_id, state.timeline?.current_version ?? null]);
+    asset.version, asset.project_version_id, asset.provenance, state.timeline?.timeline_id, state.timeline?.current_version ?? null]);
 }
 function writeGuard(state) {
   demand(state.projectId && state.workspaceId && ranks[audioRole(state)] >= ranks.editor, 'Cần quyền biên tập của dự án để lưu hoặc nhận diện.');
@@ -122,11 +123,19 @@ export function validateAudioRead(value, state) {
     && value.human_review_required === true && value.source_media_mutated === false && value.publishing_enabled === false,
   'Kết quả audio sai dự án, nguồn hoặc giới hạn kiểm tra.');
   const job = value.job;
+  const imported = asset.provenance.source_type === 'verified_variant_derivative';
+  const receipt = imported ? verifiedVariantReceipt(state, asset) : null;
   demand(job && job.project_id === value.project_id && job.workspace_id === value.workspace_id
-    && Object.hasOwn(statuses, job.status) && job.request?.kind === 'uploaded_audio_transcription'
+    && Object.hasOwn(statuses, job.status) && job.request?.kind === (imported ? 'variant_evidence_import' : 'uploaded_audio_transcription')
     && job.request.audio_id === value.audio_id
     && job.request.source_sha256 === value.source_sha256 && Array.isArray(value.versions) && value.versions.length <= 51,
   'Job hoặc lịch sử audio không khớp nguồn.');
+  if (imported) demand(job.job_id === verifiedVariantImportJobId(state, asset, value.audio_id)
+    && job.status === 'awaiting_review' && job.stage === 'awaiting_review' && job.progress === 100
+    && Array.isArray(job.artifacts) && job.artifacts.length === 0 && job.request.receipt_id === receipt.receipt_id
+    && job.request.input_sha256 === receipt.input_sha256 && job.request.actor_ref === receipt.actor_ref
+    && job.request.provider_calls === 0 && value.original && value.current,
+  'Nhật ký nhập bằng chứng không khớp; đây không phải yêu cầu ASR mới.');
   demand(value.timeline_version === null || Number.isInteger(value.timeline_version) && value.timeline_version >= 1, 'Phiên bản timeline không hợp lệ.');
   const seen = new Set();
   value.versions.forEach((v, i) => {
@@ -139,6 +148,7 @@ export function validateAudioRead(value, state) {
 }
 export function audioCreatePayload(state, assetId, key, acknowledged) {
   writeGuard(state); const asset = assetFor(state, assetId);
+  demand(asset.provenance.source_type === 'user_upload', 'Audio đã nhập có lời được lưu. Kiểm tra bằng chứng này; panel không gửi ASR mới cho bản sao.');
   demand(acknowledged === true, 'Xác nhận nguồn cần nhận diện trước khi gửi.');
   demand(/^[A-Za-z0-9][A-Za-z0-9._:-]{7,159}$/.test(key), 'Khóa yêu cầu không hợp lệ.');
   return {asset_id: asset.asset_id, source_sha256: asset.checksum_sha256, idempotency_key: key, rights: []};
@@ -270,6 +280,8 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
   onUploaded = async () => {}, onCanonicalSaved = async () => {}, dom = globalThis.document, newKey = () => globalThis.crypto.randomUUID(),
   cryptoImpl = globalThis.crypto, urls = globalThis.URL, timers = globalThis, pollMs = 1500, storage = browserStorage()}) {
   if (!root) return {sync() {}, reload: async () => {}, dispose() {}, isDirty: () => false};
+  const liveState = getState; let variantReceipts = [];
+  getState = () => ({...liveState(), verifiedVariantReceipts: variantReceipts});
   let identity = scope(getState()), epoch = 0, busy = false, rows = [], selectedId = '', selectedAsset = '', capabilities = null;
   let draft = null, dirty = false, pending = null, audioUrl = null, playbackAbort = null, timer = null, pollCount = 0, upload = null;
   let pendingStorageError = false;
@@ -352,6 +364,7 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
     audioUrl = null; player.pause?.(); player.removeAttribute?.('src'); player.hidden = true;}
   function reset() {
     epoch++; stop(); revoke(); rows = []; selectedId = ''; selectedAsset = ''; capabilities = null;
+    variantReceipts = [];
     draft = null; dirty = false; pending = null; upload = null; note.value = ''; requestAck.checked = wordAck.checked = restoreAck.checked = uploadRights.checked = false;
     applyAck.checked = muteOriginal.checked = false;
     resetApplyFields();
@@ -395,6 +408,7 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
     sourceSelect.value = selectedAsset;
     if (oldSource && oldSource !== selectedAsset) revoke();
     const asset = assets.find(a => a.asset_id === selectedAsset);
+    const imported = asset?.provenance.source_type === 'verified_variant_derivative';
     sourceFacts.textContent = asset ? `${asset.filename} · ${duration(asset).toFixed(2)} giây · ${(asset.size_bytes / 1048576).toFixed(2)} MiB · SHA ${asset.checksum_sha256.slice(0, 12)}` : 'Chưa có audio lời nói. Thêm file ở mục trên.';
     const row = currentRow(); let safe = false;
     try {if (row) {validateAudioRead(row, state); safe = true;}} catch {revoke(); status.textContent = 'Nguồn hoặc kết quả đã đổi. Tải lại để kiểm tra.';}
@@ -406,9 +420,9 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
     read.disabled = busy || state.busy || dirty || !!pending;
     sourceSelect.disabled = saved.disabled = history.disabled = busy || dirty || !!pending || !!upload;
     const blockedSource = rows.some(r => r.asset_id === selectedAsset && ['queued', 'running', 'needs_attention'].includes(r.job.status));
-    requestAck.disabled = busy || !!pending; queue.disabled = !editable || !asset || dirty || !!upload || !requestAck.checked
+    requestAck.disabled = busy || !!pending || imported; queue.disabled = !editable || !asset || imported || dirty || !!upload || !requestAck.checked
       || pendingStorageError || blockedSource && pending?.kind !== 'create' || pending && pending.kind !== 'create';
-    queue.textContent = pending?.kind === 'create' ? 'Thử lại đúng yêu cầu nhận diện trước' : 'Yêu cầu nhận diện audio đã chọn';
+    queue.textContent = imported ? 'Dùng lời đã nhập · không nhận diện lại' : pending?.kind === 'create' ? 'Thử lại đúng yêu cầu nhận diện trước' : 'Yêu cầu nhận diện audio đã chọn';
     uploadFile.disabled = mime.disabled = uploadRights.disabled = !editable || !!upload || !!pending || dirty;
     uploadButton.disabled = !editable || !!pending || dirty; uploadButton.textContent = upload ? 'Tiếp tục đúng phiên tải lên trước' : 'Tải audio lời nói lên';
     listen.disabled = busy || state.busy || !safe; cancel.disabled = !editable || !safe || !['queued', 'running', 'needs_attention'].includes(row.job.status) || dirty || pending && pending.kind !== 'cancel';
@@ -425,7 +439,8 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
     note.disabled = wordAck.disabled = !mutable || !viewingCurrent || !!pending;
     restoreAck.disabled = !mutable || viewingCurrent || !!pending;
     for (const input of editor.querySelectorAll('input,textarea,button')) input.disabled = !mutable || !viewingCurrent || !!pending;
-    job.textContent = safe ? `${statuses[row.job.status]}${row.job.error?.code ? ` · ${row.job.error.code}` : ''} · ${row.job.job_id}` : 'Chưa chọn yêu cầu đã lưu.';
+    job.textContent = safe ? imported ? 'Bằng chứng đã nhập từ dự án nguồn · cần nghe và kiểm tra · không chạy ASR mới'
+      : `${statuses[row.job.status]}${row.job.error?.code ? ` · ${row.job.error.code}` : ''} · ${row.job.job_id}` : 'Chưa chọn yêu cầu đã lưu.';
     warning.textContent = safe && audioHasCaptions(state, row) ? compatibleAudioBinding(state, row)
       ? 'Audio và phụ đề đã gắn đúng bản hiện tại. Sửa lời/từ sẽ lưu cả timeline mới và cần nghe, tạo preview và duyệt video lại.'
       : 'Audio đã gắn với phụ đề timeline nhưng liên kết đang khóa, sửa tay hoặc chưa khớp. Sửa/khôi phục cần kiểm tra riêng; chưa được lưu.'
@@ -470,6 +485,15 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
     const result = await Promise.all([api('/api/v1/capabilities'), api(endpoint())]);
     if (start.epoch !== epoch || start.identity !== scope(getState())) return;
     const [caps, values] = result; demand(Array.isArray(values), 'Danh sách audio không hợp lệ.');
+    const nextReceipts = [];
+    for (const value of values) {
+      const asset = assetFor(getState(), value.asset_id);
+      if (asset.provenance.source_type !== 'verified_variant_derivative') continue;
+      const proof = await loadVariantReceipt(getState(), asset, api, getState, cryptoImpl);
+      if (start.epoch !== epoch || start.identity !== scope(getState())) return;
+      if (!nextReceipts.some(v => v.receipt.receipt_id === proof.receipt.receipt_id && v.fingerprint === proof.fingerprint)) nextReceipts.push(proof);
+    }
+    variantReceipts = nextReceipts;
     values.forEach(v => validateAudioRead(v, getState())); demand(new Set(values.map(v => v.audio_id)).size === values.length, 'Danh sách audio bị trùng.');
     const previous = currentRow();
     capabilities = caps; rows = copy(values); provider.textContent = !['openai', 'assemblyai'].includes(caps.transcription_provider)
@@ -488,6 +512,8 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
       + (transcript.provenance.fixture === true || /fixture|mock/i.test(transcript.provider_key) ? 'FIXTURE · dữ liệu kiểm thử, không phải ASR thật. '
         : transcript.provenance.human_edit ? 'Bản người dùng sửa; thời gian có thể do người sửa cung cấp. ' : 'Lời dịch vụ trả về; cần nghe và kiểm tra. ')
       + `${transcript.segments.length} đoạn · ${transcript.segments.reduce((sum, s) => sum + s.words.length, 0)} từ có thời gian.` : 'Chưa có lời nhận diện. Job bị chặn không tạo nội dung giả.';
+    if (transcript && assetFor(getState(), row.asset_id).provenance.source_type === 'verified_variant_derivative')
+      evidence.textContent = 'Bằng chứng và các bản sửa đã nhập; giữ nguồn gốc dịch vụ ban đầu, không phải nhận diện mới. ' + evidence.textContent;
     for (const segment of draft?.segments ?? []) {
       const area = create('fieldset'); area.append(create('legend', null, `Đoạn ${segment.ordinal + 1} · ${displaySeconds(segment.start_seconds)}–${displaySeconds(segment.end_seconds)} giây`));
       const text = create('textarea'); text.rows = 2; text.maxLength = 4000; text.value = segment.text; text.setAttribute('data-audio-segment-text', segment.segment_id);
