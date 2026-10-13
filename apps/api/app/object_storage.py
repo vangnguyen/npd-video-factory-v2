@@ -348,4 +348,5 @@ def create_object_storage(settings: Settings) -> ObjectStorageProvider:
         access_key=settings.object_storage_access_key,
         secret_key=settings.object_storage_secret_key,
         auto_create_bucket=settings.object_storage_auto_create_bucket,
+        request_config=bounded_download_request_config(),
     )

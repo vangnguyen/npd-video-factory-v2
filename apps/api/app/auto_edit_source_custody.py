@@ -9,6 +9,7 @@ from .auto_edit_models import MediaMetadata
 from .db import AssetORM, VideoProjectORM
 from .object_storage import sha256_file
 from .local_video_transcription_provider import completed_io
+from .frozen_storage_read import FrozenStorageRead
 
 
 async def trusted_video_snapshot(repository, project_id, asset_id, storage_name, max_bytes):
@@ -55,8 +56,12 @@ async def staged_trusted_video(repository, storage, project_id, asset_id, stagin
     root = Path(staging_root);root.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix='trusted-video-', dir=root) as owned:
         path = Path(owned)/'source.video'
-        await completed_io(storage.download_file(object_key=snapshot['object_key'], destination=path))
+        proof=FrozenStorageRead(snapshot['object_key'],snapshot['workspace_id'],snapshot['project_id'],
+            snapshot['source_size_bytes'],snapshot['source_sha256'],snapshot['storage_provider'],max_bytes)
+        await proof.download(storage,path)
         await verify_file(path, snapshot)
+        if await trusted_video_snapshot(repository,project_id,asset_id,storage.name,max_bytes)!=snapshot:
+            raise ValueError('AUTO_EDIT_VIDEO_SOURCE_CUSTODY_CHANGED')
         yield path, snapshot
 
 

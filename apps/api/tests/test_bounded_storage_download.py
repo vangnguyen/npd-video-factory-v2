@@ -204,10 +204,11 @@ async def test_actual_source_delivery_missing_object_remains_404_and_cleans_stag
             delegate = provider
             class ConstrainedFixture:
                 name = 's3'
-                async def download_file(self, *, object_key, destination):
+                async def download_file(self, *, object_key, destination, max_bytes=None,
+                        expected_size_bytes=None, expected_sha256=None, expected_prefix=None):
                     await delegate.download_file(object_key=object_key, destination=destination,
-                        max_bytes=asset.size_bytes, expected_size_bytes=asset.size_bytes,
-                        expected_sha256=asset.checksum_sha256)
+                        max_bytes=max_bytes, expected_size_bytes=expected_size_bytes,
+                        expected_sha256=expected_sha256, expected_prefix=expected_prefix)
             provider = ConstrainedFixture()
     app = FastAPI()
     @app.get('/owned-source-contract')

@@ -60,8 +60,9 @@ async def test_final_detects_canonical_audio_change_during_owned_download(env):
     reviewed=await job.process(review.render_id);assert reviewed.status=='awaiting_review',reviewed.failure_reason
     target=await final(env,reviewed)
     actual=env.storage.download_file;entered=asyncio.Event();resume=asyncio.Event()
-    async def paused(*,object_key,destination):
-        await actual(object_key=object_key,destination=destination)
+    async def paused(*,object_key,destination,max_bytes=None,expected_size_bytes=None,expected_sha256=None,expected_prefix=None):
+        await actual(object_key=object_key,destination=destination,max_bytes=max_bytes,
+            expected_size_bytes=expected_size_bytes,expected_sha256=expected_sha256,expected_prefix=expected_prefix)
         if destination.name=='narration.wav':entered.set();await resume.wait()
     env.storage.download_file=paused
     task=asyncio.create_task(job.process(target.render_id))
@@ -229,8 +230,9 @@ async def test_asset_lineage_rebind_during_download_blocks_final_and_raw_cache_r
     asset=await env.assets.get_asset(source)
     key=asset.object_key
     actual=env.storage.download_file;entered=asyncio.Event();resume=asyncio.Event()
-    async def paused(*,object_key,destination):
-        await actual(object_key=object_key,destination=destination)
+    async def paused(*,object_key,destination,max_bytes=None,expected_size_bytes=None,expected_sha256=None,expected_prefix=None):
+        await actual(object_key=object_key,destination=destination,max_bytes=max_bytes,
+            expected_size_bytes=expected_size_bytes,expected_sha256=expected_sha256,expected_prefix=expected_prefix)
         if object_key==key:entered.set();await resume.wait()
     env.storage.download_file=paused
     task=asyncio.create_task(job.process(target.render_id))
@@ -259,8 +261,9 @@ async def test_public_generic_content_version_blocks_stale_approved_audio_withou
     monkeypatch.setattr(app.state,'platform_repository',env.platform,raising=False)
     install_test_human_auth(app,platform_repository=env.platform)
     entered=asyncio.Event();resume=asyncio.Event();actual=env.storage.download_file
-    async def paused(*,object_key,destination):
-        await actual(object_key=object_key,destination=destination)
+    async def paused(*,object_key,destination,max_bytes=None,expected_size_bytes=None,expected_sha256=None,expected_prefix=None):
+        await actual(object_key=object_key,destination=destination,max_bytes=max_bytes,
+            expected_size_bytes=expected_size_bytes,expected_sha256=expected_sha256,expected_prefix=expected_prefix)
         if destination.name=='narration.wav':entered.set();await resume.wait()
     async def append_uninvalidated_version():
         value=copy.deepcopy(version.snapshot);value['content']['script']='Explicit changed fixture content.'
@@ -316,9 +319,10 @@ async def test_storage_sdk_exceptions_are_bounded_and_never_expose_object_or_end
             target=await env.package.enqueue_review(env.project.project_id,RenderCreateRequest(expected_timeline_version=1,
                 expected_subtitle_version=1,expected_audio_version=1,profile='review-960x540'))
         else:target=await final(env,reviewed)
-        async def broken_download(*,object_key,destination):
+        async def broken_download(*,object_key,destination,max_bytes=None,expected_size_bytes=None,expected_sha256=None,expected_prefix=None):
             if '/tts-reuse/' in object_key or destination.name=='narration.wav':raise error
-            await actual_download(object_key=object_key,destination=destination)
+            await actual_download(object_key=object_key,destination=destination,max_bytes=max_bytes,
+                expected_size_bytes=expected_size_bytes,expected_sha256=expected_sha256,expected_prefix=expected_prefix)
         env.storage.download_file=broken_download
     try:
         result=await job.process(target.render_id)
