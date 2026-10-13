@@ -49,6 +49,7 @@ from .provider_safety import (
     ProviderExecutionTrace,
     ProviderSafetyBlocked,
     ProviderSafetyController,
+    ProviderTransientError,
 )
 from .repositories import PlatformRepository
 from .auto_edit_local_evidence import frozen_video_binding, validated_evidence, rejected_evidence
@@ -398,8 +399,7 @@ class AutoEditAnalysisService:
             return await self._analyze(project_id, payload, local_path_override=path,
                 local_source_snapshot=snapshot, local_binding=binding)
 
-    async def _analyze(self, project_id, payload, *, local_path_override=None,
-                       local_source_snapshot=None, local_binding=None):
+    async def prepare(self, project_id, payload, *, local_binding=None):
         if (
             payload.word_timing_policy != "strict_provider_intervals"
             and not self.derived_timing_enabled
@@ -450,31 +450,42 @@ class AutoEditAnalysisService:
                 separators=(",", ":"),
             ).encode("utf-8")
         ).hexdigest()
-        analysis_id, created = await self.repository.create_analysis(
-            project_id=project_id,
-            asset=asset,
-            fingerprint=fingerprint,
-            configuration=payload,
-            source_media=source_media,
-            provenance={
-                "algorithm_version": self.algorithm_version,
-                "source_asset_checksum": asset.checksum_sha256,
-                "source_media_mutated": False,
-                "publish_requested": False,
-                "paid_external_call": False,
-                "vision_analysis": "deferred-to-v2-05",
-                **({'local_video_execution': 'synchronous_partial', 'human_review_required': True,
-                    'production_acceptance_verified': False, 'automatic_model_replay': False}
-                    if local_binding is not None else {}),
-                **profile_binding,
-            },
-        )
+        provenance = {
+            'algorithm_version': self.algorithm_version, 'source_asset_checksum': asset.checksum_sha256,
+            'source_media_mutated': False, 'publish_requested': False, 'paid_external_call': False,
+            'vision_analysis': 'deferred-to-v2-05',
+            **({'local_video_execution': 'synchronous_partial', 'human_review_required': True,
+                'production_acceptance_verified': False, 'automatic_model_replay': False} if local_binding else {}),
+            **profile_binding,
+        }
+        return {'asset': asset, 'source_media': source_media, 'fingerprint': fingerprint,
+            'profile_binding': profile_binding, 'profile_kwargs': profile_kwargs,
+            'asr_prompt_profile': asr_prompt_profile, 'provenance': provenance}
+
+    async def _analyze(self, project_id, payload, *, local_path_override=None,
+                       local_source_snapshot=None, local_binding=None, analysis_id_override=None, job_guard=None):
+        prepared = await self.prepare(project_id, payload, local_binding=local_binding)
+        asset, source_media, fingerprint = prepared['asset'], prepared['source_media'], prepared['fingerprint']
+        profile_binding, profile_kwargs = prepared['profile_binding'], prepared['profile_kwargs']
+        asr_prompt_profile = prepared['asr_prompt_profile']
+        transcription_provider = self.transcription_provider
+        if job_guard is not None:
+            await job_guard.before_execute(prepared)
+        if analysis_id_override is None:
+            analysis_id, created = await self.repository.create_analysis(
+                project_id=project_id, asset=asset, fingerprint=fingerprint, configuration=payload,
+                source_media=source_media, provenance=prepared['provenance'])
+        else:
+            analysis_id, created = analysis_id_override, True
         if not created:
             existing = await self.repository.get_analysis(analysis_id)
             if existing is None:
                 raise RuntimeError("analysis fingerprint exists without readable state")
             return existing
-        await self.repository.mark_analysis_running(analysis_id)
+        if job_guard is None:
+            await self.repository.mark_analysis_running(analysis_id)
+        elif getattr(transcription_provider, 'supports_durable_cancellation', False):
+            profile_kwargs = {**profile_kwargs, 'is_cancelled': job_guard.is_cancelled}
         self.staging_root.mkdir(parents=True, exist_ok=True)
         local_path = local_path_override or self.staging_root / f"{analysis_id}-{asset.filename}"
         local_result_evidence = None
@@ -485,9 +496,10 @@ class AutoEditAnalysisService:
                     raise ValueError("source checksum changed")
             else:
                 await verify_file(local_path, local_source_snapshot)
-                await asyncio.to_thread(transcription_provider.verify)
-                if frozen_video_binding(transcription_provider) != local_binding:
-                    raise ValueError('AUTO_EDIT_LOCAL_VIDEO_BINDING_CHANGED')
+                if local_binding is not None:
+                    await asyncio.to_thread(transcription_provider.verify)
+                    if frozen_video_binding(transcription_provider) != local_binding:
+                        raise ValueError('AUTO_EDIT_LOCAL_VIDEO_BINDING_CHANGED')
             if source_media.audio_codec is None:
                 # A validated video with NO audio stream needs visual analysis, not fabricated ASR.
                 signals = await self.signal_provider.analyze(local_path, metadata=source_media,
@@ -495,17 +507,30 @@ class AutoEditAnalysisService:
                     minimum_silence_duration=payload.minimum_silence_duration)
                 scenes = build_scenes(duration=float(source_media.duration_seconds),
                     signals=signals, transcript=None)
+                if job_guard is not None:
+                    await job_guard.verify_original_file(local_path)
                 await self.repository.save_analysis_results(analysis_id=analysis_id,
                     asset_id=asset.asset_id, provider_key=self.signal_provider.key, transcript=None,
                     scenes=scenes, silence_decisions=[],
                     highlights=build_highlights(scenes=scenes, top_k=payload.top_highlights),
                     signal_evidence={**signals.provenance,"waveform":signals.waveform,"visual":signals.visual},
-                    local_source_snapshot=local_source_snapshot)
+                    local_source_snapshot=local_source_snapshot, job_guard=job_guard)
                 result = await self.repository.get_analysis(analysis_id)
                 if result is None:
                     raise RuntimeError("visual analysis was not persisted")
                 return result
             execution_trace = ProviderExecutionTrace()
+            dispatched = False
+            async def dispatch_transcription():
+                nonlocal dispatched
+                if job_guard is not None:
+                    if dispatched:
+                        raise TimeoutError('AUTO_EDIT_PROVIDER_OUTCOME_UNKNOWN')
+                    if await job_guard.is_cancelled():
+                        raise asyncio.CancelledError()
+                dispatched = True
+                return await transcription_provider.transcribe(local_path, metadata=source_media,
+                    checksum_sha256=asset.checksum_sha256, execution_trace=execution_trace, **profile_kwargs)
             operation_key = (
                 payload.acceptance_operation_id
                 if transcription_provider.external_call
@@ -533,6 +558,7 @@ class AutoEditAnalysisService:
                     ),
                     workspace_id=asset.workspace_id,
                     project_id=asset.project_id,
+                    job_id=job_guard.job_id if job_guard else None,
                     provider_key=transcription_provider.key,
                     model=transcription_provider.model,
                     capability=transcription_capability,
@@ -584,13 +610,7 @@ class AutoEditAnalysisService:
                     rights_required=transcription_provider.external_call,
                     rights=[],
                 ),
-                lambda: transcription_provider.transcribe(
-                    local_path,
-                    metadata=source_media,
-                    checksum_sha256=asset.checksum_sha256,
-                    execution_trace=execution_trace,
-                    **profile_kwargs,
-                ),
+                dispatch_transcription,
                 actual_cost=lambda result: result.actual_cost_vnd,
                 timeout_evidence_factory=lambda timeout_envelope, error: (
                     execution_trace.timeout_evidence(
@@ -613,6 +633,8 @@ class AutoEditAnalysisService:
                         local_binding, local_source_snapshot)
                     if local_result_evidence is None:
                         raise ValueError('AUTO_EDIT_LOCAL_VIDEO_RESULT_EVIDENCE_INVALID')
+                if job_guard is not None:
+                    await job_guard.record_result(result)
                 return result
             transcription_result, signals = await gather_drained(
                 capture_transcription(),
@@ -631,6 +653,8 @@ class AutoEditAnalysisService:
                 async with staged_trusted_video(self.repository, self.object_storage, project_id, payload.asset_id,
                         self.staging_root, transcription_provider.max_file_bytes, expected=local_source_snapshot):
                     pass
+            elif job_guard is not None:
+                await job_guard.verify_original_file(local_path)
             transcript = type(transcription_result.value)(
                 language=transcription_result.value.language,
                 confidence=transcription_result.value.confidence,
@@ -663,7 +687,7 @@ class AutoEditAnalysisService:
             await self.platform.record_provider_operation(
                 workspace_id=asset.workspace_id,
                 project_id=asset.project_id,
-                job_id=None,
+                job_id=job_guard.job_id if job_guard else None,
                 provider_key=transcription_provider.key,
                 capability=transcription_capability,
                 operation=f"auto-edit-transcript:{analysis_id}",
@@ -689,7 +713,7 @@ class AutoEditAnalysisService:
             await self.platform.record_provider_operation(
                 workspace_id=asset.workspace_id,
                 project_id=asset.project_id,
-                job_id=None,
+                job_id=job_guard.job_id if job_guard else None,
                 provider_key=self.signal_provider.key,
                 capability="media_analysis",
                 operation=f"auto-edit-signals:{analysis_id}",
@@ -707,25 +731,26 @@ class AutoEditAnalysisService:
                 highlights=highlights,
                 signal_evidence={**signals.provenance,"waveform":signals.waveform,"visual":signals.visual},
                 local_source_snapshot=local_source_snapshot,
+                job_guard=job_guard,
             )
         except asyncio.CancelledError:
             await self.repository.mark_analysis_failed(analysis_id, 'AUTO_EDIT_LOCAL_OUTCOME_UNKNOWN' if local_binding else 'AUTO_EDIT_ANALYSIS_CANCELLED',
-                local_evidence=local_result_evidence, expected_source_sha256=asset.checksum_sha256)
+                local_evidence=local_result_evidence, expected_source_sha256=asset.checksum_sha256, job_guard=job_guard)
             raise
         except ProviderNotConfigured:
             await self.repository.mark_analysis_failed(analysis_id, "PROVIDER_NOT_CONFIGURED",
-                local_evidence=local_result_evidence, expected_source_sha256=asset.checksum_sha256)
+                local_evidence=local_result_evidence, expected_source_sha256=asset.checksum_sha256, job_guard=job_guard)
             raise
         except ProviderSafetyBlocked:
             await self.repository.mark_analysis_failed(analysis_id, "PROVIDER_SAFETY_BLOCKED",
-                local_evidence=local_result_evidence, expected_source_sha256=asset.checksum_sha256)
+                local_evidence=local_result_evidence, expected_source_sha256=asset.checksum_sha256, job_guard=job_guard)
             raise
         except Exception as exc:
             evidence = local_result_evidence or rejected_evidence(exc, local_binding, local_source_snapshot)
-            code = ('AUTO_EDIT_LOCAL_OUTCOME_UNKNOWN' if local_binding and isinstance(exc, TimeoutError)
+            code = ('AUTO_EDIT_LOCAL_OUTCOME_UNKNOWN' if (local_binding or job_guard) and isinstance(exc, (TimeoutError,ProviderTransientError))
                     else 'AUTO_EDIT_ANALYSIS_FAILED')
             await self.repository.mark_analysis_failed(analysis_id, code,
-                local_evidence=evidence, expected_source_sha256=asset.checksum_sha256)
+                local_evidence=evidence, expected_source_sha256=asset.checksum_sha256, job_guard=job_guard)
             raise
         finally:
             if local_path_override is None:

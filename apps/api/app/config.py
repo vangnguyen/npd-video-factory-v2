@@ -95,6 +95,8 @@ class Settings(BaseSettings):
     ffmpeg_path: str = "ffmpeg"
     upload_staging_root: Path = Path("/workspace/storage/uploads")
     analysis_staging_root: Path = Path("/workspace/storage/analysis")
+    auto_edit_job_lease_seconds: int = Field(default=300, ge=30, le=3600)
+    auto_edit_job_timeout_seconds: int = Field(default=1800, ge=30, le=3600)
     vision_fixture_enabled: bool = True
     vision_provider: str = "fixture"
     vision_staging_root: Path = Path("/workspace/storage/vision")

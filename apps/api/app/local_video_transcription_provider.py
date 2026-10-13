@@ -12,7 +12,7 @@ from .auto_edit_providers import ProviderNotConfigured
 from .local_asr_profile import digest, profile
 from .local_asr_runtime import plain, file_sha
 from .local_transcription_provider import LocalCpuTranscriptionProvider
-from .local_uploaded_audio_provider import custody, proof, bounded_process, decoded, projection, cancellable
+from .local_uploaded_audio_provider import custody, proof, bounded_process, decoded, projection
 
 
 async def completed_io(awaitable):
@@ -41,6 +41,25 @@ class LocalVideoRejected(ValueError):
         super().__init__(code)
 
 
+async def cancellable(factory, is_cancelled):
+    """One cancellation reaches the child; later caller cancellation drains it."""
+    if is_cancelled is not None and await is_cancelled():
+        raise LocalVideoRejected('LOCAL_VIDEO_CANCELLED')
+    task = asyncio.create_task(factory())
+    try:
+        while not task.done():
+            await asyncio.wait([task], timeout=.1)
+            if is_cancelled is not None and await is_cancelled():
+                raise LocalVideoRejected('LOCAL_VIDEO_CANCELLED')
+        return await task
+    finally:
+        if not task.done():
+            task.cancel()
+        async def collect():
+            return await asyncio.gather(task, return_exceptions=True)
+        await completed_io(collect())
+
+
 class LocalVideoEvidenceRejected(LocalVideoRejected):
     """Immutable result of this invocation, never a shared raw-result lookup."""
     def __init__(self, code, evidence):
@@ -58,6 +77,7 @@ class LocalVideoTranscriptionProvider:
     profile = None
     response_format = 'json'
     timestamp_granularities = ('segment', 'word')
+    supports_durable_cancellation = True
 
     def __init__(self, *, manifest, manifest_sha256, decoder, decoder_sha256,
                  language='auto', model_key='base', decoder_timeout_seconds=60,
@@ -115,7 +135,7 @@ class LocalVideoTranscriptionProvider:
             'provider_billed_cost_vnd': 0, 'operating_electricity_hardware_cost_vnd': None,
             'human_accepted': False, 'publishing_enabled': False}
 
-    async def transcribe(self, path, *, metadata, checksum_sha256, execution_trace=None):
+    async def transcribe(self, path, *, metadata, checksum_sha256, execution_trace=None, is_cancelled=None):
         await completed_io(asyncio.to_thread(self.verify))
         source = plain(path)
         source_size = source.stat().st_size if source.is_file() else 0
@@ -132,7 +152,7 @@ class LocalVideoTranscriptionProvider:
                 '-copyts', '-start_at_zero', '-protocol_whitelist', 'file,pipe', '-i', str(source),
                 '-map', '0:a:0', '-vn', '-ac', '1', '-af', 'aresample=16000,asettb=1/16000,ashowinfo',
                 '-t', str(self.max_duration_seconds), '-c:a', 'pcm_s16le', str(pcm)],
-                timeout=self.decoder_timeout_seconds), None)
+                timeout=self.decoder_timeout_seconds), is_cancelled)
             # The source duration was admitted in full; -t is a resource ceiling,
             # never permission to process a silently truncated overlong source.
             if not 0 < pcm.stat().st_size <= self.max_pcm_bytes:
@@ -146,9 +166,9 @@ class LocalVideoTranscriptionProvider:
             if provider.profile != self._profile:
                 raise ProviderNotConfigured('LOCAL_VIDEO_PROFILE_CHANGED')
             try:
-                transcript = await provider.transcribe(pcm, metadata=MediaMetadata(media_kind='audio',
+                transcript = await cancellable(lambda: provider.transcribe(pcm, metadata=MediaMetadata(media_kind='audio',
                     detected_content_type='audio/wav', duration_seconds=duration, audio_channels=1, audio_sample_rate=16000),
-                    checksum_sha256=pcm_sha, execution_trace=execution_trace)
+                    checksum_sha256=pcm_sha, execution_trace=execution_trace), is_cancelled)
             except Exception:
                 if isinstance(provider.raw_result, dict):
                     captured = self._evidence(provider.raw_result, clock, checksum_sha256, pcm_sha,
