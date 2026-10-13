@@ -50,6 +50,8 @@ class VoiceResult(BaseModel):
     provider: str
     voice: str
     evidence: TTSArtifactEvidence | None = None
+    reuse: dict | None = None
+    cache_origin: dict | None = None
 
 
 class ContentProvider(Protocol):

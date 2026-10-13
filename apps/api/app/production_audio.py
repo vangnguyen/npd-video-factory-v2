@@ -170,6 +170,10 @@ class AudioMixEngine:
                 # Preserve provider evidence separately; do not silently reuse
                 # raw-audio boundaries as mixed-timeline word timestamps.
                 timing[-1]["transformed_audio_requires_alignment_mapping"] = bool(voice.evidence.timing.words)
+            if voice.reuse is not None:
+                timing[-1]['raw_audio_reuse'] = voice.reuse
+            if voice.cache_origin is not None:
+                timing[-1]['raw_audio_cache_origin'] = voice.cache_origin
             # Segment-cue estimates only. Never expose these as word timestamps.
             total = sum(len(c.text.split()) for c in group)
             cursor = start
@@ -299,6 +303,10 @@ class AudioMixEngine:
                 timing[-1]["provider_audio_file"] = raw.name
                 timing[-1]["alignment_source_audio_only"] = voice_result.evidence.timing.source
                 timing[-1]["transformed_audio_requires_alignment_mapping"] = bool(voice_result.evidence.timing.words)
+            if voice_result.reuse is not None:
+                timing[-1]['raw_audio_reuse'] = voice_result.reuse
+            if voice_result.cache_origin is not None:
+                timing[-1]['raw_audio_cache_origin'] = voice_result.cache_origin
 
         _write_pcm16(output_path, master, sample_rate)
         if not any(abs(sample) >= PCM_ACTIVITY_THRESHOLD for sample in master):

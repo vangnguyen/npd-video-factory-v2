@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import wave
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -81,7 +82,11 @@ class DeterministicAudioEngine:
         workdir,
     ):
         del config, workdir
-        output_path.write_bytes(b"deterministic-narration")
+        # An actual owned PCM fixture allows read-only final audio custody.
+        # It remains synthetic and is never speech/normalization acceptance.
+        with wave.open(str(output_path),'wb') as audio:
+            audio.setnchannels(1);audio.setsampwidth(2);audio.setframerate(48000)
+            audio.writeframes(b'\x00\x10'*int(duration_seconds*48000))
         return {
             "provider": "fixture-vi",
             "voice": "fixture-vi",
@@ -110,7 +115,9 @@ class DeterministicAudioEngine:
         output_path,
     ):
         del narration_path, music_path, cues
-        output_path.write_bytes(b"deterministic-48khz-stereo-audio")
+        with wave.open(str(output_path),'wb') as audio:
+            audio.setnchannels(2);audio.setsampwidth(2);audio.setframerate(48000)
+            audio.writeframes(b'\x00\x10'*2*int(duration_seconds*48000))
         return {
             "engine": "deterministic-audio-mix-v2-08",
             "sample_rate": config.sample_rate,
