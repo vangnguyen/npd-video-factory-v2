@@ -1,4 +1,4 @@
-"""Scoped SQL family reservations, without child creation or provider execution.
+"""Scoped SQL family reservations and versioned derivative history.
 
 S1 freezes actual source metadata and version graphs. It does not attest byte
 custody or upload trust; those require a later verified artifact import step.
@@ -29,7 +29,7 @@ from .sql_variant_db import (SqlVariantFamilyORM, SqlVariantMemberORM,
 from .sql_variant_models import (AssetProof, AssetReceiptRead, AssetReceiptReserveRequest,
     FamilyMemberRead, FamilyPage, FamilyRead, FamilyReserveRequest, FamilySnapshot,
     FamilyVersionRequest, MasterBinding, NoAuthority, RecordProof, VariantAvailability,
-    VariantCatalog, VariantProfile, as_utc, canonical, default_catalog, digest)
+    VariantCatalog, VariantProfile, VariantProgressSafety, as_utc, canonical, default_catalog, digest)
 
 
 class SqlVariantError(ValueError):
@@ -311,21 +311,22 @@ class SqlVariantFamilyRepository:
                 profile = VariantProfile.model_validate(member.profile_json)
                 if profile != profiles.get(ref) or digest(member.profile_json) != member.profile_sha256 \
                         or member.member_id != expected_id or member.planned_project_id != expected_project \
-                        or member.workspace_id != row.workspace_id or member.child_project_id is not None \
-                        or member.initial_timeline_version_id is not None or member.state != row.state:
+                        or member.workspace_id != row.workspace_id:
                     raise ValueError()
                 reads.append(FamilyMemberRead(member_id=member.member_id, family_id=row.family_id,
                     workspace_id=row.workspace_id, profile=profile, planned_project_id=member.planned_project_id,
-                    state=member.state))
+                    state=member.state, child_project_id=member.child_project_id,
+                    safety=VariantProgressSafety(child_projects_created=int(member.child_project_id is not None),
+                        source_bytes_verified=member.child_project_id is not None)))
             expected_result = {'schema_version': 'sql-variant-reservation-result.v1',
                 'members': [{'member_id': m.member_id, 'profile_ref': m.profile.profile_ref,
                     'planned_project_id': m.planned_project_id} for m in reads],
                 'safety': NoAuthority().model_dump(mode='json')}
-            if row.result_json != expected_result or row.state not in {'reserved', 'cancelled'} or row.version < 1:
+            if row.result_json != expected_result or row.version < 1:
                 raise ValueError()
             events = (await session.scalars(select(SqlVariantEventORM).where(SqlVariantEventORM.family_id == row.family_id)
                 .order_by(SqlVariantEventORM.version))).all()
-            if len(events) != row.version or row.version != (1 if row.state == 'reserved' else 2):
+            if len(events) != row.version:
                 raise ValueError()
             for index, event in enumerate(events, 1):
                 if event.version != index or event.workspace_id != row.workspace_id \
@@ -338,14 +339,9 @@ class SqlVariantFamilyRepository:
                     if event.event_type != 'family.reserved' or event.request_key_sha256 != row.request_key_sha256 \
                             or event.request_sha256 != row.request_sha256 or event.actor_ref != row.actor_ref or event.payload_json != expected_payload:
                         raise ValueError()
-                else:
-                    cancellation = FamilyVersionRequest.model_validate({**event.payload_json['request'], 'request_key': 'internal-cancel-history-key'})
-                    if event.event_type != 'family.cancelled' or digest(event.payload_json['request']) != event.request_sha256 \
-                            or cancellation.expected_version != 1 or cancellation.expected_snapshot_sha256 != row.snapshot_sha256 \
-                            or event.payload_json != {'from_version': 1, 'to_version': 2, 'snapshot_sha256': row.snapshot_sha256,
-                                'request': cancellation.model_dump(mode='json', exclude={'request_key'}), 'safety': NoAuthority().model_dump(mode='json')}:
-                        raise ValueError()
-        except (ValueError, TypeError, KeyError):
+            from .sql_variant_derivation_repository import validate_progress
+            await validate_progress(session, row, members, events)
+        except (ValueError, TypeError, KeyError, StopIteration):
             raise SqlVariantError('SQL_VARIANT_FAMILY_EVIDENCE_CHANGED') from None
         source_current, reason = True, None
         try:
@@ -357,7 +353,9 @@ class SqlVariantFamilyRepository:
         return FamilyRead(family_id=row.family_id, workspace_id=row.workspace_id, master_project_id=row.master_project_id,
             version=row.version, state=row.state, snapshot=snapshot, snapshot_sha256=row.snapshot_sha256,
             result=copy.deepcopy(row.result_json), result_sha256=row.result_sha256, source_current=source_current,
-            source_current_reason=reason, members=reads, actor_ref=row.actor_ref, created_at=as_utc(row.created_at))
+            source_current_reason=reason, members=reads, actor_ref=row.actor_ref, created_at=as_utc(row.created_at),
+            safety=VariantProgressSafety(child_projects_created=sum(m.child_project_id is not None for m in reads),
+                source_bytes_verified=all(m.child_project_id is not None for m in reads)))
 
     async def reserve(self, workspace_id, master_project_id, payload: FamilyReserveRequest, *, actor_ref):
         self.actor(actor_ref)
@@ -488,15 +486,19 @@ class SqlVariantFamilyRepository:
                 return await self._read(session, row), True
             if row.version != payload.expected_version or row.snapshot_sha256 != payload.expected_snapshot_sha256:
                 raise SqlVariantError('SQL_VARIANT_VERSION_CHANGED')
-            if row.state != 'reserved':
+            if row.state == 'cancelled':
                 raise SqlVariantError('SQL_VARIANT_STATE_CHANGED')
             prior_version = row.version
             row.version += 1
             row.state = 'cancelled'
             row.updated_at = utc_now()
-            await session.execute(update(SqlVariantMemberORM).where(SqlVariantMemberORM.family_id == family_id).values(state='cancelled', updated_at=row.updated_at))
+            await session.execute(update(SqlVariantMemberORM).where(SqlVariantMemberORM.family_id == family_id,
+                SqlVariantMemberORM.child_project_id.is_(None)).values(state='cancelled', updated_at=row.updated_at))
             await session.execute(update(SqlVariantArtifactReceiptORM).where(SqlVariantArtifactReceiptORM.family_id == family_id,
                 SqlVariantArtifactReceiptORM.state == 'reserved').values(state='cancelled', updated_at=row.updated_at))
+            await session.execute(update(SqlVariantArtifactReceiptORM).where(SqlVariantArtifactReceiptORM.family_id == family_id,
+                SqlVariantArtifactReceiptORM.state == 'pending').values(state='cancelled', claim_id=None, lease_until=None,
+                    updated_at=row.updated_at))
             self._event(session, row, 'family.cancelled', key_sha, request_sha, actor_ref,
                 {'from_version': prior_version, 'to_version': row.version, 'snapshot_sha256': row.snapshot_sha256,
                     'request': body, 'safety': NoAuthority().model_dump(mode='json')})
@@ -557,7 +559,8 @@ class SqlVariantFamilyRepository:
                 'request': request.model_dump(mode='json', exclude={'request_key'}), 'safety': NoAuthority().model_dump(mode='json')}
             if row.workspace_id != family.workspace_id or row.family_id != family.family_id or value != expected \
                     or digest(value) != row.input_sha256 or row.receipt_id != identity('vfr_', row.member_id + '/' + row.input_sha256) \
-                    or row.kind != 'asset' or row.state not in {'reserved', 'cancelled'} or row.state != family.state \
+                    or row.kind != 'asset' or row.state not in {'reserved', 'cancelled'} \
+                    or row.state != ('cancelled' if family.state == 'cancelled' else 'reserved') \
                     or digest(value['request']) != row.request_sha256 or request.member_id != row.member_id \
                     or request.source_asset_id != source.asset_id or request.expected_source_record_sha256 != source.record_sha256 \
                     or request.expected_snapshot_sha256 != family.snapshot_sha256 or request.expected_version != 1 \
