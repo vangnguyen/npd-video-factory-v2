@@ -1,6 +1,7 @@
 """Verified original media bytes; authorization/source ownership belongs to caller."""
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import os
 from pathlib import Path
@@ -14,6 +15,8 @@ from starlette.responses import StreamingResponse
 from .media_validation import MediaValidationError, safe_upload_filename, sniff_media
 from .object_storage import ObjectStorageProvider, filesystem_path, validate_object_key
 from .platform_models import AssetRead
+from .bounded_storage_download import StorageDownloadError
+from .frozen_storage_read import frozen_asset_read, completed_read
 
 MAX_SOURCE_BYTES = 2 * 1024**3
 CHUNK_BYTES = 128 * 1024
@@ -102,6 +105,7 @@ async def deliver_source_asset(request: Request, *, asset: AssetRead,
     object_storage: ObjectStorageProvider, staging_root: Path,
     max_source_bytes: int = MAX_SOURCE_BYTES):
     """Call only after project/workspace, completed intake and snapshot guards."""
+    asset = asset.model_copy(deep=True)
     if (type(max_source_bytes) is not int or not 1 <= max_source_bytes <= MAX_SOURCE_BYTES
         or type(asset.size_bytes) is not int or not 0 < asset.size_bytes <= max_source_bytes
         or asset.asset_class != 'source' or asset.kind not in {'audio','video','image'}
@@ -110,6 +114,8 @@ async def deliver_source_asset(request: Request, *, asset: AssetRead,
         fail('SOURCE_ASSET_METADATA_INVALID')
     try:
         validate_object_key(asset.object_key)
+        proof = frozen_asset_read(asset, workspace_id=asset.workspace_id, project_id=asset.project_id,
+            storage=object_storage, maximum=max_source_bytes)
     except (ValueError, TypeError):
         fail('SOURCE_ASSET_METADATA_INVALID')
     declared = asset.content_type.split(';',1)[0].strip().lower()
@@ -130,16 +136,23 @@ async def deliver_source_asset(request: Request, *, asset: AssetRead,
     handed_off = False
     try:
         try:
-            await object_storage.download_file(object_key=asset.object_key, destination=target)
+            await proof.download(object_storage, target)
         except FileNotFoundError:
             fail('SOURCE_OBJECT_NOT_FOUND', 404)
+        except StorageDownloadError as error:
+            if error.code in {'STORAGE_DOWNLOAD_SIZE_MISMATCH', 'STORAGE_DOWNLOAD_SIZE_LIMIT'}:
+                fail('SOURCE_ASSET_SIZE_CHANGED')
+            if error.code in {'STORAGE_DOWNLOAD_HASH_MISMATCH', 'STORAGE_DOWNLOAD_STAGE_HASH_MISMATCH'}:
+                fail('SOURCE_ASSET_CHECKSUM_CHANGED')
+            fail('SOURCE_STORAGE_UNAVAILABLE', 503)
         except Exception:
             fail('SOURCE_STORAGE_UNAVAILABLE', 503)
         if target.is_symlink() or target.resolve().parent != folder.resolve():
             fail('SOURCE_STAGED_FILE_INVALID')
         physical = filesystem_path(target)
         try:
-            handle, detected_mime = await anyio.to_thread.run_sync(verified_handle, physical, asset, declared)
+            handle, detected_mime = await completed_read(asyncio.to_thread(verified_handle, physical, asset, declared),
+                dispose_cancelled_result=lambda result:result[0].close())
         except MediaValidationError:
             fail('SOURCE_ASSET_MIME_CHANGED')
         except OSError:

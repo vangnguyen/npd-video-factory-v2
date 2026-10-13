@@ -23,6 +23,7 @@ from .repositories import PostgresJobStore
 from .transcript_word_review import revised
 from .uploaded_audio_db import UploadedAudioORM
 from .uploaded_audio_repository import UploadedAudioRepository, AudioConflict, source, digest, identity, actor
+from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES, FrozenReadRejected
 
 AUDIO_QUEUE = 'npd:video-factory:v2:uploaded-audio:queued'
 
@@ -185,7 +186,7 @@ class UploadedAudioService:
         async with self.session_factory() as session:
             parent = await self.repository.parent(session, project_id, audio_id)
             _, asset, _ = await source(session, project_id, parent.asset_id, parent=parent)
-            key, sha, size, mime = asset.object_key, parent.source_sha256, parent.source_size_bytes, asset.content_type
+            sha, size, mime = parent.source_sha256, parent.source_size_bytes, asset.content_type
             # Intake validates bytes/MIME, not client extensions. Stage a name
             # matching that verified MIME for adapters that check suffixes.
             suffix = {'audio/wav':'.wav','audio/x-wav':'.wav','audio/mpeg':'.mp3',
@@ -194,16 +195,31 @@ class UploadedAudioService:
                 raise AudioConflict('AUDIO_MIME_UNSUPPORTED')
             if asset.storage_provider != self.object_storage.name:
                 raise AudioConflict('AUDIO_STORAGE_CHANGED')
+            limit=parent.configuration_json.get('provider',{}).get('max_file_bytes')
+            if limit is not None and (type(limit) is not int or limit<=0):
+                raise AudioConflict('AUDIO_PROVIDER_BINDING_INVALID')
+            try:
+                proof=frozen_asset_read(asset,workspace_id=parent.workspace_id,project_id=project_id,
+                    storage=self.object_storage,maximum=min(limit,MAX_SOURCE_BYTES) if limit is not None else MAX_SOURCE_BYTES)
+                custody=asset_custody(asset)
+            except FrozenReadRejected:
+                raise AudioConflict('AUDIO_SOURCE_CHANGED') from None
         self.staging_root.mkdir(parents=True, exist_ok=True)
         owner = TemporaryDirectory(prefix='uploaded-audio-',dir=self.staging_root)
         path = Path(owner.name)/('source'+suffix)
         try:
-            await self.object_storage.download_file(object_key=key,destination=path)
-            if path.stat().st_size!=size or sha256_file(path)!=sha:
+            try:
+                await proof.download(self.object_storage,path)
+            except Exception:
+                raise AudioConflict('AUDIO_SOURCE_DOWNLOAD_FAILED') from None
+            if path.stat().st_size!=size or await completed_read(asyncio.to_thread(sha256_file,path))!=sha:
                 raise AudioConflict('AUDIO_SOURCE_CHANGED')
             # Recheck registered custody after an asynchronous download.
             async with self.session_factory() as session:
-                await self.repository.parent(session, project_id, audio_id)
+                current=await self.repository.parent(session, project_id, audio_id)
+                _,current_asset,_=await source(session,project_id,current.asset_id,parent=current)
+                if asset_custody(current_asset)!=custody:
+                    raise AudioConflict('AUDIO_SOURCE_CHANGED')
             return owner,path,mime,sha
         except BaseException:
             owner.cleanup()

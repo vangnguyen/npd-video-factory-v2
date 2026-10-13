@@ -3,6 +3,7 @@ from __future__ import annotations
 # Import the additive ORM before schema creation; default providers do no reuse.
 from .sql_tts_artifact_reuse_db import TTSArtifactReuseORM
 
+import asyncio
 import copy
 import hashlib
 import json
@@ -15,6 +16,7 @@ from typing import Any, Awaitable, Callable, Protocol
 import httpx
 
 from .object_storage import ObjectStorageProvider, validate_object_key
+from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES
 from .platform_models import AssetRegister
 from .production_audio import AudioMixEngine, audio_provider_status
 from .production_logic import (
@@ -395,7 +397,7 @@ class ProductionRenderProcessor:
             source_project_version_id = feature_context.project_version_id if feature_context else None
             snapshot = TimelineSnapshot.model_validate(snapshot_json)
             project = await self.platform.get_project(render.project_id)
-            if project is None:
+            if project is None or project.workspace_id != render.workspace_id:
                 raise RuntimeError("render project disappeared")
             await self.repository.set_render_progress(render_id, 10)
             asset_ids = {
@@ -411,14 +413,11 @@ class ProductionRenderProcessor:
             for asset_id in sorted(asset_ids):
                 await self._check_cancelled(render_id)
                 asset = await self.asset_repository.get_asset(asset_id)
-                if asset is None or asset.project_id != render.project_id:
+                if asset is None or asset.project_id != render.project_id or asset.workspace_id != render.workspace_id:
                     raise ProductionContractError(f"render asset is unavailable: {asset_id}")
                 suffix = Path(asset.filename).suffix[:12] or ".bin"
                 path = workdir / f"{asset.asset_id}{suffix}"
-                await self.object_storage.download_file(object_key=asset.object_key, destination=path)
-                from .object_storage import sha256_file
-                if sha256_file(path) != asset.checksum_sha256:
-                    raise ProductionContractError("render asset bytes changed after registration")
+                await self._download_render_asset(render,asset,path)
                 asset_paths[asset.asset_id] = (asset, path)
             timeline_qc = validate_timeline_renderability(
                 snapshot, available_asset_ids=set(asset_paths)
@@ -462,6 +461,7 @@ class ProductionRenderProcessor:
                     current = await ContentService(self.platform).latest(render.project_id)
                     if current is None or current.project_version_id != snapshot.metadata.get("content_version_id"):
                         raise RenderCancelledError("TTS_CONTENT_VERSION_STALE")
+                    await self._check_cancelled(render_id)
                 if hasattr(tts_provider, "bind_render_scope") and audio_mix.config.voice.enabled:
                     tts_provider = tts_provider.bind_render_scope(workspace_id=project.workspace_id,
                         project_id=render.project_id, content_version_id=snapshot.metadata.get("content_version_id"),
@@ -477,6 +477,7 @@ class ProductionRenderProcessor:
                             await self._check_cancelled(render_id)
                             await self.repository.assert_audio_reuse_current(render_id,target)
                             await before_unit()
+                            await self.repository.assert_audio_reuse_current(render_id,target)
                         tts_provider=ReusingTTSProvider(tts_provider,repository=TTSArtifactReuseRepository(self.repository.session_factory),
                             platform=self.platform,assets=self.asset_repository,storage=self.object_storage,render=render,
                             content=content,voice_config=audio_mix.config.voice,guard=reuse_guard,target_binding=target)
@@ -675,6 +676,26 @@ class ProductionRenderProcessor:
     async def _check_cancelled(self, render_id: str) -> None:
         if await self.repository.render_cancel_requested(render_id):
             raise RenderCancelledError("render was cancelled")
+
+    async def _download_render_asset(self, render, asset, path):
+        """Read selected footage/music from its registered server byte proof."""
+        try:
+            proof=frozen_asset_read(asset,workspace_id=render.workspace_id,project_id=render.project_id,
+                storage=self.object_storage,maximum=MAX_SOURCE_BYTES)
+            custody=asset_custody(asset)
+            await proof.download(self.object_storage,path)
+            from .object_storage import sha256_file
+            if await completed_read(asyncio.to_thread(sha256_file,path)) != asset.checksum_sha256:
+                raise ProductionContractError('RENDER_ASSET_BYTES_CHANGED')
+        except ProductionContractError:
+            raise
+        except Exception:
+            raise ProductionContractError('RENDER_ASSET_DOWNLOAD_FAILED') from None
+        await self._check_cancelled(render.render_id)
+        latest_asset=await self.asset_repository.get_asset(asset.asset_id)
+        if latest_asset is None or asset_custody(latest_asset)!=custody:
+            raise ProductionContractError('RENDER_ASSET_CUSTODY_CHANGED')
+        await self._check_cancelled(render.render_id)
 
     async def _persist_asset(
         self,
