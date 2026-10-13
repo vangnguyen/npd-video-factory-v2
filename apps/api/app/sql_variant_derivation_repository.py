@@ -38,6 +38,9 @@ def target_key(workspace, child, member, source_id, mime):
 
 def validate_input(row, family, members):
     """Immutable originals match S1 graph proofs, not freely rehashed metadata."""
+    if row.kind == 'uploaded_evidence_derivation':
+        from .sql_variant_uploaded_repository import validate_input as validate_uploaded
+        return validate_uploaded(row, family, members)
     value = row.input_json
     request = DeriveStoryboardRequest.model_validate({**value['request'], 'request_key': 'internal-derivation-history-key'})
     member = next(m for m in members if m.member_id == row.member_id)
@@ -83,7 +86,7 @@ async def validate_progress(session, family, members, events):
     """Reconstruct persisted state from exact claims/completions; no approval transfer."""
     receipts = (await session.scalars(select(SqlVariantArtifactReceiptORM).where(
         SqlVariantArtifactReceiptORM.family_id == family.family_id,
-        SqlVariantArtifactReceiptORM.kind == 'storyboard_derivation'))).all()
+        SqlVariantArtifactReceiptORM.kind.in_(['storyboard_derivation', 'uploaded_evidence_derivation'])))).all()
     by_id, states, children = {}, {m.member_id: 'reserved' for m in members}, {}
     for receipt in receipts:
         validate_input(receipt, family, members)
@@ -172,6 +175,9 @@ async def validate_progress(session, family, members, events):
 
 
 async def validate_completed(session, receipt):
+    if receipt.kind == 'uploaded_evidence_derivation':
+        from .sql_variant_uploaded_repository import validate_completed as validate_uploaded
+        return await validate_uploaded(session, receipt)
     value, result = receipt.input_json, receipt.result_json
     ids, content, timeline = derive_storyboard(value, result['copies'])
     expected = make_result(value, result['copies'])
@@ -235,6 +241,8 @@ def make_result(value, copies):
 
 
 class SqlStoryboardDerivationRepository:
+    kind = 'storyboard_derivation'
+    target_key = staticmethod(target_key)
     def __init__(self, families: SqlVariantFamilyRepository, *, lease_seconds=180):
         if type(lease_seconds) is not int or not 1 <= lease_seconds <= 900:
             raise ValueError('SQL_VARIANT_LEASE_INVALID')
@@ -369,7 +377,7 @@ class SqlStoryboardDerivationRepository:
             SqlVariantArtifactReceiptORM.receipt_id == receipt.receipt_id,
             SqlVariantArtifactReceiptORM.family_id == family.family_id,
             SqlVariantArtifactReceiptORM.workspace_id == family.workspace_id,
-            SqlVariantArtifactReceiptORM.kind == 'storyboard_derivation',
+            SqlVariantArtifactReceiptORM.kind == self.kind,
             SqlVariantArtifactReceiptORM.state == 'pending',
             SqlVariantArtifactReceiptORM.claim_id == claim_id,
             SqlVariantArtifactReceiptORM.lease_until == expected['lease_until'],
@@ -513,7 +521,7 @@ class SqlStoryboardDerivationRepository:
                 return None
             receipt = await session.scalar(select(SqlVariantArtifactReceiptORM).where(
                 SqlVariantArtifactReceiptORM.receipt_id == receipt_id, SqlVariantArtifactReceiptORM.family_id == family_id,
-                SqlVariantArtifactReceiptORM.workspace_id == workspace, SqlVariantArtifactReceiptORM.kind == 'storyboard_derivation'))
+                SqlVariantArtifactReceiptORM.workspace_id == workspace, SqlVariantArtifactReceiptORM.kind == self.kind))
             return self.read(receipt) if receipt else None
 
 

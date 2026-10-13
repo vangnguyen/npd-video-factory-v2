@@ -44,14 +44,24 @@ async def source(session, project_id, asset_id, *, parent=None):
         raise KeyError(asset_id)
     if asset.asset_class != 'source' or asset.kind != 'audio' or not asset.content_type.startswith('audio/'):
         raise AudioConflict('AUDIO_SOURCE_REQUIRED')
-    upload = await session.get(UploadSessionORM, asset.provenance.get('source_reference', ''))
-    if (asset.provenance.get('source_type') != 'user_upload' or upload is None
-        or upload.asset_id != asset_id or upload.project_id != project_id
-        or upload.workspace_id != project.workspace_id
-        or upload.status not in {'completed', 'completed_duplicate'}
-        or upload.quarantine_state != 'trusted' or upload.trusted_at is None
-        or upload.scan_checksum_sha256 != asset.checksum_sha256):
-        raise AudioConflict('AUDIO_TRUSTED_UPLOAD_REQUIRED')
+    upload = None
+    if asset.provenance.get('source_type') == 'verified_variant_derivative':
+        from .sql_variant_uploaded_custody import trusted_derivative_source
+        try:
+            _, derivative = await trusted_derivative_source(session, project, asset)
+        except ValueError:
+            raise AudioConflict('AUDIO_DERIVATIVE_CUSTODY_CHANGED') from None
+        intake_metadata = asset.provenance.get('media_metadata')
+    else:
+        upload = await session.get(UploadSessionORM, asset.provenance.get('source_reference', ''))
+        if (asset.provenance.get('source_type') != 'user_upload' or upload is None
+            or upload.asset_id != asset_id or upload.project_id != project_id
+            or upload.workspace_id != project.workspace_id
+            or upload.status not in {'completed', 'completed_duplicate'}
+            or upload.quarantine_state != 'trusted' or upload.trusted_at is None
+            or upload.scan_checksum_sha256 != asset.checksum_sha256):
+            raise AudioConflict('AUDIO_TRUSTED_UPLOAD_REQUIRED')
+        intake_metadata = upload.media_metadata_json
     try:
         media = MediaMetadata.model_validate(asset.provenance.get('media_metadata'))
     except ValueError:
@@ -60,7 +70,7 @@ async def source(session, project_id, asset_id, *, parent=None):
     if (media.media_kind != 'audio' or media.audio_codec is None or media.video_codec is not None
         or duration is None or not math.isfinite(duration) or not 0 < duration <= 3600):
         raise AudioConflict('AUDIO_METADATA_INVALID')
-    if upload.media_metadata_json != media.model_dump(mode='json') or media.detected_content_type != asset.content_type:
+    if intake_metadata != media.model_dump(mode='json') or media.detected_content_type != asset.content_type:
         raise AudioConflict('AUDIO_METADATA_CHANGED')
     if parent is not None and (parent.workspace_id != project.workspace_id
         or parent.asset_id != asset_id or parent.source_sha256 != asset.checksum_sha256
