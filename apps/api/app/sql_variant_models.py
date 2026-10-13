@@ -218,6 +218,30 @@ class FamilySnapshot(Contract):
     safety: NoAuthority = Field(default_factory=NoAuthority)
 
 
+class VariantProgressSafety(Contract):
+    provider_calls: Literal[0] = 0
+    new_inference_calls: Literal[0] = 0
+    child_projects_created: int = Field(default=0, ge=0, le=6)
+    source_bytes_verified: bool = False
+    approval_inherited: Literal[False] = False
+    rights_override_inherited: Literal[False] = False
+    automatic_render: Literal[False] = False
+    publishing_enabled: Literal[False] = False
+
+    @model_validator(mode='before')
+    @classmethod
+    def exact_types(cls, value):
+        if isinstance(value, dict):
+            for key in ('provider_calls', 'new_inference_calls', 'child_projects_created'):
+                if key in value and type(value[key]) is not int:
+                    raise ValueError('SQL_VARIANT_SAFETY_TYPE_INVALID')
+            for key in ('source_bytes_verified', 'approval_inherited', 'rights_override_inherited',
+                        'automatic_render', 'publishing_enabled'):
+                if key in value and type(value[key]) is not bool:
+                    raise ValueError('SQL_VARIANT_SAFETY_TYPE_INVALID')
+        return value
+
+
 class FamilyMemberRead(Contract):
     schema_version: Literal['sql-variant-member.v1'] = 'sql-variant-member.v1'
     member_id: str
@@ -225,9 +249,9 @@ class FamilyMemberRead(Contract):
     workspace_id: str
     profile: VariantProfile
     planned_project_id: str
-    child_project_id: None = None
-    state: Literal['reserved', 'cancelled']
-    safety: NoAuthority = Field(default_factory=NoAuthority)
+    child_project_id: str | None = None
+    state: Literal['reserved', 'deriving', 'needs_attention', 'review_required', 'cancelled', 'failed']
+    safety: VariantProgressSafety = Field(default_factory=VariantProgressSafety)
 
 
 class FamilyRead(Contract):
@@ -236,7 +260,7 @@ class FamilyRead(Contract):
     workspace_id: str
     master_project_id: str
     version: int = Field(ge=1)
-    state: Literal['reserved', 'cancelled']
+    state: Literal['reserved', 'deriving', 'review_required', 'needs_attention', 'recovery_required', 'cancelled', 'failed']
     snapshot: FamilySnapshot
     snapshot_sha256: str
     result: dict
@@ -246,7 +270,7 @@ class FamilyRead(Contract):
     members: list[FamilyMemberRead]
     actor_ref: str
     created_at: datetime
-    safety: NoAuthority = Field(default_factory=NoAuthority)
+    safety: VariantProgressSafety = Field(default_factory=VariantProgressSafety)
 
 
 class AssetReceiptRead(Contract):
