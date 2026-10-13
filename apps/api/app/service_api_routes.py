@@ -60,6 +60,9 @@ async def command(request,action,ws,pid,payload,call,*,actor=None,status=200):
     if request.method=='PUT' and request.url.path.endswith('/timeline'):kind='timeline.mutate'
     if request.url.path.endswith(('/review-render','/render')):kind='render.queue'
     if request.url.path.endswith('/publish'):kind='publication.finalize'
+    if request.url.path=='/v1/uploads/init':kind='upload.initialize'
+    if request.url.path.endswith('/preview'):kind='preview.queue'
+    if request.url.path.endswith('/approve'):kind='approval.decide'
     async def writer(session,value):
         await repository.canonical_outcome(session,row.operation_id,status,media_response(value),kind)
     try:
@@ -91,7 +94,7 @@ async def contract(request:Request):
         'service_id':actor.service_id,'workspace_grants':dict(actor.workspace_grants),'capabilities':sorted(CAPABILITIES),
         'operations':[{'method':method,'path':route.path} for route in router.routes for method in sorted(route.methods)],
         'human_approval_required':True,'publication_requires_human_owner':True,'shared_database':False,'shared_redis':False,
-        'outcome_event_contract_versions':['agent-hub-service-outcomes.v1'],'outcome_event_delivery_enabled':False,
+        'outcome_event_contract_versions':['agent-hub-service-outcomes.v1','agent-hub-service-outcomes.v2'],'outcome_event_delivery_enabled':False,
         'agent_hub_runtime_dependency':False,'production_deployed':False,'canonical_services_reused':True}
 
 @router.post('/projects',status_code=201)
@@ -329,4 +332,5 @@ async def operation_events(request:Request,workspace_id:str,after:int=0,limit:in
                 raise error(409,'SERVICE_EVENT_EVIDENCE_INVALID')
             result.append({'sequence':item.sequence,'envelope':item.envelope_json,'envelope_sha256':item.envelope_sha256,'delivery_enabled':False})
     return {'contract_version':'agent-hub-service-outcomes.v1','items':result,'next_after':events[limit-1].sequence if len(events)>limit else None,
+        'event_contract_versions':['agent-hub-service-outcomes.v1','agent-hub-service-outcomes.v2'],
         'delivery_enabled':False,'real_Agent_Hub':False}

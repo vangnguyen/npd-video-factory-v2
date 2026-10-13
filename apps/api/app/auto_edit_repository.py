@@ -36,6 +36,7 @@ from .auto_edit_providers import ProviderTranscript
 from .db import AssetORM, ProjectVersionORM, VideoProjectORM, utc_now
 from .media_security import MediaScanResult
 from .platform_models import AssetRead
+from .service_outcome_context import capture
 
 
 def _new_id(prefix: str) -> str:
@@ -159,7 +160,12 @@ class AutoEditRepository:
                 quarantine_state="not_scanned",
             )
             session.add(row)
+            await session.flush()
+            result = _upload_read(row)
+            captured = await capture('upload.initialize', session, result)
             await session.commit()
+            if captured:
+                return result
             await session.refresh(row)
             return _upload_read(row)
 

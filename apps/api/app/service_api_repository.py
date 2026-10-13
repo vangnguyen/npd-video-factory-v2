@@ -69,11 +69,12 @@ class ServiceOperationRepository:
 
     async def canonical_outcome(self,session,identity,status,value,kind):
         """The canonical write, receipt and secret-free outbox commit together."""
-        from .service_outcome_events import event,reference
+        from .service_outcome_events import event,reference,source_kind
         row=await session.get(ServiceOperationORM,identity,with_for_update=True)
         if row is None or row.status!='running':raise OperationConflict('SERVICE_OPERATION_CHANGED')
         if not isinstance(value,dict) or value.get('workspace_id',row.workspace_id)!=row.workspace_id:
             raise OperationConflict('SERVICE_OUTCOME_SCOPE_INVALID')
         if row.project_id and value.get('project_id')!=row.project_id:raise OperationConflict('SERVICE_OUTCOME_SCOPE_INVALID')
         row.response_status=status;row.response_json=value;row.response_sha256=digest(value);row.status='succeeded';row.updated_at=utc_now()
-        session.add(event(row,row.response_sha256,kind,status,reference(value)))
+        if source_kind(row)!=kind:raise OperationConflict('SERVICE_OUTCOME_KIND_INVALID')
+        session.add(event(row,row.response_sha256,kind,status,reference(value,kind)))

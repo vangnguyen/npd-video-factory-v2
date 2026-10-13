@@ -682,7 +682,11 @@ class ProductionRepository:
                     actor_ref=reviewer_ref,
                     payload={"comment_recorded": bool(comment), "publishing_allowed": False},
                 )
-            return _approval_read(approval)
+                await session.flush()
+                result = _approval_read(approval)
+                from .service_outcome_context import capture
+                await capture('approval.decide', session, result)
+            return result
 
     async def list_events(self, project_id: str) -> list[ProductionEventRead]:
         async with self.session_factory() as session:

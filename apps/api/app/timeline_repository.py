@@ -305,7 +305,10 @@ class TimelineRepository:
                         created = True
                     else:
                         created = False
+                    await session.flush()
                     preview = await self._preview_read(session, existing, timeline)
+                    from .service_outcome_context import capture
+                    await capture('preview.queue', session, preview)
                     return preview, created
                 now = utc_now()
                 row = PreviewJobORM(
@@ -336,7 +339,11 @@ class TimelineRepository:
                 if requested_version == timeline.current_version:
                     timeline.latest_preview_id = row.preview_id
                     timeline.updated_at = now
-            return await self._preview_read(session, row, timeline), True
+                await session.flush()
+                preview = await self._preview_read(session, row, timeline)
+                from .service_outcome_context import capture
+                await capture('preview.queue', session, preview)
+            return preview, True
 
     async def get_preview(self, preview_id: str) -> PreviewRead | None:
         async with self.session_factory() as session:

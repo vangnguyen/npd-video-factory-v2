@@ -33,3 +33,6 @@ OWNER ACTION REQUIRED: none for safe continuation; no live migration, deployment
 NEXT WAVE: remaining canonical command/queue/worker-event coverage and disabled-by-default outbound delivery; Native/full original Mode A/B acceptance remains
 
 Migration0026 additionally passes a targeted seeded-data retest: an existing workspace and uncertain service receipt remain byte-for-byte unchanged after upgrade. This1 PASS is supplementary to the24-case combined run; it is not counted as another distinct scenario. Both portable archive revisions are retained.
+
+
+Latest additional three atomic roots and v2 event scope: [SERVICE_INTAKE_OUTCOMES.md](SERVICE_INTAKE_OUTCOMES.md). Existing four roots remain v1; whole-program readiness is unchanged.

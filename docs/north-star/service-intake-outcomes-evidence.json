@@ -1,0 +1,84 @@
+{
+  "schema_version": "north-star-service-intake-outcomes-evidence-v1",
+  "recorded_at": "2026-10-13T04:31:51.588288+00:00",
+  "source_parent": "e8a64aacd1d9fc0248bf88c79294ee4d231785fd",
+  "tests": {
+    "API_intake_outcomes_and_facade": 34,
+    "API_core_regression": 34
+  },
+  "new_distinct_intake_cases": 10,
+  "test_logs": {
+    "API_intake_outcomes_and_facade": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-intake-outcomes-final.log",
+      "sha256": "2e01a5d7293255a70fe5828791cd6a6f869a1ee5d49500494e19bff3fee58159",
+      "bytes": 113,
+      "passed": 34
+    },
+    "API_core_regression": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-intake-outcomes-regression-final.log",
+      "sha256": "eece043eb7786fbcec02799cdfa62c2af658fc28b6d2081f8b061bdd807c7ea2",
+      "bytes": 113,
+      "passed": 34
+    }
+  },
+  "portable_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-intake-outcomes-evidence-n1.zip",
+    "sha256": "9a3c621082538b2bec9681b8ea80d65b8b9f140cd89b60d31a3c0afaba9eb183",
+    "bytes": 444,
+    "entries": 2,
+    "all_bytes_verified": true,
+    "media_copied": false
+  },
+  "scope": {
+    "new_atomic_root_kinds": [
+      "upload.initialize",
+      "preview.queue",
+      "approval.decide"
+    ],
+    "previous_atomic_root_kinds": [
+      "project.create",
+      "timeline.mutate",
+      "render.queue",
+      "publication.finalize"
+    ],
+    "intake_receipt_does_not_duplicate_upload_or_staging": true,
+    "preview_receipt_does_not_duplicate_job_or_queue": true,
+    "preview_lost_handoff_existing_recovery_requeues_same_id": true,
+    "preview_existing_failed_requeue_rolls_back_with_failed_outbox": true,
+    "approval_three_decisions_replay_without_redeciding": true,
+    "approval_replay_still_requires_verified_human": true,
+    "approval_failure_rolls_back_decision_timeline_audit_and_receipt": true,
+    "v1_schema_and_references_unchanged": true,
+    "v2_closed_schema_validated": true,
+    "rehashed_source_kind_rejected": true,
+    "no_new_database_migration": true,
+    "all_command_atomic_coverage_complete": false,
+    "worker_terminal_event_coverage_complete": false,
+    "outbound_delivery_enabled": false,
+    "real_Agent_Hub": false,
+    "Native_full_service_API_parity_verified": false,
+    "media_ASR_QC_human_and_Redis_inputs_are_fixtures": true,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "new_intake_process_exit_proof": false,
+    "PostgreSQL_Docker_production_verified": false,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "retained_attempts": [
+    "service-intake-outcomes-initial-n1.log"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

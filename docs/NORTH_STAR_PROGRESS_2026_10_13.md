@@ -37,3 +37,6 @@ Mốc [API /v1 theo Master](SERVICE_API_V1.md): nối đủ18 thao tác và đư
 
 
 Mốc [biên nhận/sự kiện cùng giao dịch lõi](SERVICE_CANONICAL_OUTCOMES.md): project/timeline/render queue/publication lưu kết quả và outbox cùng commit; ngắt tiến trình sau commit rồi chạy lại không sinh thêm dữ liệu.24 outcome/API và21 hồi quy đạt; lỗi outbox rollback đồng bộ, sự kiện sửa rồi tính lại hash bị từ chối. Metadata/identity/media/provider vẫn giả lập; chưa gửi sự kiện mới ra ngoài, chưa nghiệm thu PostgreSQL/Hub/Owner/full A/B/C. Các lệnh và nguồn worker còn lại vẫn cần hoàn thiện;59 nhóm mở. Bundle/source cuối: recovery/20261007/service-outcomes-program-state.json.
+
+
+Mốc [phục hồi upload/preview/duyệt](SERVICE_INTAKE_OUTCOMES.md): thêm 3 loại giao dịch atomic; thử lại không sinh thêm upload/job/quyết định, lỗi outbox rollback, mất handoff preview phục hồi đúng ID. Duyệt vẫn yêu cầu người có quyền cả khi replay. 10 ca mới nằm trong 34 outcome/facade đạt; 34 hồi quy đạt. v2 mới giữ nguyên v1; media/provider/Redis/identity là fixture. Không nghiệm thu Owner, Hub/provider thật, production hay full A/B/C. Còn 59 nhóm chưa đóng; SHA/bundle cuối ở recovery/20261007/service-intake-outcomes-program-state.json.

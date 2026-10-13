@@ -3911,3 +3911,8 @@ Full report: [SERVICE_API_V1.md](SERVICE_API_V1.md). All18 example methods;16 ne
 ## Wave14/15 — Canonical service response/outbox recovery
 
 Full report: [SERVICE_CANONICAL_OUTCOMES.md](SERVICE_CANONICAL_OUTCOMES.md). Four atomic root outcomes;24 outcome/facade and21 core PASS; actual process exit/replay plus rollback/idempotence/source/schema checks. No new outbound delivery/Hub/provider/media/Owner/production/full-flow acceptance. Other command/queue/worker-event coverage and Native remain;59 groups unclosed. Final source: recovery/20261007/service-outcomes-program-state.json.
+
+
+## Wave 14/15/16 — Upload/preview/verified decision transaction recovery
+
+Full 13-field report: [SERVICE_INTAKE_OUTCOMES.md](SERVICE_INTAKE_OUTCOMES.md). 10 new cases included in 34 outcome/facade and 34 core PASS; immutable intake responses, preview queue recovery and human decision replay/rollback. New v2, preserved v1; no migration, outbound delivery, real provider/Owner/Hub/production/full A/B/C acceptance. 59 groups remain. Final source: recovery/20261007/service-intake-outcomes-program-state.json.
