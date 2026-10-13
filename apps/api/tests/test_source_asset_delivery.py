@@ -36,9 +36,12 @@ async def fixture(tmp_path):
     app = FastAPI(); state = {'asset':asset, 'calls':[], 'store':store, 'cap':2*1024**3}
     class RecordingStore:
         name = 'local'
-        async def download_file(self, *, object_key, destination):
+        async def download_file(self, *, object_key, destination, max_bytes=None,
+                expected_size_bytes=None, expected_sha256=None, expected_prefix=None):
             state['calls'].append(destination)
-            await state['store'].download_file(object_key=object_key, destination=destination)
+            await state['store'].download_file(object_key=object_key, destination=destination,
+                max_bytes=max_bytes, expected_size_bytes=expected_size_bytes,
+                expected_sha256=expected_sha256, expected_prefix=expected_prefix)
     staging = tmp_path/'staging'
     @app.get('/fixture-source')
     async def source_route(request:Request):

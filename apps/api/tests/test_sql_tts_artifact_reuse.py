@@ -236,8 +236,9 @@ async def test_cancel_during_pcm_download_prevents_a_late_reuse_receipt_and_no_w
     reviewed=await job.process(review.render_id);assert reviewed.status=='awaiting_review',reviewed.failure_reason
     target=await final(env,reviewed)
     actual=env.storage.download_file;entered=asyncio.Event();resume=asyncio.Event()
-    async def paused(*,object_key,destination):
-        await actual(object_key=object_key,destination=destination)
+    async def paused(*,object_key,destination,max_bytes=None,expected_size_bytes=None,expected_sha256=None,expected_prefix=None):
+        await actual(object_key=object_key,destination=destination,max_bytes=max_bytes,
+            expected_size_bytes=expected_size_bytes,expected_sha256=expected_sha256,expected_prefix=expected_prefix)
         if destination.name=='narration.wav':entered.set();await resume.wait()
     env.storage.download_file=paused
     task=asyncio.create_task(job.process(target.render_id))

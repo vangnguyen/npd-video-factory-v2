@@ -23,6 +23,7 @@ from .providers import VoiceResult
 from .tts_evidence import TTSArtifactEvidence
 from .sql_tts_artifact_reuse_db import TTSArtifactReuseORM
 from .production_db import ProductionRenderJobORM
+from .frozen_storage_read import frozen_asset_read, completed_read
 
 SCHEMA = 'sql-raw-tts-reuse.v1'
 MAX_BYTES = 20_000_000
@@ -160,16 +161,19 @@ class ReusingTTSProvider:
 
     async def current(self):
         await self.guard()
-        if self.provider.artifact_reuse_binding != self._adapter:
-            raise TTSReuseRejected('TTS_REUSE_RUNTIME_CHANGED')
-        if digest(self.voice_config.model_dump(mode='json'))!=self._scope['voice_config_sha256'] \
-                or (self.model,self.voice)!=(self.provider.model,self.provider.voice):
-            raise TTSReuseRejected('TTS_REUSE_VOICE_CONFIG_CHANGED')
         latest=await self.platform.get_version(self.content.project_version_id)
         if latest is None or latest.project_id!=self.render.project_id or latest.workspace_id!=self.render.workspace_id \
                 or digest(latest.snapshot)!=self._scope['content_sha256'] \
                 or digest(latest.provenance)!=self._scope['content_provenance_sha256']:
             raise TTSReuseRejected('TTS_REUSE_CONTENT_CHANGED')
+        # Metadata reads are awaited: a cancel/current-target writer during
+        # that read must be observed before admitting any read or result.
+        await self.guard()
+        if self.provider.artifact_reuse_binding != self._adapter:
+            raise TTSReuseRejected('TTS_REUSE_RUNTIME_CHANGED')
+        if digest(self.voice_config.model_dump(mode='json'))!=self._scope['voice_config_sha256'] \
+                or (self.model,self.voice)!=(self.provider.model,self.provider.voice):
+            raise TTSReuseRejected('TTS_REUSE_VOICE_CONFIG_CHANGED')
 
     async def synthesize(self, *, text, language, output_path):
         await self.current()
@@ -217,8 +221,10 @@ class ReusingTTSProvider:
                     or asset.object_key!=result['object_key'] or asset_proof(asset)!=result.get('asset_proof'):
                 raise TTSReuseRejected('TTS_REUSE_ASSET_CHANGED')
             try:
-                await self.storage.download_file(object_key=asset.object_key,destination=target)
-                await asyncio.to_thread(pcm,target,evidence)
+                proof=frozen_asset_read(asset,workspace_id=self.render.workspace_id,
+                    project_id=self.render.project_id,storage=self.storage,maximum=MAX_BYTES)
+                await proof.download(self.storage,target)
+                await completed_read(asyncio.to_thread(pcm,target,evidence))
             except TTSReuseRejected:
                 raise
             except Exception:
@@ -227,6 +233,7 @@ class ReusingTTSProvider:
             latest_asset=await self.assets.get_asset(asset.asset_id)
             if latest_asset is None or asset_proof(latest_asset)!=result['asset_proof']:
                 raise TTSReuseRejected('TTS_REUSE_ASSET_CHANGED')
+            await self.current()
             receipt={'schema_version':SCHEMA,'reuse_id':entry['reuse_id'],'input_fingerprint':digest(binding),
                 'source_render_id':entry['source_render_id'],'source_asset_id':asset.asset_id,
                 'source_result_sha256':entry['result_sha256'],'original_evidence_sha256':result['original_evidence_sha256'],
@@ -257,7 +264,7 @@ class ReusingTTSProvider:
                     or evidence.usage.get('server_source_sha256')!=self._adapter['server_source_sha256'] \
                     or not re.fullmatch(r'[a-f0-9]{64}',evidence.usage.get('normalization_record_sha256','')):
                 raise TTSReuseRejected('TTS_REUSE_PROVIDER_EVIDENCE_REQUIRED')
-            await asyncio.to_thread(pcm,target,evidence)
+            await completed_read(asyncio.to_thread(pcm,target,evidence))
             key=validate_object_key(f"workspaces/{self.render.workspace_id}/projects/{self.render.project_id}/tts-reuse/{entry['reuse_id']}.wav")
             try:
                 stored=await self.storage.put_file(object_key=key,path=target,content_type='audio/wav')
@@ -378,9 +385,11 @@ async def prepared_final_audio(*, repository, assets, storage, render, snapshot,
         if path.is_symlink() or path.exists():
             raise TTSReuseRejected('TTS_REUSE_OUTPUT_CONFLICT')
         try:
-            await storage.download_file(object_key=asset.object_key,destination=path)
+            proof=frozen_asset_read(asset,workspace_id=render.workspace_id,project_id=render.project_id,
+                storage=storage,maximum=maximum)
+            await proof.download(storage,path)
             plain(path)
-            if path.stat().st_size!=asset.size_bytes or sha256_file(path)!=asset.checksum_sha256:
+            if path.stat().st_size!=asset.size_bytes or await completed_read(asyncio.to_thread(sha256_file,path))!=asset.checksum_sha256:
                 raise TTSReuseRejected('TTS_REUSE_APPROVED_ASSET_CHANGED')
         except TTSReuseRejected:
             raise
@@ -389,17 +398,22 @@ async def prepared_final_audio(*, repository, assets, storage, render, snapshot,
         await current()
         latest=await assets.get_asset(asset.asset_id)
         try:
-            if latest is None or asset_proof(latest)!=asset_proof(asset) or sha256_file(path)!=asset.checksum_sha256:
+            if latest is None or asset_proof(latest)!=asset_proof(asset) \
+                    or await completed_read(asyncio.to_thread(sha256_file,path))!=asset.checksum_sha256:
                 raise TTSReuseRejected('TTS_REUSE_APPROVED_ASSET_CHANGED')
         except OSError:
             raise TTSReuseRejected('TTS_REUSE_APPROVED_ASSET_UNAVAILABLE') from None
+        latest=await assets.get_asset(asset.asset_id)
+        if latest is None or asset_proof(latest)!=asset_proof(asset):
+            raise TTSReuseRejected('TTS_REUSE_APPROVED_ASSET_CHANGED')
+        await current()
         copies.append({'kind':kind,'asset_id':asset.asset_id,'sha256':asset.checksum_sha256,'bytes':asset.size_bytes})
         return path
     supporting=manifest['supporting_asset_ids']
     voice_path=await download(supporting.get('narration-track'),'narration.wav','narration-track')
     mix_path=await download(supporting.get('audio-mix'),'audio-mix.wav','audio-mix')
     for path in (voice_path,mix_path):
-        await asyncio.to_thread(prepared_pcm,path,duration)
+        await completed_read(asyncio.to_thread(prepared_pcm,path,duration))
     pins=await repository.approved_tts_reuse_units(render.render_id)
     if pins is not None and len(pins['units'])!=len(narration['timing']):
         raise TTSReuseRejected('TTS_REUSE_REVIEW_UNIT_COUNT_CHANGED')
@@ -413,7 +427,7 @@ async def prepared_final_audio(*, repository, assets, storage, render, snapshot,
                 expected_sha=evidence.audio_sha256,maximum=MAX_BYTES,frozen_proof=unit.get('provider_audio_asset_proof'))
             if not unit.get('provider_audio_asset_proof'):
                 raise TTSReuseRejected('TTS_REUSE_APPROVED_RAW_PROOF_REQUIRED')
-            await asyncio.to_thread(pcm,raw,evidence)
+            await completed_read(asyncio.to_thread(pcm,raw,evidence))
             if pins is not None and (pins['units'][index]['audio_sha256']!=evidence.audio_sha256
                     or pins['units'][index]['original_evidence_sha256']!=digest(unit['provider_evidence'])):
                 raise TTSReuseRejected('TTS_REUSE_APPROVED_RAW_AUDIO_CHANGED')
