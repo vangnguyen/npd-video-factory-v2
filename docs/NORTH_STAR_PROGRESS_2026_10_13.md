@@ -28,3 +28,6 @@ Mốc [Native Meta signed feedback](NATIVE_META_FEEDBACK_E2E.md):6 kiểm tra HT
 
 
 Mốc [SQL/API Meta counter feedback](META_COUNTER_SQL_FEEDBACK.md): thuật toán riêng và nhóm so sánh giữ phiên bản API/định nghĩa chỉ số; kiểm chứng dữ liệu dựng đã đóng băng, learning bất biến, loại nguồn không tương thích và quyền API. API_new:17 đạt, API_regression:98 đạt, Native_regression:35 đạt. SQLite/ASGI/provider/metric/feature đều dùng bộ dữ liệu giả lập có ghi nhãn; chưa nghiệm thu PostgreSQL/Docker/provider thật/webhook/Owner/full Mode A/B.59 nhóm còn mở. Mã nguồn/bundle cuối ở recovery/20261007/meta-counter-sql-feedback-program-state.json.
+
+
+Mốc [Meta webhook qua tiến trình độc lập](NATIVE_META_WEBHOOK_PROCESSES.md):8 bộ bằng chứng local (6 ca đạt ban đầu,2 ca sửa và chạy lại đạt),5 chốt bảo vệ Native đạt. HTTP/chữ ký/schema/ledger chạy thật trên local; mất phản hồi, khởi động lại bộ nhận, ngắt tiến trình gửi, xoay khóa, Retry-After và bên nhận offline đều được kiểm chứng. Meta/video/identity vẫn giả lập; chưa dùng Hub/HTTPS production/provider thật/Owner. Còn thiếu toàn bộ phạm vi thao tác /v1 theo Master và full A/B/C/production;59 nhóm vẫn mở. Bundle/mã nguồn cuối: recovery/20261007/native-meta-webhook-processes-program-state.json.

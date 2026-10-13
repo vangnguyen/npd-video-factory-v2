@@ -1,0 +1,218 @@
+{
+  "schema_version": "north-star-native-meta-webhook-processes-evidence-v1",
+  "recorded_at": "2026-10-13T02:58:52.270108+00:00",
+  "source_parent": "cbd690f68518a370d38fefbc77ab24ef919b34cb",
+  "tests": {
+    "accepted_process_scenarios": 8,
+    "initial_full_batch_passed": 6,
+    "initial_full_batch_failed_repaired": 2,
+    "repaired_restart_tests": 2,
+    "Native_guards": 5
+  },
+  "test_logs": {
+    "Native_guards": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-guards-final.log",
+      "sha256": "5425714e49ae30064931eec05ad3d0920990592977cf1b6bcdb194a2c5e1725b",
+      "bytes": 1243,
+      "passed": 5,
+      "failed": 0
+    },
+    "repaired_restart_tests": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-restart-final.log",
+      "sha256": "3d4375de0667590f5382977431c774d75f2fd5627d05fb3d7cd0605ed484bd44",
+      "bytes": 596,
+      "passed": 2,
+      "failed": 0
+    },
+    "initial_full_batch": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-final.log",
+      "sha256": "0295eaf084b7d4438f44000826a4ab88a6b419187da06b14377800adcea3ee6a",
+      "bytes": 3654,
+      "passed": 6,
+      "failed": 2,
+      "two_restart_failures_repaired_and_retested": true
+    }
+  },
+  "scenario_evidence": [
+    {
+      "platform": "instagram_reels",
+      "scenario": "normal",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\instagram_reels-normal\\evidence.json",
+        "sha256": "c02ee6dfec4a0079736c2cb01a5eff548b55abaff6b38385b223cea486015163",
+        "bytes": 21834
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\instagram_reels-normal\\receiver.sqlite3",
+        "sha256": "6b1b370e977ef1ecd672125a0436e7db409db62df6dac7b4437652052f3eb17b",
+        "bytes": 28672
+      },
+      "unique_received_events": 4
+    },
+    {
+      "platform": "instagram_reels",
+      "scenario": "lost_response",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n5\\instagram_reels-lost_response\\evidence.json",
+        "sha256": "17811e1dfa905ef387b2cb38aa75ccafec81e9f665b6eae711dfd1c29798ace6",
+        "bytes": 6873
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n5\\instagram_reels-lost_response\\receiver.sqlite3",
+        "sha256": "deb7d3d804408dd6d30278c1574f9048264153b89ee98c59962e75c8a83b19b4",
+        "bytes": 20480
+      },
+      "unique_received_events": 1
+    },
+    {
+      "platform": "instagram_reels",
+      "scenario": "producer_crash",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\instagram_reels-producer_crash\\evidence.json",
+        "sha256": "d7bdb4365c46744d0b3447ee736fa8de9183b42fbde95178ad88f2ce8045c2e5",
+        "bytes": 6830
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\instagram_reels-producer_crash\\receiver.sqlite3",
+        "sha256": "bb96e863f63530bc11d50da226ca7a14dd1c52ff028f11bd5b4b4572d202639e",
+        "bytes": 20480
+      },
+      "unique_received_events": 1
+    },
+    {
+      "platform": "instagram_reels",
+      "scenario": "rate_limit",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\instagram_reels-rate_limit\\evidence.json",
+        "sha256": "d2ea919426d6c850f08964310de97118b0fee54cc9adc6430274a45e88c4cbea",
+        "bytes": 9112
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\instagram_reels-rate_limit\\receiver.sqlite3",
+        "sha256": "22ef327ee9d1c43fc79fb5cfbedfb8a99c5836bfbbb7d36c4c7debc079274b49",
+        "bytes": 20480
+      },
+      "unique_received_events": 1
+    },
+    {
+      "platform": "facebook",
+      "scenario": "normal",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\facebook-normal\\evidence.json",
+        "sha256": "af182965b8b6e40a61fc17eeccb03bbc8aa1481aa95def2fce6803660030e969",
+        "bytes": 16653
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\facebook-normal\\receiver.sqlite3",
+        "sha256": "8ad63307326db314fb94acee74bee5829bede9a1e88d99a3c2d7d088d41efaa5",
+        "bytes": 28672
+      },
+      "unique_received_events": 3
+    },
+    {
+      "platform": "facebook",
+      "scenario": "lost_response",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n5\\facebook-lost_response\\evidence.json",
+        "sha256": "ceb15cb43bbdef87447ba602ebc15a6c1242df4e17cc59fdfe7ba19e1615512f",
+        "bytes": 6864
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n5\\facebook-lost_response\\receiver.sqlite3",
+        "sha256": "85e5345d89c03eb5971f847916bb64624a6a61db89e22eac62e0c139d2ed81de",
+        "bytes": 20480
+      },
+      "unique_received_events": 1
+    },
+    {
+      "platform": "facebook",
+      "scenario": "producer_crash",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\facebook-producer_crash\\evidence.json",
+        "sha256": "bc4de319ccdbb450b3758f655f3451ded9d898c26729bffd97e045a7dabb10a9",
+        "bytes": 6822
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\facebook-producer_crash\\receiver.sqlite3",
+        "sha256": "e3e1a52d5fc2e93c96a6f569a73b1ed8953e62691143d978300aac160e3028a2",
+        "bytes": 20480
+      },
+      "unique_received_events": 1
+    },
+    {
+      "platform": "facebook",
+      "scenario": "rate_limit",
+      "accepted": true,
+      "owned_roots_cleaned": true,
+      "evidence": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\facebook-rate_limit\\evidence.json",
+        "sha256": "0a19ca5d928ec593307f6f4bb735bff3105db665df14b25e2312a0bd1479000d",
+        "bytes": 9102
+      },
+      "receiver_database": {
+        "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-n4\\facebook-rate_limit\\receiver.sqlite3",
+        "sha256": "b505878645017a87fbc29ad1985969aa1fb958903627855ce2c0ac42b789a659",
+        "bytes": 20480
+      },
+      "unique_received_events": 1
+    }
+  ],
+  "scope": {
+    "actual_local_HTTP": true,
+    "independent_external_schema_receiver": true,
+    "fresh_Native_producer_processes": true,
+    "recipient_deduplication_after_restart": true,
+    "producer_interruption_after_recipient_commit": true,
+    "signed_identity_content_conflict_guards": true,
+    "retry_after_and_offline_core": true,
+    "production_HTTPS_transport_unchanged": true,
+    "production_HTTPS_real_receiver_verified": false,
+    "real_Agent_Hub": false,
+    "provider_identity_publication_media_clock_and_control_are_fixtures": true,
+    "paid_calls": 0,
+    "real_provider_calls": 0,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "retained_preflights": [
+    "native-meta-webhook-processes-initial.log",
+    "native-meta-webhook-processes-contract-n2.log",
+    "native-meta-webhook-processes-contract-n3.log"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+  "portable_receipt_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-webhook-processes-receipts-n1.zip",
+    "sha256": "5182df0f2dcde8f996b6993114c10748b04420ef9db7cc25a2b03b63d4e39b04",
+    "bytes": 38563,
+    "entries": 22,
+    "all_indexed_receipt_bytes_verified": true,
+    "new_media_copied": false,
+    "data_deleted": false
+  }
+}

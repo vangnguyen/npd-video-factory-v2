@@ -3896,3 +3896,8 @@ Full report: [NATIVE_META_FEEDBACK_E2E.md](NATIVE_META_FEEDBACK_E2E.md); [eviden
 ## Wave11/12/15 — SQL/API Meta counter component
 
 Complete wave report and tests: [META_COUNTER_SQL_FEEDBACK.md](META_COUNTER_SQL_FEEDBACK.md). Owned SQLite/ASGI/protocol fixtures pass; no provider/PostgreSQL/Docker/new browser/webhook/Owner/full-flow acceptance.59 groups remain open. Final source seal: recovery/20261007/meta-counter-sql-feedback-program-state.json.
+
+
+## Wave14/15 — Native Meta independent local receipt/process proofs
+
+Full per-wave report: [NATIVE_META_WEBHOOK_PROCESSES.md](NATIVE_META_WEBHOOK_PROCESSES.md).8 accepted process scenarios (initial6 PASS/2 FAIL, repaired2 PASS) and5 Native guards. Actual local HTTP/recipient restart/producer interruption/deduplication/Retry-After/offline core; Meta/media/identity remain fixtures. No real Hub/production HTTPS/provider/browser/Owner/full-flow acceptance.59 groups unclosed; continue full safe Master /v1 operations and original A/B/production E2E. Final source: recovery/20261007/native-meta-webhook-processes-program-state.json.
