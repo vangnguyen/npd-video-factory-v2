@@ -18,6 +18,16 @@ from botocore.config import Config
 from botocore.exceptions import ClientError
 
 from .config import Settings
+from .bounded_storage_download import (
+    DownloadBounds,
+    StorageDownloadError,
+    StorageDownloadNotFound,
+    counted_download,
+    drained_download,
+    guarded_source,
+    legacy_sdk_download,
+    private_sdk_download,
+)
 
 
 OBJECT_KEY_SEGMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
@@ -37,7 +47,9 @@ class ObjectStorageProvider(Protocol):
 
     async def ensure_ready(self) -> None: ...
     async def put_file(self, *, object_key: str, path: Path, content_type: str | None = None) -> StoredObject: ...
-    async def download_file(self, *, object_key: str, destination: Path) -> None: ...
+    async def download_file(self, *, object_key: str, destination: Path,
+                            max_bytes: int | None = None, expected_size_bytes: int | None = None,
+                            expected_sha256: str | None = None, expected_prefix: str | None = None) -> None: ...
     async def exists(self, *, object_key: str) -> bool: ...
 
 
@@ -96,10 +108,49 @@ def detected_content_type(path: Path) -> str:
     return mimetypes.guess_type(path.name)[0] or "application/octet-stream"
 
 
+def _download_bounds(object_key, max_bytes, expected_size_bytes, expected_sha256, expected_prefix):
+    bounds = DownloadBounds(max_bytes, expected_size_bytes, expected_sha256)
+    key = validate_object_key(object_key)
+    if expected_prefix is not None:
+        if not isinstance(expected_prefix, str) or not expected_prefix:
+            raise StorageDownloadError('STORAGE_DOWNLOAD_INVALID_PREFIX')
+        raw_prefix = expected_prefix.removesuffix('/')
+        if any(part in {'', '.', '..'} for part in raw_prefix.split('/')):
+            raise StorageDownloadError('STORAGE_DOWNLOAD_INVALID_PREFIX')
+        try:
+            prefix = validate_object_key(raw_prefix)
+        except ValueError:
+            raise StorageDownloadError('STORAGE_DOWNLOAD_INVALID_PREFIX') from None
+        if key != prefix and not key.startswith(prefix + '/'):
+            raise StorageDownloadError('STORAGE_DOWNLOAD_PREFIX_MISMATCH')
+    return key, bounds
+
+
+def bounded_download_request_config() -> Config:
+    """Explicit profile for counted S3 requests; no configured client is changed."""
+    return Config(connect_timeout=5, read_timeout=30, retries={'total_max_attempts': 1})
+
+
+def _require_bounded_download_client(client):
+    try:
+        config = client.meta.config
+        retries = config.retries or {}
+        total = retries.get('total_max_attempts')
+        maximum = retries.get('max_attempts')
+        if (type(config.connect_timeout) not in {int, float} or not 0 < config.connect_timeout <= 5
+                or type(config.read_timeout) not in {int, float} or not 0 < config.read_timeout <= 30
+                or not (type(total) is int and total == 1
+                        or ('total_max_attempts' not in retries and type(maximum) is int and maximum == 0))):
+            raise StorageDownloadError('STORAGE_DOWNLOAD_SDK_PROFILE_REQUIRED')
+    except (AttributeError, TypeError):
+        raise StorageDownloadError('STORAGE_DOWNLOAD_SDK_PROFILE_REQUIRED') from None
+
+
 class LocalObjectStorageProvider:
     name = "local"
 
     def __init__(self, root: Path):
+        self._download_root = Path(root).absolute()
         self.root = root.resolve()
         self._io_root = filesystem_path(self.root).resolve()
 
@@ -133,13 +184,27 @@ class LocalObjectStorageProvider:
             storage_provider=self.name,
         )
 
-    async def download_file(self, *, object_key: str, destination: Path) -> None:
-        source = self._path(object_key)
-        if not source.is_file():
-            raise FileNotFoundError(object_key)
-        destination = filesystem_path(destination)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        await asyncio.to_thread(_copy_file, source, destination)
+    async def download_file(self, *, object_key: str, destination: Path,
+                            max_bytes: int | None = None, expected_size_bytes: int | None = None,
+                            expected_sha256: str | None = None, expected_prefix: str | None = None) -> None:
+        key, bounds = _download_bounds(object_key, max_bytes, expected_size_bytes, expected_sha256, expected_prefix)
+        # Keep existing containment rules; inspect unresolved components as well
+        # so an in-root symlink cannot disappear behind resolve().
+        source = self._download_root / Path(*PurePosixPath(key).parts)
+        def open_source():
+            try:
+                self._path(key)
+                path = guarded_source(source, filesystem_path)
+                stream = path.open('rb')
+                try:
+                    return stream, os.fstat(stream.fileno()).st_size
+                except Exception:
+                    stream.close()
+                    raise
+            except FileNotFoundError:
+                raise StorageDownloadNotFound() from None
+        await drained_download(lambda control: counted_download(opener=open_source, destination=destination,
+            bounds=bounds, control=control, io_path=filesystem_path))
 
     async def exists(self, *, object_key: str) -> bool:
         return self._path(object_key).is_file()
@@ -227,16 +292,39 @@ class S3ObjectStorageProvider:
             storage_provider=self.name,
         )
 
-    async def download_file(self, *, object_key: str, destination: Path) -> None:
-        key = validate_object_key(object_key)
-        destination = filesystem_path(destination)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        temporary = destination.with_name(".vf-object-" + uuid.uuid4().hex + ".tmp")
-        try:
-            await asyncio.to_thread(self.client.download_file, self.bucket, key, str(temporary))
-            temporary.replace(destination)
-        finally:
-            temporary.unlink(missing_ok=True)
+    async def download_file(self, *, object_key: str, destination: Path,
+                            max_bytes: int | None = None, expected_size_bytes: int | None = None,
+                            expected_sha256: str | None = None, expected_prefix: str | None = None) -> None:
+        key, bounds = _download_bounds(object_key, max_bytes, expected_size_bytes, expected_sha256, expected_prefix)
+        constrained = any(value is not None for value in (max_bytes, expected_size_bytes, expected_sha256, expected_prefix))
+        def missing_or_failed(error):
+            if str(error.response.get('Error', {}).get('Code', '')) in {'404', 'NoSuchKey', 'NotFound'}:
+                raise StorageDownloadNotFound() from None
+            raise StorageDownloadError('STORAGE_DOWNLOAD_READ_FAILED') from None
+        if not constrained:
+            # Backwards compatible SDK signature only for explicitly unbounded
+            # legacy callers. A constrained request never falls back here.
+            def legacy(path):
+                try:
+                    self.client.download_file(self.bucket, key, str(path))
+                except ClientError as error:
+                    missing_or_failed(error)
+            await drained_download(lambda control: legacy_sdk_download(
+                operation=legacy,
+                destination=destination, control=control, io_path=filesystem_path))
+            return
+        _require_bounded_download_client(self.client)
+        def open_source():
+            try:
+                response = self.client.get_object(Bucket=self.bucket, Key=key)
+            except ClientError as exc:
+                missing_or_failed(exc)
+            return response.get('Body'), response.get('ContentLength')
+        def transfer(control):
+            with private_sdk_download():
+                counted_download(opener=open_source, destination=destination,
+                    bounds=bounds, control=control, io_path=filesystem_path)
+        await drained_download(transfer)
 
     async def exists(self, *, object_key: str) -> bool:
         key = validate_object_key(object_key)
