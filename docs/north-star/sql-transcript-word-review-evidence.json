@@ -1,0 +1,139 @@
+{
+  "schema_version": "north-star-sql-transcript-word-review-evidence.v1",
+  "recorded_at": "2026-10-13T07:31:28+00:00",
+  "source_parent": "656744e799cac80435895b550924048d984b6d74",
+  "final_commit": null,
+  "final_source_preservation_seal": "pending_root",
+  "master_spec_sections": [22, 28, 39, 40, 41, 42, 43, 44, 55, 64, 80],
+  "waves": "3B/3G/3I SQL component; full waves remain PARTIAL",
+  "status": "SQL_TRANSACTION_AND_MOCK_ASR_API_TESTS_PASS",
+  "endpoint": "POST /api/v1/projects/{project_id}/analyses/{analysis_id}/transcript-words",
+  "source_paths": [
+    "apps/api/app/auto_edit_routes.py",
+    "apps/api/app/transcript_word_editing.py",
+    "apps/api/tests/test_transcript_word_editing.py"
+  ],
+  "reused_components": [
+    "apps/api/app/transcript_word_review.py",
+    "apps/api/app/auto_edit_db.py",
+    "apps/api/app/timeline_repository.py",
+    "apps/api/app/human_auth.py"
+  ],
+  "tests": {
+    "new_component": {
+      "path": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/sql-transcript-word-review-new-final-n3.log",
+      "sha256": "d62bed9763ac8f3c497907b349252cca5ba66bfbfe7b075f72c01191bb972674",
+      "bytes": 102,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 38.74,
+      "modules": ["apps/api/tests/test_transcript_word_editing.py"]
+    },
+    "regression": {
+      "path": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/sql-transcript-word-review-regression-final-n4.log",
+      "sha256": "f2460e3410e5193b239ae7743e18a366fd0bb2d841dbd5f9467eeeccbe124221",
+      "bytes": 511,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 2,
+      "duration_seconds": 116.64,
+      "includes_all_new_component_tests": true,
+      "modules": [
+        "apps/api/tests/test_transcript_word_editing.py",
+        "apps/api/tests/test_transcript_editing.py",
+        "apps/api/tests/test_auto_edit_analysis.py",
+        "apps/api/tests/test_auto_edit_studio.py",
+        "apps/api/tests/test_timeline_audio_preview.py",
+        "apps/api/tests/test_audio_subtitle_render_qc.py",
+        "apps/api/tests/test_highlight_drafts.py",
+        "apps/api/tests/test_scene_intelligence.py"
+      ],
+      "skip_reasons": [
+        {"source": "apps/api/tests/test_timeline_audio_preview.py:106", "reason": "real local FFmpeg/FFprobe unavailable"},
+        {"source": "apps/api/tests/test_timeline_audio_preview.py:189", "reason": "real local FFmpeg/FFprobe unavailable"}
+      ]
+    },
+    "counts_are_not_additive": true,
+    "prior_failed_attempts_excluded_from_pass_claim": [
+      "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/sql-transcript-word-review-final-n1.log",
+      "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/sql-transcript-word-review-final-n2.log"
+    ]
+  },
+  "test_runtime": {
+    "environment": "Ubuntu-24.04 WSL isolated test runtime",
+    "python": "/root/vfns-ci-20261007-c1/venv/bin/python",
+    "pythonpath": "/mnt/c/vfns01/apps/api:/mnt/c/vfns01",
+    "database": "sqlite+aiosqlite file-backed per-test database",
+    "api_transport": "httpx ASGITransport in-process",
+    "socket_http_server_tested": false
+  },
+  "real_persistence_evidence": {
+    "file_backed_sqlite_transactions": true,
+    "original_transcript_and_timeline_history_unchanged": true,
+    "atomic_transcript_timeline_rollback": true,
+    "production_approval_render_records_invalidated": true,
+    "same_revision_race": {
+      "test": "test_concurrent_same_revision_produces_one_version_and_one_conflict",
+      "concurrent_transactions": 2,
+      "required_successes": 1,
+      "required_conflicts": 1,
+      "expected_transcript_rows": 2,
+      "expected_timeline_version": 2
+    },
+    "foreign_keys": {
+      "fixture_setup": "apps/api/tests/test_auto_edit_analysis.py:setup_services issues PRAGMA foreign_keys=ON before Base.metadata.create_all",
+      "implementation_parent_flush_order": ["TranscriptORM", "TranscriptSegmentORM", "TranscriptWordORM"],
+      "every_connection_pragma_verified": false,
+      "dedicated_negative_fk_acceptance_test": false,
+      "postgresql_acceptance": false
+    }
+  },
+  "mock_scope": {
+    "asr_provider": "DeterministicTranscriptionProvider fixture",
+    "source_video": "synthetic_mp4 byte fixture; not actual accepted user footage",
+    "media_probe": "FakeMediaProbe fixture",
+    "authenticated_identity": "test token registry fixture; API auth implementation exercised",
+    "listening_acknowledgement": "explicit CI fixture acknowledgement",
+    "production_approval_render_status": "synthetic approved/ready database records; no media render or Owner approval"
+  },
+  "verified_behaviors": [
+    "versioned explicit word text/time edits, add and remove words",
+    "preserve original ASR/provider rows and confidence",
+    "server-verified actor; reject client actor and invalid acknowledgement",
+    "null confidence and timing_independently_measured=false for human edits",
+    "project/workspace/asset/analysis/source checksum guards",
+    "transcript and canonical timeline optimistic concurrency",
+    "branch after canonical timeline restore without reusing revision numbers",
+    "canonical captions map retained source windows and playback speed",
+    "preserve media tracks and original timeline snapshots",
+    "reject word intervals crossing existing cuts or declared source gaps",
+    "reject locked caption track mutations, including unchanged-caption identity metadata",
+    "protect manually moved or deleted caption layouts by conflict",
+    "invalidate preview, approval and production render records in the same transaction",
+    "rollback transcript and timeline when dependent mutation fails",
+    "same-revision concurrent writes produce one success and one conflict"
+  ],
+  "remaining_gaps": [
+    "SQL Studio UI is not connected to the transcript-word endpoint",
+    "standalone SQL audio transcript word review is not implemented by this endpoint",
+    "discontinuous decoded source clock without a verified gap map is rejected",
+    "manual caption layout reconciliation requires a separate workflow",
+    "scene/highlight semantics are marked stale, not recalculated here",
+    "per-connection SQLite FK and PostgreSQL acceptance remain incomplete",
+    "two actual-media tests skipped because WSL FFmpeg/FFprobe is unavailable",
+    "no actual ASR/provider/media/browser/Owner/Docker/production acceptance in this SQL component"
+  ],
+  "external_provider_calls": 0,
+  "paid_provider_calls": 0,
+  "asr_calls_during_word_revision": 0,
+  "destructive_migration": false,
+  "owner_uat": false,
+  "publishing_performed": false,
+  "production_deployment_performed": false,
+  "global_readiness_changed": false,
+  "IMPLEMENTATION_COMPLETE": false,
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": false,
+  "PRODUCTION_DEPLOYED": false,
+  "VIDEO_FACTORY_NORTH_STAR_READY": false
+}

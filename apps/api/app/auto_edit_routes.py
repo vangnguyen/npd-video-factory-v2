@@ -17,6 +17,8 @@ from .auto_edit_providers import MediaProbeError, ProviderNotConfigured
 from .auto_edit_service import AutoEditAnalysisService, UploadConflictError, UploadService, UploadSizeError
 from .human_auth import authorize_project
 from .transcript_editing import edit_transcript,TranscriptEditConflict
+from .transcript_word_review import WordReview
+from .transcript_word_editing import edit_transcript_words, TranscriptWordEditConflict
 from .media_security import MediaScanUnavailable, MediaSecurityError, UnsafeMediaRejected
 from .media_validation import MediaValidationError
 from .highlight_drafts import (HighlightDraftRequest,HighlightDraftRead,HighlightDraftApply,
@@ -83,6 +85,18 @@ async def edit_analysis_transcript(project_id:str,analysis_id:str,payload:Transc
         return await edit_transcript(analysis_service_from(request).repository,project_id,analysis_id,payload,principal.subject)
     except KeyError as exc:raise missing('Analysis') from exc
     except TranscriptEditConflict as exc:raise error(409,'TRANSCRIPT_EDIT_CONFLICT',str(exc)) from exc
+
+
+@router.post('/projects/{project_id}/analyses/{analysis_id}/transcript-words', response_model=AutoEditAnalysisRead)
+async def review_analysis_transcript_words(project_id:str, analysis_id:str, payload:WordReview, request:Request):
+    principal = await authorize_project(request, project_id, 'editor')
+    try:
+        return await edit_transcript_words(analysis_service_from(request).repository,
+            project_id, analysis_id, payload, principal.subject)
+    except KeyError as exc:
+        raise missing('Analysis') from exc
+    except TranscriptWordEditConflict as exc:
+        raise error(409, 'TRANSCRIPT_WORD_EDIT_CONFLICT', str(exc)) from exc
 
 
 def upload_service_from(request: Request) -> UploadService:
