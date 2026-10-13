@@ -25,3 +25,6 @@ Mốc [Native Meta counter feedback](NATIVE_META_COUNTER_FEEDBACK.md): thuật t
 
 
 Mốc [Native Meta signed feedback](NATIVE_META_FEEDBACK_E2E.md):6 kiểm tra HTTP xác thực và786 Studio đạt; cả Instagram/Facebook review và lưu khuyến nghị qua trình duyệt, kiểm tra1366/1920/2560px. Bridge thu sự kiện qua ranh giới DB độc lập, xác thực dịch vụ/chống dùng lại nonce và không nhân bản khi replay; gửi webhook vẫn tắt. JSON kỹ thuật được thu gọn mặc định. Provider/identity/publication/media đều giả lập; SQL/API parity, webhook/Hub thật, metric/feature thật và full Owner/A/B/C/production chưa hoàn tất.59 nhóm vẫn mở. SHA/bundle cuối ở recovery/20261007/native-meta-feedback-e2e-program-state.json.
+
+
+Mốc [SQL/API Meta counter feedback](META_COUNTER_SQL_FEEDBACK.md): thuật toán riêng và nhóm so sánh giữ phiên bản API/định nghĩa chỉ số; kiểm chứng dữ liệu dựng đã đóng băng, learning bất biến, loại nguồn không tương thích và quyền API. API_new:17 đạt, API_regression:98 đạt, Native_regression:35 đạt. SQLite/ASGI/provider/metric/feature đều dùng bộ dữ liệu giả lập có ghi nhãn; chưa nghiệm thu PostgreSQL/Docker/provider thật/webhook/Owner/full Mode A/B.59 nhóm còn mở. Mã nguồn/bundle cuối ở recovery/20261007/meta-counter-sql-feedback-program-state.json.

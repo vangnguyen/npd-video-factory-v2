@@ -462,3 +462,8 @@ See NATIVE_META_COUNTER_FEEDBACK.md: separately versioned interaction scoring, e
 ## Native Meta signed feedback verification
 
 Actual local signed HTTP/browser/outbox capture now passes for Meta winner/learning/projections;6 HTTP and786 Studio tests pass. JSON technical evidence is folded in normal review. Independent projection harvest and service nonce/idempotence are verified with delivery disabled. Continue actual new Meta webhook/Hub and SQL/API parity, genuine feature/metric acceptance, self-contained CI dataset generation and every original full Mode A/B/A-B-C/Owner/production gap.59 groups remain unclosed. See NATIVE_META_FEEDBACK_E2E.md.
+
+
+## SQL/API Meta counter-feedback amendment
+
+See [META_COUNTER_SQL_FEEDBACK.md](META_COUNTER_SQL_FEEDBACK.md) and [evidence](north-star/meta-counter-sql-feedback-evidence.json). The ORM processor now shares the distinct Native counter policy and exact Meta API/definition scope, verifies frozen current render context, and stores immutable algorithm-isolated learning. Owned SQLite/ASGI and explicit provider/metric/feature fixtures verify eligible Instagram and insufficient Facebook, incompatible cohort exclusion, old-history preservation, idempotence, malformed definitions and role guards. Production PostgreSQL/Docker/full runtime parity, genuine calibration, new Meta webhook/Hub and every original Mode A/B/A-B-C/Owner gate remain open. The primary matrix stays5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED:59 unclosed groups.

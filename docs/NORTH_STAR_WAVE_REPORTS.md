@@ -3891,3 +3891,8 @@ Full per-wave report is in [NATIVE_META_COUNTER_FEEDBACK.md](NATIVE_META_COUNTER
 ## Wave11/12/14 — Native Meta signed feedback/browser/outbox
 
 Full report: [NATIVE_META_FEEDBACK_E2E.md](NATIVE_META_FEEDBACK_E2E.md); [evidence](north-star/native-meta-feedback-e2e-evidence.json).6 signed HTTP/786 Studio pass; final browser views/projections pass on both platforms at3 widths. No Meta webhook delivery/real Hub/SQL production parity/genuine provider/Owner/full-flow acceptance.59 groups remain; final source state is recovery/20261007/native-meta-feedback-e2e-program-state.json.
+
+
+## Wave11/12/15 — SQL/API Meta counter component
+
+Complete wave report and tests: [META_COUNTER_SQL_FEEDBACK.md](META_COUNTER_SQL_FEEDBACK.md). Owned SQLite/ASGI/protocol fixtures pass; no provider/PostgreSQL/Docker/new browser/webhook/Owner/full-flow acceptance.59 groups remain open. Final source seal: recovery/20261007/meta-counter-sql-feedback-program-state.json.

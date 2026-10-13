@@ -1,0 +1,68 @@
+{
+  "schema_version": "north-star-meta-counter-sql-feedback-evidence-v1",
+  "recorded_at": "2026-10-13T02:36:14.330478+00:00",
+  "source_parent": "1ab9201c23d75b094ac94e37bf64f181c7153c0d",
+  "tests": {
+    "API_new": 17,
+    "API_regression": 98,
+    "Native_regression": 35
+  },
+  "test_logs": {
+    "API_new": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-counter-api-new-n5.log",
+      "sha256": "9868888cf89d0bb06b77e42592ab6b964b026ee5e1fa2bd4c5de3bf5591658a9",
+      "bytes": 113,
+      "passed": 17
+    },
+    "API_regression": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-counter-api-regression-final.log",
+      "sha256": "0affc46f19009389a978efdefd77efbf873e1d8e52f401185dac88b1fb738bbd",
+      "bytes": 194,
+      "passed": 98
+    },
+    "Native_regression": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\meta-counter-native-regression-final.log",
+      "sha256": "df342f7ebd357ffd8fd435c0dbf7afb4c1b596ee9fc59f112fcd041b6c164345",
+      "bytes": 8701,
+      "passed": 35
+    }
+  },
+  "scope": {
+    "owned_SQLite_ORM": true,
+    "ASGI_authenticated_routes": true,
+    "actual_Meta_counter_cohort_processor": true,
+    "exact_definition_version_availability_scope": true,
+    "immutable_learning_history_idempotence": true,
+    "legacy_algorithm_history_preserved": true,
+    "provider_identity_publication_metrics_feature_labels_are_explicit_fixtures": true,
+    "boundary_genuine_flag_injection_is_also_synthetic": true,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "production_PostgreSQL_verified": false,
+    "Docker_verified": false,
+    "new_browser_verified": false,
+    "new_Meta_webhook_delivery_verified": false,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "retained_attempts": [
+    "meta-counter-api-initial.log",
+    "meta-counter-api-new-n1.log",
+    "meta-counter-api-new-n2.log",
+    "meta-counter-api-new-n3.log",
+    "meta-counter-api-new-n4.log"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}
