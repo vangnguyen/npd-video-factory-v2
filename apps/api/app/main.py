@@ -538,6 +538,17 @@ def _provider_definitions(uploaded_audio_instance=None) -> list[dict[str, object
         and getattr(uploaded_audio_instance, 'key', None) == 'local-faster-whisper'
         and getattr(uploaded_audio_instance, 'external_call', None) is False
         and getattr(uploaded_audio_instance, 'paid', None) is False)
+    # Pure selection metadata only. This never constructs the TTS adapter,
+    # reads its server/model files, resolves a secret, or checks service health.
+    from .vieneu_contracts import SELECTED_VOICE, selected_vieneu_profile
+    vieneu_profile = None
+    if (settings.audio_tts_provider == 'vieneu' and settings.vieneu_local_execution_enabled is True
+            and settings.vieneu_voice_id == SELECTED_VOICE):
+        try:
+            vieneu_profile = selected_vieneu_profile()
+        except (ValueError, TypeError):
+            pass
+    vieneu_selected = vieneu_profile is not None
     return [
         content_provider_definition(settings.content_generation_provider),
         {
@@ -573,6 +584,25 @@ def _provider_definitions(uploaded_audio_instance=None) -> list[dict[str, object
             "supports_dry_run": False,
             "config_ref": "env:OPENAI_API_KEY",
             "metadata": {"paid": True, "manual_acceptance_only": True},
+        },
+        {
+            "provider_key": "vieneu-tts",
+            "display_name": "VieNeu Selected Vietnamese Voice Candidate",
+            "capability": "tts",
+            "adapter": "app.vieneu_tts_provider.VieNeuTTSProvider",
+            "routing_mode": "primary" if vieneu_selected else "disabled",
+            "status": "degraded" if vieneu_selected else "not_configured",
+            "enabled": vieneu_selected,
+            "supports_dry_run": False,
+            "config_ref": "env:AUDIO_TTS_PROVIDER/VIENEU_LOCAL_EXECUTION_ENABLED/VIENEU_VOICE_ID",
+            "metadata": {"paid": False, "external_call": False, "fixture": False,
+                "default_enabled": False, "selection_configured": vieneu_selected,
+                "configuration_only": True, "runtime_custody_verified": False,
+                "provider_health_verified": False, "semantic_quality_verified": False,
+                "production_acceptance_required": True, "production_acceptance_verified": False,
+                "human_voice_accepted": False, "human_review_required": True,
+                "rights_status": "unknown", "production_deployed": False,
+                "selected_candidate_profile_sha256": vieneu_profile.sha256 if vieneu_profile else None},
         },
         {
             "provider_key": "remotion",
