@@ -15,7 +15,8 @@ def original(document,asset):
     if not record or not record.get('normalized_transcript'):return None
     try:value=TranscriptRead.model_validate(record['normalized_transcript'])
     except ValueError:raise WorkflowError('AUDIO_TRANSCRIPT_EVIDENCE_CHANGED') from None
-    expected='ana_'+digest(['native-audio-transcript-v1',asset['id'],asset['sha256'],record['transcript']['provenance']['raw_response_sha256']])[:24]
+    algorithm='native-local-audio-transcript-v1' if record['transcript']['provenance'].get('provider')=='faster-whisper' else 'native-audio-transcript-v1'
+    expected='ana_'+digest([algorithm,asset['id'],asset['sha256'],record['transcript']['provenance']['raw_response_sha256']])[:24]
     if value.analysis_id!=expected or value.asset_id!=asset_reference(asset) or value.is_original_evidence!=(record.get('source_gap_review') is None) or value.version!=1:
         raise WorkflowError('AUDIO_TRANSCRIPT_EVIDENCE_CHANGED')
     reconstructed=normalize_transcript(record['transcript'],analysis_id=expected,asset_id=value.asset_id,

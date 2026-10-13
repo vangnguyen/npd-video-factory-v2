@@ -41,7 +41,7 @@ export function analysisMarkup(bundle,{project=null,sourceEnabled=false}={}) {
       ${transcript?`<details open><summary>Lời nói · bản ${transcript.version} · ${esc(transcript.language)}</summary>
       ${transcript.segments.map(segment=>`<label>${formatTime(segment.start_seconds)}–${formatTime(segment.end_seconds)}s
         <textarea data-auto-edit-control data-transcript-segment="${esc(segment.segment_id)}" rows="2" maxlength="4000">${esc(segment.text)}</textarea></label>
-        <p class="hint">${segment.words.length?`${segment.words.length} từ có thời gian đo từ nguồn.`:'Đoạn này không có căn chỉnh từng từ; không suy đoán thời gian mới.'}</p>`).join('')}
+        <p class="hint">${segment.words.length?`${segment.words.length} từ có mốc thời gian từ kết quả nhận diện hoặc bản sửa; cần kiểm tra trên nguồn.`:'Đoạn này không có căn chỉnh từng từ; không suy đoán thời gian mới.'}</p>`).join('')}
       <button data-auto-edit-control data-save-transcript type="button" class="secondary">Lưu lời nói đã sửa</button>
       <details><summary>Lịch sử lời nói · ${item.transcript_history.length} bản</summary><label>Bản đã lưu<select data-auto-edit-control data-transcript-history>
       ${item.transcript_history.map(value=>`<option value="${esc(value.transcript_id)}">Bản ${value.version} · ${value.is_original_evidence?'nhận diện gốc':'bản chỉnh sửa'}</option>`).join('')}</select></label>

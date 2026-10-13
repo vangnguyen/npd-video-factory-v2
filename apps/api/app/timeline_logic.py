@@ -8,6 +8,7 @@ from typing import Any
 from .auto_edit_models import AutoEditAnalysisRead
 from .media_intelligence_models import MediaPlanRead
 from .platform_models import AssetRead
+from .transcript_word_review import timing_evidence
 from .timeline_models import (
     TimelineClip,
     TimelineOperation,
@@ -148,8 +149,8 @@ def build_initial_timeline(
                         kind="subtitle",
                         label=caption_text[:120],
                         asset_id=None,
-                        source_start=round(overlap_start, 6),
-                        source_end=round(overlap_end, 6),
+                        source_start=overlap_start,
+                        source_end=overlap_end,
                         timeline_start=round(mapped_start, 6),
                         duration=round(duration, 6),
                         metadata={
@@ -166,6 +167,7 @@ def build_initial_timeline(
                                 "start_seconds": word.start_seconds,
                                 "end_seconds": word.end_seconds}
                                 for word in measured_words],
+                            **(timing_evidence(analysis.transcript) if measured_words else {}),
                         },
                     )
                 )

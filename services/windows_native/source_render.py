@@ -114,7 +114,10 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
         actor_ref='native-session-owner',created_at=datetime.now(timezone.utc))
     root_analysis=next(value['analysis'] for value in project['document']['auto_edit_analyses']
         if value['analysis']['analysis_id']==snapshot.metadata['source_analysis_id'])
-    language=((root_analysis.get('transcript') or {}).get('language') or 'vi')
+    from .auto_edit_analysis import selected_transcript
+    from app.auto_edit_models import AutoEditAnalysisRead
+    selected=selected_transcript(project['document'],AutoEditAnalysisRead.model_validate(root_analysis))
+    language=selected.language if selected else 'vi'
     from .channel_profiles import resolve
     selected_channel=resolve(project['document'])
     if selected_channel is not None:
@@ -135,8 +138,11 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
             'imports':list(records(project['document']).values()),'verified_active_source_sha256':verify_physical(config.data_root,project['document']),
             'source_media_mutated':False,'provider_calls':0,'human_review_required':True})
     durable_json(directory/'subtitles.json',{'cues':[cue.model_dump(mode='json') for cue in cues],
-        'style':style.model_dump(mode='json'),'word_alignment':'human_reviewed_source_intervals' if (root_analysis.get('transcript') or {}).get('provenance',{}).get('human_edit') else 'source_provider_intervals_where_available',
-        'transcript_evidence':root_analysis.get('transcript')})
+        'style':style.model_dump(mode='json'),'word_alignment':('human_supplied_source_intervals_not_independently_measured'
+            if selected and selected.provenance.get('word_timestamp_policy')=='human_supplied_source_intervals'
+            else 'source_provider_intervals_where_available' if selected and any(s.words for s in selected.segments)
+            else 'sentence_segment_bounds_no_word_alignment'),
+        'transcript_evidence':selected.model_dump(mode='json') if selected else None})
     durable_json(directory/'audio-analysis.json',{'schema':'canonical-source-audio-v1','clips':audio.clips,
         'muted_clip_ids':audio.muted_clip_ids,'source_audio_included':bool(audio.clips),
         'normalization_applied':bool(audio.processing['normalization_clip_ids']),

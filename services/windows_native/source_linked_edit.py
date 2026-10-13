@@ -38,6 +38,7 @@ def _key(clip):
 
 def _captions(sources,transcript):
     if transcript is None:return []
+    from app.transcript_word_review import timing_evidence
     windows=[]
     for clip in sorted((item for item in sources if not item.disabled),key=lambda item:item.timeline_start):
         if (windows and abs(windows[-1].source_end-clip.source_start)<1e-6
@@ -62,6 +63,7 @@ def _captions(sources,transcript):
                     'confidence':segment.confidence,'native_linked_caption':True,
                     'timing_source':'provider_native_word_intervals' if words else 'segment_bounds_without_word_alignment',
                     'measured_source_words':[{'text':word.text,'start_seconds':word.start_seconds,'end_seconds':word.end_seconds} for word in words],
+                    **(timing_evidence(transcript) if words else {}),
                     **({'subtitle_text':text} if not segment.words else {})}))
     return result
 

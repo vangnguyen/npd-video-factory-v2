@@ -684,6 +684,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
+        from .transcript_word_routes import handles as word_handles,dispatch as word_dispatch
+        if word_handles(path):
+            if self.path!=path:raise WorkflowError('TRANSCRIPT_WORD_REVIEW_QUERY_INVALID',400)
+            return word_dispatch(self,write=False)
         if path=='/oauth/google/callback':
             from .google_oauth_callback import dispatch
             return dispatch(self)
@@ -895,7 +899,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
                 "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
@@ -1017,6 +1021,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-multipart-upload.mjs'] = 'native-multipart-upload.mjs'
         static['/native-file-sha256.mjs'] = 'native-file-sha256.mjs'
         static['/native-audio-transcripts.mjs'] = 'native-audio-transcripts.mjs'
+        static['/native-transcript-words.mjs'] = 'native-transcript-words.mjs'
         static['/native-source-media-tracks.mjs'] = 'native-source-media-tracks.mjs'
         static.update({name:name[1:] for name in ('/native-narrated-timeline.mjs',
             '/native-narrated-timeline.css','/native-visual-properties.mjs','/native-source-drag-drop.mjs','/native-clip-style.mjs')})
@@ -1092,6 +1097,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        from .transcript_word_routes import handles as word_handles,dispatch as word_dispatch
+        if word_handles(self.path):return word_dispatch(self,write=True)
         from .multipart_routes import handles as upload_handles,dispatch as upload_dispatch
         if upload_handles(self.path):return upload_dispatch(self,write=True)
         from .audio_transcript_routes import handles as audio_transcript_handles,dispatch as audio_transcript_dispatch
@@ -1257,7 +1264,8 @@ class Handler(BaseHTTPRequestHandler):
             body = self.read_body(max_bytes=100000)
             if set(body) != {'revision', 'edit'} or type(body.get('revision')) is not int:
                 raise WorkflowError('AUTO_EDIT_TRANSCRIPT_REQUEST_INVALID', 400)
-            return self.reply(edit_transcript(self.server.store, analysis_route[1], body['revision'], analysis_route[2], body['edit']))
+            actor=self.auth_session.principal.token_id if self.server.access is not None else 'legacy-local-editor'
+            return self.reply(edit_transcript(self.server.store, analysis_route[1], body['revision'], analysis_route[2], body['edit'],actor_ref=actor))
         shot_route=re.fullmatch(r'/api/projects/([0-9a-f]{32})/(shots|preview|ai-edit|asset-association|script-review)',self.path)
         if shot_route:
             identifier,action=shot_route.groups(); body=self.read_body(max_bytes=100000)

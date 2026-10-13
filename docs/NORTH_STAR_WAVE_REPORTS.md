@@ -3926,3 +3926,34 @@ Full 13-field report: [NATIVE_LOCAL_CPU_ASR.md](NATIVE_LOCAL_CPU_ASR.md). Native
 ## Wave3B/8/16 — Local ASR model/reference-quality control
 
 Full 13-field report: [NATIVE_LOCAL_ASR_QUALITY.md](NATIVE_LOCAL_ASR_QUALITY.md). Native51/Studio789 PASS. Fixed licensed speech comparison and actual small-model Native/cold flow; failed experimental model quarantined, default provider/base identity unchanged. Partial VI quality/timing/proper names/browser/Owner/full acceptance;59 groups remain. Automatic deletion rejection retained251MB, no bypass. Final state: recovery/20261007/local-asr-quality-program-state.json.
+
+
+## Native transcript word/timing review — local component
+
+WAVE: 3B/3G/3I/6E/8F/16 component
+
+STATUS: LOCAL_REAL_COMPONENT_PASS; full waves PARTIAL
+
+HEAD SHA: parent 536b69452d9bea9ee313e24f89c5de38dcc8bb28; final in recovery/20261007/native-transcript-word-review-program-state.json
+
+CAPABILITIES COMPLETED: scoped Native word/timing UI and HTTP, immutable version/hash/actor history, canonical caption mapping, word-safe cut guards, source playback, selected transcript render evidence, scoped actual media/restore proof
+
+CAPABILITIES PARTIAL: SQL API word-edit parity, automatic calibrated alignment, comprehensive language/name/noise quality, full transcript segment restructuring, refresh of scene/highlight semantics, genuine user footage/non-developer/Owner/full Mode A/B/production acceptance
+
+TESTS: Native92/Studio795/API16 PASS; Native11 overlapping linked and Native14 source-track/HTTP follow-ups PASS
+
+REAL PROVIDER TESTS: 2 actual local small-model CPU inferences across browser-source and audio-source cases; actual FFmpeg/renderer; no remote-provider acceptance
+
+MOCK TESTS: identity, listening acknowledgement and approval fixtures; ASR fixtures in unit/HTTP regressions; generated visual and fixture DOM; no fabricated benchmark ASR result
+
+EVIDENCE: [indexed evidence](north-star/native-transcript-word-review-evidence.json); portable ZIP, browser state backup, original/current transcript, canonical timeline, preview/final, subtitles, audio, QC, job events, costs and exact two-project cold restore
+
+REGRESSIONS: original ASR/assets/accepted artifacts preserved; locked/dirty/stale/foreign/CSRF/source-change guards; text-only caption guard; final video still requires separate review; final seal rechecks historical artifacts and live source
+
+EXTERNAL BLOCKERS: original Owner/provider/GPU/Docker/production gates remain; source quality and whole-flow acceptance remain incomplete; one new temporary-root cleanup denied
+
+OWNER ACTION REQUIRED: none for continued safe implementation; UAT/listening remains deferred; no publishing or deployment approval requested
+
+NEXT WAVE: genuine source/operator/quality acceptance and remaining original Mode A/B, media, profiles, Trend, publishing/analytics/learning, Agent Hub and production requirements
+
+SOURCE_PRESERVED=YES is established by the final preservation seal. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO. Matrix remains 5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED, 59 unclosed groups. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.

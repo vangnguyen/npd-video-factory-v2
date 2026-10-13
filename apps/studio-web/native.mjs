@@ -148,7 +148,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null;
+  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   let asrLanguageEnabled=false;
   let localAsrEnabled=false;
@@ -247,6 +247,7 @@ if (typeof document !== "undefined") {
     stockUI?.controls();
     multipartUI?.sync();
     audioTranscriptUI?.sync();
+    transcriptWordsUI?.sync();
     asrGapReviewUI?.sync();
     sourceMediaUI?.sync();
     narratedTimelineUI?.sync();
@@ -439,6 +440,13 @@ if (typeof document !== "undefined") {
       audioTranscriptUI=transcripts.initializeNativeAudioTranscripts({api,getState:()=>({project,dirty,busy,active:jobActive(project),
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
+    }
+    if(session.capabilities?.native_transcript_word_review===true){
+        const words=await import('./native-transcript-words.mjs');
+        transcriptWordsUI=words.initializeTranscriptWords({api,getState:()=>({project,dirty,dirtyPart,busy,active:jobActive(project),
+          canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,workspace_id:session.access?.workspace_id??'wsp_native_local'}),
+          onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);},
+          onDirty:value=>{if(value)markDirty('transcript_words');else if(dirtyPart==='transcript_words'){dirty=false;dirtyPart=null;controls();}}});
     }
     if(session.capabilities?.native_asr_gap_review===true){
       const gaps=await import('./native-asr-gap-review.mjs');

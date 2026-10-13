@@ -218,6 +218,11 @@ def validate_record(record, project_id, document, asset, *, require_current=True
 
 
 def selected_transcript(document, analysis):
+    for value in document.get('auto_edit_transcripts',[]):
+        if value.get('analysis_id')!=analysis.analysis_id:continue
+        checks=document.get('auto_edit_transcript_version_sha256',{})
+        if value.get('provenance',{}).get('word_timestamp_policy')=='human_supplied_source_intervals' or value.get('transcript_id') in checks:
+            if checks.get(value.get('transcript_id'))!=digest(value):raise WorkflowError('TRANSCRIPT_WORD_REVIEW_HISTORY_CHANGED')
     versions = [TranscriptRead.model_validate(value) for value in document.get("auto_edit_transcripts", [])
         if value.get("analysis_id") == analysis.analysis_id]
     if analysis.transcript:
@@ -255,6 +260,7 @@ def view(store, project_id):
         for scene in scenes:
             scene["evidence"]["transcript_segment_count"] = len(scene["evidence"]["transcript_segment_ids"])
         result.append({"native_asset_id": asset["id"], "filename": asset["filename"],
+            'asset_sha256':asset['sha256'],'analysis_sha256':record['sha256'],
             "analysis": selected.model_dump(mode="json"), "scenes": scenes,
             "highlights": build_highlights(scenes=scenes, top_k=5),
             "transcript_history": [value.model_dump(mode="json") for value in
@@ -302,7 +308,10 @@ def _save(store, con, project, document, action, details, *, timeline_mutated=Fa
         "provider_calls": 0, "approval_invalidated": True, "canonical_timeline_mutated": timeline_mutated})
 
 
-def edit_transcript(store, project_id, revision, analysis_id, body):
+def edit_transcript(store, project_id, revision, analysis_id, body,*,actor_ref='legacy-local-editor'):
+    import re
+    if not isinstance(actor_ref,str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,160}',actor_ref):
+        raise WorkflowError('AUTO_EDIT_TRANSCRIPT_ACTOR_INVALID',400)
     try:
         payload = TranscriptEditRequest.model_validate(body)
     except ValueError:
@@ -357,7 +366,7 @@ def edit_transcript(store, project_id, revision, analysis_id, body):
             derived = TranscriptRead(transcript_id="trn_" + uuid.uuid4().hex[:24], analysis_id=analysis_id,
                 asset_id=current.asset_id, version=current.version + 1, is_original_evidence=False,
                 provider_key=base.provider_key, language=base.language, confidence=None, segments=segments,
-                provenance={**copy.deepcopy(base.provenance), "human_edit": True, "actor_ref": "native-session-owner",
+                provenance={**copy.deepcopy(base.provenance), "human_edit": True, "actor_ref": actor_ref,
                     "derived_from_transcript_id": base.transcript_id, "changed_segment_ids": changed,
                     "word_timestamp_policy": "discard_for_changed_text", "edit_note": payload.note,
                     "source_media_mutated": False, "remote_calls": 0, "timeline_application_required": True},
