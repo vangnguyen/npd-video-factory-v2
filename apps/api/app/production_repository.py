@@ -47,8 +47,13 @@ def _new_id(prefix: str) -> str:
 
 
 class ProductionRepository:
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession]):
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession], *, variant_narration_fence=None):
         self.session_factory = session_factory
+        if variant_narration_fence is not None:
+            from .sql_variant_narration_render import VariantNarrationTerminalFence
+            if type(variant_narration_fence) is not VariantNarrationTerminalFence:
+                raise TypeError('SQL_VARIANT_NARRATION_TYPED_FENCE_REQUIRED')
+        self.variant_narration_fence = variant_narration_fence
 
     async def create_or_refresh_package(
         self,
@@ -568,6 +573,12 @@ class ProductionRepository:
                 hint = await session.get(ProductionRenderJobORM, render_id)
                 if hint is None:
                     return None
+                variant=(manifest.get('narration') or {}).get('variant_narration_reuse')
+                variant_proof=None
+                if variant is not None:
+                    if self.variant_narration_fence is None:
+                        raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+                    variant_proof=await self.variant_narration_fence.lock(session,hint,variant)
                 # Serialize with version creation (project lock) and approval
                 # replacement (package lock), then reload the render. SQLite's
                 # no-op UPDATE provides the corresponding writer transaction.
@@ -588,6 +599,8 @@ class ProductionRepository:
                     row.status = "stale" if row.status == "stale" else "cancelled"
                     row.updated_at = utc_now()
                     return _render_read(row)
+                if variant_proof is not None:
+                    await self.variant_narration_fence.guard(session,row,variant_proof)
                 if row.render_kind=='final' and prepared is not None:
                     import copy
                     target=copy.deepcopy((manifest.get('narration') or {}).get('canonical_audio_binding'))
@@ -622,6 +635,11 @@ class ProductionRepository:
                             "publishing_allowed": False,
                         },
                     )
+                if variant_proof is not None:
+                    # Event/flush and every byte/SQL await precedes the final
+                    # same-transaction source fence; stale results roll back all.
+                    await session.flush()
+                    await self.variant_narration_fence.guard(session,row,variant_proof,terminal=True)
             return _render_read(row)
 
     async def fail_render(
