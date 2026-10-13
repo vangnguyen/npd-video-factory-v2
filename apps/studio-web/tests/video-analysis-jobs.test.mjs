@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
+import {createHash,webcrypto} from 'node:crypto';
+import {verifyVariantReceipt} from '../verified-variant-source.mjs';
 import {videoAnalysisAssets,videoAnalysisPayload,validateVideoAnalysisJob,videoReviewSelection,selectedVideoReviewAnalysis,initializeVideoAnalysisJobs} from '../video-analysis-jobs.mjs';
 import {transcriptEditPayload} from '../transcript-editor.mjs';
 
@@ -37,6 +38,60 @@ function harness({s=state(),memory=new Map(),storage,handler}={}){
 }
 const captured=Object.fromEntries(['queued','running','awaiting_review','cancelled','needs_attention'].map(name=>[name,
   JSON.parse(readFileSync(new URL(`./fixtures/sql-video-jobs/${name}.json`,import.meta.url),'utf8'))]));
+const imported=JSON.parse(readFileSync(new URL('./fixtures/sql-variant-import-review/read.json',import.meta.url),'utf8'));
+const importedJobs=JSON.parse(readFileSync(new URL('./fixtures/sql-variant-import-review/video-jobs.json',import.meta.url),'utf8'));
+function importedState(role='editor'){return{workspaceId:imported.context.workspace_id,projectId:imported.context.project_id,
+  principal:{subject:imported.context.viewer_subject,token_id:'explicit-import-video-session',expires_at:'2100-01-01T00:00:00Z',platform_role:role},
+  busy:false,dirty:false,assets:clone(imported.responses.assets.body),timeline:clone(imported.responses.timeline.body),analyses:clone(imported.responses.analyses.body)};}
+test('actual derivative video picker uses verified receipt with current child source, never old upload or job alias',async()=>{
+  const s=importedState(),asset=videoAnalysisAssets(s)[0];assert.ok(asset);assert.notEqual(asset.asset_id,asset.provenance.parent_asset_id);
+  assert.throws(()=>videoAnalysisPayload(s,asset.asset_id,3,'explicit-new-video-only'),/biên nhận/);
+  s.verifiedVariantReceipts=[await verifyVariantReceipt(imported.responses.receipt.body,s,asset,webcrypto)];
+  const p=videoAnalysisPayload(s,asset.asset_id,5,'explicit-new-video-only');
+  assert.equal(p.configuration.asset_id,asset.asset_id);assert.equal(p.source_sha256,asset.checksum_sha256);
+  assert.equal(importedJobs.status,200);assert.deepEqual(importedJobs.body,[]);assert.equal(importedJobs.provider_calls,0);
+  const before=JSON.stringify(s.timeline);assert.equal(selectedVideoReviewAnalysis(s,null,s.analyses[0]),s.analyses[0]);
+  assert.equal(JSON.stringify(s.timeline),before);
+});
+test('derived video read loads receipt and shows imported scenes without new ASR POST or master job alias',async()=>{
+  const s=importedState(),before=JSON.stringify(s),h=harness({s,handler:c=>
+    c.path===imported.responses.receipt.path?clone(imported.responses.receipt.body):clone(importedJobs.body)});
+  assert.equal(h.calls.length,0);h.controller.sync();assert.equal(h.calls.length,0);await h.click('read');
+  assert.deepEqual(h.calls.map(c=>c.method),['GET','GET']);assert.match(h.get('status').textContent,/Cảnh và lời đã nhập/);
+  assert.equal(h.get('saved').children.length,0);assert.equal(h.timers.size,0);assert.equal(h.get('review').disabled,true);
+  assert.equal(JSON.stringify(s),before);assert.equal(h.get('start').textContent,'Gửi phân tích mới cho bản sao đã chọn');
+});
+test('only explicit derived video start sends one fresh child intent; blocked provider keeps key, no new result',async()=>{
+  const s=importedState(),before=JSON.stringify(s.timeline),h=harness({s,handler:c=>{
+    if(c.path===imported.responses.receipt.path)return clone(imported.responses.receipt.body);
+    if(c.method==='POST')throw Error('EXPLICIT UI FIXTURE: VIDEO_PROVIDER_NOT_CONFIGURED; no backend/model dispatch');
+    return clone(importedJobs.body);
+  }});
+  await h.click('read');assert.equal(h.calls.some(c=>c.method==='POST'),false);await h.click('start');
+  const sent=h.calls.filter(c=>c.method==='POST');assert.equal(sent.length,1);
+  assert.equal(sent[0].body.configuration.asset_id,s.assets.find(a=>a.kind==='video').asset_id);
+  assert.equal(sent[0].body.source_sha256,s.assets.find(a=>a.kind==='video').checksum_sha256);
+  assert.equal(h.controller.isPending(),true);assert.equal(h.memory.size,1);assert.equal(h.reviewed.length,0);
+  assert.equal(JSON.stringify(s.timeline),before);assert.equal(h.timers.size,0);
+});
+test('missing/foreign origin, elevated receipt and role/draft/session drift never dispatch derived analysis',async()=>{
+  for(const change of[s=>delete s.timeline.snapshot.metadata.sql_variant_derivative.family_id,s=>s.projectId='prj_foreign',
+    s=>s.principal.platform_role='viewer',s=>s.dirty=true,s=>s.busy=true]){
+    const s=importedState();change(s);const h=harness({s,handler:c=>clone(imported.responses.receipt.body)});
+    await h.click('start');assert.equal(h.calls.some(c=>c.method==='POST'),false);
+  }
+  for(const late of[s=>s.principal.token_id='changed-session',s=>s.assets.find(a=>a.kind==='video').version++,s=>s.dirty=true]){
+    const s=importedState(),h=harness({s,handler:c=>{late(s);return clone(imported.responses.receipt.body);}});
+    await h.click('start');assert.equal(h.calls.some(c=>c.method==='POST'),false);assert.equal(h.memory.size,0);
+  }
+  const s=importedState(),r=clone(imported.responses.receipt.body);r.safety.approval_inherited=true;
+  const h=harness({s,handler:()=>r});await h.click('start');assert.equal(h.calls.some(c=>c.method==='POST'),false);
+});
+test('closing derived video controller during receipt await forbids all new write and pending keys',async()=>{
+  const s=importedState();let h;
+  h=harness({s,handler:()=>{h.controller.dispose();return clone(imported.responses.receipt.body);}});
+  await h.click('start');assert.equal(h.calls.some(c=>c.method==='POST'),false);assert.equal(h.memory.size,0);
+});
 function capturedState(c,role='viewer'){return{workspaceId:c.context.workspace_id,projectId:c.context.project_id,
   workspaceSlug:c.responses.workspace.body.slug,assets:clone(c.responses.assets.body),busy:false,dirty:false,
   principal:{subject:c.context.viewer_subject,token_id:'explicit-browser-fixture',expires_at:'2100-01-01T00:00:00Z',platform_role:role}};}

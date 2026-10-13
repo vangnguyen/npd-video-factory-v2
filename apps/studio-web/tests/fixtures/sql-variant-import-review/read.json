@@ -1,0 +1,3133 @@
+{
+  "schema_version": "actual-sql-variant-import-review-fixture.v1",
+  "fixture_notice": "Owned synthetic tone/color media. Original ASR and one prior review are explicitly saved contract fixtures; current word edit is actual scoped ASGI. No real speech/model/provider/Owner acceptance.",
+  "context": {
+    "workspace_id": "wsp_06faf98fcd064901b7155a94",
+    "master_project_id": "prj_908c4f1ea0f645a8b777ac33",
+    "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+    "audio_id": "aud_cbf5d523885496a303bf6ccc",
+    "viewer_subject": "usr:test-owner",
+    "family_id": "vfa_50564c96af6b552ea397df0fe1ea7e4e",
+    "receipt_id": "vfr_04340cbba38753289a08016532a95893"
+  },
+  "word_edit_request": {
+    "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+    "edit": {
+      "expected_version": 2,
+      "expected_transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+      "expected_timeline_version": 1,
+      "acknowledged": true,
+      "note": "Explicit ASGI fixture word review, no human listening acceptance.",
+      "segments": [
+        {
+          "segment_id": "seg_43463452e5c603d97535866c",
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "words": [
+            {
+              "word_id": "wrd_34a2867ae426a9c26155394f",
+              "text": "Lời",
+              "start_seconds": 0.1,
+              "end_seconds": 0.4
+            },
+            {
+              "word_id": "wrd_1bfbb93c028d503e74816fc3",
+              "text": "thanh.",
+              "start_seconds": 0.4,
+              "end_seconds": 0.9
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "responses": {
+    "assets": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/assets",
+      "status": 200,
+      "headers": {
+        "content-length": "3259",
+        "content-type": "application/json",
+        "x-request-id": "253e9de951774acb97f6f143e684e281",
+        "x-correlation-id": "253e9de951774acb97f6f143e684e281",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store"
+      },
+      "body": [
+        {
+          "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "job_id": null,
+          "asset_class": "source",
+          "kind": "video",
+          "filename": "ast_4e68a3cfd96a468dbeeccceb.mp4",
+          "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_4e68a3cfd96a468dbeeccceb.mp4",
+          "content_type": "video/mp4",
+          "size_bytes": 31983,
+          "checksum_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+          "storage_provider": "local",
+          "version": 1,
+          "provenance": {
+            "source_type": "verified_variant_derivative",
+            "derivation_receipt_id": "vfr_04340cbba38753289a08016532a95893",
+            "parent_project_id": "prj_908c4f1ea0f645a8b777ac33",
+            "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+            "approval_inherited": false,
+            "rights_override_inherited": false,
+            "publishing_enabled": false,
+            "external_call": false,
+            "new_inference_calls": 0,
+            "parent_asset_id": "ast_4e68a3cfd96a468dbeeccceb",
+            "parent_record_sha256": "180359c24218f8efe1b929b2e03e702e1919e446b57d52fd9e51334df1235f5b",
+            "source_bytes_verified": true,
+            "rights_status": "unknown",
+            "license": null,
+            "media_metadata": {
+              "media_kind": "video",
+              "detected_content_type": "video/mp4",
+              "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+              "duration_seconds": 3.0,
+              "width": 320,
+              "height": 240,
+              "fps": 24.0,
+              "video_codec": "h264",
+              "audio_codec": "aac",
+              "audio_channels": 1,
+              "audio_sample_rate": 44100
+            },
+            "production_eligible": true
+          },
+          "created_at": "2026-10-13T18:39:11.696068",
+          "updated_at": "2026-10-13T18:39:11.696068"
+        },
+        {
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "job_id": null,
+          "asset_class": "source",
+          "kind": "audio",
+          "filename": "ast_7dc5008edcf04940ac7993db.wav",
+          "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_7dc5008edcf04940ac7993db.wav",
+          "content_type": "audio/wav",
+          "size_bytes": 64044,
+          "checksum_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "storage_provider": "local",
+          "version": 1,
+          "provenance": {
+            "source_type": "verified_variant_derivative",
+            "derivation_receipt_id": "vfr_04340cbba38753289a08016532a95893",
+            "parent_project_id": "prj_908c4f1ea0f645a8b777ac33",
+            "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+            "approval_inherited": false,
+            "rights_override_inherited": false,
+            "publishing_enabled": false,
+            "external_call": false,
+            "new_inference_calls": 0,
+            "parent_asset_id": "ast_7dc5008edcf04940ac7993db",
+            "parent_record_sha256": "3c4dad7ce6c31d2a186a21b9bf45d14a449b3b47be408eba6980bcc1fd4ae18a",
+            "source_bytes_verified": true,
+            "rights_status": "unknown",
+            "license": null,
+            "media_metadata": {
+              "media_kind": "audio",
+              "detected_content_type": "audio/wav",
+              "format_name": "wav",
+              "duration_seconds": 2.0,
+              "width": null,
+              "height": null,
+              "fps": null,
+              "video_codec": null,
+              "audio_codec": "pcm_s16le",
+              "audio_channels": 1,
+              "audio_sample_rate": 16000
+            },
+            "production_eligible": true
+          },
+          "created_at": "2026-10-13T18:39:11.696068",
+          "updated_at": "2026-10-13T18:39:11.696068"
+        }
+      ],
+      "bytes": 3259,
+      "body_sha256": "d26f5046dd023c9f59a4cf589648f45512fc03b83dd9ffffedb634a5685b4f0f"
+    },
+    "timeline": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/timeline",
+      "status": 200,
+      "headers": {
+        "content-length": "10389",
+        "content-type": "application/json",
+        "x-request-id": "d13d550c0b094f93a84dfded94595cc5",
+        "x-correlation-id": "d13d550c0b094f93a84dfded94595cc5",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "timeline_id": "tln_bc0a497036f05aaebdca19c3cd52ff64",
+        "workspace_id": "wsp_06faf98fcd064901b7155a94",
+        "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+        "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+        "source_analysis_id": "ana_6dcd8364065f18358a36ecaa",
+        "source_content_version_id": null,
+        "source_kind": "video_analysis",
+        "source_media_plan_id": null,
+        "current_version_id": "tlv_d487c4544d6e58068f8f187f673e0f0e",
+        "current_version": 1,
+        "approval_status": "draft",
+        "approved_timeline_version": null,
+        "snapshot": {
+          "schema_version": "1.0",
+          "width": 1920,
+          "height": 1080,
+          "fps": 30.0,
+          "aspect_ratio": "16:9",
+          "duration_seconds": 3.0,
+          "tracks": [
+            {
+              "track_id": "trk_b35718ac8ab94d37862e",
+              "type": "video",
+              "kind": "source",
+              "label": "Video gốc",
+              "order": 0,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_8e4f24bdd9f1542db558bb8d0348ca11",
+                  "kind": "source",
+                  "label": "Cảnh 1",
+                  "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+                  "source_start": 0.0,
+                  "source_end": 3.0,
+                  "timeline_start": 0.0,
+                  "duration": 3.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.125,
+                    "width": 1.0,
+                    "height": 0.75
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_0f18ee30bd4e879c6a5c2bcb",
+                    "scene_ordinal": 0,
+                    "semantic_label": "Explicit fixture scene",
+                    "quality_score": 0.0,
+                    "source_checksum_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+                    "content_type": "video/mp4",
+                    "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_4e68a3cfd96a468dbeeccceb.mp4",
+                    "original_evidence": true,
+                    "rights_status": "unknown",
+                    "official_render": false,
+                    "reframe": {
+                      "schema_version": 1,
+                      "keyframes": [
+                        {
+                          "time": 0.0,
+                          "x": 0.0,
+                          "y": 0.125,
+                          "width": 1.0,
+                          "height": 0.75
+                        }
+                      ],
+                      "aspect_ratio": "16:9",
+                      "confidence": null,
+                      "fallback": "center_crop",
+                      "needs_attention": true,
+                      "subject_tracking": "NOT_CONFIGURED",
+                      "source_width": 320,
+                      "source_height": 240,
+                      "time_space": "source_seconds"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_90dc6ccd6766407f904e",
+              "type": "video",
+              "kind": "broll",
+              "label": "B-roll",
+              "order": 1,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": []
+            },
+            {
+              "track_id": "trk_bb9f45c53ac440d48f4a",
+              "type": "text",
+              "kind": "subtitles",
+              "label": "Bản chép lời",
+              "order": 2,
+              "locked": false,
+              "muted": false,
+              "disabled": true,
+              "clips": [
+                {
+                  "clip_id": "clip_1f3504a6ca5f5d99b0aaad98b2e7d92c",
+                  "kind": "subtitle",
+                  "label": "Xin chào.",
+                  "asset_id": null,
+                  "source_start": 0.1,
+                  "source_end": 1.0,
+                  "timeline_start": 0.1,
+                  "duration": 0.9,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "transcript_id": "trn_2d0bffe0b968d8cb5a11d9c6",
+                    "segment_id": "seg_12df9987c14bb13d94ad7ee4",
+                    "language": "vi",
+                    "confidence": null,
+                    "editable_in": "V2-08",
+                    "timing_source": "provider_native_word_intervals",
+                    "measured_source_words": [
+                      {
+                        "text": "Xin",
+                        "start_seconds": 0.1,
+                        "end_seconds": 0.4
+                      },
+                      {
+                        "text": "chào.",
+                        "start_seconds": 0.4,
+                        "end_seconds": 1.0
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_51c14ca56eb04143bd85",
+              "type": "audio",
+              "kind": "original_audio",
+              "label": "Âm thanh gốc",
+              "order": 3,
+              "locked": false,
+              "muted": true,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_956740bd040d57c29f950a935e7656e6",
+                  "kind": "original_audio",
+                  "label": "Âm thanh gốc 1",
+                  "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+                  "source_start": 0.0,
+                  "source_end": 3.0,
+                  "timeline_start": 0.0,
+                  "duration": 3.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_0f18ee30bd4e879c6a5c2bcb",
+                    "scene_ordinal": 0,
+                    "semantic_label": "Explicit fixture scene",
+                    "quality_score": 0.0,
+                    "source_checksum_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+                    "content_type": "video/mp4",
+                    "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_4e68a3cfd96a468dbeeccceb.mp4",
+                    "original_evidence": true,
+                    "rights_status": "unknown",
+                    "official_render": false
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_aae48d26465b4921843e",
+              "type": "metadata",
+              "kind": "metadata",
+              "label": "Dấu mốc AI",
+              "order": 4,
+              "locked": true,
+              "muted": false,
+              "disabled": false,
+              "clips": []
+            },
+            {
+              "track_id": "trk_d63b9add714641dd9f7be32c",
+              "type": "audio",
+              "kind": "voice",
+              "label": "Uploaded narration",
+              "order": 5,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_c370e47f4f495bd1ba37f1ab324ac369",
+                  "kind": "voice",
+                  "label": "Uploaded narration",
+                  "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+                  "source_start": 0.0,
+                  "source_end": 2.0,
+                  "timeline_start": 0.0,
+                  "duration": 2.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "audio_binding_id": "abnd_4768d95f5f455b2785b77a74274abd85",
+                    "audio_transcription_id": "aud_cbf5d523885496a303bf6ccc",
+                    "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                    "rights_status": "unknown",
+                    "official_render": false
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_6d4dec1d85a54138833d4c52",
+              "type": "text",
+              "kind": "subtitles",
+              "label": "Audio captions",
+              "order": 6,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_8cbf51c40acb5e04bf43950f0d4bbf4c",
+                  "kind": "subtitle",
+                  "label": "Âm thanh.",
+                  "asset_id": null,
+                  "source_start": 0.1,
+                  "source_end": 0.9,
+                  "timeline_start": 0.1,
+                  "duration": 0.8,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "audio_transcription_id": "aud_cbf5d523885496a303bf6ccc",
+                    "audio_binding_id": "abnd_4768d95f5f455b2785b77a74274abd85",
+                    "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+                    "segment_id": "seg_43463452e5c603d97535866c",
+                    "language": "vi",
+                    "confidence": null,
+                    "timing_independently_measured": false,
+                    "recognition_review_required": true,
+                    "timing_source": "human_supplied_or_retained_transcript_word_intervals",
+                    "human_word_timing_review": true,
+                    "measured_source_words": [
+                      {
+                        "text": "Âm",
+                        "start_seconds": 0.1,
+                        "end_seconds": 0.4
+                      },
+                      {
+                        "text": "thanh.",
+                        "start_seconds": 0.4,
+                        "end_seconds": 0.9
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "metadata": {
+            "source_analysis_id": "ana_6dcd8364065f18358a36ecaa",
+            "source_asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+            "source_duration_seconds": 3.0,
+            "transcript_revision": {
+              "transcript_id": "trn_2d0bffe0b968d8cb5a11d9c6",
+              "version": 1,
+              "human_edited": false
+            },
+            "silence_decisions_applied": 0,
+            "silence_speech_padding_preserved": true,
+            "silence_decision_ids": [],
+            "highlight_ids": [],
+            "preview_profile": "proxy-540-canonical-audio-v2",
+            "approval_invalidates_on_change": true,
+            "uploaded_audio_bindings_v1": {
+              "aud_cbf5d523885496a303bf6ccc": {
+                "binding_id": "abnd_4768d95f5f455b2785b77a74274abd85",
+                "audio_id": "aud_cbf5d523885496a303bf6ccc",
+                "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                "source_duration": 2.0,
+                "voice_track_id": "trk_d63b9add714641dd9f7be32c",
+                "subtitle_track_id": "trk_6d4dec1d85a54138833d4c52",
+                "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+                "transcript": {
+                  "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+                  "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+                  "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+                  "version": 2,
+                  "is_original_evidence": false,
+                  "provider_key": "explicit-saved-asr-fixture",
+                  "language": "vi",
+                  "confidence": null,
+                  "segments": [
+                    {
+                      "segment_id": "seg_43463452e5c603d97535866c",
+                      "ordinal": 0,
+                      "start_seconds": 0.1,
+                      "end_seconds": 0.9,
+                      "text": "Âm thanh.",
+                      "speaker": null,
+                      "confidence": null,
+                      "words": [
+                        {
+                          "word_id": "wrd_34a2867ae426a9c26155394f",
+                          "ordinal": 0,
+                          "start_seconds": 0.1,
+                          "end_seconds": 0.4,
+                          "text": "Âm",
+                          "confidence": null
+                        },
+                        {
+                          "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                          "ordinal": 1,
+                          "start_seconds": 0.4,
+                          "end_seconds": 0.9,
+                          "text": "thanh.",
+                          "confidence": null
+                        }
+                      ]
+                    }
+                  ],
+                  "provenance": {
+                    "fixture": true,
+                    "raw_provider_result": {
+                      "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+                    },
+                    "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                    "source_media_mutated": false,
+                    "recognition_review_required": true,
+                    "human_edit": true,
+                    "actor_ref": "fixture-editor",
+                    "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+                    "changed_segment_ids": [
+                      "seg_0b1220a611d16b69c480d9b4"
+                    ],
+                    "reviewed_segment_ids": [
+                      "seg_0b1220a611d16b69c480d9b4"
+                    ],
+                    "segment_id_mapping": {
+                      "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+                    },
+                    "word_timestamp_policy": "human_supplied_source_intervals",
+                    "word_alignment_source": "human_supplied",
+                    "timing_rewrite_applied": true,
+                    "human_timing_acknowledged": true,
+                    "timing_independently_measured": false,
+                    "review_required": true,
+                    "edit_note": "",
+                    "remote_calls": 0
+                  },
+                  "created_at": "2026-10-13T18:39:11.378069Z"
+                },
+                "transcript_sha256": "0d1ef11d819cf72b651343c0e6190d119c4d8356d7da6d5651e39e5314e5bfe9",
+                "human_review_required": true
+              }
+            },
+            "inherited_review_evidence": {
+              "original": {
+                "source_media_plan_id": null
+              },
+              "sha256": "3c7e3b8a468693e838ec638fb68dc09e67a99d9aaa9afe2e0e4481f08b58edb0",
+              "authority_transferred": false
+            },
+            "sql_variant_derivative": {
+              "schema_version": "sql-variant-evidence-lineage.v1",
+              "family_id": "vfa_50564c96af6b552ea397df0fe1ea7e4e",
+              "member_id": "vfm_73c63e5e52e755d68a808d0da064d30f",
+              "master_project_id": "prj_908c4f1ea0f645a8b777ac33",
+              "source_mode": "video_analysis",
+              "source_timeline_sha256": "54ef9752ba39ad0530406e1993963b5cf1a328780f11586b1b7c918f1b1e23ca",
+              "family_snapshot_sha256": "182e8f531a4c3adffc56833b47666812e57046cb411d77d4cd147000e68fab20",
+              "approval_inherited": false,
+              "rights_override_inherited": false,
+              "new_inference_calls": 0,
+              "human_review_required": true
+            },
+            "reframe": {
+              "aspect_ratio": "16:9",
+              "fallback": "center_crop",
+              "needs_attention": true,
+              "confidence": null
+            }
+          },
+          "source_media_mutated": false,
+          "publish_requested": false
+        },
+        "latest_preview_id": null,
+        "latest_preview_valid": false,
+        "source_media_mutated": false,
+        "publish_requested": false,
+        "created_at": "2026-10-13T18:39:11.706078",
+        "updated_at": "2026-10-13T18:39:11.706078"
+      },
+      "bytes": 10389,
+      "body_sha256": "8d3f881cae5a0e16f1ec45f3d6cd67bd262da96b7d8fa859f4c684ed7a9987d4"
+    },
+    "analyses": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/analyses",
+      "status": 200,
+      "headers": {
+        "content-length": "5431",
+        "content-type": "application/json",
+        "x-request-id": "c0b34b0be3d34168a485dbdc88c3bef4",
+        "x-correlation-id": "c0b34b0be3d34168a485dbdc88c3bef4",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store"
+      },
+      "body": [
+        {
+          "analysis_id": "ana_6dcd8364065f18358a36ecaa",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+          "status": "succeeded",
+          "fingerprint": "7e1d79f46a794c1da1e0e16190e80894f4344ad074d549750e3fa50c59e9b3c0",
+          "configuration": {
+            "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+            "acceptance_operation_id": null,
+            "top_highlights": 3,
+            "silence_threshold_db": -35.0,
+            "minimum_silence_duration": 0.5,
+            "padding_before": 0.08,
+            "padding_after": 0.08,
+            "word_timing_policy": "strict_provider_intervals"
+          },
+          "source_media": {
+            "media_kind": "video",
+            "detected_content_type": "video/mp4",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 3.0,
+            "width": 320,
+            "height": 240,
+            "fps": 24.0,
+            "video_codec": "h264",
+            "audio_codec": "aac",
+            "audio_channels": 1,
+            "audio_sample_rate": 44100
+          },
+          "transcript": {
+            "transcript_id": "trn_2d0bffe0b968d8cb5a11d9c6",
+            "analysis_id": "ana_6dcd8364065f18358a36ecaa",
+            "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_12df9987c14bb13d94ad7ee4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 1.0,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_bf9a5b990ed57ff1b93313c3",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Xin",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_bd68fee99e1a850f6c949b86",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 1.0,
+                    "text": "chào.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_model_result": {
+                "source_project_id": "prj_908c4f1ea0f645a8b777ac33",
+                "fixture_notice": "Manually saved contract evidence; source is synthetic tone/color, no speech inference."
+              },
+              "original_evidence": true,
+              "source_type": "uploaded_variant_derivative",
+              "derivation_receipt_id": "vfr_04340cbba38753289a08016532a95893",
+              "parent_project_id": "prj_908c4f1ea0f645a8b777ac33",
+              "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+              "approval_inherited": false,
+              "rights_override_inherited": false,
+              "publishing_enabled": false,
+              "external_call": false,
+              "new_inference_calls": 0,
+              "inherited_original_provenance": {
+                "fixture": true,
+                "raw_model_result": {
+                  "source_project_id": "prj_908c4f1ea0f645a8b777ac33",
+                  "fixture_notice": "Manually saved contract evidence; source is synthetic tone/color, no speech inference."
+                },
+                "original_evidence": true
+              },
+              "original_record_sha256": "f39ddbed247b9b8cc42024ca170c4891f348d44b87c004dec9981f7fe19c36b4",
+              "recognition_review_required": true
+            },
+            "created_at": "2026-10-13T18:39:11.157842"
+          },
+          "scenes": [
+            {
+              "scene_id": "scn_0f18ee30bd4e879c6a5c2bcb",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 3.0,
+              "semantic_label": "Explicit fixture scene",
+              "description": "Manual contract fixture, no Vision/scene model.",
+              "subjects": [],
+              "quality_score": 0.0,
+              "motion_score": 0.0,
+              "speech_score": 0.0,
+              "confidence": 0.0,
+              "evidence": {
+                "fixture": true,
+                "new_inference_calls": 0,
+                "source_type": "uploaded_variant_derivative",
+                "derivation_receipt_id": "vfr_04340cbba38753289a08016532a95893",
+                "parent_project_id": "prj_908c4f1ea0f645a8b777ac33",
+                "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+                "approval_inherited": false,
+                "rights_override_inherited": false,
+                "publishing_enabled": false,
+                "external_call": false,
+                "inherited_original_evidence": {
+                  "fixture": true,
+                  "new_inference_calls": 0
+                },
+                "original_record_sha256": "deb71159476e518f2cb1707fff477ce7ae4a2d4023b0843ac43df08fe944ed7b"
+              }
+            }
+          ],
+          "silence_decisions": [],
+          "highlights": [],
+          "source_media_mutated": false,
+          "publish_requested": false,
+          "error_code": null,
+          "provenance": {
+            "fixture": true,
+            "source_asset_checksum": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+            "provider_calls": 0,
+            "source_type": "uploaded_variant_derivative",
+            "derivation_receipt_id": "vfr_04340cbba38753289a08016532a95893",
+            "parent_project_id": "prj_908c4f1ea0f645a8b777ac33",
+            "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+            "approval_inherited": false,
+            "rights_override_inherited": false,
+            "publishing_enabled": false,
+            "external_call": false,
+            "new_inference_calls": 0,
+            "original_record": {
+              "analysis_id": "ana_43d6af25eb614a6aa8482e7a",
+              "workspace_id": "wsp_06faf98fcd064901b7155a94",
+              "project_id": "prj_908c4f1ea0f645a8b777ac33",
+              "project_version_id": null,
+              "asset_id": "ast_4e68a3cfd96a468dbeeccceb",
+              "status": "succeeded",
+              "fingerprint": "b51a0a3dedd3eaf2a6d92f94a2c7789088fd383b31156197419366422adb2496",
+              "configuration_json": {
+                "asset_id": "ast_4e68a3cfd96a468dbeeccceb",
+                "acceptance_operation_id": null,
+                "top_highlights": 3,
+                "silence_threshold_db": -35.0,
+                "minimum_silence_duration": 0.5,
+                "padding_before": 0.08,
+                "padding_after": 0.08,
+                "word_timing_policy": "strict_provider_intervals"
+              },
+              "source_media_json": {
+                "media_kind": "video",
+                "detected_content_type": "video/mp4",
+                "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+                "duration_seconds": 3.0,
+                "width": 320,
+                "height": 240,
+                "fps": 24.0,
+                "video_codec": "h264",
+                "audio_codec": "aac",
+                "audio_channels": 1,
+                "audio_sample_rate": 44100
+              },
+              "error_code": null,
+              "provenance_json": {
+                "fixture": true,
+                "source_asset_checksum": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+                "provider_calls": 0
+              },
+              "created_at": "2026-10-13T18:39:11.146764+00:00",
+              "updated_at": "2026-10-13T18:39:11.160350+00:00"
+            },
+            "original_record_sha256": "f80ad38dc93c6511fa6a83aef530372c8df3b9973a3d8877b1741b8c2710dfe7",
+            "origin_provider_result_reused": true
+          },
+          "created_at": "2026-10-13T18:39:11.146764",
+          "updated_at": "2026-10-13T18:39:11.160350"
+        }
+      ],
+      "bytes": 5431,
+      "body_sha256": "2ef0a85cf3cb37a840febdca9b079bc43447fd01b10a1835c77f60c37f0c4fd2"
+    },
+    "capabilities": {
+      "method": "GET",
+      "path": "/api/v1/capabilities",
+      "status": 200,
+      "headers": {
+        "content-length": "7293",
+        "content-type": "application/json",
+        "x-request-id": "8ae7a55fc4c04ed8a70998e08bfe5030",
+        "x-correlation-id": "8ae7a55fc4c04ed8a70998e08bfe5030",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "video_jobs": true,
+        "deterministic_content": true,
+        "publishing_implemented": true,
+        "publishing_mode": "dry_run_only",
+        "publish_enabled": false,
+        "publish_external_execution_enabled": false,
+        "publish_owner_gate_enabled": false,
+        "human_approval_required": true,
+        "human_authentication": "short_lived_external_bearer",
+        "human_rbac_roles": [
+          "viewer",
+          "editor",
+          "reviewer",
+          "owner"
+        ],
+        "workspace_isolation": "deny_by_default",
+        "human_write_enabled": true,
+        "human_rate_limit_per_minute": 300,
+        "analytics_implemented": true,
+        "analytics_mode": "deterministic_fixture",
+        "analytics_external_execution_enabled": false,
+        "analytics_historical_snapshots": true,
+        "winner_detection": "explainable_recommendation_only",
+        "learning_feedback_auto_applied": false,
+        "agent_hub_runtime_dependency": false,
+        "agent_hub_bridge_implemented": true,
+        "agent_hub_bridge_enabled": false,
+        "agent_hub_bridge_contract": "agent-hub-bridge.v1",
+        "agent_hub_webhook_mode": "disabled",
+        "agent_hub_webhook_external_delivery_enabled": false,
+        "service_auth": "hmac-sha256-anti-replay",
+        "shared_agent_hub_database": false,
+        "shared_agent_hub_redis": false,
+        "metadata_database": "postgresql",
+        "queue": "redis-transient",
+        "object_storage": "local",
+        "durable_job_state": true,
+        "cost_currency": "VND",
+        "provider_safety_plane": "enforced",
+        "provider_safety_state_backend": "postgresql",
+        "provider_external_execution_enabled": false,
+        "provider_paid_execution_enabled": false,
+        "provider_global_kill_switch_engaged": true,
+        "provider_budget_currency": "VND",
+        "provider_ledger_retention_days": 400,
+        "provider_ledger_cleanup_enabled": false,
+        "operations_snapshot": "authenticated_read_only",
+        "operations_external_notifications_enabled": false,
+        "request_correlation_headers": [
+          "X-Request-ID",
+          "X-Correlation-ID"
+        ],
+        "operations_evidence_retention_days": 400,
+        "operations_log_retention_days": 30,
+        "trend_radar": true,
+        "idea_intelligence": true,
+        "content_opportunity_queue": true,
+        "trend_provider_mode": "deterministic_fixture",
+        "live_trend_providers_configured": false,
+        "creator_media_download": false,
+        "idea_to_project_state": "draft_only",
+        "resumable_upload": true,
+        "upload_quarantine_required": true,
+        "upload_malware_scanner_mode": "fixture",
+        "archive_ingestion_enabled": false,
+        "public_ingress_approved": false,
+        "auto_edit_analysis": true,
+        "uploaded_audio_transcription": "independent_async_versioned_evidence",
+        "uploaded_audio_default_provider": "not_configured",
+        "uploaded_audio_canonical_caption_edit": "explicit_versioned_binding_and_review",
+        "local_video_asr_execution": "explicit_synchronous_cpu_partial",
+        "local_video_asr_async_queue": true,
+        "auto_edit_video_job": "durable_async_versioned_source_evidence",
+        "local_video_asr_semantic_quality_accepted": false,
+        "auto_edit_timeline": true,
+        "timeline_versioning": true,
+        "timeline_optimistic_concurrency": true,
+        "proxy_preview": "asynchronous_540p",
+        "preview_audio": "version_bound_av_review",
+        "preview_publish": false,
+        "subtitle_editor": true,
+        "dynamic_subtitles": true,
+        "subtitle_template_catalog": "1.0",
+        "subtitle_modes": [
+          "none",
+          "fade",
+          "pop",
+          "word_highlight",
+          "word_by_word",
+          "karaoke",
+          "keyword_highlight"
+        ],
+        "word_caption_requires_measured_alignment": true,
+        "audio_mixer": true,
+        "music_ducking": true,
+        "audio_tts_provider": "espeak",
+        "audio_external_execution_enabled": false,
+        "review_render": "asynchronous_540x960",
+        "final_render_profiles": [
+          "vertical-1080x1920",
+          "landscape-1920x1080",
+          "square-1080x1080",
+          "portrait-1080x1350"
+        ],
+        "final_render_requires_version_bound_approval": true,
+        "full_video_qc": true,
+        "final_render_publish": "dry_run_validation_only",
+        "source_media_mutation": false,
+        "transcription_provider": "contract",
+        "openai_asr_adapter_implemented": true,
+        "openai_asr_model_selection": "PROPOSED_NOT_APPROVED",
+        "openai_asr_compatibility": [
+          {
+            "model": "whisper-1",
+            "selection_status": "PROPOSED_NOT_APPROVED",
+            "transcript_text": "SUPPORTED",
+            "segment_timestamps": "SUPPORTED",
+            "word_timestamps": "SUPPORTED",
+            "language": "SUPPORTED",
+            "usage_or_duration": "SUPPORTED",
+            "provider_request_id": "SUPPORTED",
+            "deterministic_provider_transcript_mapping": "SUPPORTED",
+            "strict_flow_a_compatible": true,
+            "checked_on": "2026-09-03",
+            "evidence_kind": "official_contract_and_recorded_fixture",
+            "official_references": [
+              "https://developers.openai.com/api/docs/guides/speech-to-text",
+              "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+              "https://developers.openai.com/api/docs/models/whisper-1"
+            ],
+            "live_api_calls": 0,
+            "credential_reads": 0,
+            "spend_vnd": 0,
+            "notes": [
+              "verbose_json exposes language, duration, segments and words",
+              "native word timing satisfies the strict Flow A timestamp contract",
+              "provider confidence is not fabricated and maps to null"
+            ]
+          },
+          {
+            "model": "gpt-transcribe",
+            "selection_status": "PROPOSED_NOT_APPROVED",
+            "transcript_text": "SUPPORTED",
+            "segment_timestamps": "UNSUPPORTED",
+            "word_timestamps": "UNSUPPORTED",
+            "language": "UNRESOLVED",
+            "usage_or_duration": "SUPPORTED",
+            "provider_request_id": "SUPPORTED",
+            "deterministic_provider_transcript_mapping": "UNSUPPORTED",
+            "strict_flow_a_compatible": false,
+            "checked_on": "2026-09-03",
+            "evidence_kind": "official_contract_and_recorded_fixture",
+            "official_references": [
+              "https://developers.openai.com/api/docs/guides/speech-to-text",
+              "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+              "https://developers.openai.com/api/docs/models/gpt-transcribe"
+            ],
+            "live_api_calls": 0,
+            "credential_reads": 0,
+            "spend_vnd": 0,
+            "notes": [
+              "current official guide reserves timestamp granularities for whisper-1",
+              "no alignment layer is introduced by V3-01-18",
+              "model selection remains an owner gate"
+            ]
+          },
+          {
+            "model": "gpt-4o-transcribe",
+            "selection_status": "PROPOSED_NOT_APPROVED",
+            "transcript_text": "SUPPORTED",
+            "segment_timestamps": "UNSUPPORTED",
+            "word_timestamps": "UNSUPPORTED",
+            "language": "UNRESOLVED",
+            "usage_or_duration": "SUPPORTED",
+            "provider_request_id": "SUPPORTED",
+            "deterministic_provider_transcript_mapping": "UNSUPPORTED",
+            "strict_flow_a_compatible": false,
+            "checked_on": "2026-09-03",
+            "evidence_kind": "official_contract_and_recorded_fixture",
+            "official_references": [
+              "https://developers.openai.com/api/docs/guides/speech-to-text",
+              "https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create",
+              "https://developers.openai.com/api/docs/models/gpt-4o-transcribe"
+            ],
+            "live_api_calls": 0,
+            "credential_reads": 0,
+            "spend_vnd": 0,
+            "notes": [
+              "current official guide reserves timestamp granularities for whisper-1",
+              "token usage does not replace native segment and word timing",
+              "model selection remains an owner gate"
+            ]
+          }
+        ],
+        "asr_external_execution_enabled": false,
+        "asr_paid_execution_enabled": false,
+        "asr_real_provider_tested": false,
+        "media_signal_provider": "fixture",
+        "vision_analysis": true,
+        "vision_provider": "fixture",
+        "openai_vision_adapter_implemented": true,
+        "live_vision_provider_configured": false,
+        "vision_external_execution_enabled": false,
+        "vision_paid_execution_enabled": false,
+        "vision_real_provider_tested": false,
+        "ocr": true,
+        "subject_tracking": true,
+        "smart_reframe": true,
+        "smart_reframe_aspect_ratios": [
+          "9:16",
+          "16:9",
+          "1:1",
+          "4:5"
+        ],
+        "smart_reframe_preview_only": true,
+        "media_intelligence": true,
+        "media_planner": true,
+        "broll_planner": true,
+        "stock_media_provider": "contract",
+        "image_generation_provider": "contract",
+        "video_generation_provider": "contract",
+        "comfyui_bridge_contract": true,
+        "comfyui_execution_enabled": false,
+        "media_external_execution_enabled": false,
+        "media_paid_execution_enabled": false,
+        "media_rights_gate": "fail_closed",
+        "media_resolution": "asynchronous",
+        "media_fixture_production_eligible": false
+      },
+      "bytes": 7293,
+      "body_sha256": "bcac93489d65b14d832802e95d8323717e6bab3688379e7253487c6f60fc142d"
+    },
+    "receipt": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_908c4f1ea0f645a8b777ac33/variant-families/vfa_50564c96af6b552ea397df0fe1ea7e4e/receipts/vfr_04340cbba38753289a08016532a95893",
+      "status": 200,
+      "headers": {
+        "content-length": "4055",
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "x-request-id": "0e516cbd54924a97ab4a483a3a7e7890",
+        "x-correlation-id": "0e516cbd54924a97ab4a483a3a7e7890",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": {
+        "schema_version": "sql-variant-uploaded-receipt.v1",
+        "receipt_id": "vfr_04340cbba38753289a08016532a95893",
+        "family_id": "vfa_50564c96af6b552ea397df0fe1ea7e4e",
+        "member_id": "vfm_73c63e5e52e755d68a808d0da064d30f",
+        "workspace_id": "wsp_06faf98fcd064901b7155a94",
+        "state": "ready",
+        "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+        "request_sha256": "dea6be95fc3f9bc70e4684beb4b9cee602bf03e170422f056819be8271581459",
+        "result": {
+          "schema_version": "sql-variant-uploaded-result.v1",
+          "child_project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "content_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "content_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "timeline_id": "tln_bc0a497036f05aaebdca19c3cd52ff64",
+          "timeline_version_id": "tlv_d487c4544d6e58068f8f187f673e0f0e",
+          "timeline_sha256": "6220f2ba167c45bf45e2ba508cfc519bcac417dc726dcbbee8e259111ec74c92",
+          "asset_map": {
+            "ast_4e68a3cfd96a468dbeeccceb": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+            "ast_7dc5008edcf04940ac7993db": "ast_e5d636d9c7e050b7bbcb61ce37aded2f"
+          },
+          "identity_map": {
+            "ast_4e68a3cfd96a468dbeeccceb": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+            "ast_7dc5008edcf04940ac7993db": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "ana_43d6af25eb614a6aa8482e7a": "ana_6dcd8364065f18358a36ecaa",
+            "trn_d1502c4be3264730a66e857e": "trn_2d0bffe0b968d8cb5a11d9c6",
+            "seg_6db92e43261e475081db6d5f": "seg_12df9987c14bb13d94ad7ee4",
+            "wrd_147bf2e17c32416094940ac2": "wrd_bd68fee99e1a850f6c949b86",
+            "wrd_bbd71ddac5334b04ab59e18f": "wrd_bf9a5b990ed57ff1b93313c3",
+            "scn_6fe7871cf717415db6640ae8": "scn_0f18ee30bd4e879c6a5c2bcb",
+            "aud_2bd6ae2c55e4761910d36f1c": "aud_cbf5d523885496a303bf6ccc",
+            "trn_05c85d96c28a44833470f568": "trn_f88ea11442447d2e02cd32f2",
+            "trn_ca270cb1f31d4361bb24b471": "trn_cae6fa2bde190f81fe2b1795",
+            "seg_3f40eaba456a16d76537e53b": "seg_0b1220a611d16b69c480d9b4",
+            "wrd_1d4ff5a8c6a700eda168bcb8": "wrd_9619cf9b3f36b7fed855fc34",
+            "wrd_027850e6b86f297dfed185bf": "wrd_a85a1e4ebf3c0175495e241e",
+            "seg_80da5f634d2844ca800bf1c6": "seg_43463452e5c603d97535866c",
+            "wrd_8691276124894b31aa4d38cc": "wrd_34a2867ae426a9c26155394f",
+            "wrd_da4f026c3f014f8b86189cf5": "wrd_1bfbb93c028d503e74816fc3"
+          },
+          "copies": {
+            "ast_4e68a3cfd96a468dbeeccceb": {
+              "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_4e68a3cfd96a468dbeeccceb.mp4",
+              "sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+              "size_bytes": 31983,
+              "content_type": "video/mp4",
+              "storage_provider": "local",
+              "dimensions": null
+            },
+            "ast_7dc5008edcf04940ac7993db": {
+              "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_7dc5008edcf04940ac7993db.wav",
+              "sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "size_bytes": 64044,
+              "content_type": "audio/wav",
+              "storage_provider": "local",
+              "dimensions": null
+            }
+          },
+          "original_graph_sha256": "52312d94b6a71dbc8cb8c00f831ceccc4ddc9eb0609a7f2e408880111c1bc4f6",
+          "original_uploads_sha256": "c0b75e78c1ec0d4704878a6fff922ebd3c7c37daf90b0f313261ba96fae1b691",
+          "original_jobs_sha256": "746c135a7fecf06f9085b65f47de7f11197170495be6e6e458d41f901f1d8867",
+          "original_job_relations_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "safety": {
+            "provider_calls": 0,
+            "new_inference_calls": 0,
+            "child_projects_created": 1,
+            "source_bytes_verified": true,
+            "approval_inherited": false,
+            "rights_override_inherited": false,
+            "automatic_render": false,
+            "publishing_enabled": false
+          },
+          "human_review_required": true,
+          "rights_review_required": true,
+          "reframe_attention_required": true,
+          "raw_evidence_rewritten": false,
+          "new_provider_billed_cost_vnd": 0,
+          "operating_cost_vnd": null
+        },
+        "result_sha256": "4659765fc13d7bec3e8770dc1ae6ed4adebaf62a67a1fc42974efb5fbd91d38e",
+        "error_code": null,
+        "actor_ref": "fixture-editor",
+        "safety": {
+          "provider_calls": 0,
+          "new_inference_calls": 0,
+          "child_projects_created": 1,
+          "source_bytes_verified": true,
+          "approval_inherited": false,
+          "rights_override_inherited": false,
+          "automatic_render": false,
+          "publishing_enabled": false
+        }
+      },
+      "bytes": 4055,
+      "body_sha256": "b526c1157cdde03cc4932879bdc4b08b3ae7c481b2bc303f63061bbdaa9194c9"
+    },
+    "audio_list": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/audio-transcriptions",
+      "status": 200,
+      "headers": {
+        "content-length": "6288",
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "x-request-id": "12bdecde78d64fa9b9d2b452ba56d89f",
+        "x-correlation-id": "12bdecde78d64fa9b9d2b452ba56d89f",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": [
+        {
+          "schema_version": "uploaded-audio-transcription.v1",
+          "audio_id": "aud_cbf5d523885496a303bf6ccc",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "job": {
+            "job_id": "job_vimport_e5d4489b93e952829c246f90db464098",
+            "workspace_id": "wsp_06faf98fcd064901b7155a94",
+            "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+            "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+            "status": "awaiting_review",
+            "stage": "awaiting_review",
+            "progress": 100,
+            "request": {
+              "kind": "variant_evidence_import",
+              "audio_id": "aud_cbf5d523885496a303bf6ccc",
+              "receipt_id": "vfr_04340cbba38753289a08016532a95893",
+              "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+              "actor_ref": "fixture-editor",
+              "provider_calls": 0
+            },
+            "artifacts": [],
+            "error": null,
+            "created_at": "2026-10-13T18:39:11.701577",
+            "updated_at": "2026-10-13T18:39:11.701577"
+          },
+          "original": {
+            "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0b1220a611d16b69c480d9b4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true
+            },
+            "created_at": "2026-10-13T18:39:11.377067Z"
+          },
+          "current": {
+            "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_43463452e5c603d97535866c",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_34a2867ae426a9c26155394f",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": null
+                  },
+                  {
+                    "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": null
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "human_edit": true,
+              "actor_ref": "fixture-editor",
+              "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+              "changed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "reviewed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "segment_id_mapping": {
+                "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+              },
+              "word_timestamp_policy": "human_supplied_source_intervals",
+              "word_alignment_source": "human_supplied",
+              "timing_rewrite_applied": true,
+              "human_timing_acknowledged": true,
+              "timing_independently_measured": false,
+              "review_required": true,
+              "edit_note": "",
+              "remote_calls": 0
+            },
+            "created_at": "2026-10-13T18:39:11.378069Z"
+          },
+          "versions": [
+            {
+              "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+              "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+              "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+              "version": 1,
+              "is_original_evidence": true,
+              "provider_key": "explicit-saved-asr-fixture",
+              "language": "vi",
+              "confidence": null,
+              "segments": [
+                {
+                  "segment_id": "seg_0b1220a611d16b69c480d9b4",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.9,
+                  "text": "Âm thanh.",
+                  "speaker": null,
+                  "confidence": null,
+                  "words": [
+                    {
+                      "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                      "ordinal": 0,
+                      "start_seconds": 0.1,
+                      "end_seconds": 0.4,
+                      "text": "Âm",
+                      "confidence": 0.9
+                    },
+                    {
+                      "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                      "ordinal": 1,
+                      "start_seconds": 0.4,
+                      "end_seconds": 0.9,
+                      "text": "thanh.",
+                      "confidence": 0.8
+                    }
+                  ]
+                }
+              ],
+              "provenance": {
+                "fixture": true,
+                "raw_provider_result": {
+                  "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+                },
+                "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                "source_media_mutated": false,
+                "recognition_review_required": true
+              },
+              "created_at": "2026-10-13T18:39:11.377067Z"
+            },
+            {
+              "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+              "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+              "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+              "version": 2,
+              "is_original_evidence": false,
+              "provider_key": "explicit-saved-asr-fixture",
+              "language": "vi",
+              "confidence": null,
+              "segments": [
+                {
+                  "segment_id": "seg_43463452e5c603d97535866c",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.9,
+                  "text": "Âm thanh.",
+                  "speaker": null,
+                  "confidence": null,
+                  "words": [
+                    {
+                      "word_id": "wrd_34a2867ae426a9c26155394f",
+                      "ordinal": 0,
+                      "start_seconds": 0.1,
+                      "end_seconds": 0.4,
+                      "text": "Âm",
+                      "confidence": null
+                    },
+                    {
+                      "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                      "ordinal": 1,
+                      "start_seconds": 0.4,
+                      "end_seconds": 0.9,
+                      "text": "thanh.",
+                      "confidence": null
+                    }
+                  ]
+                }
+              ],
+              "provenance": {
+                "fixture": true,
+                "raw_provider_result": {
+                  "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+                },
+                "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                "source_media_mutated": false,
+                "recognition_review_required": true,
+                "human_edit": true,
+                "actor_ref": "fixture-editor",
+                "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+                "changed_segment_ids": [
+                  "seg_0b1220a611d16b69c480d9b4"
+                ],
+                "reviewed_segment_ids": [
+                  "seg_0b1220a611d16b69c480d9b4"
+                ],
+                "segment_id_mapping": {
+                  "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+                },
+                "word_timestamp_policy": "human_supplied_source_intervals",
+                "word_alignment_source": "human_supplied",
+                "timing_rewrite_applied": true,
+                "human_timing_acknowledged": true,
+                "timing_independently_measured": false,
+                "review_required": true,
+                "edit_note": "",
+                "remote_calls": 0
+              },
+              "created_at": "2026-10-13T18:39:11.378069Z"
+            }
+          ],
+          "timeline_version": 1,
+          "human_review_required": true,
+          "source_media_mutated": false,
+          "publishing_enabled": false
+        }
+      ],
+      "bytes": 6288,
+      "body_sha256": "e03b05a833d57122361bb667ef05bc2ee61fc4f013c3ce89be886934c815dbff"
+    },
+    "audio": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/audio-transcriptions/aud_cbf5d523885496a303bf6ccc",
+      "status": 200,
+      "headers": {
+        "content-length": "6286",
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "x-request-id": "eb17dc57708642339d9a6cd5a412db5d",
+        "x-correlation-id": "eb17dc57708642339d9a6cd5a412db5d",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": {
+        "schema_version": "uploaded-audio-transcription.v1",
+        "audio_id": "aud_cbf5d523885496a303bf6ccc",
+        "workspace_id": "wsp_06faf98fcd064901b7155a94",
+        "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+        "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "job": {
+          "job_id": "job_vimport_e5d4489b93e952829c246f90db464098",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "status": "awaiting_review",
+          "stage": "awaiting_review",
+          "progress": 100,
+          "request": {
+            "kind": "variant_evidence_import",
+            "audio_id": "aud_cbf5d523885496a303bf6ccc",
+            "receipt_id": "vfr_04340cbba38753289a08016532a95893",
+            "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+            "actor_ref": "fixture-editor",
+            "provider_calls": 0
+          },
+          "artifacts": [],
+          "error": null,
+          "created_at": "2026-10-13T18:39:11.701577",
+          "updated_at": "2026-10-13T18:39:11.701577"
+        },
+        "original": {
+          "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+          "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "explicit-saved-asr-fixture",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0b1220a611d16b69c480d9b4",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Âm thanh.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.4,
+                  "text": "Âm",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                  "ordinal": 1,
+                  "start_seconds": 0.4,
+                  "end_seconds": 0.9,
+                  "text": "thanh.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "fixture": true,
+            "raw_provider_result": {
+              "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+            },
+            "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "source_media_mutated": false,
+            "recognition_review_required": true
+          },
+          "created_at": "2026-10-13T18:39:11.377067Z"
+        },
+        "current": {
+          "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+          "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "version": 2,
+          "is_original_evidence": false,
+          "provider_key": "explicit-saved-asr-fixture",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_43463452e5c603d97535866c",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Âm thanh.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_34a2867ae426a9c26155394f",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.4,
+                  "text": "Âm",
+                  "confidence": null
+                },
+                {
+                  "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                  "ordinal": 1,
+                  "start_seconds": 0.4,
+                  "end_seconds": 0.9,
+                  "text": "thanh.",
+                  "confidence": null
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "fixture": true,
+            "raw_provider_result": {
+              "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+            },
+            "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "source_media_mutated": false,
+            "recognition_review_required": true,
+            "human_edit": true,
+            "actor_ref": "fixture-editor",
+            "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+            "changed_segment_ids": [
+              "seg_0b1220a611d16b69c480d9b4"
+            ],
+            "reviewed_segment_ids": [
+              "seg_0b1220a611d16b69c480d9b4"
+            ],
+            "segment_id_mapping": {
+              "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+            },
+            "word_timestamp_policy": "human_supplied_source_intervals",
+            "word_alignment_source": "human_supplied",
+            "timing_rewrite_applied": true,
+            "human_timing_acknowledged": true,
+            "timing_independently_measured": false,
+            "review_required": true,
+            "edit_note": "",
+            "remote_calls": 0
+          },
+          "created_at": "2026-10-13T18:39:11.378069Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0b1220a611d16b69c480d9b4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true
+            },
+            "created_at": "2026-10-13T18:39:11.377067Z"
+          },
+          {
+            "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_43463452e5c603d97535866c",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_34a2867ae426a9c26155394f",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": null
+                  },
+                  {
+                    "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": null
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "human_edit": true,
+              "actor_ref": "fixture-editor",
+              "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+              "changed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "reviewed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "segment_id_mapping": {
+                "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+              },
+              "word_timestamp_policy": "human_supplied_source_intervals",
+              "word_alignment_source": "human_supplied",
+              "timing_rewrite_applied": true,
+              "human_timing_acknowledged": true,
+              "timing_independently_measured": false,
+              "review_required": true,
+              "edit_note": "",
+              "remote_calls": 0
+            },
+            "created_at": "2026-10-13T18:39:11.378069Z"
+          }
+        ],
+        "timeline_version": 1,
+        "human_review_required": true,
+        "source_media_mutated": false,
+        "publishing_enabled": false
+      },
+      "bytes": 6286,
+      "body_sha256": "faa0cf8c7a4148281ffc76aa904c6adcd5fd279c2c6840f00da5737c2e8ea88e"
+    },
+    "audio_source": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/audio-transcriptions/aud_cbf5d523885496a303bf6ccc/source",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "accept-ranges": "bytes",
+        "etag": "\"sha256-20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa\"",
+        "x-content-type-options": "nosniff",
+        "content-length": "64044",
+        "content-disposition": "inline; filename=\"ast_7dc5008edcf04940ac7993db.wav\"",
+        "content-type": "audio/wav",
+        "x-request-id": "23c34758e97242408d2db2b894be92ad",
+        "x-correlation-id": "23c34758e97242408d2db2b894be92ad",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": null,
+      "bytes": 64044,
+      "body_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa"
+    },
+    "audio_range": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/audio-transcriptions/aud_cbf5d523885496a303bf6ccc/source",
+      "status": 206,
+      "headers": {
+        "cache-control": "no-store",
+        "accept-ranges": "bytes",
+        "etag": "\"sha256-20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa\"",
+        "x-content-type-options": "nosniff",
+        "content-length": "32",
+        "content-disposition": "inline; filename=\"ast_7dc5008edcf04940ac7993db.wav\"",
+        "content-range": "bytes 0-31/64044",
+        "content-type": "audio/wav",
+        "x-request-id": "45b6c9db63a34a0c99cac3a53cbf8f71",
+        "x-correlation-id": "45b6c9db63a34a0c99cac3a53cbf8f71",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": null,
+      "bytes": 32,
+      "body_sha256": "035055a21f9d9c755a0489088000420f5af9d7221cef31a10a422187cb5e9f16"
+    },
+    "word_edit": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/audio-transcriptions/aud_cbf5d523885496a303bf6ccc/transcript-words",
+      "status": 200,
+      "headers": {
+        "content-length": "7971",
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "x-request-id": "6f6d0cd9720449c49f523202f22d7205",
+        "x-correlation-id": "6f6d0cd9720449c49f523202f22d7205",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": {
+        "schema_version": "uploaded-audio-transcription.v1",
+        "audio_id": "aud_cbf5d523885496a303bf6ccc",
+        "workspace_id": "wsp_06faf98fcd064901b7155a94",
+        "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+        "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "job": {
+          "job_id": "job_vimport_e5d4489b93e952829c246f90db464098",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "status": "awaiting_review",
+          "stage": "awaiting_review",
+          "progress": 100,
+          "request": {
+            "kind": "variant_evidence_import",
+            "audio_id": "aud_cbf5d523885496a303bf6ccc",
+            "receipt_id": "vfr_04340cbba38753289a08016532a95893",
+            "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+            "actor_ref": "fixture-editor",
+            "provider_calls": 0
+          },
+          "artifacts": [],
+          "error": null,
+          "created_at": "2026-10-13T18:39:11.701577",
+          "updated_at": "2026-10-13T18:39:11.701577"
+        },
+        "original": {
+          "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+          "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "explicit-saved-asr-fixture",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0b1220a611d16b69c480d9b4",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Âm thanh.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.4,
+                  "text": "Âm",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                  "ordinal": 1,
+                  "start_seconds": 0.4,
+                  "end_seconds": 0.9,
+                  "text": "thanh.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "fixture": true,
+            "raw_provider_result": {
+              "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+            },
+            "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "source_media_mutated": false,
+            "recognition_review_required": true
+          },
+          "created_at": "2026-10-13T18:39:11.377067Z"
+        },
+        "current": {
+          "transcript_id": "trn_f6d684b03c454d148d774537",
+          "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "version": 3,
+          "is_original_evidence": false,
+          "provider_key": "explicit-saved-asr-fixture",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_853ea059bffc4a37ad5d0f44",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Lời thanh.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_314d1eb606984e0299f210c0",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.4,
+                  "text": "Lời",
+                  "confidence": null
+                },
+                {
+                  "word_id": "wrd_2e6c6c8ade614363b996e842",
+                  "ordinal": 1,
+                  "start_seconds": 0.4,
+                  "end_seconds": 0.9,
+                  "text": "thanh.",
+                  "confidence": null
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "fixture": true,
+            "raw_provider_result": {
+              "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+            },
+            "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "source_media_mutated": false,
+            "recognition_review_required": true,
+            "human_edit": true,
+            "actor_ref": "usr:test-owner",
+            "derived_from_transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+            "changed_segment_ids": [
+              "seg_43463452e5c603d97535866c"
+            ],
+            "reviewed_segment_ids": [
+              "seg_43463452e5c603d97535866c"
+            ],
+            "segment_id_mapping": {
+              "seg_43463452e5c603d97535866c": "seg_853ea059bffc4a37ad5d0f44"
+            },
+            "word_timestamp_policy": "human_supplied_source_intervals",
+            "word_alignment_source": "human_supplied",
+            "timing_rewrite_applied": true,
+            "human_timing_acknowledged": true,
+            "timing_independently_measured": false,
+            "review_required": true,
+            "edit_note": "Explicit ASGI fixture word review, no human listening acceptance.",
+            "remote_calls": 0
+          },
+          "created_at": "2026-10-13T18:39:12.546788Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0b1220a611d16b69c480d9b4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true
+            },
+            "created_at": "2026-10-13T18:39:11.377067Z"
+          },
+          {
+            "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_43463452e5c603d97535866c",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_34a2867ae426a9c26155394f",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": null
+                  },
+                  {
+                    "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": null
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "human_edit": true,
+              "actor_ref": "fixture-editor",
+              "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+              "changed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "reviewed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "segment_id_mapping": {
+                "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+              },
+              "word_timestamp_policy": "human_supplied_source_intervals",
+              "word_alignment_source": "human_supplied",
+              "timing_rewrite_applied": true,
+              "human_timing_acknowledged": true,
+              "timing_independently_measured": false,
+              "review_required": true,
+              "edit_note": "",
+              "remote_calls": 0
+            },
+            "created_at": "2026-10-13T18:39:11.378069Z"
+          },
+          {
+            "transcript_id": "trn_f6d684b03c454d148d774537",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 3,
+            "is_original_evidence": false,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_853ea059bffc4a37ad5d0f44",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Lời thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_314d1eb606984e0299f210c0",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Lời",
+                    "confidence": null
+                  },
+                  {
+                    "word_id": "wrd_2e6c6c8ade614363b996e842",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": null
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "human_edit": true,
+              "actor_ref": "usr:test-owner",
+              "derived_from_transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+              "changed_segment_ids": [
+                "seg_43463452e5c603d97535866c"
+              ],
+              "reviewed_segment_ids": [
+                "seg_43463452e5c603d97535866c"
+              ],
+              "segment_id_mapping": {
+                "seg_43463452e5c603d97535866c": "seg_853ea059bffc4a37ad5d0f44"
+              },
+              "word_timestamp_policy": "human_supplied_source_intervals",
+              "word_alignment_source": "human_supplied",
+              "timing_rewrite_applied": true,
+              "human_timing_acknowledged": true,
+              "timing_independently_measured": false,
+              "review_required": true,
+              "edit_note": "Explicit ASGI fixture word review, no human listening acceptance.",
+              "remote_calls": 0
+            },
+            "created_at": "2026-10-13T18:39:12.546788Z"
+          }
+        ],
+        "timeline_version": 2,
+        "human_review_required": true,
+        "source_media_mutated": false,
+        "publishing_enabled": false
+      },
+      "bytes": 7971,
+      "body_sha256": "4e60a3dcb22bd1022737b9841678cac93cd7b5f301f5f42440b21905994e3b40"
+    },
+    "timeline_after": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/timeline",
+      "status": 200,
+      "headers": {
+        "content-length": "10442",
+        "content-type": "application/json",
+        "x-request-id": "92e7ab56f38e4340b57c736afd024261",
+        "x-correlation-id": "92e7ab56f38e4340b57c736afd024261",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "timeline_id": "tln_bc0a497036f05aaebdca19c3cd52ff64",
+        "workspace_id": "wsp_06faf98fcd064901b7155a94",
+        "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+        "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+        "source_analysis_id": "ana_6dcd8364065f18358a36ecaa",
+        "source_content_version_id": null,
+        "source_kind": "video_analysis",
+        "source_media_plan_id": null,
+        "current_version_id": "tlv_514db70ad8f44d148a3a",
+        "current_version": 2,
+        "approval_status": "draft",
+        "approved_timeline_version": null,
+        "snapshot": {
+          "schema_version": "1.0",
+          "width": 1920,
+          "height": 1080,
+          "fps": 30.0,
+          "aspect_ratio": "16:9",
+          "duration_seconds": 3.0,
+          "tracks": [
+            {
+              "track_id": "trk_b35718ac8ab94d37862e",
+              "type": "video",
+              "kind": "source",
+              "label": "Video gốc",
+              "order": 0,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_8e4f24bdd9f1542db558bb8d0348ca11",
+                  "kind": "source",
+                  "label": "Cảnh 1",
+                  "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+                  "source_start": 0.0,
+                  "source_end": 3.0,
+                  "timeline_start": 0.0,
+                  "duration": 3.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.125,
+                    "width": 1.0,
+                    "height": 0.75
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_0f18ee30bd4e879c6a5c2bcb",
+                    "scene_ordinal": 0,
+                    "semantic_label": "Explicit fixture scene",
+                    "quality_score": 0.0,
+                    "source_checksum_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+                    "content_type": "video/mp4",
+                    "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_4e68a3cfd96a468dbeeccceb.mp4",
+                    "original_evidence": true,
+                    "rights_status": "unknown",
+                    "official_render": false,
+                    "reframe": {
+                      "schema_version": 1,
+                      "keyframes": [
+                        {
+                          "time": 0.0,
+                          "x": 0.0,
+                          "y": 0.125,
+                          "width": 1.0,
+                          "height": 0.75
+                        }
+                      ],
+                      "aspect_ratio": "16:9",
+                      "confidence": null,
+                      "fallback": "center_crop",
+                      "needs_attention": true,
+                      "subject_tracking": "NOT_CONFIGURED",
+                      "source_width": 320,
+                      "source_height": 240,
+                      "time_space": "source_seconds"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_90dc6ccd6766407f904e",
+              "type": "video",
+              "kind": "broll",
+              "label": "B-roll",
+              "order": 1,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": []
+            },
+            {
+              "track_id": "trk_bb9f45c53ac440d48f4a",
+              "type": "text",
+              "kind": "subtitles",
+              "label": "Bản chép lời",
+              "order": 2,
+              "locked": false,
+              "muted": false,
+              "disabled": true,
+              "clips": [
+                {
+                  "clip_id": "clip_1f3504a6ca5f5d99b0aaad98b2e7d92c",
+                  "kind": "subtitle",
+                  "label": "Xin chào.",
+                  "asset_id": null,
+                  "source_start": 0.1,
+                  "source_end": 1.0,
+                  "timeline_start": 0.1,
+                  "duration": 0.9,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "transcript_id": "trn_2d0bffe0b968d8cb5a11d9c6",
+                    "segment_id": "seg_12df9987c14bb13d94ad7ee4",
+                    "language": "vi",
+                    "confidence": null,
+                    "editable_in": "V2-08",
+                    "timing_source": "provider_native_word_intervals",
+                    "measured_source_words": [
+                      {
+                        "text": "Xin",
+                        "start_seconds": 0.1,
+                        "end_seconds": 0.4
+                      },
+                      {
+                        "text": "chào.",
+                        "start_seconds": 0.4,
+                        "end_seconds": 1.0
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_51c14ca56eb04143bd85",
+              "type": "audio",
+              "kind": "original_audio",
+              "label": "Âm thanh gốc",
+              "order": 3,
+              "locked": false,
+              "muted": true,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_956740bd040d57c29f950a935e7656e6",
+                  "kind": "original_audio",
+                  "label": "Âm thanh gốc 1",
+                  "asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+                  "source_start": 0.0,
+                  "source_end": 3.0,
+                  "timeline_start": 0.0,
+                  "duration": 3.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "scene_id": "scn_0f18ee30bd4e879c6a5c2bcb",
+                    "scene_ordinal": 0,
+                    "semantic_label": "Explicit fixture scene",
+                    "quality_score": 0.0,
+                    "source_checksum_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+                    "content_type": "video/mp4",
+                    "object_key": "workspaces/wsp_06faf98fcd064901b7155a94/projects/prj_e205c908cb8b5bebb29400678df1f750/variant-imports/vfm_73c63e5e52e755d68a808d0da064d30f/ast_4e68a3cfd96a468dbeeccceb.mp4",
+                    "original_evidence": true,
+                    "rights_status": "unknown",
+                    "official_render": false
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_aae48d26465b4921843e",
+              "type": "metadata",
+              "kind": "metadata",
+              "label": "Dấu mốc AI",
+              "order": 4,
+              "locked": true,
+              "muted": false,
+              "disabled": false,
+              "clips": []
+            },
+            {
+              "track_id": "trk_d63b9add714641dd9f7be32c",
+              "type": "audio",
+              "kind": "voice",
+              "label": "Uploaded narration",
+              "order": 5,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_c370e47f4f495bd1ba37f1ab324ac369",
+                  "kind": "voice",
+                  "label": "Uploaded narration",
+                  "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+                  "source_start": 0.0,
+                  "source_end": 2.0,
+                  "timeline_start": 0.0,
+                  "duration": 2.0,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "audio_binding_id": "abnd_4768d95f5f455b2785b77a74274abd85",
+                    "audio_transcription_id": "aud_cbf5d523885496a303bf6ccc",
+                    "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                    "rights_status": "unknown",
+                    "official_render": false
+                  }
+                }
+              ]
+            },
+            {
+              "track_id": "trk_6d4dec1d85a54138833d4c52",
+              "type": "text",
+              "kind": "subtitles",
+              "label": "Audio captions",
+              "order": 6,
+              "locked": false,
+              "muted": false,
+              "disabled": false,
+              "clips": [
+                {
+                  "clip_id": "clip_156adec6071e4992a62013ac",
+                  "kind": "subtitle",
+                  "label": "Lời thanh.",
+                  "asset_id": null,
+                  "source_start": 0.1,
+                  "source_end": 0.9,
+                  "timeline_start": 0.1,
+                  "duration": 0.8,
+                  "speed": 1.0,
+                  "crop": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                  },
+                  "transform": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "scale": 1.0,
+                    "rotation_degrees": 0.0
+                  },
+                  "opacity": 1.0,
+                  "volume": 1.0,
+                  "transition_in": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "transition_out": {
+                    "kind": "cut",
+                    "duration_seconds": 0.0
+                  },
+                  "effects": [],
+                  "disabled": false,
+                  "metadata": {
+                    "audio_transcription_id": "aud_cbf5d523885496a303bf6ccc",
+                    "audio_binding_id": "abnd_4768d95f5f455b2785b77a74274abd85",
+                    "transcript_id": "trn_f6d684b03c454d148d774537",
+                    "segment_id": "seg_853ea059bffc4a37ad5d0f44",
+                    "language": "vi",
+                    "confidence": null,
+                    "timing_independently_measured": false,
+                    "recognition_review_required": true,
+                    "timing_source": "human_supplied_or_retained_transcript_word_intervals",
+                    "human_word_timing_review": true,
+                    "measured_source_words": [
+                      {
+                        "text": "Lời",
+                        "start_seconds": 0.1,
+                        "end_seconds": 0.4
+                      },
+                      {
+                        "text": "thanh.",
+                        "start_seconds": 0.4,
+                        "end_seconds": 0.9
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "metadata": {
+            "source_analysis_id": "ana_6dcd8364065f18358a36ecaa",
+            "source_asset_id": "ast_f7cba95af68b51b7b1f0a2d93e847f6a",
+            "source_duration_seconds": 3.0,
+            "transcript_revision": {
+              "transcript_id": "trn_2d0bffe0b968d8cb5a11d9c6",
+              "version": 1,
+              "human_edited": false
+            },
+            "silence_decisions_applied": 0,
+            "silence_speech_padding_preserved": true,
+            "silence_decision_ids": [],
+            "highlight_ids": [],
+            "preview_profile": "proxy-540-canonical-audio-v2",
+            "approval_invalidates_on_change": true,
+            "uploaded_audio_bindings_v1": {
+              "aud_cbf5d523885496a303bf6ccc": {
+                "binding_id": "abnd_4768d95f5f455b2785b77a74274abd85",
+                "audio_id": "aud_cbf5d523885496a303bf6ccc",
+                "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                "source_duration": 2.0,
+                "voice_track_id": "trk_d63b9add714641dd9f7be32c",
+                "subtitle_track_id": "trk_6d4dec1d85a54138833d4c52",
+                "transcript_id": "trn_f6d684b03c454d148d774537",
+                "transcript": {
+                  "transcript_id": "trn_f6d684b03c454d148d774537",
+                  "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+                  "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+                  "version": 3,
+                  "is_original_evidence": false,
+                  "provider_key": "explicit-saved-asr-fixture",
+                  "language": "vi",
+                  "confidence": null,
+                  "segments": [
+                    {
+                      "segment_id": "seg_853ea059bffc4a37ad5d0f44",
+                      "ordinal": 0,
+                      "start_seconds": 0.1,
+                      "end_seconds": 0.9,
+                      "text": "Lời thanh.",
+                      "speaker": null,
+                      "confidence": null,
+                      "words": [
+                        {
+                          "word_id": "wrd_314d1eb606984e0299f210c0",
+                          "ordinal": 0,
+                          "start_seconds": 0.1,
+                          "end_seconds": 0.4,
+                          "text": "Lời",
+                          "confidence": null
+                        },
+                        {
+                          "word_id": "wrd_2e6c6c8ade614363b996e842",
+                          "ordinal": 1,
+                          "start_seconds": 0.4,
+                          "end_seconds": 0.9,
+                          "text": "thanh.",
+                          "confidence": null
+                        }
+                      ]
+                    }
+                  ],
+                  "provenance": {
+                    "fixture": true,
+                    "raw_provider_result": {
+                      "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+                    },
+                    "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+                    "source_media_mutated": false,
+                    "recognition_review_required": true,
+                    "human_edit": true,
+                    "actor_ref": "usr:test-owner",
+                    "derived_from_transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+                    "changed_segment_ids": [
+                      "seg_43463452e5c603d97535866c"
+                    ],
+                    "reviewed_segment_ids": [
+                      "seg_43463452e5c603d97535866c"
+                    ],
+                    "segment_id_mapping": {
+                      "seg_43463452e5c603d97535866c": "seg_853ea059bffc4a37ad5d0f44"
+                    },
+                    "word_timestamp_policy": "human_supplied_source_intervals",
+                    "word_alignment_source": "human_supplied",
+                    "timing_rewrite_applied": true,
+                    "human_timing_acknowledged": true,
+                    "timing_independently_measured": false,
+                    "review_required": true,
+                    "edit_note": "Explicit ASGI fixture word review, no human listening acceptance.",
+                    "remote_calls": 0
+                  },
+                  "created_at": "2026-10-13T18:39:12.546788Z"
+                },
+                "transcript_sha256": "7d61de2ddfd1871f0fa5ecaa0a3e6318f0606edb74bb7a74d9f2397535bc54bb",
+                "human_review_required": true
+              }
+            },
+            "inherited_review_evidence": {
+              "original": {
+                "source_media_plan_id": null
+              },
+              "sha256": "3c7e3b8a468693e838ec638fb68dc09e67a99d9aaa9afe2e0e4481f08b58edb0",
+              "authority_transferred": false
+            },
+            "sql_variant_derivative": {
+              "schema_version": "sql-variant-evidence-lineage.v1",
+              "family_id": "vfa_50564c96af6b552ea397df0fe1ea7e4e",
+              "member_id": "vfm_73c63e5e52e755d68a808d0da064d30f",
+              "master_project_id": "prj_908c4f1ea0f645a8b777ac33",
+              "source_mode": "video_analysis",
+              "source_timeline_sha256": "54ef9752ba39ad0530406e1993963b5cf1a328780f11586b1b7c918f1b1e23ca",
+              "family_snapshot_sha256": "182e8f531a4c3adffc56833b47666812e57046cb411d77d4cd147000e68fab20",
+              "approval_inherited": false,
+              "rights_override_inherited": false,
+              "new_inference_calls": 0,
+              "human_review_required": true
+            },
+            "reframe": {
+              "aspect_ratio": "16:9",
+              "fallback": "center_crop",
+              "needs_attention": true,
+              "confidence": null
+            }
+          },
+          "source_media_mutated": false,
+          "publish_requested": false
+        },
+        "latest_preview_id": null,
+        "latest_preview_valid": false,
+        "source_media_mutated": false,
+        "publish_requested": false,
+        "created_at": "2026-10-13T18:39:11.706078",
+        "updated_at": "2026-10-13T18:39:12.552771"
+      },
+      "bytes": 10442,
+      "body_sha256": "ad37c14a14de3ec27359314571539e6ba8faed1aeb412d93f341bdd2ce5fda0f"
+    },
+    "audio_after": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_e205c908cb8b5bebb29400678df1f750/audio-transcriptions/aud_cbf5d523885496a303bf6ccc",
+      "status": 200,
+      "headers": {
+        "content-length": "7971",
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "x-request-id": "097af30296774531930fb7f50055f07c",
+        "x-correlation-id": "097af30296774531930fb7f50055f07c",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "no-referrer"
+      },
+      "body": {
+        "schema_version": "uploaded-audio-transcription.v1",
+        "audio_id": "aud_cbf5d523885496a303bf6ccc",
+        "workspace_id": "wsp_06faf98fcd064901b7155a94",
+        "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+        "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "job": {
+          "job_id": "job_vimport_e5d4489b93e952829c246f90db464098",
+          "workspace_id": "wsp_06faf98fcd064901b7155a94",
+          "project_id": "prj_e205c908cb8b5bebb29400678df1f750",
+          "project_version_id": "pver_321200c87ba85b98b387bd0dfa8f6dc2",
+          "status": "awaiting_review",
+          "stage": "awaiting_review",
+          "progress": 100,
+          "request": {
+            "kind": "variant_evidence_import",
+            "audio_id": "aud_cbf5d523885496a303bf6ccc",
+            "receipt_id": "vfr_04340cbba38753289a08016532a95893",
+            "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "input_sha256": "d01dfcb84cc8fd2a163ebd35203fcd424e481bfac6f2b7f7ce3bf59d6db96753",
+            "actor_ref": "fixture-editor",
+            "provider_calls": 0
+          },
+          "artifacts": [],
+          "error": null,
+          "created_at": "2026-10-13T18:39:11.701577",
+          "updated_at": "2026-10-13T18:39:11.701577"
+        },
+        "original": {
+          "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+          "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "version": 1,
+          "is_original_evidence": true,
+          "provider_key": "explicit-saved-asr-fixture",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_0b1220a611d16b69c480d9b4",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Âm thanh.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.4,
+                  "text": "Âm",
+                  "confidence": 0.9
+                },
+                {
+                  "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                  "ordinal": 1,
+                  "start_seconds": 0.4,
+                  "end_seconds": 0.9,
+                  "text": "thanh.",
+                  "confidence": 0.8
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "fixture": true,
+            "raw_provider_result": {
+              "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+            },
+            "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "source_media_mutated": false,
+            "recognition_review_required": true
+          },
+          "created_at": "2026-10-13T18:39:11.377067Z"
+        },
+        "current": {
+          "transcript_id": "trn_f6d684b03c454d148d774537",
+          "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+          "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+          "version": 3,
+          "is_original_evidence": false,
+          "provider_key": "explicit-saved-asr-fixture",
+          "language": "vi",
+          "confidence": null,
+          "segments": [
+            {
+              "segment_id": "seg_853ea059bffc4a37ad5d0f44",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Lời thanh.",
+              "speaker": null,
+              "confidence": null,
+              "words": [
+                {
+                  "word_id": "wrd_314d1eb606984e0299f210c0",
+                  "ordinal": 0,
+                  "start_seconds": 0.1,
+                  "end_seconds": 0.4,
+                  "text": "Lời",
+                  "confidence": null
+                },
+                {
+                  "word_id": "wrd_2e6c6c8ade614363b996e842",
+                  "ordinal": 1,
+                  "start_seconds": 0.4,
+                  "end_seconds": 0.9,
+                  "text": "thanh.",
+                  "confidence": null
+                }
+              ]
+            }
+          ],
+          "provenance": {
+            "fixture": true,
+            "raw_provider_result": {
+              "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+            },
+            "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+            "source_media_mutated": false,
+            "recognition_review_required": true,
+            "human_edit": true,
+            "actor_ref": "usr:test-owner",
+            "derived_from_transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+            "changed_segment_ids": [
+              "seg_43463452e5c603d97535866c"
+            ],
+            "reviewed_segment_ids": [
+              "seg_43463452e5c603d97535866c"
+            ],
+            "segment_id_mapping": {
+              "seg_43463452e5c603d97535866c": "seg_853ea059bffc4a37ad5d0f44"
+            },
+            "word_timestamp_policy": "human_supplied_source_intervals",
+            "word_alignment_source": "human_supplied",
+            "timing_rewrite_applied": true,
+            "human_timing_acknowledged": true,
+            "timing_independently_measured": false,
+            "review_required": true,
+            "edit_note": "Explicit ASGI fixture word review, no human listening acceptance.",
+            "remote_calls": 0
+          },
+          "created_at": "2026-10-13T18:39:12.546788Z"
+        },
+        "versions": [
+          {
+            "transcript_id": "trn_f88ea11442447d2e02cd32f2",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_0b1220a611d16b69c480d9b4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_9619cf9b3f36b7fed855fc34",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": 0.9
+                  },
+                  {
+                    "word_id": "wrd_a85a1e4ebf3c0175495e241e",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": 0.8
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true
+            },
+            "created_at": "2026-10-13T18:39:11.377067Z"
+          },
+          {
+            "transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 2,
+            "is_original_evidence": false,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_43463452e5c603d97535866c",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Âm thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_34a2867ae426a9c26155394f",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Âm",
+                    "confidence": null
+                  },
+                  {
+                    "word_id": "wrd_1bfbb93c028d503e74816fc3",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": null
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "human_edit": true,
+              "actor_ref": "fixture-editor",
+              "derived_from_transcript_id": "trn_f88ea11442447d2e02cd32f2",
+              "changed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "reviewed_segment_ids": [
+                "seg_0b1220a611d16b69c480d9b4"
+              ],
+              "segment_id_mapping": {
+                "seg_0b1220a611d16b69c480d9b4": "seg_43463452e5c603d97535866c"
+              },
+              "word_timestamp_policy": "human_supplied_source_intervals",
+              "word_alignment_source": "human_supplied",
+              "timing_rewrite_applied": true,
+              "human_timing_acknowledged": true,
+              "timing_independently_measured": false,
+              "review_required": true,
+              "edit_note": "",
+              "remote_calls": 0
+            },
+            "created_at": "2026-10-13T18:39:11.378069Z"
+          },
+          {
+            "transcript_id": "trn_f6d684b03c454d148d774537",
+            "analysis_id": "aud_cbf5d523885496a303bf6ccc",
+            "asset_id": "ast_e5d636d9c7e050b7bbcb61ce37aded2f",
+            "version": 3,
+            "is_original_evidence": false,
+            "provider_key": "explicit-saved-asr-fixture",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_853ea059bffc4a37ad5d0f44",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Lời thanh.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_314d1eb606984e0299f210c0",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Lời",
+                    "confidence": null
+                  },
+                  {
+                    "word_id": "wrd_2e6c6c8ade614363b996e842",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.9,
+                    "text": "thanh.",
+                    "confidence": null
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "raw_provider_result": {
+                "original_project_id": "prj_908c4f1ea0f645a8b777ac33"
+              },
+              "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "human_edit": true,
+              "actor_ref": "usr:test-owner",
+              "derived_from_transcript_id": "trn_cae6fa2bde190f81fe2b1795",
+              "changed_segment_ids": [
+                "seg_43463452e5c603d97535866c"
+              ],
+              "reviewed_segment_ids": [
+                "seg_43463452e5c603d97535866c"
+              ],
+              "segment_id_mapping": {
+                "seg_43463452e5c603d97535866c": "seg_853ea059bffc4a37ad5d0f44"
+              },
+              "word_timestamp_policy": "human_supplied_source_intervals",
+              "word_alignment_source": "human_supplied",
+              "timing_rewrite_applied": true,
+              "human_timing_acknowledged": true,
+              "timing_independently_measured": false,
+              "review_required": true,
+              "edit_note": "Explicit ASGI fixture word review, no human listening acceptance.",
+              "remote_calls": 0
+            },
+            "created_at": "2026-10-13T18:39:12.546788Z"
+          }
+        ],
+        "timeline_version": 2,
+        "human_review_required": true,
+        "source_media_mutated": false,
+        "publishing_enabled": false
+      },
+      "bytes": 7971,
+      "body_sha256": "4e60a3dcb22bd1022737b9841678cac93cd7b5f301f5f42440b21905994e3b40"
+    }
+  },
+  "raw_original_parent_unchanged": true,
+  "model_inferences": 0,
+  "provider_calls": 0,
+  "real_renderer_calls": 0,
+  "external_network_calls": 0,
+  "paid_operations": 0,
+  "owner_acceptance": false,
+  "source_provenance": {
+    "license": "First-party synthetic test fixture",
+    "video_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+    "video_bytes": 31983,
+    "retained_source_unchanged": true
+  }
+}

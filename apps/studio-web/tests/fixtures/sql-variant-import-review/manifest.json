@@ -1,0 +1,32 @@
+{
+  "schema_version": "sql-variant-import-review-fixture-manifest.v1",
+  "files": [
+    {
+      "name": "read.json",
+      "bytes": 130678,
+      "sha256": "de8d54ca8bc8522a30e160eb0b595dc8ab5c61e67c3e712c4cd00d1944ac0b8c"
+    },
+    {
+      "name": "source.wav",
+      "bytes": 64044,
+      "sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa"
+    },
+    {
+      "name": "video-jobs.json",
+      "bytes": 935,
+      "sha256": "b6164a22a41562c1bf8ec3d8b41d0107bdffc74db8ef2f34b477e2f08399fb01"
+    }
+  ],
+  "model_inferences": 0,
+  "provider_calls": 0,
+  "renderer_calls": 0,
+  "external_network_calls": 0,
+  "paid_operations": 0,
+  "owner_acceptance": false,
+  "source_provenance": {
+    "license": "First-party synthetic test fixture",
+    "video_sha256": "8d1db04a8996aced33dc784feab11f4cb512b547b495b51b3e8a4311af2846e6",
+    "video_bytes": 31983,
+    "retained_source_unchanged": true
+  }
+}
