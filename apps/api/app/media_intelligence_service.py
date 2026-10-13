@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import time
+import tempfile
 from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -62,6 +63,10 @@ from .stock_wire_context import CURRENT_OPERATION,stock_wire_operation
 from .stock_wire_quota import StockWireDeferred,digest as stock_digest
 from .stock_media_providers import OfficialStockProvider,StockProviderFailure
 from . import stock_resolution_deferral as stock_wait
+from . import stock_planner_retry as stock_planner
+from .auto_edit_models import AutoEditAnalysisRead
+from .vision_models import VisionAnalysisRead
+from .object_storage import sha256_file
 
 
 MEDIA_RESOLUTION_QUEUE_KEY = "npd:video-factory:v2:media-resolution:queued"
@@ -131,6 +136,7 @@ class MediaPlanningService:
         allow_external_execution: bool,
         allow_paid_execution: bool,
         learning=None,
+        object_storage=None,
     ) -> None:
         self.repository = repository
         self.auto_edit_repository = auto_edit_repository
@@ -140,6 +146,7 @@ class MediaPlanningService:
         self.allow_external_execution = allow_external_execution
         self.allow_paid_execution = allow_paid_execution
         self.learning = learning
+        self.object_storage = object_storage
 
     async def create(self, *, project_id: str, payload: MediaPlanRequest) -> MediaPlanRead:
         project = await self.platform.get_project(project_id)
@@ -170,6 +177,8 @@ class MediaPlanningService:
         if vision and vision.provenance.get('source_asset_checksum') != source_asset.checksum_sha256:
             raise ValueError('saved Vision checksum differs from the source asset')
         provider_status = self._provider_status()
+        if self._managed_stock():
+            provider_status = {**provider_status, 'stock_binding': self._stock_identity()}
         supporting_assets = await self.platform.list_assets(project_id) if payload.purpose == 'supporting_broll' else []
         fingerprint = hashlib.sha256(
             json.dumps(
@@ -217,6 +226,14 @@ class MediaPlanningService:
             if existing is None:
                 raise RuntimeError("media plan fingerprint exists without readable state")
             return existing
+        if self._managed_stock():
+            binding = await self._freeze_stock_plan(project, analysis, vision, source_asset, supporting_assets,
+                payload, provider_status)
+            if binding['searches']:
+                binding.update(media_plan_id=media_plan_id, fingerprint=fingerprint,
+                    project_version_id=analysis.project_version_id)
+                await stock_planner.initialize(self.repository, media_plan_id, binding, self._stock_clock())
+                return await self.process_stock_plan(media_plan_id)
         try:
             stock_available = self._provider_available(self.providers.stock)
             image_available = self._provider_available(self.providers.image)
@@ -325,6 +342,212 @@ class MediaPlanningService:
         return result
 
     async def get(self, media_plan_id: str) -> MediaPlanRead | None:
+        return await self.repository.get_plan(media_plan_id)
+
+    def _managed_stock(self):
+        stock = self.providers.stock
+        return isinstance(stock, OfficialStockProvider) and stock.wire_guard is not None \
+            and self._provider_available(stock) and not stock.paid
+
+    def _stock_identity(self):
+        stock = self.providers.stock
+        return {'provider': stock.key, 'mode': stock.cache_mode,
+            'configuration_sha256': stock.cache_binding_sha256, 'paid': stock.paid}
+
+    def _stock_clock(self):
+        return stock_planner.clock(self.providers.stock.wire_guard.clock())
+
+    async def _freeze_stock_plan(self, project, analysis, vision, source, supporting, payload, provider_status):
+        available = {'stock': self._provider_available(self.providers.stock),
+            'image': self._provider_available(self.providers.image), 'video': self._provider_available(self.providers.video)}
+        aspect = platform_aspect_ratio(payload.platform)
+        image_cost = await self.providers.image.estimate_cost(ImageGenerationInput(prompt='media-plan-estimate',
+            aspect_ratio=aspect)) if available['image'] else None
+        video_cost = await self.providers.video.estimate_cost(VideoGenerationInput(prompt='media-plan-estimate',
+            aspect_ratio=aspect)) if available['video'] else None
+        searches = []
+        for scene in analysis.scenes:
+            broll = build_broll_decision(analysis=analysis, scene=scene, vision=vision, brand_context=payload.brand_context)
+            strategy = select_strategy(ordinal=scene.ordinal, payload=payload, preferred_media_type=broll.preferred_media_type,
+                stock_available=available['stock'], image_available=available['image'], video_available=available['video'],
+                has_source_asset=True)
+            if payload.purpose == 'supporting_broll':
+                from .broll_planner import supporting_candidates, choose_supporting_strategy
+                strategy, _ = choose_supporting_strategy(payload, supporting_candidates(supporting, analysis, broll.search_query),
+                    stock=available['stock'], image=available['image'], video=available['video'],
+                    preferred_type=broll.preferred_media_type)
+            if strategy in {'stock_image', 'stock_video'}:
+                searches.append({'scene_id': scene.scene_id, 'strategy': strategy, 'query': broll.search_query,
+                    'orientation': platform_orientation(payload.platform), 'limit': 3})
+        inputs = {'project': project.model_dump(mode='json'), 'analysis': analysis.model_dump(mode='json'),
+            'vision': vision.model_dump(mode='json') if vision else None, 'source_asset': source.model_dump(mode='json'),
+            'supporting_assets': [asset.model_dump(mode='json') for asset in supporting],
+            'configuration': payload.model_dump(mode='json'), 'provider_status': provider_status}
+        return {'schema_version': 'sql-stock-planner-binding.v1', 'paid': False, 'provider': self._stock_identity(),
+            'inputs': inputs, 'inputs_sha256': stock_digest(inputs), 'availability': available,
+            'image_cost_vnd': str(image_cost) if image_cost is not None else None,
+            'video_cost_vnd': str(video_cost) if video_cost is not None else None,
+            'budget_sha256': stock_digest({'max_ai_cost_vnd': str(payload.max_ai_cost_vnd), 'paid': False}),
+            'searches': searches, 'source_file_sha256': source.checksum_sha256}
+
+    async def _verify_stock_plan_inputs(self, plan, binding, *, verify_bytes=True):
+        if not self._managed_stock():
+            raise ValueError('STOCK_PLANNER_NOT_CONFIGURED')
+        if binding['provider'] != self._stock_identity():
+            raise ValueError('STOCK_PLANNER_PROVIDER_CHANGED')
+        inputs = binding['inputs']
+        if plan.media_plan_id != binding['media_plan_id'] or plan.fingerprint != binding['fingerprint'] \
+                or plan.workspace_id != inputs['project']['workspace_id'] or plan.project_id != inputs['project']['project_id'] \
+                or plan.project_version_id != binding['project_version_id'] or plan.analysis_id != inputs['analysis']['analysis_id'] \
+                or plan.vision_analysis_id != (inputs['vision']['vision_analysis_id'] if inputs['vision'] else None) \
+                or plan.max_ai_cost_vnd != Decimal(inputs['configuration']['max_ai_cost_vnd']):
+            raise ValueError('STOCK_PLANNER_PLAN_SCOPE_CHANGED')
+        if stock_digest(inputs) != binding['inputs_sha256'] or inputs['configuration'] != plan.configuration.model_dump(mode='json') \
+                or inputs['provider_status'] != plan.provider_status:
+            raise ValueError('STOCK_PLANNER_BINDING_CHANGED')
+        project = await self.platform.get_project(plan.project_id)
+        analysis = await self.auto_edit_repository.get_analysis(plan.analysis_id, transcript_id=plan.configuration.transcript_id)
+        source = await self.auto_edit_repository.get_asset(inputs['source_asset']['asset_id'])
+        vision = await self.vision_repository.get_analysis(plan.vision_analysis_id) if plan.vision_analysis_id else None
+        supporting = await self.platform.list_assets(plan.project_id) if plan.configuration.purpose == 'supporting_broll' else []
+        current = {'project': project.model_dump(mode='json') if project else None,
+            'analysis': analysis.model_dump(mode='json') if analysis else None,
+            'vision': vision.model_dump(mode='json') if vision else None,
+            'source_asset': source.model_dump(mode='json') if source else None,
+            'supporting_assets': [asset.model_dump(mode='json') for asset in supporting],
+            'configuration': plan.configuration.model_dump(mode='json'), 'provider_status': plan.provider_status}
+        if stock_digest(current) != binding['inputs_sha256']:
+            raise ValueError('STOCK_PLANNER_SOURCE_CHANGED')
+        if not verify_bytes:
+            return
+        if self.object_storage is None:
+            raise ValueError('STOCK_PLANNER_SOURCE_STORAGE_NOT_CONFIGURED')
+        with tempfile.TemporaryDirectory(prefix='vf-sp-') as owned:
+            path = Path(owned) / 'source'
+            await self.object_storage.download_file(object_key=source.object_key, destination=path)
+            if sha256_file(path) != binding['source_file_sha256']:
+                raise ValueError('STOCK_PLANNER_SOURCE_FILE_CHANGED')
+        # The object download is awaited. Recheck current database versions
+        # after it completes so an edit during that wait cannot start a wire.
+        latest = await self.repository.get_plan(plan.media_plan_id)
+        await self._verify_stock_plan_inputs(latest, binding, verify_bytes=False)
+
+    async def process_stock_plan(self, media_plan_id: str) -> MediaPlanRead:
+        plan = await self.repository.get_plan(media_plan_id)
+        if plan is None:
+            raise KeyError(media_plan_id)
+        value = stock_planner.state(plan.provenance)
+        if value is None or value['status'] in stock_planner.TERMINAL:
+            return plan
+        if not isinstance(self.providers.stock, OfficialStockProvider) or self.providers.stock.wire_guard is None:
+            return plan
+        claim_id = await stock_planner.claim(self.repository, media_plan_id, self._stock_clock())
+        if claim_id is None:
+            return await self.repository.get_plan(media_plan_id)
+        try:
+            await self._verify_stock_plan_inputs(plan, value['binding'])
+            for request in value['binding']['searches']:
+                current = await self.repository.get_plan(media_plan_id)
+                execution = stock_planner.state(current.provenance)
+                if not stock_planner.owned(execution, claim_id) or execution['lease_until'] <= self._stock_clock():
+                    return current
+                if request['scene_id'] in execution['results']:
+                    continue
+                # A queued plan can outlive edits made while a previous search
+                # was in flight. Validate again before starting the next wire.
+                await self._verify_stock_plan_inputs(current, value['binding'])
+                current = await self.repository.get_plan(media_plan_id)
+                execution = stock_planner.state(current.provenance)
+                if not stock_planner.owned(execution, claim_id, self._stock_clock()):
+                    return current
+                calls = 0
+                try:
+                    with stock_request_scope(plan.workspace_id), stock_wire_operation(workspace_id=plan.workspace_id,
+                        project_id=plan.project_id, source_ref='media-plan:'+media_plan_id+':'+request['scene_id'],
+                        budget_sha256=value['binding']['budget_sha256']) as operation:
+                        method = self.providers.stock.search_videos if request['strategy'] == 'stock_video' else self.providers.stock.search_images
+                        try:
+                            found = await method(request['query'], orientation=request['orientation'], limit=request['limit'])
+                        finally:
+                            calls = operation.wire_attempts
+                    self._validate_stock_evidence(found)
+                    if calls:
+                        await self._meter_stock_search(plan, request, claim_id, value['binding_sha256'], calls, 'succeeded')
+                    if not await stock_planner.checkpoint(self.repository, media_plan_id, claim_id, request['scene_id'],
+                        [candidate.model_dump(mode='json') for candidate in found], calls, stamp=self._stock_clock()):
+                        return await self.repository.get_plan(media_plan_id)
+                except StockWireDeferred as deferred:
+                    await stock_planner.wait(self.repository, media_plan_id, claim_id, scene_id=request['scene_id'],
+                        code=deferred.code, next_at=deferred.next_at, calls=calls, stamp=self._stock_clock())
+                    return await self.repository.get_plan(media_plan_id)
+                except StockProviderFailure as error:
+                    if calls:
+                        await self._meter_stock_search(plan, request, claim_id, value['binding_sha256'], calls, 'failed', error.code)
+                    if not error.retryable:
+                        await stock_planner.fail(self.repository, media_plan_id, claim_id, error.code, calls=calls,
+                            stamp=self._stock_clock())
+                        return await self.repository.get_plan(media_plan_id)
+                    now = self._stock_clock()
+                    await stock_planner.wait(self.repository, media_plan_id, claim_id, scene_id=request['scene_id'],
+                        code=error.code, next_at=now+max(5, error.retry_after_seconds or 0), calls=calls, stamp=now)
+                    return await self.repository.get_plan(media_plan_id)
+            current = await self.repository.get_plan(media_plan_id)
+            execution = stock_planner.state(current.provenance)
+            if not stock_planner.owned(execution, claim_id):
+                return current
+            await self._verify_stock_plan_inputs(current, value['binding'])
+            binding = value['binding'];inputs = binding['inputs'];available = binding['availability']
+            items = build_plan_items(media_plan_id=media_plan_id, fingerprint=plan.fingerprint,
+                analysis=AutoEditAnalysisRead.model_validate(inputs['analysis']),
+                vision=VisionAnalysisRead.model_validate(inputs['vision']) if inputs['vision'] else None,
+                payload=plan.configuration, source_asset=AssetRead.model_validate(inputs['source_asset']),
+                stock_candidates={scene: [StockMediaCandidateRead.model_validate(candidate) for candidate in result['candidates']]
+                    for scene, result in execution['results'].items()},
+                stock_available=available['stock'], image_available=available['image'], video_available=available['video'],
+                image_cost_vnd=Decimal(binding['image_cost_vnd']) if binding['image_cost_vnd'] is not None else None,
+                video_cost_vnd=Decimal(binding['video_cost_vnd']) if binding['video_cost_vnd'] is not None else None,
+                supporting_assets=[AssetRead.model_validate(asset) for asset in inputs['supporting_assets']])
+            projected = sum((item.estimated_cost_vnd for item in items if item.strategy in {'ai_image', 'ai_video'}), Decimal('0'))
+            await self.repository.save_plan_items(media_plan_id=media_plan_id, items=items,
+                projected_ai_cost_vnd=projected, needs_approval=any(item.needs_approval for item in items)
+                or projected > plan.max_ai_cost_vnd, expected_stock_claim_id=claim_id, stock_observed_at=self._stock_clock())
+        except Exception as error:
+            code = str(error) if isinstance(error, ValueError) and str(error).startswith('STOCK_PLANNER_') else \
+                error.code if isinstance(error, StockProviderFailure) else 'STOCK_PLANNER_FAILED'
+            await stock_planner.fail(self.repository, media_plan_id, claim_id, code, stamp=self._stock_clock())
+        return await self.repository.get_plan(media_plan_id)
+
+    async def _meter_stock_search(self, plan, request, claim_id, binding_sha256, calls, status, code=None):
+        await self.platform.record_provider_operation(workspace_id=plan.workspace_id,
+            project_id=plan.project_id, job_id=None, provider_key=self.providers.stock.key, capability='stock_media',
+            operation='stock-planner:'+plan.media_plan_id+':'+request['scene_id']+':'+claim_id,
+            model=self.providers.stock.cache_binding_sha256, units=Decimal(calls), unit_name='wire_search',
+            estimated_cost=Decimal('0'), actual_cost=None, max_cost_vnd=plan.max_ai_cost_vnd, status=status,
+            metadata={'fixture': self.providers.stock.cache_mode == 'fixture', 'external_call': True,
+                'paid': False, 'real_provider_tested': False, 'binding_sha256': binding_sha256, 'error_code': code})
+
+    async def recover_due_stock_plans(self, *, limit=25):
+        if not isinstance(self.providers.stock, OfficialStockProvider) or self.providers.stock.wire_guard is None:
+            return 0
+        identifiers = await stock_planner.due(self.repository, self._stock_clock(), limit)
+        for identity in identifiers:
+            await self.process_stock_plan(identity)
+        return len(identifiers)
+
+    async def stock_search_history(self, media_plan_id):
+        return await stock_planner.history(self.repository, media_plan_id)
+
+    async def retry_stock_search(self, media_plan_id, payload):
+        plan = await self.repository.get_plan(media_plan_id)
+        if plan is None:
+            raise KeyError(media_plan_id)
+        value = stock_planner.state(plan.provenance)
+        if value is None or plan.version != payload.expected_version or value['binding_sha256'] != payload.binding_sha256:
+            raise stock_planner.StockPlannerConflict('STOCK_PLANNER_REVIEW_STALE')
+        return await self.process_stock_plan(media_plan_id)
+
+    async def cancel_stock_search(self, media_plan_id, payload):
+        await stock_planner.cancel(self.repository, media_plan_id, payload.expected_version, payload.binding_sha256)
         return await self.repository.get_plan(media_plan_id)
 
     async def list(self, project_id: str) -> list[MediaPlanRead]:

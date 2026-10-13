@@ -541,7 +541,12 @@ class PlatformRepository:
         actual_cost: Decimal | None = None,
         max_cost_vnd: Decimal | None = None,
         metadata: dict[str, Any] | None = None,
+        status: str = "succeeded",
     ) -> tuple[ProviderUsageRead, CostRecordRead]:
+        if status not in {"succeeded", "failed"}:
+            raise ValueError("unsupported provider usage status")
+        if status == "failed" and ((metadata or {}).get('paid') is not False or (metadata or {}).get('external_call') is not True):
+            raise ValueError("failed usage recording requires an explicit unpaid external operation")
         for amount in (estimated_cost, actual_cost, max_cost_vnd):
             if amount is not None and (not amount.is_finite() or amount < 0):
                 raise ValueError("provider cost must be finite and non-negative")
@@ -599,7 +604,7 @@ class PlatformRepository:
                     operation=operation,
                     units=units,
                     unit_name=unit_name,
-                    status="succeeded",
+                    status=status,
                     metadata_json=metadata or {},
                     completed_at=utc_now(),
                 )

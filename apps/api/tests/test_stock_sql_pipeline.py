@@ -62,6 +62,7 @@ async def prepared(tmp_path, mode):
         'capability':'stock_media','adapter':'http-mock','routing_mode':'primary','status':'healthy',
         'enabled':True,'supports_dry_run':True,'metadata':{'fixture':True,'real_provider_tested':False}}])
     env['planner'].allow_external_execution=True
+    env['planner'].object_storage=env['storage']
     plan=await env['planner'].create(project_id=env['project'].project_id,payload=plan_request(env).model_copy(
         update={'selection_policy':'priority','resolver_priority':['licensed_stock']}))
     item=plan.items[0];job=await env['resolver'].enqueue(project_id=plan.project_id,media_plan_id=plan.media_plan_id,

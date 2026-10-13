@@ -103,6 +103,19 @@ class MediaPlanItemORM(Base):
     )
 
 
+class MediaPlanStockEventORM(Base):
+    __tablename__ = 'media_plan_stock_events'
+    __table_args__ = (UniqueConstraint('media_plan_id', 'version', name='uq_media_plan_stock_event_version'),)
+    event_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    media_plan_id: Mapped[str] = mapped_column(String(64), ForeignKey('media_plans.media_plan_id', ondelete='RESTRICT'), nullable=False)
+    workspace_id: Mapped[str] = mapped_column(String(64), ForeignKey('workspaces.workspace_id', ondelete='RESTRICT'), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    action: Mapped[str] = mapped_column(String(80), nullable=False)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    evidence_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+
+
 class MediaAssetProvenanceORM(Base):
     __tablename__ = "media_asset_provenance"
     __table_args__ = (

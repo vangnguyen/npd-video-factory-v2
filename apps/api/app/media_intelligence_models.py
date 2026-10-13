@@ -7,6 +7,7 @@ from typing import Any, Literal
 from pydantic import Field, model_serializer, model_validator
 
 from .models import StrictModel
+from .stock_planner_models import StockPlanningRead
 
 
 MediaSourceType = Literal["user_upload", "stock", "ai_generated", "internal_library"]
@@ -260,7 +261,7 @@ class MediaPlanRead(StrictModel):
     project_version_id: str | None
     analysis_id: str
     vision_analysis_id: str | None
-    status: Literal["draft", "failed"]
+    status: Literal["draft", "failed", "stock_waiting", "stock_searching", "cancelled"]
     fingerprint: str
     version: int = Field(ge=1)
     configuration: MediaPlanRequest
@@ -280,3 +281,11 @@ class MediaPlanRead(StrictModel):
     provenance: dict[str, Any]
     created_at: datetime
     updated_at: datetime
+    stock_planning: StockPlanningRead | None = None
+
+    @model_serializer(mode='wrap')
+    def preserve_legacy_response(self, handler):
+        value = handler(self)
+        if self.stock_planning is None:
+            value.pop('stock_planning', None)
+        return value

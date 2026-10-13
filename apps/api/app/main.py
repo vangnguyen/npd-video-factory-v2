@@ -369,6 +369,7 @@ async def lifespan(app: FastAPI):
         allow_external_execution=settings.media_external_execution_enabled,
         allow_paid_execution=settings.media_paid_execution_enabled,
         learning=app.state.channel_learning_service,
+        object_storage=object_storage,
     )
     app.state.media_resolution_service = MediaResolutionService(
         repository=media_intelligence_repository,

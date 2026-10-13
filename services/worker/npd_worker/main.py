@@ -34,6 +34,7 @@ from app.media_intelligence_service import (
     MEDIA_RESOLUTION_PROCESSING_KEY,
     MEDIA_RESOLUTION_QUEUE_KEY,
     MediaResolutionService,
+    MediaPlanningService,
     create_media_provider_bundle,
 )
 from app.object_storage import create_object_storage
@@ -223,6 +224,18 @@ async def recover_due_stock_jobs(service: MediaResolutionService) -> None:
         await asyncio.sleep(30)
 
 
+async def recover_due_stock_plans(service: MediaPlanningService) -> None:
+    """Fenced, persisted read-only searches only; never dispatch paid generation."""
+    while True:
+        try:
+            count = await service.recover_due_stock_plans(limit=25)
+            if count:
+                logger.info('stock_due_plans_processed count=%d', count)
+        except Exception:
+            logger.warning('stock_due_plan_recovery_failed')
+        await asyncio.sleep(30)
+
+
 async def run_preview_queue(redis: Redis, service: PreviewService) -> None:
     while True:
         preview_id = await redis.brpoplpush(
@@ -393,6 +406,12 @@ async def main() -> None:
     await stock_wire_repository.ensure_state()
     providers = create_media_provider_bundle(settings,
         stock_wire_guard=StockWireQuotaGuard(stock_wire_repository))
+    from app.vision_repository import VisionRepository
+    media_planning_service = MediaPlanningService(repository=media_repository,
+        auto_edit_repository=auto_edit_repository, vision_repository=VisionRepository(session_factory),
+        platform=platform, providers=providers, object_storage=object_storage,
+        allow_external_execution=settings.media_external_execution_enabled,
+        allow_paid_execution=settings.media_paid_execution_enabled)
     media_resolution_service = MediaResolutionService(
         repository=media_repository,
         platform=platform,
@@ -469,6 +488,7 @@ async def main() -> None:
             recover_uploaded_audio_queue(uploaded_audio),
             run_media_resolution_queue(redis, media_resolution_service),
             recover_due_stock_jobs(media_resolution_service),
+            recover_due_stock_plans(media_planning_service),
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),
             run_analytics_sync_queue(redis, analytics_processor),

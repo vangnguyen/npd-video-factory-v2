@@ -29,6 +29,7 @@ from .media_intelligence_models import (
 from .platform_models import AssetRead
 from .vision_db import VisionAnalysisORM
 from .vision_models import VisionAnalysisRead
+from .stock_planner_retry import read as stock_planner_read
 
 
 def _new_id(prefix: str) -> str:
@@ -110,9 +111,19 @@ class MediaIntelligenceRepository:
         items: list[MediaPlanItemRead],
         projected_ai_cost_vnd: Decimal,
         needs_approval: bool,
+        expected_stock_claim_id: str | None = None,
+        stock_observed_at: float | None = None,
     ) -> None:
         async with self.session_factory() as session:
             async with session.begin():
+                if expected_stock_claim_id is not None:
+                    result = await session.execute(update(MediaPlanORM).where(
+                        MediaPlanORM.media_plan_id == media_plan_id,
+                        MediaPlanORM.status == 'stock_searching',
+                        MediaPlanORM.provenance_json['stock_planner_execution']['claim_id'].as_string() == expected_stock_claim_id,
+                    ).values(updated_at=MediaPlanORM.updated_at))
+                    if result.rowcount != 1:
+                        return
                 plan = await session.scalar(
                     select(MediaPlanORM)
                     .where(MediaPlanORM.media_plan_id == media_plan_id)
@@ -120,6 +131,10 @@ class MediaIntelligenceRepository:
                 )
                 if plan is None:
                     raise KeyError(media_plan_id)
+                if expected_stock_claim_id is not None:
+                    from .stock_planner_retry import state, owned
+                    if not owned(state(plan.provenance_json), expected_stock_claim_id, stock_observed_at):
+                        return
                 existing = await session.scalar(
                     select(MediaPlanItemORM.media_plan_item_id).where(
                         MediaPlanItemORM.media_plan_id == media_plan_id
@@ -150,6 +165,13 @@ class MediaIntelligenceRepository:
                 plan.projected_ai_cost_vnd = projected_ai_cost_vnd
                 plan.needs_approval = needs_approval
                 plan.updated_at = utc_now()
+                if expected_stock_claim_id is not None:
+                    from .stock_planner_retry import state, transition
+                    value = state(plan.provenance_json)
+                    value.update(status='succeeded', claim_id=None, lease_until=None, next_at=None, error_code=None)
+                    transition(session, plan, value, 'completed', details={
+                        'item_snapshots': [item.model_dump(mode='json') for item in items],
+                        'paid_operations': 0, 'actual_cost_vnd': None})
 
     async def mark_plan_failed(self, media_plan_id: str, error_code: str) -> None:
         async with self.session_factory() as session:
@@ -222,6 +244,7 @@ class MediaIntelligenceRepository:
             provenance=plan.provenance_json,
             created_at=plan.created_at,
             updated_at=plan.updated_at,
+            stock_planning=stock_planner_read(plan.provenance_json),
         )
 
     async def list_plans(self, project_id: str) -> list[MediaPlanRead]:
