@@ -1,0 +1,554 @@
+{
+  "schema_version": "north-star-parallel-media-evidence.v1",
+  "recorded_at": "2026-10-13T09:41:38.942436+00:00",
+  "program_parent": "bda7bb9946dc07fba0c615adda556b8e0f4da4bd",
+  "source_parent": "3ff8e2c5dd33f981dd8c89be12239ba40b122cf9",
+  "capability_commits": [
+    "dbc457d621d2bc739da433c866793815ab66ba0b",
+    "bdb50722ba94542e50379aed06c7ea9443a8533e",
+    "3ff8e2c5dd33f981dd8c89be12239ba40b122cf9"
+  ],
+  "waves": "3B/3H/5A/8F/15 components; whole waves PARTIAL",
+  "Master_sections": [
+    22,
+    23,
+    24,
+    29,
+    30,
+    32,
+    33,
+    35,
+    42,
+    43,
+    52,
+    59,
+    63,
+    64,
+    65,
+    79,
+    80
+  ],
+  "tests": {
+    "audio_and_source": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\uploaded-audio-source-final-n3.log",
+      "sha256": "73a780f708571b9e21f6ce096a0efea76a8456ffc927bf7a427f8cbc5e72a1b1",
+      "bytes": 112,
+      "passed": 56
+    },
+    "API_worker_regression": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-api-worker-final-n1.log",
+      "sha256": "f1095dfd67b6eb50d76673c00b4ba1f7096d3ad000a12a3def5e991741c3ccbc",
+      "bytes": 113,
+      "passed": 44
+    },
+    "SQL_stock": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-sql-quota-regression-n1.log",
+      "sha256": "e8c83dbc41441fe90424070d1279872cc1e1e58fe2cb7a99f0ff02556190af7e",
+      "bytes": 193,
+      "passed": 74
+    },
+    "Native_Phase10_auth_quality": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-native-http-final-n2.log",
+      "sha256": "25f678fbc24db7e4e586a9d816606f6b8394760f46a0729fb5e5abdf8d446ae7",
+      "bytes": 103,
+      "passed": 66
+    },
+    "Native_stock_shared": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-sql-shared-native-regression-n2.log",
+      "sha256": "f2579b1cc6c53240ef5cad343c9fb32653ca7e680dcfd51f26829f35daac0e7e",
+      "bytes": 1237,
+      "passed": 40
+    },
+    "Native_Broll_priority": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-priority-final-n1.log",
+      "sha256": "8775a168fd9a26cfdb35cedd63e11bf1c0c5eb79c3c6905bb5c8ae1b0c3e4008",
+      "bytes": 8747,
+      "passed": 35
+    },
+    "Native_Broll_duplication": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-duplicate-final-n2.log",
+      "sha256": "b644d959e59a389c47e558b8e2186691cb4687c78e61548c7ceacec7095c087f",
+      "bytes": 101,
+      "passed": 6
+    },
+    "Studio": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-studio-final-n2.log",
+      "sha256": "48f394b3f80458f44fbd233d098e4c4a92f315818541b0bf7e29f6d1b8936f02",
+      "bytes": 84801,
+      "passed": 822
+    }
+  },
+  "batches_overlap_do_not_sum": true,
+  "audio_new": 27,
+  "source_delivery_new": 29,
+  "Broll_engine_new": 13,
+  "Broll_HTTP_new": 4,
+  "Broll_duplicate_new": 2,
+  "Studio_Broll_new": 11,
+  "uploaded_audio": {
+    "additive_independent_audio_schema": true,
+    "actual_SQLite_WAV_source": true,
+    "ASR_is_mock": true,
+    "immutable_original_versions_restore_CAS_lease_cancel_source_playback_tested": true,
+    "one_dispatch_per_ASR_operation": true,
+    "source_helper_byte_ranges_hash_magic_disconnect_and_event_loop_tested": true,
+    "canonical_audio_caption_mapping_complete": false,
+    "bound_canonical_audio_caption_edit_conflicts_roll_back": true,
+    "SQL_Studio_panel_complete": false,
+    "SQL_local_CPU_ASR_runtime_wired": false,
+    "default_provider": "NOT_CONFIGURED"
+  },
+  "SQL_stock": {
+    "API_worker_actual_session_factory_guard_wired": true,
+    "durable_quota_atomic_wire_lease": true,
+    "API_CDN_cache_isolated": true,
+    "zero_wire_wait_before_safety_reservation": true,
+    "max_actual_wire_cycles": 3,
+    "late_worker_running_failure_completion_and_defer_claim_fenced": true,
+    "due_recovery_only_unpaid_existing_stock_deferrals": true,
+    "old_migration_rows_preserved": true,
+    "planner_search_wait_has_scheduled_retry_UX": false,
+    "global_quota_accounting_complete": false,
+    "Pexels_current_video_endpoints_documentation_verified": {
+      "source": "https://www.pexels.com/api/documentation/",
+      "paths": [
+        "/v1/videos/search",
+        "/v1/videos/videos/:id"
+      ],
+      "actual_credentialed_wire_tested": false
+    }
+  },
+  "Source_Broll": {
+    "all_five_required_tiers_preserved_configurable_order": true,
+    "child_async_jobs_reused_with_atomic_admission": true,
+    "paid_unknown_outcome_requires_existing_explicit_child_recovery": true,
+    "unknown_rights_do_not_grant_selection_authority": true,
+    "reviewed_plan_derivative_original_bytes_preserved": true,
+    "duplicate_archives_reviewed_derivatives_verbatim_without_authority": true,
+    "same_canonical_timeline_explicit_apply_and_atomic_receipt": true,
+    "owner_video_approval_granted": false,
+    "UI_pending_retry_bound_to_resolution": true,
+    "UI_explicit_recovery_observation_supported": true,
+    "transient_loading_blocks_action_without_clearing_verified_selection": true,
+    "semantic_relevance_complete_or_confidence_calibrated": false,
+    "real_stock_generated_rights_quality_accepted": false
+  },
+  "local_media": {
+    "schema_version": "local-source-broll-resolution-media.v1",
+    "project_id": "93e565a6928d484ab992f74ec6f8eacf",
+    "source_backup_sha256": "ae59a0784a63e4c80d986a005a4a59e3bc7289d3f525b3b890466c9ea3ffe203",
+    "source_bytes_raw_ASR_analysis_preserved": true,
+    "canonical_non_broll_tracks_preserved_on_apply": true,
+    "explicit_apply_replay_no_duplicate": true,
+    "new_model_inferences": 0,
+    "external_provider_calls": 0,
+    "paid_operations": 0,
+    "added_visuals_and_approval_are_CI_fixtures": true,
+    "genuine_user_footage_accepted": false,
+    "Owner_UAT": false,
+    "full_Mode_A_B_accepted": false,
+    "production_deployed": false,
+    "actual_preview_and_final_render": true,
+    "QC_passed": true,
+    "cold_restore_rows_and_project_exact": true,
+    "cold_restore_same_process": true,
+    "final_sha256": "57892768235bd11961cfe75c7c61417568664a19a92e96f67188ec5a1e06a5df"
+  },
+  "independent_cold_restore": {
+    "schema_version": "source-broll-independent-cold-restore.v1",
+    "project_id": "93e565a6928d484ab992f74ec6f8eacf",
+    "project_sha256": "37a57f754d53248fa6c9b9c5fba417c4f331527dd5622d694b6cdce9672bae46",
+    "resolver_history_sha256": "8ebab8b2256d6c017aeec2a7f6b3068035daa11f073630a8da9e2bb50b12c4df",
+    "resolver_rows_exact": true,
+    "original_session_exact": true,
+    "completed_render_job_exact": true,
+    "archive_entries": 231,
+    "archive_sha256": "c06ae91c4b46f320cf72afdb7d388e6ab2b90573946ffaf5f6b605ec6f8c6d86",
+    "new_model_inferences": 0,
+    "provider_dispatches": 0,
+    "paid_calls": 0,
+    "current_configuration_execution_after_root_change_certified": false,
+    "Owner_UAT": false,
+    "full_Mode_A_B_accepted": false,
+    "fresh_process_restore": true,
+    "owned_new_temporary_root_cleaned": true
+  },
+  "browser": {
+    "schema_version": "source-broll-browser-custody.v1",
+    "project_id": "93e565a6928d484ab992f74ec6f8eacf",
+    "before_revision": 10,
+    "after_revision": 13,
+    "before_canonical_version": 5,
+    "after_canonical_version": 6,
+    "duration_seconds": 10.5,
+    "saved_raw_ASR_analysis_unchanged": true,
+    "non_broll_tracks_preserved": true,
+    "approval_invalidated": true,
+    "new_preview_render_and_QC_performed_in_browser": false,
+    "Owner_UAT": false,
+    "full_Mode_A_B_accepted": false,
+    "actual_browser_default_priority_only": true,
+    "screen_bitmap_dimensions": {
+      "review-1366.png": [
+        1318,
+        760
+      ],
+      "review-1920.png": [
+        1522,
+        1072
+      ],
+      "review-2560.png": [
+        2034,
+        1432
+      ]
+    },
+    "viewport_responsive_DOM_verified_not_Owner_usability_acceptance": true,
+    "process_exit_code": 0,
+    "server_stopped": true,
+    "owned_new_root_cleaned": true
+  },
+  "fixture_boundaries": {
+    "new_real_external_provider_calls": 0,
+    "new_model_inferences": 0,
+    "paid_calls": 0,
+    "Owner_UAT": false,
+    "old_local_benchmark_audio_and_ASR_reused": true,
+    "visuals_identity_review_and_provider_vectors_are_fixtures": true,
+    "PostgreSQL_Redis_Docker_production_accepted": false,
+    "full_original_Mode_A_B_C_accepted": false
+  },
+  "intermediate_failures_retained": {
+    "stale_Phase10_capability_expected_map_updated_preserving_strict_assertion": true,
+    "Windows_asyncio_loopback_overblocked_in_helper_fixed": true,
+    "cold_helper_receipt_entries_type_fixed": true,
+    "missing_agent_tmp_logs_not_recreated_as_evidence": true,
+    "root_actual_final_logs_preserved": true
+  },
+  "cleanup": {
+    "policy_denials_total_unchanged": 8,
+    "old_policy_blocked_roots_touched": false,
+    "blocked_deletes_retried": false,
+    "new_retained_OS_cleanup_failure_root": "C:/Users/PC/AppData/Local/Temp/vf-source-broll-independent-cold-fd00zd0d",
+    "new_retained_root_retried_or_deleted": false,
+    "new_retained_root_inventory": "source-broll-cold-retained-directories-n1.json",
+    "new_short_owned_rehearsal_roots_lifecycle_cleaned": true,
+    "old_retained_OS_and_browser_roots_touched": false
+  },
+  "artifact_files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-api-worker-final-n1.log",
+      "sha256": "f1095dfd67b6eb50d76673c00b4ba1f7096d3ad000a12a3def5e991741c3ccbc",
+      "bytes": 113
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-native-http-final-n2.log",
+      "sha256": "25f678fbc24db7e4e586a9d816606f6b8394760f46a0729fb5e5abdf8d446ae7",
+      "bytes": 103
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-native-http-n1.log",
+      "sha256": "574809f43382cd0761e9661ef92d00e91282c08837e280107d679592908d9851",
+      "bytes": 1087
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-studio-final-n2.log",
+      "sha256": "48f394b3f80458f44fbd233d098e4c4a92f315818541b0bf7e29f6d1b8936f02",
+      "bytes": 84801
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\serve-source-broll-resolution-browser-n1.py",
+      "sha256": "79a8e2ad1b187fbe2fde1c40bdffa4564c90edd2fc57b2a3d2327340d2e6da33",
+      "bytes": 3488
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-asset-delivery-final-n3.log",
+      "sha256": "e0be3ae47432e6840e0a35dc7fc4f76613b69d09c78a7d17755835e1e3fab551",
+      "bytes": 101
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-cold-retained-directories-n1.json",
+      "sha256": "1fc6e7bedcf0cb86524d2f597d516f769dd7f8eadadb0bf1d3f78048049b1a02",
+      "bytes": 30443
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-cold-retained-root-n1.json",
+      "sha256": "00f8988a67d52e5bf523d9ff96efd652d1e1116619504858b8e85eb1329b1598",
+      "bytes": 26140
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\after-project.json",
+      "sha256": "a3f6f723ca01b49c81a24129cc29e95e915bcdf061cfbdff904fedc8b8825e49",
+      "bytes": 1890900
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\backup.json",
+      "sha256": "23e572927b9623d01adcf7498c35cac003b3b59637daa4c16961f591c54419a5",
+      "bytes": 4684
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\before-project.json",
+      "sha256": "0dfeb75688dddc731e76088a81e03fb2c8ea61088bd061cda55d786342ea0bfc",
+      "bytes": 1868715
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\browser-state.zip",
+      "sha256": "12fc7022ec55c3a9319a80e6f77386c321855cd5e127d26a16669e9589e7f106",
+      "bytes": 45323809
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\control.json",
+      "sha256": "d6fdf70d53108b6b096032842ecef2bb196ef86fa1b45b21dd0102c9a5a2a0a8",
+      "bytes": 421
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\custody.json",
+      "sha256": "396de1540d2a5bca2c53e89191ad75c5a3776f0338f62f8c2adbfe09d72bc46d",
+      "bytes": 925
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\finish",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\resolver-page.json",
+      "sha256": "93dc5f2586b56a11cc940307dadbb98f791a91d102aa36a3c36fd22ffe7975bf",
+      "bytes": 24158
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\review-1366.png",
+      "sha256": "bb704063f0c83698477370250e1818038da7a1e4cb5f3a9fe7b076ac4e9cbd66",
+      "bytes": 79791
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\review-1920.png",
+      "sha256": "b0aad8ee2077a7e98a4a8a13bfe0bc4ed0f923b632605a238966fa02d44c86b0",
+      "bytes": 77938
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\review-2560.png",
+      "sha256": "fae8928369b5074d48c887c444126947767589feac7210bbfc3789d86b6deb6e",
+      "bytes": 98147
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-browser-n1\\ui-observation.json",
+      "sha256": "cef0693f6a7a60f5eda506158eaedd0f7d7a00fa3b9f238d13fcc894d0e7d55e",
+      "bytes": 975
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-cold-n1.log",
+      "sha256": "281355d68b2e40744b9eed175d4c83640e7fae6d2d5960f40af0891198ec4202",
+      "bytes": 2101
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-cold-n2.json",
+      "sha256": "823ce6d3a6d13476f91796f74308482bed635d48ddecc1da7e1db201e04f91b0",
+      "bytes": 822
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-cold-n2.log",
+      "sha256": "386ddbf8d06a41a71a1a993893debdb15b0b1e651333e65f1fd99f1756302368",
+      "bytes": 768
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-duplicate-final-n2.log",
+      "sha256": "b644d959e59a389c47e558b8e2186691cb4687c78e61548c7ceacec7095c087f",
+      "bytes": 101
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\asset-provenance.json",
+      "sha256": "c5cb1d71c8eee6267928668fd106f86033acbe102b4e3b9b111751694c31faf1",
+      "bytes": 2234
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\initial-restore.json",
+      "sha256": "b08e17f9f89d1d9d9cab4f4149744805b55eb0d976363d490dff5204da427c3c",
+      "bytes": 4936
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\preview-receipt.json",
+      "sha256": "62f03746c1e61e7827da93e4f1e7fd611d69933c951cb253a7090b250efd5e3f",
+      "bytes": 693
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\resolution-applied.json",
+      "sha256": "ad4f865d0c001ec451ef73817cac04d82da838989b993ead4b2d51a3861fd61a",
+      "bytes": 1142
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\resolution-created.json",
+      "sha256": "5402febff8cd7498b78000c15e972aabfb268bcff1afeb2a25c8a796631a22ee",
+      "bytes": 21525
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\resolution-final.json",
+      "sha256": "fdda9a3c170cbad3f01efc522b3c86676d32144ae8ff1084cec445306cf36569",
+      "bytes": 21936
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\resolution-transition.json",
+      "sha256": "5b6648968a49a124c6efe4f9169cdb5b0442c365dbe34e4ccc49e5f01e5ee87a",
+      "bytes": 796
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1\\timeline.json",
+      "sha256": "65f60e7a975af8ce42dddc9f30a1009bb44b97e126111cc51578d424c49c5f67",
+      "bytes": 322080
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n1.log",
+      "sha256": "0afc956ec07d08459c68c53a3aebcaf62e479b3c01e11bedcffe04a061b0aa7a",
+      "bytes": 1378
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\asset-provenance.json",
+      "sha256": "ca02ab039437addfa4097694063a44cb7b46cde3d9aa67237d15b0334ae1267a",
+      "bytes": 2234
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\audio-analysis.json",
+      "sha256": "e31cc4ca666f4bdf7e203680102c9cd5c445b93869b9d284872ab999fa592f83",
+      "bytes": 64570
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\audio-balance.json",
+      "sha256": "5e48b600e2e24c03fd5f839824b5be3662d4635119e050caee1442a1183ca71d",
+      "bytes": 2209
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\backup.json",
+      "sha256": "d584de6e14254dd94ba54265cd72466f88ae228a2b66f2caa73811d3e5372b9a",
+      "bytes": 4689
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\cost.json",
+      "sha256": "b38306b4f4f09d039434d0066a12db9905b392d273bc43305ab4834f3c4ddb6b",
+      "bytes": 122
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\evidence.json",
+      "sha256": "a9b31b3a7847bc671a26cf27bdaa9f3c485d1256b6ee18aa33c53cc9c5c36b27",
+      "bytes": 890
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\final.mp4",
+      "sha256": "57892768235bd11961cfe75c7c61417568664a19a92e96f67188ec5a1e06a5df",
+      "bytes": 383076
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\initial-restore.json",
+      "sha256": "3fc1331a4b3457f0ec7b3a4d8014f4acd215ae050a2757b46e425a01fad2cf25",
+      "bytes": 4936
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\preview-receipt.json",
+      "sha256": "0d116e83c62ba1b8e0fd1ee3a660f41a42c4d2cb2f96ba8bae168ee27b053529",
+      "bytes": 95752
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\preview.mp4",
+      "sha256": "348634a13e65981c7282283b3ab8826545b1eac61cd8509a76c367c521ced95c",
+      "bytes": 304929
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\qc.json",
+      "sha256": "403bd8f21989e2a994cbee44e4930aaff760e202d40f32778edfec2c312800cf",
+      "bytes": 21882
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\render-job.json",
+      "sha256": "4bef7359b73cdc233f2f205070d0671ffd18956139c3c3eb8917e7054dca5946",
+      "bytes": 749588
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\render-manifest.json",
+      "sha256": "6271a46ec56bafaeb465c37a03aa633de72bcb772d69d3ab2da0a54958a47e26",
+      "bytes": 169412
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\resolution-applied.json",
+      "sha256": "d44137bc4c41b3d92979291ee36f9912e76cbb8377687d806b0df843990969df",
+      "bytes": 1142
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\resolution-created.json",
+      "sha256": "cb2f0401830d3a3f4c5a1b35471f94a1ff7991d4e27823c745d8e6ce8a7cabbf",
+      "bytes": 21525
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\resolution-final.json",
+      "sha256": "41848f6668c0f1566e9b8e7147d6bbfd9f1b5f636d010c48d4b43be8c188dbf9",
+      "bytes": 21936
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\resolution-transition.json",
+      "sha256": "754fcd836eb4132694870eb592dab16a538a6d030422c859b66b2ef8cbf51ee9",
+      "bytes": 796
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\resolved-broll-state.zip",
+      "sha256": "c06ae91c4b46f320cf72afdb7d388e6ab2b90573946ffaf5f6b605ec6f8c6d86",
+      "bytes": 74847645
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\resolver-rows.json",
+      "sha256": "f11d18d22eceeb3f1aff462223e583f6b29718aeee431f7ae72485229fcc3df8",
+      "bytes": 23361
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\source-audio-clocks.json",
+      "sha256": "e40a85d7510b7798a314a2b4c51e010d0a7950f561063382ba9f7b317e6db34c",
+      "bytes": 59859
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\subtitles.json",
+      "sha256": "6f72e0060d20db88bc497e51218b64b98758ce6774030db84c3a3c26ca5c9bb5",
+      "bytes": 7387
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2\\timeline.json",
+      "sha256": "4f9b6ddd16cb59f3a94b9a8102ed0cb57122a1d801db084b1fcfaf48456d1706",
+      "bytes": 166439
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-media-n2.log",
+      "sha256": "7a7f754a47145c7de64cd2e1526115aa9b68b8d4b2cbbff4db98b982f1bc6f36",
+      "bytes": 192
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-priority-final-n1.log",
+      "sha256": "8775a168fd9a26cfdb35cedd63e11bf1c0c5eb79c3c6905bb5c8ae1b0c3e4008",
+      "bytes": 8747
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\source-broll-resolution-ui-new-n2.log",
+      "sha256": "a78ab5a639007eaff701673919663be42fb0d474a58da3a0c3d4168af3869b84",
+      "bytes": 877
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-sql-quota-regression-n1.log",
+      "sha256": "e8c83dbc41441fe90424070d1279872cc1e1e58fe2cb7a99f0ff02556190af7e",
+      "bytes": 193
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-sql-shared-native-regression-n2.log",
+      "sha256": "f2579b1cc6c53240ef5cad343c9fb32653ca7e680dcfd51f26829f35daac0e7e",
+      "bytes": 1237
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\uploaded-audio-source-final-n3.log",
+      "sha256": "73a780f708571b9e21f6ce096a0efea76a8456ffc927bf7a427f8cbc5e72a1b1",
+      "bytes": 112
+    }
+  ],
+  "portable_evidence_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\parallel-media-evidence-n1.zip",
+    "sha256": "eb7089a698e8d36a05ce783a18c22370f5e557f7df1c46398d8d1e65509b5154",
+    "bytes": 63477835
+  },
+  "portable_archive_entries": 61,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}
