@@ -353,7 +353,12 @@ async def lifespan(app: FastAPI):
         staging_root=settings.vision_staging_root,
         provider_safety=app.state.provider_safety_controller,
     )
-    media_providers = create_media_provider_bundle(settings)
+    from .stock_wire_quota import StockWireQuotaRepository, StockWireQuotaGuard
+    stock_wire_repository = StockWireQuotaRepository(session_factory)
+    await stock_wire_repository.ensure_state()
+    app.state.stock_wire_repository = stock_wire_repository
+    media_providers = create_media_provider_bundle(settings,
+        stock_wire_guard=StockWireQuotaGuard(stock_wire_repository))
     app.state.media_provider_bundle = media_providers
     app.state.media_planning_service = MediaPlanningService(
         repository=media_intelligence_repository,

@@ -14,6 +14,7 @@ from app import uploaded_audio_db  # noqa: F401
 from app import trend_db  # noqa: F401
 from app import vision_db  # noqa: F401
 from app import media_intelligence_db  # noqa: F401
+from app import stock_wire_quota_db  # noqa: F401
 from app import timeline_db  # noqa: F401
 from app import production_db  # noqa: F401
 from app import publishing_db  # noqa: F401

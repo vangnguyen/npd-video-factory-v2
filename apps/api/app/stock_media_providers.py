@@ -21,6 +21,8 @@ import uuid
 import httpx
 from .media_intelligence_models import StockMediaCandidateRead
 from .media_intelligence_providers import MediaProviderNotConfigured,ProviderMaterializedMedia
+from .stock_retry_policy import retry_delay
+from .stock_wire_context import CURRENT_OPERATION
 
 CACHE_SECONDS=86400
 JSON_LIMIT=2*1024*1024
@@ -81,7 +83,8 @@ class OfficialStockProvider:
     source_host=''
 
     def __init__(self,*,api_key='',enabled=False,cache_root:Path,cache_scope=None,transport=None,
-                 timeout_seconds=20,max_download_bytes=250*1024*1024,cache_configuration_sha256=None):
+                 timeout_seconds=20,max_download_bytes=250*1024*1024,cache_configuration_sha256=None,
+                 wire_guard=None,require_wire_guard=False):
         if not 1<=timeout_seconds<=60 or not 1<=max_download_bytes<=250*1024*1024:
             raise ValueError('STOCK_BOUNDS_INVALID')
         if not isinstance(api_key,str) or len(api_key)>8192 or any(c in api_key for c in '\r\n'):
@@ -98,6 +101,8 @@ class OfficialStockProvider:
         self.cache_mode='fixture' if self.mock_transport_used else 'official'
         self.cache_binding_sha256=digest(self._cache_binding())
         self._frozen_cache_identity=(self.cache_binding_sha256,self.cache_mode,self.cache_configuration_sha256)
+        if type(require_wire_guard) is not bool:raise ValueError('STOCK_WIRE_GUARD_CONFIGURATION_INVALID')
+        self.wire_guard,self.require_wire_guard=wire_guard,require_wire_guard
 
     def _cache_binding(self):
         """Hash execution identity; neither the secret nor filesystem path is cached."""
@@ -140,13 +145,22 @@ class OfficialStockProvider:
         return value
 
     async def _response(self,url,params=None,*,limit):
+        workspace=self._require();lease=None;status=None;headers=None
+        if self.require_wire_guard and self.wire_guard is None:
+            raise StockProviderFailure('STOCK_WIRE_GUARD_NOT_CONFIGURED')
+        host=urlsplit(url).hostname
+        request_class='api' if host==self.api_host else 'cdn' if host in self.cdn_hosts else None
+        if request_class is None:raise StockProviderFailure('STOCK_WIRE_HOST_INVALID')
+        if self.wire_guard is not None:
+            lease=await self.wire_guard.admit(self,workspace,request_class)
         try:
             async with asyncio.timeout(self.timeout_seconds):
                 async with self._http().stream('GET',url,params=params) as response:
+                    status=response.status_code;headers=response.headers
                     if response.status_code!=200:
                         retryable=response.status_code in {429,500,502,503,504}
-                        retry=response.headers.get('Retry-After') or response.headers.get('X-RateLimit-Reset')
-                        seconds=min(86400,max(0,int(retry))) if retry and retry.isdigit() else None
+                        clock=getattr(self.wire_guard,'clock',time.time)
+                        seconds=retry_delay(response.headers,float(clock())) if retryable else None
                         raise StockProviderFailure('STOCK_RATE_LIMITED' if response.status_code==429 else 'STOCK_HTTP_FAILED',
                             retryable=retryable,retry_after_seconds=seconds)
                     declared=response.headers.get('Content-Length')
@@ -158,31 +172,50 @@ class OfficialStockProvider:
                         chunks.append(chunk)
                     return b''.join(chunks),response.headers.get('Content-Type','').split(';')[0].lower()
         except (httpx.HTTPError,TimeoutError):raise StockProviderFailure('STOCK_NETWORK_FAILED',retryable=True) from None
+        finally:
+            if lease is not None:await self.wire_guard.release(lease,status=status,headers=headers)
 
     def _cache_path(self,scope,key):
         path=self.cache_root/digest(scope)/self.key/(key+'.json')
         if linked(path) or self.cache_root.resolve() not in path.resolve().parents:raise StockProviderFailure('STOCK_CACHE_PATH_INVALID')
         return path
 
-    async def _json(self,path,params):
+    def _cache_request(self,path,params):
         scope=self._require();key=digest({'provider':self.key,'path':path,'params':params,'schema':2,
             'binding_sha256':self.cache_binding_sha256})
-        file=self._cache_path(scope,key)
+        return scope,key,self._cache_path(scope,key)
+
+    def _read_cache(self,scope,key,file):
+        actual=cache_io_path(file)
+        if not actual.exists():return None
+        if actual.stat().st_size>JSON_LIMIT+2048:raise StockProviderFailure('STOCK_CACHE_INVALID')
+        try:
+            cached=json.loads(actual.read_bytes())
+            bound=(type(cached['schema']) is int and cached['schema']==2
+                and cached['scope']==digest(scope) and cached['key']==key and cached['provider']==self.key
+                and cached['binding_sha256']==self.cache_binding_sha256 and cached['execution_mode']==self.cache_mode
+                and cached['configuration_sha256']==self.cache_configuration_sha256 and isinstance(cached['response'],dict)
+                and cached['sha256']==digest(cached['response']) and isinstance(cached['created_at'],(int,float))
+                and not isinstance(cached['created_at'],bool) and math.isfinite(cached['created_at']))
+        except (ValueError,KeyError,TypeError):raise StockProviderFailure('STOCK_CACHE_INVALID') from None
+        if not bound:raise StockProviderFailure('STOCK_CACHE_INVALID')
+        return cached['response'] if 0<=time.time()-cached['created_at']<CACHE_SECONDS else None
+
+    async def cached_metadata(self,provider_asset_id):
+        path,params=self._metadata_request(provider_asset_id)
+        scope,key,file=self._cache_request(path,params)
         async with self._cache_lock:
-            actual=cache_io_path(file)
-            if actual.exists():
-                if actual.stat().st_size>JSON_LIMIT+2048:raise StockProviderFailure('STOCK_CACHE_INVALID')
-                try:
-                    cached=json.loads(actual.read_bytes())
-                    bound=(type(cached['schema']) is int and cached['schema']==2
-                        and cached['scope']==digest(scope) and cached['key']==key and cached['provider']==self.key
-                        and cached['binding_sha256']==self.cache_binding_sha256 and cached['execution_mode']==self.cache_mode
-                        and cached['configuration_sha256']==self.cache_configuration_sha256 and isinstance(cached['response'],dict)
-                        and cached['sha256']==digest(cached['response']) and isinstance(cached['created_at'],(int,float))
-                        and not isinstance(cached['created_at'],bool) and math.isfinite(cached['created_at']))
-                except (ValueError,KeyError,TypeError):raise StockProviderFailure('STOCK_CACHE_INVALID') from None
-                if not bound:raise StockProviderFailure('STOCK_CACHE_INVALID')
-                if 0<=time.time()-cached['created_at']<CACHE_SECONDS:return cached['response']
+            body=self._read_cache(scope,key,file)
+        return (digest(scope)+':'+key,body) if body is not None else None
+
+    async def _json(self,path,params):
+        scope,key,file=self._cache_request(path,params);memo_key=digest(scope)+':'+key
+        operation=CURRENT_OPERATION.get()
+        if operation is not None and memo_key in operation.cached_inputs:
+            return operation.cached_inputs[memo_key]
+        async with self._cache_lock:
+            cached_body=self._read_cache(scope,key,file)
+            if cached_body is not None:return cached_body
             raw,mime=await self._response('https://'+self.api_host+path,params,limit=JSON_LIMIT)
             if mime!='application/json' or self._api_key.encode() in raw:raise StockProviderFailure('STOCK_RESPONSE_INVALID')
             try:body=json.loads(raw)
@@ -198,7 +231,7 @@ class OfficialStockProvider:
             try:
                 with temporary.open('xb') as handle:
                     handle.write(json.dumps(cached,ensure_ascii=False,separators=(',',':')).encode());handle.flush();os.fsync(handle.fileno())
-                os.replace(temporary,actual)
+                os.replace(temporary,cache_io_path(file))
             finally:temporary.unlink(missing_ok=True)
             return body
 
@@ -259,7 +292,7 @@ class OfficialStockProvider:
             license=trusted.license,license_url=trusted.license_url,provider_asset_id=trusted.provider_asset_id,
             creator=trusted.creator,source_reference=trusted.source_reference,attribution_requirement=trusted.attribution_requirement,
             width=trusted.width,height=trusted.height,duration_seconds=trusted.duration_seconds,orientation=trusted.orientation,
-            production_eligible=False,estimated_cost_vnd=Decimal(0),actual_cost_vnd=Decimal(0),external_call=True,
+            production_eligible=False,estimated_cost_vnd=Decimal(0),actual_cost_vnd=None,external_call=True,
             paid=False,real_provider_tested=False,generation_provenance={'provider':self.key,'licensed_stock':True,
                 'real_provider_tested':False,'mock_transport_used':self.mock_transport_used,
                 'fixture':self.mock_transport_used,'production_eligible':False,'complete_decode_required':True,
@@ -297,11 +330,16 @@ class PexelsStockMediaProvider(OfficialStockProvider):
 
     async def search_images(self,query,*,orientation,limit):return await self._search('image',query,orientation,limit)
     async def search_videos(self,query,*,orientation,limit):return await self._search('video',query,orientation,limit)
-    async def get_asset(self,provider_asset_id):
+    def _metadata_request(self,provider_asset_id):
         match=re.fullmatch(r'(image|video):([1-9][0-9]{0,11})',provider_asset_id)
         if not match:raise ValueError('STOCK_ASSET_ID_INVALID')
         kind,identifier=match.groups()
-        body=await self._json(('/v1/photos/' if kind=='image' else '/v1/videos/videos/')+identifier,{})
+        return ('/v1/photos/' if kind=='image' else '/v1/videos/videos/')+identifier,{}
+
+    async def get_asset(self,provider_asset_id):
+        path,params=self._metadata_request(provider_asset_id)
+        body=await self._json(path,params)
+        kind,identifier=provider_asset_id.split(':')
         if str(body.get('id'))!=identifier:raise StockProviderFailure('STOCK_ASSET_BINDING_MISMATCH')
         return self._parse(body,kind)
 
@@ -336,10 +374,16 @@ class PixabayStockMediaProvider(OfficialStockProvider):
 
     async def search_images(self,query,*,orientation,limit):return await self._search('image',query,orientation,limit)
     async def search_videos(self,query,*,orientation,limit):return await self._search('video',query,orientation,limit)
-    async def get_asset(self,provider_asset_id):
+    def _metadata_request(self,provider_asset_id):
         match=re.fullmatch(r'(image|video):([1-9][0-9]{0,11})',provider_asset_id)
         if not match:raise ValueError('STOCK_ASSET_ID_INVALID')
-        kind,identifier=match.groups();body=await self._json('/api/' if kind=='image' else '/api/videos/',{'id':identifier})
+        kind,identifier=match.groups()
+        return ('/api/' if kind=='image' else '/api/videos/'),{'id':identifier}
+
+    async def get_asset(self,provider_asset_id):
+        path,params=self._metadata_request(provider_asset_id)
+        body=await self._json(path,params)
+        kind,identifier=provider_asset_id.split(':')
         items=body.get('hits',[])
         if len(items)!=1 or str(items[0].get('id'))!=identifier:raise StockProviderFailure('STOCK_ASSET_BINDING_MISMATCH')
         return self._parse(items[0],kind)

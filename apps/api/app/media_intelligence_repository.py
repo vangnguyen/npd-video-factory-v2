@@ -4,7 +4,7 @@ import uuid
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_,update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -308,17 +308,27 @@ class MediaIntelligenceRepository:
                     raise
                 return _resolution_job_read(existing), False
 
-    async def mark_resolution_running(self, resolution_job_id: str) -> None:
+    async def mark_resolution_running(self, resolution_job_id: str, *, expected_stock_claim_id: str | None = None) -> bool:
         async with self.session_factory() as session:
+            if expected_stock_claim_id is not None:
+                result = await session.execute(update(MediaResolutionJobORM).where(
+                    MediaResolutionJobORM.resolution_job_id == resolution_job_id,
+                    MediaResolutionJobORM.status == 'running',
+                    MediaResolutionJobORM.provenance_json['stock_wire_execution']['claim_id'].as_string() == expected_stock_claim_id,
+                ).values(updated_at=MediaResolutionJobORM.updated_at))
+                if result.rowcount != 1:
+                    await session.rollback()
+                    return False
             row = await session.get(MediaResolutionJobORM, resolution_job_id)
             if row is None:
                 raise KeyError(resolution_job_id)
-            if row.status == "succeeded":
-                return
+            if row.status in {"succeeded", "cancelled", "failed"}:
+                return False
             row.status = "running"
             row.progress = max(row.progress, 10)
             row.updated_at = utc_now()
             await session.commit()
+            return True
 
     async def mark_resolution_needs_approval(
         self, resolution_job_id: str, *, reason: str
@@ -340,11 +350,21 @@ class MediaIntelligenceRepository:
             await session.commit()
 
     async def mark_resolution_failed(
-        self, resolution_job_id: str, *, error_code: str, reason: str
+        self, resolution_job_id: str, *, error_code: str, reason: str,
+        expected_stock_claim_id: str | None = None,
     ) -> None:
         async with self.session_factory() as session:
+            if expected_stock_claim_id is not None:
+                result = await session.execute(update(MediaResolutionJobORM).where(
+                    MediaResolutionJobORM.resolution_job_id == resolution_job_id,
+                    MediaResolutionJobORM.status == 'running',
+                    MediaResolutionJobORM.provenance_json['stock_wire_execution']['claim_id'].as_string() == expected_stock_claim_id,
+                ).values(updated_at=MediaResolutionJobORM.updated_at))
+                if result.rowcount != 1:
+                    await session.rollback()
+                    return
             row = await session.get(MediaResolutionJobORM, resolution_job_id)
-            if row is None:
+            if row is None or row.status in {'cancelled','succeeded','failed'}:
                 return
             item = await session.get(MediaPlanItemORM, row.media_plan_item_id)
             row.status = "failed"
@@ -383,9 +403,17 @@ class MediaIntelligenceRepository:
         actual_cost_vnd: Decimal | None,
         downloaded_at,
         provenance: dict[str, Any],
+        expected_stock_claim_id: str | None = None,
     ) -> None:
         async with self.session_factory() as session:
             async with session.begin():
+                if expected_stock_claim_id is not None:
+                    result=await session.execute(update(MediaResolutionJobORM).where(
+                        MediaResolutionJobORM.resolution_job_id==resolution_job_id,
+                        MediaResolutionJobORM.status=='running',
+                        MediaResolutionJobORM.provenance_json['stock_wire_execution']['claim_id'].as_string()==expected_stock_claim_id
+                    ).values(updated_at=MediaResolutionJobORM.updated_at))
+                    if result.rowcount!=1:return
                 job = await session.scalar(
                     select(MediaResolutionJobORM)
                     .where(MediaResolutionJobORM.resolution_job_id == resolution_job_id)
@@ -393,7 +421,7 @@ class MediaIntelligenceRepository:
                 )
                 if job is None:
                     raise KeyError(resolution_job_id)
-                if job.status == "succeeded":
+                if job.status in {"succeeded","cancelled"}:
                     return
                 item = await session.get(MediaPlanItemORM, job.media_plan_item_id)
                 if item is None:
@@ -449,6 +477,11 @@ class MediaIntelligenceRepository:
                 job.error_code = None
                 job.failure_reason = None
                 job.provenance_json = {**job.provenance_json, **provenance}
+                if expected_stock_claim_id is not None:
+                    from .stock_resolution_deferral import KEY, state
+                    execution = state(job)
+                    execution.update(claim_id=None, lease_until=None, next_at=None)
+                    job.provenance_json = {**job.provenance_json, KEY: execution}
                 job.updated_at = utc_now()
                 item.selected_media_asset_id = selected_media_asset_id
                 item.status = "resolved"
@@ -479,17 +512,33 @@ class MediaIntelligenceRepository:
             raise KeyError(job.media_plan_item_id)
         return job, plan, item
 
-    async def list_incomplete_resolution_job_ids(self) -> list[str]:
+    async def list_incomplete_resolution_job_ids(self, *, now: float | None = None) -> list[str]:
         async with self.session_factory() as session:
-            return list(
-                (
-                    await session.scalars(
-                        select(MediaResolutionJobORM.resolution_job_id)
-                        .where(MediaResolutionJobORM.status.in_(["queued", "running"]))
-                        .order_by(MediaResolutionJobORM.created_at)
-                    )
-                ).all()
-            )
+            rows=(await session.scalars(select(MediaResolutionJobORM)
+                .where(MediaResolutionJobORM.status.in_(["queued","running"]))
+                .order_by(MediaResolutionJobORM.created_at))).all()
+            if now is None:return [row.resolution_job_id for row in rows]
+            from .stock_resolution_deferral import KEY,state
+            due=[]
+            for row in rows:
+                if KEY in row.provenance_json:
+                    value=state(row)
+                    if value['next_at'] is not None and value['next_at']>now:continue
+                    if value['claim_id'] is not None and value['lease_until']>now:continue
+                due.append(row.resolution_job_id)
+            return due
+
+    async def list_due_stock_resolution_job_ids(self, *, now: float) -> list[str]:
+        """Only prior read-only stock waits; never discover a paid operation to replay."""
+        from .stock_resolution_deferral import KEY, state, due
+        async with self.session_factory() as session:
+            rows = (await session.scalars(select(MediaResolutionJobORM).where(
+                MediaResolutionJobORM.status.in_(["queued", "running"]),
+                MediaResolutionJobORM.capability == "stock_media",
+                MediaResolutionJobORM.paid.is_(False),
+            ).order_by(MediaResolutionJobORM.created_at))).all()
+            return [row.resolution_job_id for row in rows
+                if KEY in row.provenance_json and due(state(row), now)]
 
     async def list_media_assets(self, project_id: str) -> list[MediaAssetProvenanceRead]:
         async with self.session_factory() as session:

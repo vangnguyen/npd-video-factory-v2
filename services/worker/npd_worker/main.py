@@ -206,9 +206,21 @@ async def run_media_resolution_queue(
                 result.status,
             )
         except Exception:
-            logger.exception("media_resolution_worker_error resolution_job_id=%s", resolution_job_id)
+            logger.warning("media_resolution_worker_error resolution_job_id=%s", resolution_job_id)
         finally:
             await redis.lrem(MEDIA_RESOLUTION_PROCESSING_KEY, 1, resolution_job_id)
+
+
+async def recover_due_stock_jobs(service: MediaResolutionService) -> None:
+    """Only already deferred read-only stock work; no paid job redispatch."""
+    while True:
+        try:
+            count = await service.recover_due_stock()
+            if count:
+                logger.info('stock_due_jobs_enqueued count=%d', count)
+        except Exception:
+            logger.warning('stock_due_job_recovery_failed')
+        await asyncio.sleep(30)
 
 
 async def run_preview_queue(redis: Redis, service: PreviewService) -> None:
@@ -376,7 +388,11 @@ async def main() -> None:
         staging_root=settings.analysis_staging_root / 'uploaded-audio',provider_safety=audio_safety)
     await uploaded_audio.recover()
     await recover_inflight(redis)
-    providers = create_media_provider_bundle(settings)
+    from app.stock_wire_quota import StockWireQuotaRepository, StockWireQuotaGuard
+    stock_wire_repository = StockWireQuotaRepository(session_factory)
+    await stock_wire_repository.ensure_state()
+    providers = create_media_provider_bundle(settings,
+        stock_wire_guard=StockWireQuotaGuard(stock_wire_repository))
     media_resolution_service = MediaResolutionService(
         repository=media_repository,
         platform=platform,
@@ -452,6 +468,7 @@ async def main() -> None:
             run_uploaded_audio_queue(redis, uploaded_audio),
             recover_uploaded_audio_queue(uploaded_audio),
             run_media_resolution_queue(redis, media_resolution_service),
+            recover_due_stock_jobs(media_resolution_service),
             run_preview_queue(redis, preview_service),
             run_production_render_queue(redis, production_render_service),
             run_analytics_sync_queue(redis, analytics_processor),

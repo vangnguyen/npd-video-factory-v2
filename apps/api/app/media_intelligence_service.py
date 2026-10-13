@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import time
+from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -56,6 +58,10 @@ from .provider_safety import (
 from .vision_repository import VisionRepository
 from .stock_media_providers import PexelsStockMediaProvider,PixabayStockMediaProvider,stock_request_scope
 from .media_generation_scope import media_generation_scope
+from .stock_wire_context import CURRENT_OPERATION,stock_wire_operation
+from .stock_wire_quota import StockWireDeferred,digest as stock_digest
+from .stock_media_providers import OfficialStockProvider,StockProviderFailure
+from . import stock_resolution_deferral as stock_wait
 
 
 MEDIA_RESOLUTION_QUEUE_KEY = "npd:video-factory:v2:media-resolution:queued"
@@ -73,7 +79,7 @@ class MediaProviderBundle:
     video: VideoGenerationProvider
 
 
-def create_media_provider_bundle(settings) -> MediaProviderBundle:
+def create_media_provider_bundle(settings, *, stock_wire_guard=None) -> MediaProviderBundle:
     stock: StockMediaProvider = (
         DeterministicStockMediaProvider()
         if settings.stock_media_provider == "fixture"
@@ -83,7 +89,7 @@ def create_media_provider_bundle(settings) -> MediaProviderBundle:
         adapter=PexelsStockMediaProvider if settings.stock_media_provider=='pexels' else PixabayStockMediaProvider
         secret=settings.pexels_api_key if settings.stock_media_provider=='pexels' else settings.pixabay_api_key
         stock=adapter(api_key=secret.get_secret_value(),enabled=settings.media_external_execution_enabled,
-            cache_root=settings.stock_cache_root)
+            cache_root=settings.stock_cache_root,wire_guard=stock_wire_guard,require_wire_guard=True)
     if settings.image_generation_provider == "fixture":
         image: ImageGenerationProvider = DeterministicImageGenerationProvider()
     elif settings.image_generation_provider == "comfyui":
@@ -254,7 +260,9 @@ class MediaPlanningService:
                         stock=stock_available,image=image_available,video=video_available,preferred_type=broll.preferred_media_type)
                 if strategy not in {"stock_image", "stock_video"}:
                     continue
-                with stock_request_scope(project.workspace_id):
+                with stock_request_scope(project.workspace_id), stock_wire_operation(workspace_id=project.workspace_id,
+                    project_id=project_id,source_ref='media-plan:'+media_plan_id+':'+scene.scene_id,
+                    budget_sha256=stock_digest({'max_ai_cost_vnd':str(payload.max_ai_cost_vnd),'paid':False})):
                     if strategy == "stock_video":
                         found = await self.providers.stock.search_videos(broll.search_query,orientation=orientation,limit=3)
                     else:
@@ -299,7 +307,7 @@ class MediaPlanningService:
                     units=Decimal(total_stock_candidates),
                     unit_name="candidate",
                     estimated_cost=Decimal("0"),
-                    actual_cost=Decimal("0"),
+                    actual_cost=None if self.providers.stock.external else Decimal("0"),
                     metadata={
                         "fixture": not self.providers.stock.external,
                         "external_call": self.providers.stock.external,
@@ -415,6 +423,8 @@ class MediaResolutionService:
                 candidate.candidate_id for candidate in item.candidates
             }:
                 raise ValueError("selected stock candidate is not part of the media plan item")
+        stock_selected=next((candidate.model_dump(mode='json') for candidate in item.candidates
+            if candidate.candidate_id==selected_candidate_id),None) if capability=='stock_media' else None
         fingerprint = hashlib.sha256(
             json.dumps(
                 {
@@ -454,6 +464,8 @@ class MediaResolutionService:
                 "request": request_payload,
                 "source_media_mutated": False,
                 "publish_requested": False,
+                **({'stock_selected_candidate':stock_selected,'stock_selected_candidate_sha256':stock_digest(stock_selected)}
+                    if stock_selected is not None else {}),
             },
         )
         if created and job.status == "queued":
@@ -461,17 +473,69 @@ class MediaResolutionService:
         return job
 
     async def process(self, resolution_job_id: str) -> MediaResolutionJobRead:
+        job,plan,item=await self.repository.get_resolution_context(resolution_job_id)
+        adapter=self.providers.stock
+        managed=job.capability=='stock_media' and not job.paid and isinstance(adapter,OfficialStockProvider) and adapter.wire_guard is not None
+        if not managed or job.status in {'succeeded','failed','cancelled','needs_approval'}:
+            return await self._process_once(resolution_job_id)
+        guard=adapter.wire_guard;stamp=float(guard.clock())
+        claim=await stock_wait.claim(self.repository,resolution_job_id,stamp)
+        if not claim.allowed:return await self.repository.get_resolution_job(resolution_job_id)
+        with stock_request_scope(plan.workspace_id),stock_wire_operation(workspace_id=plan.workspace_id,
+                project_id=plan.project_id,source_ref='media-resolution:'+resolution_job_id+':stock:'+str(claim.cycle),
+                budget_sha256=stock_digest({'max_ai_cost_vnd':str(plan.max_ai_cost_vnd),'paid':False})) as operation:
+            try:
+                selected=self._stock_candidate(job,item)
+                metadata=await adapter.cached_metadata(selected.provider_asset_id)
+                async with guard.prepare_download(adapter,plan.workspace_id,metadata):
+                    await self._process_once(resolution_job_id,stock_cycle=claim.cycle,stock_claim_id=claim.claim_id)
+            except StockWireDeferred as deferred:
+                await stock_wait.defer(self.repository,resolution_job_id,claim.claim_id,code=deferred.code,
+                    next_at=deferred.next_at,wire_attempts=operation.wire_attempts,stamp=float(guard.clock()))
+            except StockProviderFailure as error:
+                if error.retryable:
+                    now=float(guard.clock())
+                    await stock_wait.defer(self.repository,resolution_job_id,claim.claim_id,code=error.code,
+                        next_at=now+max(5,error.retry_after_seconds or 0),wire_attempts=operation.wire_attempts,stamp=now)
+                else:
+                    await self.repository.mark_resolution_failed(resolution_job_id,error_code=error.code,reason=error.code,
+                        expected_stock_claim_id=claim.claim_id)
+            except Exception:
+                await self.repository.mark_resolution_failed(resolution_job_id,error_code='STOCK_PRE_DISPATCH_FAILED',
+                    reason='Stock source/configuration could not be verified; no inferred approval.',
+                    expected_stock_claim_id=claim.claim_id)
+            finally:
+                await stock_wait.release_claim(self.repository,resolution_job_id,claim.claim_id)
+        return await self.repository.get_resolution_job(resolution_job_id)
+
+    def _stock_candidate(self,job,item):
+        evidence=getattr(job,'provenance',{}).get('stock_selected_candidate')
+        if evidence is not None:
+            if stock_digest(evidence)!=job.provenance.get('stock_selected_candidate_sha256'):
+                raise ValueError('STOCK_SELECTED_CANDIDATE_CHANGED')
+            selected=StockMediaCandidateRead.model_validate(evidence)
+        else:
+            selected=next((value for value in item.candidates if value.candidate_id==job.selected_candidate_id),None)
+        if selected is None or selected.candidate_id!=job.selected_candidate_id or selected.provider!=self.providers.stock.key:
+            raise ValueError('STOCK_SELECTED_CANDIDATE_CHANGED')
+        binding=selected.provenance.get('cache_binding_sha256')
+        if binding is not None and binding!=getattr(self.providers.stock,'cache_binding_sha256',binding):
+            raise ValueError('STOCK_SELECTED_PROVIDER_CONFIGURATION_CHANGED')
+        return selected
+
+    async def _process_once(self, resolution_job_id: str, *, stock_cycle=None,stock_claim_id=None) -> MediaResolutionJobRead:
         job, plan, item = await self.repository.get_resolution_context(resolution_job_id)
         if job.status in {"succeeded", "failed", "cancelled", "needs_approval"}:
             return job
-        await self.repository.mark_resolution_running(resolution_job_id)
+        if not await self.repository.mark_resolution_running(resolution_job_id, expected_stock_claim_id=stock_claim_id):
+            return await self.repository.get_resolution_job(resolution_job_id)
         staging_path: Path | None = None
         artifact_evidence = None
         try:
             if job.capability != 'internal_media':
                 self._ensure_provider_configured(item)
             provider_context = ProviderCallContext(
-                operation_key=f"media-resolution:{resolution_job_id}",
+                operation_key=f"media-resolution:{resolution_job_id}"+(f':stock:{stock_cycle}' if stock_cycle is not None else ''),
                 workspace_id=plan.workspace_id,
                 project_id=plan.project_id,
                 job_id=resolution_job_id,
@@ -488,7 +552,7 @@ class MediaResolutionService:
             )
             execution = await self.provider_safety.execute(
                 provider_context,
-                lambda: self._materialize(job, plan, item),
+                lambda: self._materialize(job, plan, item, expected_stock_claim_id=stock_claim_id),
             )
             materialized, existing_asset = execution.value
             if materialized.external_call and not self.allow_external_execution:
@@ -563,7 +627,7 @@ class MediaResolutionService:
                             "source_reference": materialized.source_reference,
                             "generation_provenance": materialized.generation_provenance,
                             "production_eligible": materialized.production_eligible,
-                            "fixture": not materialized.external_call,
+                            "fixture": not materialized.external_call or materialized.generation_provenance.get('fixture') is True,
                             "provider_artifact_evidence": artifact_evidence.model_dump(mode="json"),
                         },
                     ),
@@ -582,7 +646,7 @@ class MediaResolutionService:
                 actual_cost=materialized.actual_cost_vnd,
                 max_cost_vnd=plan.max_ai_cost_vnd,
                 metadata={
-                    "fixture": not materialized.external_call,
+                    "fixture": not materialized.external_call or materialized.generation_provenance.get('fixture') is True,
                     "external_call": materialized.external_call,
                     "paid": materialized.paid,
                     "real_provider_tested": materialized.real_provider_tested,
@@ -627,24 +691,32 @@ class MediaResolutionService:
                     "asset_checksum_sha256":asset.checksum_sha256,
                     "full_rights_record_required_for_production": True,
                 },
+                expected_stock_claim_id=stock_claim_id,
             )
         except MediaProviderNotConfigured as exc:
             await self.repository.mark_resolution_failed(
                 resolution_job_id,
                 error_code="PROVIDER_NOT_CONFIGURED",
                 reason=str(exc),
+                expected_stock_claim_id=stock_claim_id,
             )
         except ProviderSafetyBlocked as exc:
+            if stock_cycle is not None and isinstance(exc.__cause__,StockProviderFailure) and exc.__cause__.retryable:
+                raise exc.__cause__
+            if stock_cycle is not None and isinstance(exc.__cause__,StockWireDeferred):raise exc.__cause__
             await self.repository.mark_resolution_failed(
                 resolution_job_id,
                 error_code=exc.code,
                 reason=str(exc),
+                expected_stock_claim_id=stock_claim_id,
             )
         except Exception as exc:
+            if stock_cycle is not None and isinstance(exc,(StockWireDeferred,StockProviderFailure)):raise
             await self.repository.mark_resolution_failed(
                 resolution_job_id,
                 error_code="MEDIA_RESOLUTION_FAILED",
                 reason=str(exc),
+                expected_stock_claim_id=stock_claim_id,
             )
         finally:
             if staging_path:
@@ -658,9 +730,30 @@ class MediaResolutionService:
         return await self.repository.get_resolution_job(resolution_job_id)
 
     async def recover_pending(self) -> int:
-        identifiers = await self.repository.list_incomplete_resolution_job_ids()
+        adapter=self.providers.stock
+        now=float(adapter.wire_guard.clock()) if isinstance(adapter,OfficialStockProvider) and adapter.wire_guard is not None else time.time()
+        identifiers = await self.repository.list_incomplete_resolution_job_ids(now=now)
         for identifier in identifiers:
             await self.queue.rpush(MEDIA_RESOLUTION_QUEUE_KEY, identifier)
+        return len(identifiers)
+
+    async def recover_due_stock(self) -> int:
+        """Requeue elapsed read-only stock waits without touching processing jobs."""
+        adapter = self.providers.stock
+        if not isinstance(adapter, OfficialStockProvider) or adapter.wire_guard is None:
+            return 0
+        identifiers = await self.repository.list_due_stock_resolution_job_ids(
+            now=float(adapter.wire_guard.clock()))
+        # The script makes pending-list de-duplication atomic. SQL claim fencing
+        # remains the authority if a worker already popped this identifier.
+        script = "redis.call('LREM', KEYS[1], 0, ARGV[1]); return redis.call('RPUSH', KEYS[1], ARGV[1])"
+        evaluate = getattr(self.queue, 'eval', None)
+        if not callable(evaluate):
+            if identifiers:
+                raise RuntimeError('STOCK_RECOVERY_ATOMIC_QUEUE_REQUIRED')
+            return 0
+        for identifier in identifiers:
+            await evaluate(script, 1, MEDIA_RESOLUTION_QUEUE_KEY, identifier)
         return len(identifiers)
 
     async def _resolution_contract(self, plan, item, payload):
@@ -749,7 +842,11 @@ class MediaResolutionService:
             self.providers.video.real_provider_tested,
         )
 
-    async def _materialize(self, job, plan, item) -> tuple[ProviderMaterializedMedia, AssetRead | None]:
+    async def _materialize(self, job, plan, item, *, expected_stock_claim_id=None) -> tuple[ProviderMaterializedMedia, AssetRead | None]:
+        if expected_stock_claim_id is not None:
+            current = await self.repository.get_resolution_job(job.resolution_job_id)
+            if current is None or current.status != 'running' or current.provenance.get(stock_wait.KEY, {}).get('claim_id') != expected_stock_claim_id:
+                raise RuntimeError('STOCK_RESOLUTION_CLAIM_LOST_BEFORE_WIRE')
         if job.capability != 'internal_media':
             self._ensure_provider_configured(item)
         if job.external_call and not self.allow_external_execution:
@@ -805,14 +902,7 @@ class MediaResolutionService:
             )
 
         if item.strategy in {"stock_image", "stock_video"}:
-            selected = next(
-                (
-                    candidate
-                    for candidate in item.candidates
-                    if candidate.candidate_id == job.selected_candidate_id
-                ),
-                None,
-            )
+            selected = self._stock_candidate(job,item)
             if selected is None:
                 raise ValueError("selected stock candidate is missing")
             if selected.provider != self.providers.stock.key:
@@ -822,7 +912,9 @@ class MediaResolutionService:
             # in-process search cache: API planning and worker resolution run in
             # separate containers and both must survive restarts.  External
             # adapters may still refresh provider metadata or signed URLs.
-            with stock_request_scope(plan.workspace_id):
+            with stock_request_scope(plan.workspace_id), (nullcontext() if CURRENT_OPERATION.get() is not None else stock_wire_operation(workspace_id=plan.workspace_id,
+                project_id=plan.project_id,source_ref='media-resolution:'+getattr(job,'resolution_job_id','direct-materialization'),
+                budget_sha256=stock_digest({'max_ai_cost_vnd':str(plan.max_ai_cost_vnd),'paid':False}))):
                 candidate = (
                     await self.providers.stock.get_asset(selected.provider_asset_id)
                     if self.providers.stock.external
