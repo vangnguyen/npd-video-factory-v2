@@ -162,6 +162,12 @@ class TimelineService:
         if timeline is None:
             raise KeyError(project_id)
         snapshot = apply_operations(timeline.snapshot, payload.operations)
+        from .uploaded_audio_timeline import refresh_after_edit
+        from .uploaded_audio_repository import AudioConflict
+        try:
+            snapshot = refresh_after_edit(timeline.snapshot, snapshot, payload.operations)
+        except AudioConflict as exc:
+            raise TimelineEditError(exc.code) from exc
         self.validator.validate(snapshot)
         return await self.repository.commit_mutation(
             project_id=project_id,

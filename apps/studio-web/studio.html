@@ -6,7 +6,7 @@
     <meta name="description" content="NPD Video Factory V2 Studio — auto edit, publishing dry run and read-only analytics learning" />
     <title>NPD Studio · Auto Edit</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="stylesheet" href="/studio.css?v=north-star-broll-1" />
+    <link rel="stylesheet" href="/studio.css?v=sql-audio-1" />
   </head>
   <body>
     <div class="app-shell studio-shell">
@@ -81,6 +81,10 @@
           <p id="mvp-status"></p><details><summary>Media plan</summary><pre id="mvp-plan"></pre></details>
           <details><summary>Diff phiên bản script</summary><pre id="mvp-script-diff"></pre></details>
           <p>Ảnh không có source duration. Timing cảnh là lịch biên tập, không phải measured word timestamps. Video có lời nói vẫn cần ASR hợp lệ. A/V review và duyệt final ở workbench bên dưới.</p>
+        </details>
+        <details id="uploaded-audio-review" class="timeline-panel" open>
+          <summary>Lời nói từ audio nguồn</summary>
+          <p>Đang chuẩn bị audio lời nói. Nhận diện mặc định chưa được cấu hình.</p>
         </details>
         <section id="analysis-review" class="timeline-panel" hidden>
           <h2>Kiểm tra phân tích nguồn</h2><p id="analysis-review-summary"></p>
@@ -458,6 +462,6 @@
       </main>
     </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="/studio.js?v=0.12.0"></script>
+    <script type="module" src="/studio.js?v=sql-audio-1"></script>
   </body>
 </html>

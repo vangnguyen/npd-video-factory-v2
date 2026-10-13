@@ -1,0 +1,1468 @@
+{
+  "fixture_notice": "Explicit SQL/ASGI protocol fixture: owned silent PCM WAV, SQLite and MockASR. No real ASR, external calls or human acceptance.",
+  "state": {
+    "workspaceId": "wsp_40ea9c3484e548e99bca1be4",
+    "workspaceSlug": "ui-audio-fixture",
+    "projectId": "prj_19c3aa11676c41f197a39103",
+    "assets": [
+      {
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+        "project_id": "prj_19c3aa11676c41f197a39103",
+        "project_version_id": "pver_3c3c212319134e428f351484",
+        "job_id": null,
+        "asset_class": "source",
+        "kind": "audio",
+        "filename": "owned-audio.bin",
+        "object_key": "workspaces/wsp_40ea9c3484e548e99bca1be4/projects/prj_19c3aa11676c41f197a39103/uploads/20eaebffe1816e0ffa6f7f85/owned-audio.bin",
+        "content_type": "audio/wav",
+        "size_bytes": 64044,
+        "checksum_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "storage_provider": "local",
+        "version": 1,
+        "provenance": {
+          "source_type": "user_upload",
+          "rights_status": "owned",
+          "license": "user-provided",
+          "source_reference": "upl_6733ddf6e3ec4d65bee1fd79",
+          "generation_provenance": null,
+          "media_metadata": {
+            "media_kind": "audio",
+            "detected_content_type": "audio/wav",
+            "format_name": "wav",
+            "duration_seconds": 2.0,
+            "width": null,
+            "height": null,
+            "fps": null,
+            "video_codec": null,
+            "audio_codec": "pcm_s16le",
+            "audio_channels": 1,
+            "audio_sample_rate": 16000
+          },
+          "client_filename_retained_as_evidence": "owned-audio.bin"
+        },
+        "created_at": "2026-10-13T10:04:31.801861",
+        "updated_at": "2026-10-13T10:04:31.801863"
+      }
+    ],
+    "timeline": null,
+    "principal": {
+      "subject": "usr:test-owner",
+      "token_id": "test-owner",
+      "platform_role": "editor",
+      "workspace_roles": {
+        "*": "editor"
+      }
+    },
+    "busy": false,
+    "dirty": false
+  },
+  "original": {
+    "schema_version": "uploaded-audio-transcription.v1",
+    "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+    "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+    "project_id": "prj_19c3aa11676c41f197a39103",
+    "asset_id": "ast_4462b5506d9843d599018246",
+    "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+    "job": {
+      "job_id": "job_audio_53c49bb5e1bbcdcd75f1b912",
+      "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+      "project_id": "prj_19c3aa11676c41f197a39103",
+      "project_version_id": "pver_3c3c212319134e428f351484",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "progress": 100,
+      "request": {
+        "kind": "uploaded_audio_transcription",
+        "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "provider_binding_sha256": "ca86967c72e136e5f419d4c977bd2b163e9bedeab1ea75266582cdd2be714cd2",
+        "actor_ref": "usr:fixture-editor"
+      },
+      "artifacts": [
+        {
+          "kind": "metadata",
+          "name": "audio-transcript.json",
+          "url": "aud_53c49bb5e1bbcdcd75f1b912",
+          "asset_id": null,
+          "object_key": null,
+          "checksum_sha256": "1222ae84d963fd324d3d83451a843d01fcb8ffb8bdc0debf4ed9cc86efab2966",
+          "size_bytes": null,
+          "storage_provider": null,
+          "content_type": null
+        }
+      ],
+      "error": null,
+      "created_at": "2026-10-13T10:04:31.823229",
+      "updated_at": "2026-10-13T10:04:31.922438"
+    },
+    "original": {
+      "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 1,
+      "is_original_evidence": true,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ba60ca6c8f8299439b032aed",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Xin chào.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.4,
+              "text": "Xin",
+              "confidence": 0.9
+            },
+            {
+              "word_id": "wrd_be46650bead7871bcb0821cb",
+              "ordinal": 1,
+              "start_seconds": 0.4,
+              "end_seconds": 0.9,
+              "text": "chào.",
+              "confidence": 0.8
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": true,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true
+      },
+      "created_at": "2026-10-13T10:04:31.896281Z"
+    },
+    "current": {
+      "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 1,
+      "is_original_evidence": true,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ba60ca6c8f8299439b032aed",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Xin chào.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.4,
+              "text": "Xin",
+              "confidence": 0.9
+            },
+            {
+              "word_id": "wrd_be46650bead7871bcb0821cb",
+              "ordinal": 1,
+              "start_seconds": 0.4,
+              "end_seconds": 0.9,
+              "text": "chào.",
+              "confidence": 0.8
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": true,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true
+      },
+      "created_at": "2026-10-13T10:04:31.896281Z"
+    },
+    "versions": [
+      {
+        "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 1,
+        "is_original_evidence": true,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ba60ca6c8f8299439b032aed",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Xin chào.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.4,
+                "text": "Xin",
+                "confidence": 0.9
+              },
+              {
+                "word_id": "wrd_be46650bead7871bcb0821cb",
+                "ordinal": 1,
+                "start_seconds": 0.4,
+                "end_seconds": 0.9,
+                "text": "chào.",
+                "confidence": 0.8
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": true,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true
+        },
+        "created_at": "2026-10-13T10:04:31.896281Z"
+      }
+    ],
+    "timeline_version": null,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "publishing_enabled": false
+  },
+  "text": {
+    "schema_version": "uploaded-audio-transcription.v1",
+    "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+    "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+    "project_id": "prj_19c3aa11676c41f197a39103",
+    "asset_id": "ast_4462b5506d9843d599018246",
+    "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+    "job": {
+      "job_id": "job_audio_53c49bb5e1bbcdcd75f1b912",
+      "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+      "project_id": "prj_19c3aa11676c41f197a39103",
+      "project_version_id": "pver_3c3c212319134e428f351484",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "progress": 100,
+      "request": {
+        "kind": "uploaded_audio_transcription",
+        "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "provider_binding_sha256": "ca86967c72e136e5f419d4c977bd2b163e9bedeab1ea75266582cdd2be714cd2",
+        "actor_ref": "usr:fixture-editor"
+      },
+      "artifacts": [
+        {
+          "kind": "metadata",
+          "name": "audio-transcript.json",
+          "url": "aud_53c49bb5e1bbcdcd75f1b912",
+          "asset_id": null,
+          "object_key": null,
+          "checksum_sha256": "1222ae84d963fd324d3d83451a843d01fcb8ffb8bdc0debf4ed9cc86efab2966",
+          "size_bytes": null,
+          "storage_provider": null,
+          "content_type": null
+        }
+      ],
+      "error": null,
+      "created_at": "2026-10-13T10:04:31.823229",
+      "updated_at": "2026-10-13T10:04:31.922438"
+    },
+    "original": {
+      "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 1,
+      "is_original_evidence": true,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ba60ca6c8f8299439b032aed",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Xin chào.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.4,
+              "text": "Xin",
+              "confidence": 0.9
+            },
+            {
+              "word_id": "wrd_be46650bead7871bcb0821cb",
+              "ordinal": 1,
+              "start_seconds": 0.4,
+              "end_seconds": 0.9,
+              "text": "chào.",
+              "confidence": 0.8
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": true,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true
+      },
+      "created_at": "2026-10-13T10:04:31.896281Z"
+    },
+    "current": {
+      "transcript_id": "trn_d50551d9510748f39c103aef",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 2,
+      "is_original_evidence": false,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ff6f3b01f814454c8d16a4f6",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Chữ do người dùng sửa.",
+          "speaker": null,
+          "confidence": null,
+          "words": []
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": false,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true,
+        "human_edit": true,
+        "actor_ref": "usr:test-owner",
+        "derived_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+        "derived_from_version": 1,
+        "segment_id_mapping": {
+          "seg_ba60ca6c8f8299439b032aed": "seg_ff6f3b01f814454c8d16a4f6"
+        },
+        "edit_note": "",
+        "remote_calls": 0,
+        "changed_segment_ids": [
+          "seg_ba60ca6c8f8299439b032aed"
+        ],
+        "word_timestamp_policy": "discard_for_changed_text"
+      },
+      "created_at": "2026-10-13T10:04:32.059667Z"
+    },
+    "versions": [
+      {
+        "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 1,
+        "is_original_evidence": true,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ba60ca6c8f8299439b032aed",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Xin chào.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.4,
+                "text": "Xin",
+                "confidence": 0.9
+              },
+              {
+                "word_id": "wrd_be46650bead7871bcb0821cb",
+                "ordinal": 1,
+                "start_seconds": 0.4,
+                "end_seconds": 0.9,
+                "text": "chào.",
+                "confidence": 0.8
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": true,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true
+        },
+        "created_at": "2026-10-13T10:04:31.896281Z"
+      },
+      {
+        "transcript_id": "trn_d50551d9510748f39c103aef",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 2,
+        "is_original_evidence": false,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ff6f3b01f814454c8d16a4f6",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Chữ do người dùng sửa.",
+            "speaker": null,
+            "confidence": null,
+            "words": []
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": false,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true,
+          "human_edit": true,
+          "actor_ref": "usr:test-owner",
+          "derived_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+          "derived_from_version": 1,
+          "segment_id_mapping": {
+            "seg_ba60ca6c8f8299439b032aed": "seg_ff6f3b01f814454c8d16a4f6"
+          },
+          "edit_note": "",
+          "remote_calls": 0,
+          "changed_segment_ids": [
+            "seg_ba60ca6c8f8299439b032aed"
+          ],
+          "word_timestamp_policy": "discard_for_changed_text"
+        },
+        "created_at": "2026-10-13T10:04:32.059667Z"
+      }
+    ],
+    "timeline_version": null,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "publishing_enabled": false
+  },
+  "words": {
+    "schema_version": "uploaded-audio-transcription.v1",
+    "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+    "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+    "project_id": "prj_19c3aa11676c41f197a39103",
+    "asset_id": "ast_4462b5506d9843d599018246",
+    "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+    "job": {
+      "job_id": "job_audio_53c49bb5e1bbcdcd75f1b912",
+      "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+      "project_id": "prj_19c3aa11676c41f197a39103",
+      "project_version_id": "pver_3c3c212319134e428f351484",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "progress": 100,
+      "request": {
+        "kind": "uploaded_audio_transcription",
+        "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "provider_binding_sha256": "ca86967c72e136e5f419d4c977bd2b163e9bedeab1ea75266582cdd2be714cd2",
+        "actor_ref": "usr:fixture-editor"
+      },
+      "artifacts": [
+        {
+          "kind": "metadata",
+          "name": "audio-transcript.json",
+          "url": "aud_53c49bb5e1bbcdcd75f1b912",
+          "asset_id": null,
+          "object_key": null,
+          "checksum_sha256": "1222ae84d963fd324d3d83451a843d01fcb8ffb8bdc0debf4ed9cc86efab2966",
+          "size_bytes": null,
+          "storage_provider": null,
+          "content_type": null
+        }
+      ],
+      "error": null,
+      "created_at": "2026-10-13T10:04:31.823229",
+      "updated_at": "2026-10-13T10:04:31.922438"
+    },
+    "original": {
+      "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 1,
+      "is_original_evidence": true,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ba60ca6c8f8299439b032aed",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Xin chào.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.4,
+              "text": "Xin",
+              "confidence": 0.9
+            },
+            {
+              "word_id": "wrd_be46650bead7871bcb0821cb",
+              "ordinal": 1,
+              "start_seconds": 0.4,
+              "end_seconds": 0.9,
+              "text": "chào.",
+              "confidence": 0.8
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": true,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true
+      },
+      "created_at": "2026-10-13T10:04:31.896281Z"
+    },
+    "current": {
+      "transcript_id": "trn_9f698d9f46d64623867069f4",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 3,
+      "is_original_evidence": false,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_fb7df2a5908642b7bc87e8fb",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Chữ do người dùng sửa.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_4ac3c5b8293f4df585dbced4",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.9,
+              "text": "Chữ do người dùng sửa.",
+              "confidence": null
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": false,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true,
+        "human_edit": true,
+        "actor_ref": "usr:test-owner",
+        "derived_from_transcript_id": "trn_d50551d9510748f39c103aef",
+        "derived_from_version": 1,
+        "segment_id_mapping": {
+          "seg_ff6f3b01f814454c8d16a4f6": "seg_fb7df2a5908642b7bc87e8fb"
+        },
+        "edit_note": "",
+        "remote_calls": 0,
+        "changed_segment_ids": [
+          "seg_ff6f3b01f814454c8d16a4f6"
+        ],
+        "word_timestamp_policy": "human_supplied_source_intervals",
+        "reviewed_segment_ids": [
+          "seg_ff6f3b01f814454c8d16a4f6"
+        ],
+        "word_alignment_source": "human_supplied",
+        "timing_rewrite_applied": true,
+        "human_timing_acknowledged": true,
+        "timing_independently_measured": false,
+        "review_required": true
+      },
+      "created_at": "2026-10-13T10:04:32.116239Z"
+    },
+    "versions": [
+      {
+        "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 1,
+        "is_original_evidence": true,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ba60ca6c8f8299439b032aed",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Xin chào.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.4,
+                "text": "Xin",
+                "confidence": 0.9
+              },
+              {
+                "word_id": "wrd_be46650bead7871bcb0821cb",
+                "ordinal": 1,
+                "start_seconds": 0.4,
+                "end_seconds": 0.9,
+                "text": "chào.",
+                "confidence": 0.8
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": true,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true
+        },
+        "created_at": "2026-10-13T10:04:31.896281Z"
+      },
+      {
+        "transcript_id": "trn_d50551d9510748f39c103aef",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 2,
+        "is_original_evidence": false,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ff6f3b01f814454c8d16a4f6",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Chữ do người dùng sửa.",
+            "speaker": null,
+            "confidence": null,
+            "words": []
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": false,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true,
+          "human_edit": true,
+          "actor_ref": "usr:test-owner",
+          "derived_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+          "derived_from_version": 1,
+          "segment_id_mapping": {
+            "seg_ba60ca6c8f8299439b032aed": "seg_ff6f3b01f814454c8d16a4f6"
+          },
+          "edit_note": "",
+          "remote_calls": 0,
+          "changed_segment_ids": [
+            "seg_ba60ca6c8f8299439b032aed"
+          ],
+          "word_timestamp_policy": "discard_for_changed_text"
+        },
+        "created_at": "2026-10-13T10:04:32.059667Z"
+      },
+      {
+        "transcript_id": "trn_9f698d9f46d64623867069f4",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 3,
+        "is_original_evidence": false,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_fb7df2a5908642b7bc87e8fb",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Chữ do người dùng sửa.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_4ac3c5b8293f4df585dbced4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Chữ do người dùng sửa.",
+                "confidence": null
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": false,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true,
+          "human_edit": true,
+          "actor_ref": "usr:test-owner",
+          "derived_from_transcript_id": "trn_d50551d9510748f39c103aef",
+          "derived_from_version": 1,
+          "segment_id_mapping": {
+            "seg_ff6f3b01f814454c8d16a4f6": "seg_fb7df2a5908642b7bc87e8fb"
+          },
+          "edit_note": "",
+          "remote_calls": 0,
+          "changed_segment_ids": [
+            "seg_ff6f3b01f814454c8d16a4f6"
+          ],
+          "word_timestamp_policy": "human_supplied_source_intervals",
+          "reviewed_segment_ids": [
+            "seg_ff6f3b01f814454c8d16a4f6"
+          ],
+          "word_alignment_source": "human_supplied",
+          "timing_rewrite_applied": true,
+          "human_timing_acknowledged": true,
+          "timing_independently_measured": false,
+          "review_required": true
+        },
+        "created_at": "2026-10-13T10:04:32.116239Z"
+      }
+    ],
+    "timeline_version": null,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "publishing_enabled": false
+  },
+  "restored": {
+    "schema_version": "uploaded-audio-transcription.v1",
+    "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+    "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+    "project_id": "prj_19c3aa11676c41f197a39103",
+    "asset_id": "ast_4462b5506d9843d599018246",
+    "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+    "job": {
+      "job_id": "job_audio_53c49bb5e1bbcdcd75f1b912",
+      "workspace_id": "wsp_40ea9c3484e548e99bca1be4",
+      "project_id": "prj_19c3aa11676c41f197a39103",
+      "project_version_id": "pver_3c3c212319134e428f351484",
+      "status": "awaiting_review",
+      "stage": "awaiting_review",
+      "progress": 100,
+      "request": {
+        "kind": "uploaded_audio_transcription",
+        "audio_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "source_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "provider_binding_sha256": "ca86967c72e136e5f419d4c977bd2b163e9bedeab1ea75266582cdd2be714cd2",
+        "actor_ref": "usr:fixture-editor"
+      },
+      "artifacts": [
+        {
+          "kind": "metadata",
+          "name": "audio-transcript.json",
+          "url": "aud_53c49bb5e1bbcdcd75f1b912",
+          "asset_id": null,
+          "object_key": null,
+          "checksum_sha256": "1222ae84d963fd324d3d83451a843d01fcb8ffb8bdc0debf4ed9cc86efab2966",
+          "size_bytes": null,
+          "storage_provider": null,
+          "content_type": null
+        }
+      ],
+      "error": null,
+      "created_at": "2026-10-13T10:04:31.823229",
+      "updated_at": "2026-10-13T10:04:31.922438"
+    },
+    "original": {
+      "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 1,
+      "is_original_evidence": true,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ba60ca6c8f8299439b032aed",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Xin chào.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.4,
+              "text": "Xin",
+              "confidence": 0.9
+            },
+            {
+              "word_id": "wrd_be46650bead7871bcb0821cb",
+              "ordinal": 1,
+              "start_seconds": 0.4,
+              "end_seconds": 0.9,
+              "text": "chào.",
+              "confidence": 0.8
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": true,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true
+      },
+      "created_at": "2026-10-13T10:04:31.896281Z"
+    },
+    "current": {
+      "transcript_id": "trn_06edabe7a33940da80829f06",
+      "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+      "asset_id": "ast_4462b5506d9843d599018246",
+      "version": 4,
+      "is_original_evidence": false,
+      "provider_key": "fixture-transcription",
+      "language": "vi",
+      "confidence": null,
+      "segments": [
+        {
+          "segment_id": "seg_ab2f334ff01b46f185dc4e01",
+          "ordinal": 0,
+          "start_seconds": 0.1,
+          "end_seconds": 0.9,
+          "text": "Xin chào.",
+          "speaker": null,
+          "confidence": null,
+          "words": [
+            {
+              "word_id": "wrd_46073d6096c444a39a59c099",
+              "ordinal": 0,
+              "start_seconds": 0.1,
+              "end_seconds": 0.4,
+              "text": "Xin",
+              "confidence": 0.9
+            },
+            {
+              "word_id": "wrd_673127d71b0b4d949f9ff9f9",
+              "ordinal": 1,
+              "start_seconds": 0.4,
+              "end_seconds": 0.9,
+              "text": "chào.",
+              "confidence": 0.8
+            }
+          ]
+        }
+      ],
+      "provenance": {
+        "fixture": true,
+        "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "original_evidence": false,
+        "word_timing_rewritten": false,
+        "provider_safety_receipt": {
+          "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+          "acceptance_lineage_id": null,
+          "provider_key": "fixture-transcription",
+          "capability": "transcription",
+          "status": "succeeded",
+          "attempts": 1,
+          "retries": 0,
+          "charged_cost_vnd": "0",
+          "currency": "VND",
+          "budget_alerts": [],
+          "circuit_state": "closed",
+          "external_call": false,
+          "paid": false,
+          "rights_allowed": true
+        },
+        "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+        "source_media_mutated": false,
+        "recognition_review_required": true,
+        "human_edit": true,
+        "actor_ref": "usr:test-owner",
+        "derived_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+        "derived_from_version": 1,
+        "segment_id_mapping": {
+          "seg_ba60ca6c8f8299439b032aed": "seg_ab2f334ff01b46f185dc4e01"
+        },
+        "edit_note": "",
+        "remote_calls": 0,
+        "restored_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa"
+      },
+      "created_at": "2026-10-13T10:04:32.175968Z"
+    },
+    "versions": [
+      {
+        "transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 1,
+        "is_original_evidence": true,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ba60ca6c8f8299439b032aed",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Xin chào.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_515a029c408f89ef3d5b7d1f",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.4,
+                "text": "Xin",
+                "confidence": 0.9
+              },
+              {
+                "word_id": "wrd_be46650bead7871bcb0821cb",
+                "ordinal": 1,
+                "start_seconds": 0.4,
+                "end_seconds": 0.9,
+                "text": "chào.",
+                "confidence": 0.8
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": true,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true
+        },
+        "created_at": "2026-10-13T10:04:31.896281Z"
+      },
+      {
+        "transcript_id": "trn_d50551d9510748f39c103aef",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 2,
+        "is_original_evidence": false,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ff6f3b01f814454c8d16a4f6",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Chữ do người dùng sửa.",
+            "speaker": null,
+            "confidence": null,
+            "words": []
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": false,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true,
+          "human_edit": true,
+          "actor_ref": "usr:test-owner",
+          "derived_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+          "derived_from_version": 1,
+          "segment_id_mapping": {
+            "seg_ba60ca6c8f8299439b032aed": "seg_ff6f3b01f814454c8d16a4f6"
+          },
+          "edit_note": "",
+          "remote_calls": 0,
+          "changed_segment_ids": [
+            "seg_ba60ca6c8f8299439b032aed"
+          ],
+          "word_timestamp_policy": "discard_for_changed_text"
+        },
+        "created_at": "2026-10-13T10:04:32.059667Z"
+      },
+      {
+        "transcript_id": "trn_9f698d9f46d64623867069f4",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 3,
+        "is_original_evidence": false,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_fb7df2a5908642b7bc87e8fb",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Chữ do người dùng sửa.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_4ac3c5b8293f4df585dbced4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.9,
+                "text": "Chữ do người dùng sửa.",
+                "confidence": null
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": false,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true,
+          "human_edit": true,
+          "actor_ref": "usr:test-owner",
+          "derived_from_transcript_id": "trn_d50551d9510748f39c103aef",
+          "derived_from_version": 1,
+          "segment_id_mapping": {
+            "seg_ff6f3b01f814454c8d16a4f6": "seg_fb7df2a5908642b7bc87e8fb"
+          },
+          "edit_note": "",
+          "remote_calls": 0,
+          "changed_segment_ids": [
+            "seg_ff6f3b01f814454c8d16a4f6"
+          ],
+          "word_timestamp_policy": "human_supplied_source_intervals",
+          "reviewed_segment_ids": [
+            "seg_ff6f3b01f814454c8d16a4f6"
+          ],
+          "word_alignment_source": "human_supplied",
+          "timing_rewrite_applied": true,
+          "human_timing_acknowledged": true,
+          "timing_independently_measured": false,
+          "review_required": true
+        },
+        "created_at": "2026-10-13T10:04:32.116239Z"
+      },
+      {
+        "transcript_id": "trn_06edabe7a33940da80829f06",
+        "analysis_id": "aud_53c49bb5e1bbcdcd75f1b912",
+        "asset_id": "ast_4462b5506d9843d599018246",
+        "version": 4,
+        "is_original_evidence": false,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": null,
+        "segments": [
+          {
+            "segment_id": "seg_ab2f334ff01b46f185dc4e01",
+            "ordinal": 0,
+            "start_seconds": 0.1,
+            "end_seconds": 0.9,
+            "text": "Xin chào.",
+            "speaker": null,
+            "confidence": null,
+            "words": [
+              {
+                "word_id": "wrd_46073d6096c444a39a59c099",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.4,
+                "text": "Xin",
+                "confidence": 0.9
+              },
+              {
+                "word_id": "wrd_673127d71b0b4d949f9ff9f9",
+                "ordinal": 1,
+                "start_seconds": 0.4,
+                "end_seconds": 0.9,
+                "text": "chào.",
+                "confidence": 0.8
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "source_checksum": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "original_evidence": false,
+          "word_timing_rewritten": false,
+          "provider_safety_receipt": {
+            "operation_key": "job_audio_53c49bb5e1bbcdcd75f1b912:asr",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          },
+          "source_asset_sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+          "source_media_mutated": false,
+          "recognition_review_required": true,
+          "human_edit": true,
+          "actor_ref": "usr:test-owner",
+          "derived_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa",
+          "derived_from_version": 1,
+          "segment_id_mapping": {
+            "seg_ba60ca6c8f8299439b032aed": "seg_ab2f334ff01b46f185dc4e01"
+          },
+          "edit_note": "",
+          "remote_calls": 0,
+          "restored_from_transcript_id": "trn_db5ede796f7c31547fe3f3fa"
+        },
+        "created_at": "2026-10-13T10:04:32.175968Z"
+      }
+    ],
+    "timeline_version": null,
+    "human_review_required": true,
+    "source_media_mutated": false,
+    "publishing_enabled": false
+  },
+  "source": {
+    "status": 200,
+    "headers": {
+      "cache-control": "no-store",
+      "accept-ranges": "bytes",
+      "etag": "\"sha256-20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa\"",
+      "content-length": "64044",
+      "content-type": "audio/wav"
+    },
+    "file": "source.wav"
+  }
+}

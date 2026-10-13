@@ -58,3 +58,23 @@ class AudioTranscriptionRead(StrictModel):
     human_review_required: Literal[True] = True
     source_media_mutated: Literal[False] = False
     publishing_enabled: Literal[False] = False
+
+
+class AudioCaptionApply(StrictModel):
+    source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    expected_transcript_id: str = Field(pattern=r'^trn_[a-f0-9]{24}$')
+    expected_version: int = Field(ge=1, strict=True)
+    expected_timeline_version: int = Field(ge=1, strict=True)
+    source_start: float = Field(default=0., ge=0, allow_inf_nan=False)
+    source_end: float = Field(gt=0, allow_inf_nan=False)
+    timeline_start: float = Field(default=0., ge=0, allow_inf_nan=False)
+    speed: float = Field(default=1., gt=0, le=8, allow_inf_nan=False)
+    mute_original: bool = Field(default=False, strict=True)
+    acknowledged: bool = Field(strict=True)
+    idempotency_key: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9._:-]{7,159}$')
+
+    @model_validator(mode='after')
+    def explicit_apply(self):
+        if not self.acknowledged:
+            raise ValueError('explicit caption apply acknowledgement required')
+        return self

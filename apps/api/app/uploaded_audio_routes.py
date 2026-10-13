@@ -4,7 +4,7 @@ from fastapi.routing import APIRoute
 from .auto_edit_providers import ProviderNotConfigured
 from .human_auth import authorize_project
 from .repositories import _asset_read
-from .uploaded_audio_models import AudioTranscriptionCreate, AudioTranscriptionRead, AudioTextEdit, AudioWordEdit, AudioRestore
+from .uploaded_audio_models import AudioTranscriptionCreate, AudioTranscriptionRead, AudioTextEdit, AudioWordEdit, AudioRestore, AudioCaptionApply
 from .uploaded_audio_repository import AudioConflict, source
 
 class AudioRoute(APIRoute):
@@ -77,6 +77,11 @@ async def restore(project_id:str, audio_id:str, payload:AudioRestore, request:Re
 @router.post('/{audio_id}/cancel', response_model=AudioTranscriptionRead)
 async def cancel(project_id:str, audio_id:str, request:Request):
     return await execute(request,project_id,lambda actor:service(request).cancel(project_id,audio_id,actor.subject),write=True)
+
+
+@router.post('/{audio_id}/apply-captions')
+async def apply_captions(project_id:str, audio_id:str, payload:AudioCaptionApply, request:Request):
+    return await execute(request,project_id,lambda actor:service(request).apply_captions(project_id,audio_id,payload,actor.subject),write=True)
 
 
 @router.get('/{audio_id}/source')

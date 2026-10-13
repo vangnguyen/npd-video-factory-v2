@@ -388,6 +388,10 @@ class UploadedAudioService:
             expected_id=payload.expected_transcript_id,source_sha256=payload.source_sha256,
             expected_timeline_version=payload.edit.expected_timeline_version,actor_ref=actor_ref,revise=revise)
 
+    async def apply_captions(self, project_id, audio_id, payload, actor_ref):
+        await self.verify_source_file(project_id, audio_id)
+        return await self.repository.apply_captions(project_id, audio_id, payload, actor_ref)
+
     async def edit_words(self, project_id, audio_id, payload, actor_ref):
         await self.verify_source_file(project_id,audio_id)
         def revise(versions,parent):

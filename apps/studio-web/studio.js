@@ -28,6 +28,7 @@ import {initializeAnalyticsConsole} from '/analytics-console.mjs';
 import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
 import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
 import {initializeChannelLearning} from '/channel-learning.mjs';
+import {initializeUploadedAudioReview} from '/uploaded-audio-review.mjs?v=sql-audio-1';
 
 const state = {
   workspaceId: null,
@@ -72,11 +73,27 @@ const state = {
   pollTimer: null,
   productionPollTimer: null,
   analyticsPollTimer: null,
+  projectLoading: 0,
 };
 
 const $ = (selector) => document.querySelector(selector);
 const multiInput = initializeMultiInput({api, getState: () => state, refresh: () => loadProject(),
   refreshProjects: () => loadProjectList(), toast, uploadFetch: authenticatedFetch});
+let multiInputBaseline = null;
+function audioWorkbenchDraft() {
+  return JSON.stringify([...document.querySelectorAll('#mvp-kind,#mvp-original,#mvp-script,#mvp-facts,#mvp-protected,#mvp-scenes input,#mvp-scenes textarea,#mvp-scenes select')]
+    .map(input => [input.id, input.dataset.field, input.type === 'checkbox' ? input.checked : input.value]));
+}
+const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-review'), api,
+  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0,
+    dirty: state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  onMessage: toast, onUploaded: () => loadProject(), onCanonicalSaved: () => loadProject()});
+document.addEventListener('input', event => {
+  if (event.target.closest('#multi-input-workbench') || event.target.closest('[data-transcript-text]')) audioReview.sync();
+});
+document.addEventListener('change', event => {
+  if (event.target.closest('#multi-input-workbench')) audioReview.sync();
+});
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
     state.activePublication = publication;
@@ -189,6 +206,11 @@ async function loadProjectList() {
 
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
+  if (audioReview.isDirty()) {toast('Lưu/bỏ sửa hoặc đối chiếu yêu cầu audio trước khi tải lại dự án.', true); return;}
+  const loadedProjectId = state.projectId;
+  state.projectLoading++;
+  $('#project-select').disabled = true;
+  audioReview.sync();
   multiInput.setBusy(true);
   stopPreviewPolling();
   stopProductionPolling();
@@ -208,6 +230,7 @@ async function loadProject({ quiet = false } = {}) {
       api(`/api/v1/projects/${state.projectId}/analytics`),
       api("/api/v1/analytics-providers"),
     ]);
+    if (state.projectId !== loadedProjectId) return;
     Object.assign(state, {
       assets,
       analyses,
@@ -257,6 +280,7 @@ async function loadProject({ quiet = false } = {}) {
     }
     state.playhead = Math.min(state.playhead, timeline?.snapshot?.duration_seconds ?? 0);
     await multiInput.reload();
+    multiInputBaseline = audioWorkbenchDraft();
     render();
     if (["queued", "running"].includes(state.preview?.status)) startPreviewPolling();
     if (["queued", "running"].includes(state.activeProductionRender?.status)) startProductionPolling();
@@ -267,10 +291,15 @@ async function loadProject({ quiet = false } = {}) {
     toast(error.message, true);
   } finally {
     multiInput.setBusy(false);
+    state.projectLoading--;
+    $('#project-select').disabled = state.projectLoading > 0;
+    audioReview.sync();
   }
+  if (state.projectId === loadedProjectId) await audioReview.reload();
 }
 
 function renderNoProject(title, description) {
+  audioReview.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -281,6 +310,7 @@ function renderNoProject(title, description) {
 }
 
 function render() {
+  audioReview.sync();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -1294,7 +1324,12 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if (audioReview.isDirty()) {
+    event.target.value = state.projectId ?? '';
+    return toast('Lưu/bỏ sửa hoặc đối chiếu yêu cầu audio trước khi đổi dự án.', true);
+  }
   state.projectId = event.target.value || null;
+  audioReview.sync();
   window.localStorage.setItem("npd-studio-project", state.projectId ?? "");
   await loadProject();
 });
@@ -1628,6 +1663,7 @@ $("#back-button").addEventListener("click", () => setPlayhead(state.playhead - 1
 $("#preview-video").addEventListener("timeupdate", (event) => setPlayhead(event.target.currentTime, false));
 
 window.addEventListener("beforeunload", () => {
+  audioReview.dispose();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();

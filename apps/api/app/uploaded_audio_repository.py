@@ -212,19 +212,21 @@ class UploadedAudioRepository:
                         TimelineORM.project_id == project_id).with_for_update())
                     if expected_timeline_version != (timeline.current_version if timeline else None):
                         raise AudioConflict('AUDIO_TIMELINE_VERSION_CHANGED')
+                    bound_snapshot = None
                     if timeline:
                         version = await session.get(TimelineVersionORM, timeline.current_version_id)
                         if version is None or timeline.workspace_id != parent.workspace_id:
                             raise AudioConflict('AUDIO_TIMELINE_CHANGED')
-                        prior_ids = {v.transcript_id for v in versions}
-                        for track in version.snapshot_json['tracks']:
-                            for clip in track['clips']:
-                                meta = clip.get('metadata', {})
-                                if (meta.get('transcript_id') in prior_ids
-                                    or meta.get('audio_transcription_id') == audio_id):
-                                    # Audio source mappings differ from video source mappings.
-                                    # Keep approved captions untouched until explicitly reviewed.
-                                    raise AudioConflict('AUDIO_CANONICAL_CAPTION_REVIEW_REQUIRED')
+                        from .timeline_models import TimelineSnapshot
+                        from .uploaded_audio_timeline import binding
+                        candidate = TimelineSnapshot.model_validate(version.snapshot_json)
+                        if binding(candidate, audio_id) is not None:
+                            bound_snapshot = candidate
+                        else:
+                            prior_ids = {v.transcript_id for v in versions}
+                            if any(c.metadata.get('transcript_id') in prior_ids or c.metadata.get('audio_transcription_id') == audio_id
+                                   for t in candidate.tracks for c in t.clips):
+                                raise AudioConflict('AUDIO_CANONICAL_CAPTION_REVIEW_REQUIRED')
                     value = revise(versions, parent)
                     if value is None:
                         return await self.get(project_id, audio_id)
@@ -234,10 +236,24 @@ class UploadedAudioRepository:
                     if count.rowcount != 1:
                         raise AudioConflict('AUDIO_TRANSCRIPT_VERSION_CHANGED')
                     session.add(self.version_row(value, actor_ref))
+                    if bound_snapshot is not None:
+                        from .uploaded_audio_timeline import sync
+                        from .transcript_word_editing import _manual_caption_tracks
+                        from .timeline_repository import TimelineRepository
+                        selected = versions[-1]
+                        bound_id = bound_snapshot.metadata['uploaded_audio_bindings_v1'][audio_id]['transcript_id']
+                        if value.provenance.get('restored_from_transcript_id') == bound_id:
+                            selected = next((v for v in versions if v.transcript_id == bound_id), selected)
+                        snapshot = sync(bound_snapshot, selected, value,
+                            manual_tracks=await _manual_caption_tracks(session, timeline))
+                        await TimelineRepository(self.session_factory).commit_mutation_in_session(session=session,
+                            project_id=project_id, expected_version=expected_timeline_version, snapshot=snapshot,
+                            mutation={'type':'uploaded-audio-transcript-review','audio_id':audio_id,
+                                'transcript_id':value.transcript_id,'source_media_mutated':False}, actor_ref=actor_ref)
                     job = await session.get(JobORM, parent.job_id)
                     session.add(PostgresJobStore._event(row=job, event_type='uploaded_audio.transcript_version_saved',
                         actor_ref=actor_ref, payload={'transcript_id':value.transcript_id,'version':value.version,
-                            'source_media_mutated':False,'timeline_mutated':False,'provider_calls':0}))
+                            'source_media_mutated':False,'timeline_mutated':bound_snapshot is not None,'provider_calls':0}))
             return await self.get(project_id, audio_id)
         except (IntegrityError, OperationalError) as exc:
             if isinstance(exc, OperationalError) and 'locked' not in str(exc).lower():
@@ -250,3 +266,50 @@ class UploadedAudioRepository:
         return UploadedAudioVersionORM(transcript_id=value.transcript_id, audio_id=value.analysis_id,
             version=value.version, transcript_json=body, transcript_sha256=digest(body),
             actor_ref=actor_ref, created_at=value.created_at)
+
+    async def apply_captions(self, project_id, audio_id, payload, actor_ref):
+        actor(actor_ref)
+        request_sha = digest(payload.model_dump(mode='json'))
+        key = digest([audio_id, payload.idempotency_key])
+        try:
+            async with self.session_factory() as session:
+                async with session.begin():
+                    parent = await self.parent(session, project_id, audio_id, lock=True)
+                    versions = await self.versions(session, parent)
+                    if parent.source_sha256 != payload.source_sha256:
+                        raise AudioConflict('AUDIO_SOURCE_CHANGED')
+                    timeline = await session.scalar(select(TimelineORM).where(
+                        TimelineORM.project_id == project_id).with_for_update())
+                    if timeline is None or timeline.workspace_id != parent.workspace_id:
+                        raise AudioConflict('AUDIO_CANONICAL_TIMELINE_REQUIRED')
+                    receipts = (await session.scalars(select(TimelineVersionORM).where(
+                        TimelineVersionORM.timeline_id == timeline.timeline_id).order_by(TimelineVersionORM.version))).all()
+                    for row in receipts:
+                        mutation = row.mutation_json
+                        if mutation.get('type') == 'uploaded-audio-caption-apply' and mutation.get('request_key_sha256') == key:
+                            if mutation.get('request_sha256') != request_sha:
+                                raise AudioConflict('AUDIO_IDEMPOTENCY_CONFLICT')
+                            return dict(audio_id=audio_id, binding_id=mutation['binding_id'],
+                                applied_timeline_version=row.version, replayed=True, human_review_required=True)
+                    if not versions or versions[-1].version != payload.expected_version or versions[-1].transcript_id != payload.expected_transcript_id:
+                        raise AudioConflict('AUDIO_TRANSCRIPT_VERSION_CHANGED')
+                    if timeline.current_version != payload.expected_timeline_version:
+                        raise AudioConflict('AUDIO_TIMELINE_VERSION_CHANGED')
+                    version = await session.get(TimelineVersionORM, timeline.current_version_id)
+                    if version is None or version.timeline_id != timeline.timeline_id:
+                        raise AudioConflict('AUDIO_TIMELINE_CHANGED')
+                    from .timeline_models import TimelineSnapshot
+                    from .uploaded_audio_timeline import apply
+                    from .timeline_repository import TimelineRepository
+                    snapshot, bid = apply(TimelineSnapshot.model_validate(version.snapshot_json), versions[-1], payload,
+                        source_duration=parent.media_metadata_json['duration_seconds'])
+                    await TimelineRepository(self.session_factory).commit_mutation_in_session(session=session,
+                        project_id=project_id, expected_version=payload.expected_timeline_version, snapshot=snapshot,
+                        mutation={'type':'uploaded-audio-caption-apply', 'audio_id':audio_id, 'binding_id':bid,
+                            'request_key_sha256':key, 'request_sha256':request_sha, 'source_media_mutated':False}, actor_ref=actor_ref)
+                    return dict(audio_id=audio_id, binding_id=bid, applied_timeline_version=payload.expected_timeline_version+1,
+                        replayed=False, human_review_required=True)
+        except (IntegrityError, OperationalError) as exc:
+            if isinstance(exc, OperationalError) and 'locked' not in str(exc).lower():
+                raise
+            raise AudioConflict('AUDIO_TIMELINE_VERSION_CHANGED') from exc

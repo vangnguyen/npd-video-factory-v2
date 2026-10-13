@@ -9,5 +9,6 @@ COPY studio.html /usr/share/nginx/html/studio.html
 COPY studio.css /usr/share/nginx/html/studio.css
 COPY studio-utils.mjs /usr/share/nginx/html/studio-utils.mjs
 COPY studio.js /usr/share/nginx/html/studio.js
+COPY *.mjs /usr/share/nginx/html/
 
 EXPOSE 8080

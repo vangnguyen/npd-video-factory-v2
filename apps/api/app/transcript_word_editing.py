@@ -73,6 +73,12 @@ def _sync_captions(snapshot, base, derived, *, manual_tracks):
     if not any(t['kind']=='subtitles' for t in payload['tracks']):
         raise TranscriptWordEditConflict('canonical subtitle track is unavailable')
     subtitle_tracks = [t for t in payload['tracks'] if t['kind']=='subtitles']
+    # Audio caption ownership must never become a fallback destination for
+    # revisions of an unrelated video transcript.
+    subtitle_tracks = [t for t in subtitle_tracks if not any(c['metadata'].get('audio_binding_id') for c in t['clips'])
+        and t['track_id'] not in {b['subtitle_track_id'] for b in payload['metadata'].get('uploaded_audio_bindings_v1', {}).values()}]
+    if not subtitle_tracks:
+        raise TranscriptWordEditConflict('canonical video subtitle track is unavailable')
     targets = {old_id: ({t['track_id'] for t in subtitle_tracks for c in t['clips']
         if c['metadata'].get('transcript_id')==base.transcript_id and c['metadata'].get('segment_id')==old_id}
         or {subtitle_tracks[0]['track_id']}) for old_id in changed}
@@ -89,6 +95,8 @@ def _sync_captions(snapshot, base, derived, *, manual_tracks):
                 raise TranscriptWordEditConflict('reviewed word crosses an existing source boundary')
     for track in payload['tracks']:
         if track['kind'] != 'subtitles':
+            continue
+        if track not in subtitle_tracks:
             continue
         prior_clips = copy.deepcopy(track['clips'])
         originals = [c for c in track['clips'] if c['metadata'].get('transcript_id') == base.transcript_id]

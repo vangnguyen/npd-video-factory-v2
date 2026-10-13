@@ -1148,7 +1148,7 @@ async def capabilities() -> dict[str, object]:
         "auto_edit_analysis": True,
         "uploaded_audio_transcription": "independent_async_versioned_evidence",
         "uploaded_audio_default_provider": "not_configured",
-        "uploaded_audio_canonical_caption_edit": "explicit_review_required",
+        "uploaded_audio_canonical_caption_edit": "explicit_versioned_binding_and_review",
         "auto_edit_timeline": True,
         "timeline_versioning": True,
         "timeline_optimistic_concurrency": True,
