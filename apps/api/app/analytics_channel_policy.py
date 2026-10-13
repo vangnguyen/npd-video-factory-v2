@@ -14,6 +14,7 @@ def _utc_input(value):
     return value.astimezone(timezone.utc)
 
 VERSION = 'winner-channel-assessment-v1'
+META_COUNTER_VERSION = 'winner-meta-counter-assessment-v1'
 WEIGHTS = dict(view_velocity=.18, retention=.16, completion=.16, engagement=.13, shares=.08,
     saves=.07, ctr=.08, follower_conversion=.06, revenue_efficiency=.05, production_cost_efficiency=.03)
 
@@ -118,3 +119,30 @@ def assess_channel(metrics, *, duration, production_cost, context, policy):
     return AssessmentDraft(state=state, score=score, data_coverage=round(available, 6), factors=factors, evidence=evidence,
         recommendations=['Review this relative assessment with its missing metrics and peer evidence.',
             'Collect compatible observations before changing creative strategy; do not delete posts or change media budgets automatically.'], algorithm_version=VERSION)
+
+
+def assess_meta_counter_channel(metrics, *, duration, production_cost, context, policy):
+    """Descriptive interaction comparisons, separated from retention-based quality.
+
+    The Native caller must freeze Meta API/metric definitions and matching distinct
+    post scope. Missing watch time, publication age and counter velocity stay null.
+    """
+    draft=assess_channel(metrics,duration=duration,production_cost=production_cost,context=context,policy=policy)
+    factors=[f.model_copy(update={'evidence':{**f.evidence,'comparison':'matching_meta_counter_scope'}}) for f in draft.factors]
+    available=sum(f.weight for f in factors if f.score is not None)
+    observed={f.factor for f in factors if f.score is not None and f.weight>0}
+    sufficient=(context['scope_verified'] and len(context['peers'])>=policy.minimum_peer_posts
+        and metrics.views is not None and metrics.views>=policy.minimum_views
+        and available>=policy.minimum_weight_coverage and 'engagement' in observed
+        and bool(observed & {'shares','saves'}))
+    score=round(sum(f.score*f.weight for f in factors if f.score is not None)/available,3) if sufficient and available else None
+    state='insufficient_data' if score is None else 'winner_candidate' if score>=policy.winner_threshold else 'underperforming' if score<=policy.underperforming_threshold else 'normal'
+    return AssessmentDraft(state=state,score=score,data_coverage=round(available,6),factors=factors,
+        evidence=[f'Meta counter policy SHA256: {policy.digest()}; matched distinct peer posts: {len(context["peers"])}.',
+            'Peers share the frozen workspace/account/platform/provider/transport, Meta API version and metric definition, render format, duration bucket and niche.',
+            f'Available configured weight: {available:.6f}; minimum {policy.minimum_weight_coverage:.6f}. Engagement plus a sharing/saving ratio is required.',
+            'Interaction associations do not establish retention, complete account history, equal publication age or audience causality.',
+            f'Candidate scan truncated: {context["candidate_rows_truncated"]}; at most 500 rows and {policy.maximum_peer_posts} distinct peers.'],
+        recommendations=['Review the interaction ratios, missing metrics, matched posts and explicit metric definitions.',
+            'Treat this as a creative experiment recommendation; do not delete posts or change budgets automatically.'],
+        algorithm_version=META_COUNTER_VERSION)

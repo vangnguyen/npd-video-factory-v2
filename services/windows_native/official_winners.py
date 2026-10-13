@@ -14,7 +14,7 @@ from .official_winner_models import Create
 from .official_publications import utc
 from .store import now
 from app.analytics_models import NormalizedMetrics
-from app.analytics_channel_policy import WinnerChannelPolicy,values,bucket,assess_channel
+from app.analytics_channel_policy import WinnerChannelPolicy,values,bucket,assess_channel,assess_meta_counter_channel
 
 TABLES=('native_official_winner_assessments','native_official_winner_events')
 
@@ -40,7 +40,7 @@ class NativeOfficialWinners:
         if (self.analytics,self.store,self.workspace,self.clock,self.store.root.absolute())!=self.frozen:raise WorkflowError('NATIVE_OFFICIAL_WINNER_CONFIGURATION_CHANGED')
         self.analytics.check()
 
-    def proof(self,con,project,identity):
+    def proof(self,con,project,identity,*,qualified_meta=True):
         value=self.analytics.get(project,identity,con=con);result=value['result']
         if value['status']!='succeeded' or result is None:raise WorkflowError('NATIVE_OFFICIAL_WINNER_QUALIFIED_OBSERVATION_REQUIRED')
         request=parse_collect({**value['snapshot']['request'],'request_key':'internal-native-winner-source-key'})
@@ -53,6 +53,15 @@ class NativeOfficialWinners:
             'provider_key':result['provider_key'],'source_kind':result['source_kind'],'mock':result['mock'],'source_external_call':result['external_call'],
             'query':query,'format':format,'duration_bucket':bucket(features['duration_seconds']),'niche':features['niche'],
             'channel_profile_ref':evidence.get('channel_profile_ref'),'channel_profile_sha256':evidence.get('channel_profile_sha256')}
+        if qualified_meta and result['platform'] in ('instagram_reels','facebook'):
+            # Keep old winner histories readable; new Meta comparisons freeze their
+            # exact metric definition and availability independently of report dates.
+            observed=result['evidence']
+            scope.update(counter_comparison_schema='native-meta-counter-comparison-scope-v1',
+                metric_scope=observed['metric_scope'],api_version=observed['api_version'],
+                metric_definition_sha256=digest({k:observed[k] for k in ('metric_mapping','normalized_units',
+                    'returned_metrics','unavailable_metrics','provider_metric_semantics_real_verified')}),
+                metric_semantics_real_verified=observed['provider_metric_semantics_real_verified'])
         return {'project_id':project,'publication_id':value['publication_id'],'sync_id':identity,'result_snapshot_id':value['result_snapshot_id'],
             'result_sha256':digest(result),'consent_sha256':value['snapshot_sha256'],'source_sha256':digest(source),'publication_receipt_sha256':source['receipt_sha256'],
             'remote_post_id':result['remote_post_id'],'collected_at':result['collected_at'],'scope':scope,'metrics':result['metrics'],
@@ -88,20 +97,26 @@ class NativeOfficialWinners:
         return list(selected.values()),len(rows)>500,dict(excluded)
 
     def assessment(self,candidate,peers,policy,truncated):
+        meta=candidate['scope'].get('counter_comparison_schema')=='native-meta-counter-comparison-scope-v1'
+        counter=candidate['scope']['platform']=='tiktok' or meta
         context={'peers':[{'snapshot_id':p['result_snapshot_id'],'values':values(NormalizedMetrics.model_validate(p['metrics']),p['features']['duration_seconds'],p['production_cost_vnd'])} for p in peers],
             'candidate_rows_truncated':truncated,'counter_growth':None,'scope_verified':self.known_scope(candidate),'policy_sha256':policy.digest()}
-        draft=assess_channel(NormalizedMetrics.model_validate(candidate['metrics']),duration=candidate['features']['duration_seconds'],production_cost=candidate['production_cost_vnd'],context=context,policy=policy)
-        return {'state':draft.state,'score':draft.score,'data_coverage':draft.data_coverage,'algorithm_version':draft.algorithm_version,
+        evaluate=assess_meta_counter_channel if meta else assess_channel
+        draft=evaluate(NormalizedMetrics.model_validate(candidate['metrics']),duration=candidate['features']['duration_seconds'],production_cost=candidate['production_cost_vnd'],context=context,policy=policy)
+        unverified_meta=meta and not candidate['scope']['mock'] and not candidate['scope']['metric_semantics_real_verified']
+        return {'state':'insufficient_data' if unverified_meta else draft.state,'score':None if unverified_meta else draft.score,'data_coverage':draft.data_coverage,'algorithm_version':draft.algorithm_version,
             'factors':[f.model_dump(mode='json') for f in draft.factors],'evidence':draft.evidence,'recommendations':draft.recommendations,
-            'basis':'matching_native_official_cumulative_counter_scope' if candidate['scope']['platform']=='tiktok' else 'matching_native_official_channel_report_scope','peer_scope_verified':context['scope_verified'],
-            'channel_baseline_verified':not candidate['scope']['mock'] and context['scope_verified'] and len(peers)>=policy.minimum_peer_posts,
+            'basis':'matching_native_official_meta_counter_scope' if meta else 'matching_native_official_cumulative_counter_scope' if counter else 'matching_native_official_channel_report_scope','peer_scope_verified':context['scope_verified'],
+            'channel_baseline_verified':not candidate['scope']['mock'] and context['scope_verified'] and len(peers)>=policy.minimum_peer_posts
+                and (not meta or candidate['scope']['metric_semantics_real_verified']),
             'view_velocity_supported':False,'publishing_age_hours':None,'actual_publication_time':None,
             'mock':candidate['scope']['mock'],'source_kind':candidate['scope']['source_kind'],'source_external_call':candidate['scope']['source_external_call'],
             'real_audience_observation':not candidate['scope']['mock'],'external_call':False,'automatic_action':False,'publishing_enabled':False,
-            'limitations':['Cumulative counters have no reporting interval or verified equal publication age.' if candidate['scope']['platform']=='tiktok' else 'Requested report dates do not prove complete coverage or equal publication age.',
-                'Counter snapshots do not prove continuous observation or publication age; velocity and publication time remain unavailable.' if candidate['scope']['platform']=='tiktok' else 'Report updates are not cumulative video-counter velocity; velocity and publication time remain unavailable.',
+            'limitations':['Cumulative counters have no reporting interval or verified equal publication age.' if counter else 'Requested report dates do not prove complete coverage or equal publication age.',
+                'Counter snapshots do not prove continuous observation or publication age; velocity and publication time remain unavailable.' if counter else 'Report updates are not cumulative video-counter velocity; velocity and publication time remain unavailable.',
                 'Frozen niche/channel annotations and selected compatible posts do not prove complete channel history or causal improvement.',
-                'Protocol mocks are synthetic; their relative assessments cannot enter real audience learning.']}
+                'Protocol mocks are synthetic; their relative assessments cannot enter real audience learning.']
+                +(['Meta metric semantics are not real-provider verified; genuine observations remain insufficient until that evidence exists.'] if unverified_meta else [])}
 
     def row(self,con,project,identity):
         self.check();self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project,)).fetchone())
@@ -125,8 +140,9 @@ class NativeOfficialWinners:
                 or snapshot['authority']['token_id']!=value['created_by'] or not isinstance(excluded,dict)
                 or set(excluded)-{'incompatible_scope_or_anchor','duplicate_remote_post','peer_limit','candidate_scope_incomplete'}
                 or any(type(v) is not int or v<0 for v in excluded.values()) or sum(excluded.values())>500):raise ValueError()
-            actual=self.proof(con,value['project_id'],value['sync_id'])
-            if candidate!=actual or any(not self.compatible(candidate,p) or p!=self.proof(con,p['project_id'],p['sync_id']) for p in peers):raise ValueError()
+            qualified_meta=candidate['scope'].get('counter_comparison_schema')=='native-meta-counter-comparison-scope-v1'
+            actual=self.proof(con,value['project_id'],value['sync_id'],qualified_meta=qualified_meta)
+            if candidate!=actual or any(not self.compatible(candidate,p) or p!=self.proof(con,p['project_id'],p['sync_id'],qualified_meta=qualified_meta) for p in peers):raise ValueError()
             expected=self.assessment(candidate,peers,policy,truncated)
             if snapshot['assessment']!=expected:raise ValueError()
             value.pop('key_sha256')
