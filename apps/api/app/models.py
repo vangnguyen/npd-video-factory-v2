@@ -79,6 +79,7 @@ class JobStatus(StrEnum):
 class JobStage(StrEnum):
     QUEUED = "queued"
     ANALYZING_AUDIO = "analyzing_audio"
+    ANALYZING_VIDEO = "analyzing_video"
     SCRIPTING = "scripting"
     STORYBOARDING = "storyboarding"
     GENERATING_VOICE = "generating_voice"
@@ -94,6 +95,7 @@ class JobStage(StrEnum):
 STAGE_ORDER: dict[JobStage, int] = {
     JobStage.QUEUED: 0,
     JobStage.ANALYZING_AUDIO: 10,
+    JobStage.ANALYZING_VIDEO: 10,
     JobStage.SCRIPTING: 10,
     JobStage.STORYBOARDING: 20,
     JobStage.GENERATING_VOICE: 30,
@@ -157,6 +159,14 @@ class UploadedAudioJobInput(StrictModel):
     actor_ref: str = Field(min_length=1, max_length=160)
 
 
+class AutoEditAnalysisJobInput(StrictModel):
+    kind: Literal['auto_edit_analysis'] = 'auto_edit_analysis'
+    analysis_id: str = Field(pattern=r'^ana_[a-f0-9]{24}$')
+    source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    provider_binding_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    actor_ref: str = Field(min_length=1, max_length=160)
+
+
 class JobRecord(StrictModel):
     job_id: str
     workspace_id: str | None = None
@@ -165,7 +175,7 @@ class JobRecord(StrictModel):
     status: JobStatus
     stage: JobStage
     progress: int = Field(ge=0, le=100)
-    request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput
+    request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput | AutoEditAnalysisJobInput
     artifacts: list[Artifact] = Field(default_factory=list)
     error: JobError | None = None
     created_at: datetime
@@ -176,7 +186,7 @@ class JobRecord(StrictModel):
         cls,
         *,
         job_id: str,
-        request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput,
+        request: VideoJobCreate | ContentGenerationJobInput | UploadedAudioJobInput | AutoEditAnalysisJobInput,
         workspace_id: str | None = None,
         project_id: str | None = None,
         project_version_id: str | None = None,

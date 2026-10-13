@@ -355,6 +355,9 @@ class AutoEditRepository:
 
     async def mark_analysis_running(self, analysis_id: str) -> None:
         async with self.session_factory() as session:
+            from .auto_edit_job_db import AutoEditJobORM
+            if await session.scalar(select(AutoEditJobORM.relation_id).where(AutoEditJobORM.analysis_id==analysis_id)):
+                raise ValueError('ANALYSIS_JOB_CLAIM_REQUIRED')
             row = await session.get(AutoEditAnalysisORM, analysis_id)
             if row is None:
                 raise KeyError(analysis_id)
@@ -363,8 +366,14 @@ class AutoEditRepository:
             await session.commit()
 
     async def mark_analysis_failed(self, analysis_id: str, error_code: str, *, local_evidence=None,
-                                   expected_source_sha256=None) -> None:
+                                   expected_source_sha256=None, job_guard=None) -> None:
+        if job_guard is not None:
+            await job_guard.fail(error_code, evidence=local_evidence)
+            return
         async with self.session_factory() as session:
+            from .auto_edit_job_db import AutoEditJobORM
+            if await session.scalar(select(AutoEditJobORM.relation_id).where(AutoEditJobORM.analysis_id==analysis_id)):
+                return
             row = await session.get(AutoEditAnalysisORM, analysis_id, with_for_update=True)
             if row is None:
                 return
@@ -398,9 +407,16 @@ class AutoEditRepository:
         highlights: list[dict[str, Any]],
         signal_evidence: dict[str, Any] | None = None,
         local_source_snapshot: dict[str, Any] | None = None,
+        job_guard=None,
     ) -> None:
         async with self.session_factory() as session:
             async with session.begin():
+                if job_guard is not None:
+                    await job_guard.lock(session)
+                else:
+                    from .auto_edit_job_db import AutoEditJobORM
+                    if await session.scalar(select(AutoEditJobORM.relation_id).where(AutoEditJobORM.analysis_id==analysis_id)):
+                        raise ValueError('ANALYSIS_JOB_CLAIM_REQUIRED')
                 analysis = await session.scalar(
                     select(AutoEditAnalysisORM)
                     .where(AutoEditAnalysisORM.analysis_id == analysis_id)
@@ -408,6 +424,8 @@ class AutoEditRepository:
                 )
                 if analysis is None:
                     raise KeyError(analysis_id)
+                if job_guard is not None:
+                    await job_guard.validate(session, analysis)
                 if analysis.status == "succeeded":
                     return
                 if local_source_snapshot is not None:
@@ -551,6 +569,8 @@ class AutoEditRepository:
                 analysis.status = "succeeded"
                 analysis.error_code = None
                 analysis.updated_at = utc_now()
+                if job_guard is not None:
+                    await job_guard.complete(session, analysis)
 
     async def get_analysis(self, analysis_id: str, *, transcript_id: str | None = None) -> AutoEditAnalysisRead | None:
         async with self.session_factory() as session:

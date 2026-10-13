@@ -67,5 +67,7 @@ async def gather_drained(*coroutines):
     except BaseException:
         for task in tasks:
             if not task.done():task.cancel()
-        await asyncio.gather(*tasks, return_exceptions=True)
+        async def collect():
+            return await asyncio.gather(*tasks, return_exceptions=True)
+        await completed_io(collect())
         raise
