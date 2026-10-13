@@ -1,0 +1,102 @@
+{
+  "schema_version": "north-star-service-outcomes-evidence-v1",
+  "recorded_at": "2026-10-13T04:17:45.996377+00:00",
+  "source_parent": "eccf843644f8912c506992bb6b70566f92eaca1b",
+  "tests": {
+    "API_outcomes_and_facade": 24,
+    "API_core_regression": 21
+  },
+  "test_logs": {
+    "API_outcomes_and_facade": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-outcomes-new-final.log",
+      "sha256": "e96816cc9667947336fcb2a017a1200a6bb65779ef1451d936267f43bff6809e",
+      "bytes": 112,
+      "passed": 24
+    },
+    "API_core_regression": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-outcomes-regression-final.log",
+      "sha256": "9d8d313d6e348464f2370f76ef41c508b752887658621fc4fb7c56f6845a2f92",
+      "bytes": 112,
+      "passed": 21
+    },
+    "seeded_migration_retest": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-outcomes-migration-seeded-final.log",
+      "sha256": "2d41b6f75d65393e05b24e16c4770ed7e2a1db4aca865fc79f53757dc5d7a483",
+      "bytes": 100,
+      "passed": 1
+    }
+  },
+  "actual_process_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-outcomes-process-final\\actual-process-recovery.json",
+    "sha256": "d0ab183ab1e5e6e962e89c11a319468c973be5e37e906f50100d254b5d8e32e0",
+    "bytes": 862
+  },
+  "portable_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-outcomes-evidence-n2.zip",
+    "sha256": "412320f0484293348e368e1b31b9f1499138668e5c53e5eeec1bfbe17d79e704",
+    "bytes": 1196,
+    "entries": 4,
+    "all_bytes_verified": true,
+    "media_copied": false
+  },
+  "scope": {
+    "canonical_transaction_atomic_receipt_and_outbox": true,
+    "covered_root_kinds": [
+      "project.create",
+      "timeline.mutate",
+      "render.queue",
+      "publication.finalize"
+    ],
+    "actual_producer_exit_after_commit": 71,
+    "new_process_recovered_existing_project": true,
+    "no_duplicate_timeline_version_render_job_or_publication": true,
+    "outbox_failure_rolls_back_core": true,
+    "request_local_context_does_not_capture_unrelated_human_core": true,
+    "rehash_event_cannot_replace_original_receipt_actor": true,
+    "versioned_public_schema_validated": true,
+    "signed_scoped_event_reads": true,
+    "outbound_event_delivery_enabled": false,
+    "all_Master_command_atomic_coverage_complete": false,
+    "worker_terminal_event_coverage_complete": false,
+    "new_outcome_webhook_delivery_verified": false,
+    "Native_full_service_API_parity_verified": false,
+    "production_migration_run": false,
+    "production_PostgreSQL_verified": false,
+    "real_Agent_Hub": false,
+    "provider_media_render_QC_identity_are_fixtures": true,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false,
+    "prior_workspace_and_receipt_rows_seeded_in_migration_retest": true
+  },
+  "retained_attempts": [
+    "service-outcomes-initial-n1.log",
+    "service-outcomes-combined-n2.log",
+    "service-outcomes-new-n3.log",
+    "service-outcomes-new-n4.log",
+    "service-outcomes-process-n1",
+    "service-outcomes-process-n2"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+  "retained_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\service-outcomes-evidence-n1.zip",
+    "sha256": "fa53284f3953fce6ee18f6b3da85c116fe01a4748ee445ab4bc07bf374e63fdb",
+    "bytes": 991,
+    "entries": 3,
+    "all_bytes_verified": true,
+    "media_copied": false
+  }
+}

@@ -34,3 +34,6 @@ Mốc [Meta webhook qua tiến trình độc lập](NATIVE_META_WEBHOOK_PROCESSE
 
 
 Mốc [API /v1 theo Master](SERVICE_API_V1.md): nối đủ18 thao tác và đường hỗ trợ tới engine hiện có; quyền rõ theo workspace, chữ ký riêng, xác thực reviewer/owner độc lập, timeline chung, lấy preview/render và biên nhận chống lặp.16 mới/52 hồi quy API/2 auth Native đạt. Cấu hình Hub lỗi chỉ tắt lớp tích hợp; migration bổ sung chỉ thử trên SQLite riêng. Hai luồng có trace HTTP thật trên ASGI nhưng mọi media/provider/audio/QC/identity vẫn giả lập; không nghiệm thu Owner/full A/B/C/provider/production. Native parity, toàn bộ sự kiện và xử lý kết quả lệnh chưa rõ còn mở;59 nhóm chưa đóng. Bundle/mã nguồn cuối: recovery/20261007/service-api-program-state.json.
+
+
+Mốc [biên nhận/sự kiện cùng giao dịch lõi](SERVICE_CANONICAL_OUTCOMES.md): project/timeline/render queue/publication lưu kết quả và outbox cùng commit; ngắt tiến trình sau commit rồi chạy lại không sinh thêm dữ liệu.24 outcome/API và21 hồi quy đạt; lỗi outbox rollback đồng bộ, sự kiện sửa rồi tính lại hash bị từ chối. Metadata/identity/media/provider vẫn giả lập; chưa gửi sự kiện mới ra ngoài, chưa nghiệm thu PostgreSQL/Hub/Owner/full A/B/C. Các lệnh và nguồn worker còn lại vẫn cần hoàn thiện;59 nhóm mở. Bundle/source cuối: recovery/20261007/service-outcomes-program-state.json.

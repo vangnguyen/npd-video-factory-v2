@@ -3906,3 +3906,8 @@ Full per-wave report: [NATIVE_META_WEBHOOK_PROCESSES.md](NATIVE_META_WEBHOOK_PRO
 ## Wave14/15 — Full Master SQL/API service facade
 
 Full report: [SERVICE_API_V1.md](SERVICE_API_V1.md). All18 example methods;16 new/52 API regression/2 Native auth PASS. Existing engine/scoped-HMAC/human gates with actual SQLite/ASGI and explicit protocol/media/provider fixtures; additive migration only in owned DB. No Native full parity/complete command-event coverage/uncertain reconciliation/production/provider/Hub/Owner/full A/B/C acceptance.59 groups remain; final source: recovery/20261007/service-api-program-state.json.
+
+
+## Wave14/15 — Canonical service response/outbox recovery
+
+Full report: [SERVICE_CANONICAL_OUTCOMES.md](SERVICE_CANONICAL_OUTCOMES.md). Four atomic root outcomes;24 outcome/facade and21 core PASS; actual process exit/replay plus rollback/idempotence/source/schema checks. No new outbound delivery/Hub/provider/media/Owner/production/full-flow acceptance. Other command/queue/worker-event coverage and Native remain;59 groups unclosed. Final source: recovery/20261007/service-outcomes-program-state.json.

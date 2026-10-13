@@ -33,3 +33,8 @@ REGRESSIONS: existing API/Native checks pass; accepted15-artifact/live source ve
 EXTERNAL BLOCKERS: actual OAuth/Hub/production/Owner gates remain separate
 OWNER ACTION REQUIRED: none for safe continuation; UAT deferred; no main/publish/paid/deploy/live migration approval exercised
 NEXT WAVE: complete Native /v1 parity and command-event/recovery coverage, then remaining original real Mode A/B/production acceptance
+
+
+## Atomic service outcome amendment
+
+See [SERVICE_CANONICAL_OUTCOMES.md](SERVICE_CANONICAL_OUTCOMES.md) and [evidence](north-star/service-outcomes-evidence.json). Canonical project creation, timeline mutation, render queue and successful publication finalization now atomically persist their scoped response and versioned outcome event. Actual exit71 after commit/fresh-process replay201 preserves one project/event; lost outer completion creates no duplicate timeline version/job/publication. Event failure rolls back core state. Signed bounded event reads rebuild original source binding and reject a rehashed actor.24 outcome/facade and21 core regressions pass. Delivery remains disabled; media/provider/identity are fixtures. Other commands/queue/worker terminal events/outbound delivery/Native and full real A/B/C/Owner/production remain open. Primary counts remain5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED:59 unclosed groups.
