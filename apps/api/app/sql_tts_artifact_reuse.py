@@ -7,6 +7,7 @@ import asyncio
 import copy
 from datetime import timedelta, timezone
 import hashlib
+import math
 import re
 import uuid
 import wave
@@ -25,6 +26,9 @@ from .production_db import ProductionRenderJobORM
 
 SCHEMA = 'sql-raw-tts-reuse.v1'
 MAX_BYTES = 20_000_000
+PREPARED_AUDIO_MAX_DURATION_SECONDS = 600  # Existing timeline-render manifest contract.
+PREPARED_AUDIO_HEADER_MAX_BYTES = 64 * 1024
+PREPARED_AUDIO_SAMPLE_RATE = 48000
 
 
 class TTSReuseRejected(ValueError):
@@ -302,17 +306,30 @@ def canonical_audio_binding(render, snapshot, subtitles, config):
         'audio_config_sha256':digest(config.model_dump(mode='json'))}
 
 
+def prepared_audio_byte_limit(duration):
+    """Stereo PCM16 capacity plus bounded WAV metadata, not a duration shrink."""
+    if type(duration) not in (int,float) or not math.isfinite(duration) \
+            or not 0 < duration <= PREPARED_AUDIO_MAX_DURATION_SECONDS:
+        raise TTSReuseRejected('TTS_REUSE_PREPARED_AUDIO_DURATION_INVALID')
+    # Keep the existing one-sample clock tolerance, including fractional frames.
+    return (math.ceil(duration*PREPARED_AUDIO_SAMPLE_RATE)+1)*2*2+PREPARED_AUDIO_HEADER_MAX_BYTES
+
+
 def prepared_pcm(path, duration):
     """Actual prepared audio length/sample count; no listening/QC inference."""
     try:
+        maximum=prepared_audio_byte_limit(duration)
         path=plain(path)
-        if not 0<path.stat().st_size<=90_000_000:
+        size=path.stat().st_size
+        if not 0<size<=maximum:
             raise TTSReuseRejected('TTS_REUSE_PREPARED_AUDIO_LIMIT')
         with wave.open(str(filesystem_path(path)),'rb') as audio:
             rate=audio.getframerate();channels=audio.getnchannels();count=audio.getnframes()
-            if rate!=48000 or channels not in {1,2} or audio.getsampwidth()!=2 \
+            if rate!=PREPARED_AUDIO_SAMPLE_RATE or channels not in {1,2} or audio.getsampwidth()!=2 \
                     or abs(count/rate-duration)>1/rate:
                 raise TTSReuseRejected('TTS_REUSE_PREPARED_AUDIO_CLOCK_INVALID')
+            if not 0<size-count*channels*2<=PREPARED_AUDIO_HEADER_MAX_BYTES:
+                raise TTSReuseRejected('TTS_REUSE_PREPARED_AUDIO_HEADER_LIMIT')
             remaining=count
             while remaining:
                 amount=min(remaining,48000)
@@ -326,6 +343,8 @@ def prepared_pcm(path, duration):
 
 
 async def prepared_final_audio(*, repository, assets, storage, render, snapshot, subtitles, config, workdir):
+    duration=snapshot.get('duration_seconds')
+    prepared_maximum=prepared_audio_byte_limit(duration)
     source=await repository.approved_audio_reuse_source(render.render_id)
     target=canonical_audio_binding(render,snapshot,subtitles,config)
     manifest=source['manifest'];narration=copy.deepcopy(manifest.get('narration',{}));mix=copy.deepcopy(manifest.get('mix',{}))
@@ -343,7 +362,7 @@ async def prepared_final_audio(*, repository, assets, storage, render, snapshot,
     except (OSError,ValueError):
         raise TTSReuseRejected('TTS_REUSE_OUTPUT_PATH_INVALID') from None
     copies=[]
-    async def download(asset_id, name, kind, expected_sha=None, maximum=90_000_000, frozen_proof=None):
+    async def download(asset_id, name, kind, expected_sha=None, maximum=prepared_maximum, frozen_proof=None):
         asset=await assets.get_asset(asset_id) if asset_id else None
         if asset is None or (asset.workspace_id,asset.project_id,asset.storage_provider)!=(
                 render.workspace_id,render.project_id,storage.name) or asset.asset_class!='render' \
@@ -380,7 +399,7 @@ async def prepared_final_audio(*, repository, assets, storage, render, snapshot,
     voice_path=await download(supporting.get('narration-track'),'narration.wav','narration-track')
     mix_path=await download(supporting.get('audio-mix'),'audio-mix.wav','audio-mix')
     for path in (voice_path,mix_path):
-        await asyncio.to_thread(prepared_pcm,path,float(snapshot['duration_seconds']))
+        await asyncio.to_thread(prepared_pcm,path,duration)
     pins=await repository.approved_tts_reuse_units(render.render_id)
     if pins is not None and len(pins['units'])!=len(narration['timing']):
         raise TTSReuseRejected('TTS_REUSE_REVIEW_UNIT_COUNT_CHANGED')
