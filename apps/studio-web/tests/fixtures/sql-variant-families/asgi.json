@@ -1,0 +1,1549 @@
+{
+  "dto": {
+    "availability": {
+      "availability": {
+        "binding": {
+          "assets": [
+            {
+              "asset_class": "generated",
+              "asset_id": "ast_0edccaa164424163b0f16d2b",
+              "checksum_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+              "content_type": "image/png",
+              "kind": "image",
+              "object_key_sha256": "5dc8d4a4832ee4b750b99182b735edce3ed57a735de2f0db9e3e20a31573e810",
+              "project_id": "prj_d8dd5da35d8b41c48825b477",
+              "project_version_id": "pver_9f1e9840683a41da87e5a2e8",
+              "record_sha256": "010df602699a3a2c4f230ea290ae9577f2c0e39b5bfab834e79dc20be1fbdbf3",
+              "size_bytes": 1729,
+              "storage_provider": "local",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            }
+          ],
+          "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+          "project_current_version_id": "pver_9f1e9840683a41da87e5a2e8",
+          "project_version": 2,
+          "records": [
+            {
+              "count": 1,
+              "owner_ref": "prj_d8dd5da35d8b41c48825b477",
+              "sha256": "3dc92b10bbf4b8a78acca82cec9f942348b1d05a3a77a8a4e023fb4cc026d9f5",
+              "table": "video_projects"
+            },
+            {
+              "count": 1,
+              "owner_ref": "tlv_d63fbced68694a5cb7fe",
+              "sha256": "ca2060a1af08242d94373fc525284fa9ce580251bda0970d0e34962cbcefd48b",
+              "table": "timeline_versions"
+            },
+            {
+              "count": 1,
+              "owner_ref": "pver_9f1e9840683a41da87e5a2e8",
+              "sha256": "981ceafc70dfdc590c9ff4e84e63b35aec72e2784ff66a6ffe06ed4bd8745653",
+              "table": "project_versions"
+            }
+          ],
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-master-binding.v1",
+          "selected_transcript_id": null,
+          "source_analysis_id": null,
+          "source_content_version_id": "pver_9f1e9840683a41da87e5a2e8",
+          "source_mode": "storyboard_media",
+          "timeline_id": "tml_41bcb74c683a4a7e9ddb",
+          "timeline_snapshot_sha256": "f5cb6bb5593bfd3bb588d5582336d2f9bf010187c25863ba38830b2c4868dda7",
+          "timeline_version": 1,
+          "timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        "binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+        "catalog": {
+          "catalog_ref": "master-platform-formats@1",
+          "profiles": [
+            {
+              "aspect_ratio": "16:9",
+              "final_profile": "landscape-1920x1080",
+              "height": 1080,
+              "label": "YouTube · 16:9",
+              "platform": "youtube",
+              "profile_ref": "youtube-landscape@1",
+              "review_profile": "review-960x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "youtube_landscape",
+              "width": 1920
+            },
+            {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "YouTube Shorts · 9:16",
+              "platform": "youtube",
+              "profile_ref": "youtube-shorts@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "youtube_shorts",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "TikTok · 9:16",
+              "platform": "tiktok",
+              "profile_ref": "tiktok-short@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "tiktok",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "Instagram Reels · 9:16",
+              "platform": "instagram_reels",
+              "profile_ref": "instagram-reel@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "instagram_reels",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "1:1",
+              "final_profile": "square-1080x1080",
+              "height": 1080,
+              "label": "Social · 1:1",
+              "platform": null,
+              "profile_ref": "social-square@1",
+              "review_profile": "review-540x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "social_square",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "4:5",
+              "final_profile": "portrait-1080x1350",
+              "height": 1350,
+              "label": "Feed · 4:5",
+              "platform": null,
+              "profile_ref": "social-feed@1",
+              "review_profile": "review-432x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "social_feed",
+              "width": 1080
+            }
+          ],
+          "schema_version": "sql-variant-catalog.v1"
+        },
+        "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+        "safety": {
+          "approval_inherited": false,
+          "automatic_render": false,
+          "child_projects_created": 0,
+          "new_inference_calls": 0,
+          "provider_calls": 0,
+          "publishing_enabled": false,
+          "rights_override_inherited": false,
+          "source_bytes_verified": false
+        },
+        "schema_version": "sql-variant-availability.v1"
+      },
+      "derivation": {
+        "automatic_execution": false,
+        "engine": "storyboard",
+        "provider_calls": 0,
+        "reason_code": null,
+        "schema_version": "sql-variant-api-dispatch.v1",
+        "state": "CONFIGURED"
+      },
+      "schema_version": "sql-variant-api-availability.v1"
+    },
+    "current_family": {
+      "actor_ref": "usr:test-owner",
+      "created_at": "2026-10-13T18:03:17.139768Z",
+      "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+      "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+      "members": [
+        {
+          "child_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+          "planned_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+          "profile": {
+            "aspect_ratio": "16:9",
+            "final_profile": "landscape-1920x1080",
+            "height": 1080,
+            "label": "YouTube · 16:9",
+            "platform": "youtube",
+            "profile_ref": "youtube-landscape@1",
+            "review_profile": "review-960x540",
+            "schema_version": "sql-variant-profile.v1",
+            "target": "youtube_landscape",
+            "width": 1920
+          },
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 1,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": true
+          },
+          "schema_version": "sql-variant-member.v1",
+          "state": "needs_attention",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        {
+          "child_project_id": null,
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "member_id": "vfm_1209648dbb7b52049a5da682468ce3b7",
+          "planned_project_id": "prj_bf8f402ce50156f1bba49a19b2ce307a",
+          "profile": {
+            "aspect_ratio": "9:16",
+            "final_profile": "vertical-1080x1920",
+            "height": 1920,
+            "label": "YouTube Shorts · 9:16",
+            "platform": "youtube",
+            "profile_ref": "youtube-shorts@1",
+            "review_profile": "review-540x960",
+            "schema_version": "sql-variant-profile.v1",
+            "target": "youtube_shorts",
+            "width": 1080
+          },
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-member.v1",
+          "state": "reserved",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        {
+          "child_project_id": null,
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "member_id": "vfm_12228f702e8a5dcab43fdbdddc63c419",
+          "planned_project_id": "prj_7a810238701a5fc0963ad4d5ec9a1332",
+          "profile": {
+            "aspect_ratio": "9:16",
+            "final_profile": "vertical-1080x1920",
+            "height": 1920,
+            "label": "TikTok · 9:16",
+            "platform": "tiktok",
+            "profile_ref": "tiktok-short@1",
+            "review_profile": "review-540x960",
+            "schema_version": "sql-variant-profile.v1",
+            "target": "tiktok",
+            "width": 1080
+          },
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-member.v1",
+          "state": "reserved",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        {
+          "child_project_id": null,
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "member_id": "vfm_9f46129c62c05cdeaaa90b8946c8ec9d",
+          "planned_project_id": "prj_6f7fd2bc3b05561a893e792b39adab91",
+          "profile": {
+            "aspect_ratio": "9:16",
+            "final_profile": "vertical-1080x1920",
+            "height": 1920,
+            "label": "Instagram Reels · 9:16",
+            "platform": "instagram_reels",
+            "profile_ref": "instagram-reel@1",
+            "review_profile": "review-540x960",
+            "schema_version": "sql-variant-profile.v1",
+            "target": "instagram_reels",
+            "width": 1080
+          },
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-member.v1",
+          "state": "reserved",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        {
+          "child_project_id": null,
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "member_id": "vfm_fc447b7440da5608a03f943277d50eac",
+          "planned_project_id": "prj_c73ea636acf35b66871bf183aa66cd79",
+          "profile": {
+            "aspect_ratio": "1:1",
+            "final_profile": "square-1080x1080",
+            "height": 1080,
+            "label": "Social · 1:1",
+            "platform": null,
+            "profile_ref": "social-square@1",
+            "review_profile": "review-540x540",
+            "schema_version": "sql-variant-profile.v1",
+            "target": "social_square",
+            "width": 1080
+          },
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-member.v1",
+          "state": "reserved",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        {
+          "child_project_id": null,
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "member_id": "vfm_3abf4f702b3b54d0b84362ae8ef1959c",
+          "planned_project_id": "prj_3ea9196e8cc059628e5ca7cfb5af852e",
+          "profile": {
+            "aspect_ratio": "4:5",
+            "final_profile": "portrait-1080x1350",
+            "height": 1350,
+            "label": "Feed · 4:5",
+            "platform": null,
+            "profile_ref": "social-feed@1",
+            "review_profile": "review-432x540",
+            "schema_version": "sql-variant-profile.v1",
+            "target": "social_feed",
+            "width": 1080
+          },
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-member.v1",
+          "state": "reserved",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        }
+      ],
+      "result": {
+        "members": [
+          {
+            "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+            "planned_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+            "profile_ref": "youtube-landscape@1"
+          },
+          {
+            "member_id": "vfm_1209648dbb7b52049a5da682468ce3b7",
+            "planned_project_id": "prj_bf8f402ce50156f1bba49a19b2ce307a",
+            "profile_ref": "youtube-shorts@1"
+          },
+          {
+            "member_id": "vfm_12228f702e8a5dcab43fdbdddc63c419",
+            "planned_project_id": "prj_7a810238701a5fc0963ad4d5ec9a1332",
+            "profile_ref": "tiktok-short@1"
+          },
+          {
+            "member_id": "vfm_9f46129c62c05cdeaaa90b8946c8ec9d",
+            "planned_project_id": "prj_6f7fd2bc3b05561a893e792b39adab91",
+            "profile_ref": "instagram-reel@1"
+          },
+          {
+            "member_id": "vfm_fc447b7440da5608a03f943277d50eac",
+            "planned_project_id": "prj_c73ea636acf35b66871bf183aa66cd79",
+            "profile_ref": "social-square@1"
+          },
+          {
+            "member_id": "vfm_3abf4f702b3b54d0b84362ae8ef1959c",
+            "planned_project_id": "prj_3ea9196e8cc059628e5ca7cfb5af852e",
+            "profile_ref": "social-feed@1"
+          }
+        ],
+        "safety": {
+          "approval_inherited": false,
+          "automatic_render": false,
+          "child_projects_created": 0,
+          "new_inference_calls": 0,
+          "provider_calls": 0,
+          "publishing_enabled": false,
+          "rights_override_inherited": false,
+          "source_bytes_verified": false
+        },
+        "schema_version": "sql-variant-reservation-result.v1"
+      },
+      "result_sha256": "92655cfffb67b4b2d1cba56744d2dbe5c16d5c8541675f6388b8e1bdb329b337",
+      "safety": {
+        "approval_inherited": false,
+        "automatic_render": false,
+        "child_projects_created": 1,
+        "new_inference_calls": 0,
+        "provider_calls": 0,
+        "publishing_enabled": false,
+        "rights_override_inherited": false,
+        "source_bytes_verified": false
+      },
+      "schema_version": "sql-variant-family.v1",
+      "snapshot": {
+        "binding": {
+          "assets": [
+            {
+              "asset_class": "generated",
+              "asset_id": "ast_0edccaa164424163b0f16d2b",
+              "checksum_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+              "content_type": "image/png",
+              "kind": "image",
+              "object_key_sha256": "5dc8d4a4832ee4b750b99182b735edce3ed57a735de2f0db9e3e20a31573e810",
+              "project_id": "prj_d8dd5da35d8b41c48825b477",
+              "project_version_id": "pver_9f1e9840683a41da87e5a2e8",
+              "record_sha256": "010df602699a3a2c4f230ea290ae9577f2c0e39b5bfab834e79dc20be1fbdbf3",
+              "size_bytes": 1729,
+              "storage_provider": "local",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            }
+          ],
+          "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+          "project_current_version_id": "pver_9f1e9840683a41da87e5a2e8",
+          "project_version": 2,
+          "records": [
+            {
+              "count": 1,
+              "owner_ref": "prj_d8dd5da35d8b41c48825b477",
+              "sha256": "3dc92b10bbf4b8a78acca82cec9f942348b1d05a3a77a8a4e023fb4cc026d9f5",
+              "table": "video_projects"
+            },
+            {
+              "count": 1,
+              "owner_ref": "tlv_d63fbced68694a5cb7fe",
+              "sha256": "ca2060a1af08242d94373fc525284fa9ce580251bda0970d0e34962cbcefd48b",
+              "table": "timeline_versions"
+            },
+            {
+              "count": 1,
+              "owner_ref": "pver_9f1e9840683a41da87e5a2e8",
+              "sha256": "981ceafc70dfdc590c9ff4e84e63b35aec72e2784ff66a6ffe06ed4bd8745653",
+              "table": "project_versions"
+            }
+          ],
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-master-binding.v1",
+          "selected_transcript_id": null,
+          "source_analysis_id": null,
+          "source_content_version_id": "pver_9f1e9840683a41da87e5a2e8",
+          "source_mode": "storyboard_media",
+          "timeline_id": "tml_41bcb74c683a4a7e9ddb",
+          "timeline_snapshot_sha256": "f5cb6bb5593bfd3bb588d5582336d2f9bf010187c25863ba38830b2c4868dda7",
+          "timeline_version": 1,
+          "timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        },
+        "binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+        "catalog": {
+          "catalog_ref": "master-platform-formats@1",
+          "profiles": [
+            {
+              "aspect_ratio": "16:9",
+              "final_profile": "landscape-1920x1080",
+              "height": 1080,
+              "label": "YouTube · 16:9",
+              "platform": "youtube",
+              "profile_ref": "youtube-landscape@1",
+              "review_profile": "review-960x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "youtube_landscape",
+              "width": 1920
+            },
+            {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "YouTube Shorts · 9:16",
+              "platform": "youtube",
+              "profile_ref": "youtube-shorts@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "youtube_shorts",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "TikTok · 9:16",
+              "platform": "tiktok",
+              "profile_ref": "tiktok-short@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "tiktok",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "Instagram Reels · 9:16",
+              "platform": "instagram_reels",
+              "profile_ref": "instagram-reel@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "instagram_reels",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "1:1",
+              "final_profile": "square-1080x1080",
+              "height": 1080,
+              "label": "Social · 1:1",
+              "platform": null,
+              "profile_ref": "social-square@1",
+              "review_profile": "review-540x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "social_square",
+              "width": 1080
+            },
+            {
+              "aspect_ratio": "4:5",
+              "final_profile": "portrait-1080x1350",
+              "height": 1350,
+              "label": "Feed · 4:5",
+              "platform": null,
+              "profile_ref": "social-feed@1",
+              "review_profile": "review-432x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "social_feed",
+              "width": 1080
+            }
+          ],
+          "schema_version": "sql-variant-catalog.v1"
+        },
+        "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+        "request": {
+          "acknowledge_draft_derivation": true,
+          "catalog_ref": "master-platform-formats@1",
+          "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+          "expected_binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+          "expected_project_version": 2,
+          "expected_timeline_version": 1,
+          "expected_timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+          "profile_refs": [
+            "youtube-landscape@1",
+            "youtube-shorts@1",
+            "tiktok-short@1",
+            "instagram-reel@1",
+            "social-square@1",
+            "social-feed@1"
+          ],
+          "schema_version": "sql-variant-family-reserve.v1"
+        },
+        "request_sha256": "b3d752d86a723ab9ff1b1274570c0a5166f080730c69a9a2ca88b4171937c4a2",
+        "safety": {
+          "approval_inherited": false,
+          "automatic_render": false,
+          "child_projects_created": 0,
+          "new_inference_calls": 0,
+          "provider_calls": 0,
+          "publishing_enabled": false,
+          "rights_override_inherited": false,
+          "source_bytes_verified": false
+        },
+        "schema_version": "sql-variant-family-snapshot.v1"
+      },
+      "snapshot_sha256": "4c66bf974871e1169301c6af6bc500dac7feb9a80e9d2b5185fbd4c899cee606",
+      "source_current": true,
+      "source_current_reason": null,
+      "state": "needs_attention",
+      "version": 3,
+      "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+    },
+    "derived_receipt_mutation": {
+      "receipt": {
+        "actor_ref": "usr:test-owner",
+        "error_code": null,
+        "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+        "input_sha256": "3c48aecf5c070a166d2ec021204a3f7da2aaa47e9da356b905f41afbdd5a09ae",
+        "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+        "receipt_id": "vfr_3e35ca7252d05e02a9c5caabf7c200dc",
+        "request_sha256": "1779e672da415e4b0fc41eac885aa737b880add42e816576c37efd6b96769681",
+        "result": {
+          "asset_map": {
+            "ast_0edccaa164424163b0f16d2b": "ast_e0df521de4155074a9087c781b3ab028"
+          },
+          "child_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+          "content_sha256": "63f38f9d300ae34e06e497032cca524774ac3ceb6784db87948cc6b8ea00b2f0",
+          "content_version_id": "pver_e7ea74703d8b529d931a2c2f123f1d33",
+          "copies": {
+            "ast_0edccaa164424163b0f16d2b": {
+              "content_type": "image/png",
+              "dimensions": [
+                270,
+                480
+              ],
+              "object_key": "workspaces/wsp_5c10e33753c8417b950ca0d1/projects/prj_b98b902900c75272bc5fa4b824f369c2/variant-imports/vfm_55d03b68297f5e1182e54347a69448ae/ast_0edccaa164424163b0f16d2b.png",
+              "sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+              "size_bytes": 1729,
+              "storage_provider": "local"
+            }
+          },
+          "human_review_required": true,
+          "reframe_attention_required": true,
+          "rights_review_required": true,
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 1,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": true
+          },
+          "schema_version": "sql-variant-storyboard-result.v1",
+          "timeline_id": "tln_b995429fd90b59e6b4c4c2da85c4be83",
+          "timeline_sha256": "017749d184e7bca77eac7a6da27a14c08cdc0590cd839f54625cd44283e1dbe5",
+          "timeline_version_id": "tlv_7d0cd22ae67c57138082d49778501541"
+        },
+        "result_sha256": "199eb61a6a31ca3524f0fc4436c9c19d08c864d26620b95e0e7dc903967d7193",
+        "safety": {
+          "approval_inherited": false,
+          "automatic_render": false,
+          "child_projects_created": 1,
+          "new_inference_calls": 0,
+          "provider_calls": 0,
+          "publishing_enabled": false,
+          "rights_override_inherited": false,
+          "source_bytes_verified": true
+        },
+        "schema_version": "sql-variant-storyboard-receipt.v1",
+        "state": "ready",
+        "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+      },
+      "replayed": false,
+      "schema_version": "sql-variant-api-derive-result.v1"
+    },
+    "page": {
+      "items": [
+        {
+          "actor_ref": "usr:test-owner",
+          "created_at": "2026-10-13T18:03:17.139768Z",
+          "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+          "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+          "members": [
+            {
+              "child_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+              "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+              "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+              "planned_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+              "profile": {
+                "aspect_ratio": "16:9",
+                "final_profile": "landscape-1920x1080",
+                "height": 1080,
+                "label": "YouTube · 16:9",
+                "platform": "youtube",
+                "profile_ref": "youtube-landscape@1",
+                "review_profile": "review-960x540",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "youtube_landscape",
+                "width": 1920
+              },
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 1,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": true
+              },
+              "schema_version": "sql-variant-member.v1",
+              "state": "needs_attention",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            },
+            {
+              "child_project_id": null,
+              "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+              "member_id": "vfm_1209648dbb7b52049a5da682468ce3b7",
+              "planned_project_id": "prj_bf8f402ce50156f1bba49a19b2ce307a",
+              "profile": {
+                "aspect_ratio": "9:16",
+                "final_profile": "vertical-1080x1920",
+                "height": 1920,
+                "label": "YouTube Shorts · 9:16",
+                "platform": "youtube",
+                "profile_ref": "youtube-shorts@1",
+                "review_profile": "review-540x960",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "youtube_shorts",
+                "width": 1080
+              },
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 0,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": false
+              },
+              "schema_version": "sql-variant-member.v1",
+              "state": "reserved",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            },
+            {
+              "child_project_id": null,
+              "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+              "member_id": "vfm_12228f702e8a5dcab43fdbdddc63c419",
+              "planned_project_id": "prj_7a810238701a5fc0963ad4d5ec9a1332",
+              "profile": {
+                "aspect_ratio": "9:16",
+                "final_profile": "vertical-1080x1920",
+                "height": 1920,
+                "label": "TikTok · 9:16",
+                "platform": "tiktok",
+                "profile_ref": "tiktok-short@1",
+                "review_profile": "review-540x960",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "tiktok",
+                "width": 1080
+              },
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 0,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": false
+              },
+              "schema_version": "sql-variant-member.v1",
+              "state": "reserved",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            },
+            {
+              "child_project_id": null,
+              "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+              "member_id": "vfm_9f46129c62c05cdeaaa90b8946c8ec9d",
+              "planned_project_id": "prj_6f7fd2bc3b05561a893e792b39adab91",
+              "profile": {
+                "aspect_ratio": "9:16",
+                "final_profile": "vertical-1080x1920",
+                "height": 1920,
+                "label": "Instagram Reels · 9:16",
+                "platform": "instagram_reels",
+                "profile_ref": "instagram-reel@1",
+                "review_profile": "review-540x960",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "instagram_reels",
+                "width": 1080
+              },
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 0,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": false
+              },
+              "schema_version": "sql-variant-member.v1",
+              "state": "reserved",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            },
+            {
+              "child_project_id": null,
+              "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+              "member_id": "vfm_fc447b7440da5608a03f943277d50eac",
+              "planned_project_id": "prj_c73ea636acf35b66871bf183aa66cd79",
+              "profile": {
+                "aspect_ratio": "1:1",
+                "final_profile": "square-1080x1080",
+                "height": 1080,
+                "label": "Social · 1:1",
+                "platform": null,
+                "profile_ref": "social-square@1",
+                "review_profile": "review-540x540",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "social_square",
+                "width": 1080
+              },
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 0,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": false
+              },
+              "schema_version": "sql-variant-member.v1",
+              "state": "reserved",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            },
+            {
+              "child_project_id": null,
+              "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+              "member_id": "vfm_3abf4f702b3b54d0b84362ae8ef1959c",
+              "planned_project_id": "prj_3ea9196e8cc059628e5ca7cfb5af852e",
+              "profile": {
+                "aspect_ratio": "4:5",
+                "final_profile": "portrait-1080x1350",
+                "height": 1350,
+                "label": "Feed · 4:5",
+                "platform": null,
+                "profile_ref": "social-feed@1",
+                "review_profile": "review-432x540",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "social_feed",
+                "width": 1080
+              },
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 0,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": false
+              },
+              "schema_version": "sql-variant-member.v1",
+              "state": "reserved",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            }
+          ],
+          "result": {
+            "members": [
+              {
+                "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+                "planned_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+                "profile_ref": "youtube-landscape@1"
+              },
+              {
+                "member_id": "vfm_1209648dbb7b52049a5da682468ce3b7",
+                "planned_project_id": "prj_bf8f402ce50156f1bba49a19b2ce307a",
+                "profile_ref": "youtube-shorts@1"
+              },
+              {
+                "member_id": "vfm_12228f702e8a5dcab43fdbdddc63c419",
+                "planned_project_id": "prj_7a810238701a5fc0963ad4d5ec9a1332",
+                "profile_ref": "tiktok-short@1"
+              },
+              {
+                "member_id": "vfm_9f46129c62c05cdeaaa90b8946c8ec9d",
+                "planned_project_id": "prj_6f7fd2bc3b05561a893e792b39adab91",
+                "profile_ref": "instagram-reel@1"
+              },
+              {
+                "member_id": "vfm_fc447b7440da5608a03f943277d50eac",
+                "planned_project_id": "prj_c73ea636acf35b66871bf183aa66cd79",
+                "profile_ref": "social-square@1"
+              },
+              {
+                "member_id": "vfm_3abf4f702b3b54d0b84362ae8ef1959c",
+                "planned_project_id": "prj_3ea9196e8cc059628e5ca7cfb5af852e",
+                "profile_ref": "social-feed@1"
+              }
+            ],
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-reservation-result.v1"
+          },
+          "result_sha256": "92655cfffb67b4b2d1cba56744d2dbe5c16d5c8541675f6388b8e1bdb329b337",
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 1,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-family.v1",
+          "snapshot": {
+            "binding": {
+              "assets": [
+                {
+                  "asset_class": "generated",
+                  "asset_id": "ast_0edccaa164424163b0f16d2b",
+                  "checksum_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+                  "content_type": "image/png",
+                  "kind": "image",
+                  "object_key_sha256": "5dc8d4a4832ee4b750b99182b735edce3ed57a735de2f0db9e3e20a31573e810",
+                  "project_id": "prj_d8dd5da35d8b41c48825b477",
+                  "project_version_id": "pver_9f1e9840683a41da87e5a2e8",
+                  "record_sha256": "010df602699a3a2c4f230ea290ae9577f2c0e39b5bfab834e79dc20be1fbdbf3",
+                  "size_bytes": 1729,
+                  "storage_provider": "local",
+                  "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+                }
+              ],
+              "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+              "project_current_version_id": "pver_9f1e9840683a41da87e5a2e8",
+              "project_version": 2,
+              "records": [
+                {
+                  "count": 1,
+                  "owner_ref": "prj_d8dd5da35d8b41c48825b477",
+                  "sha256": "3dc92b10bbf4b8a78acca82cec9f942348b1d05a3a77a8a4e023fb4cc026d9f5",
+                  "table": "video_projects"
+                },
+                {
+                  "count": 1,
+                  "owner_ref": "tlv_d63fbced68694a5cb7fe",
+                  "sha256": "ca2060a1af08242d94373fc525284fa9ce580251bda0970d0e34962cbcefd48b",
+                  "table": "timeline_versions"
+                },
+                {
+                  "count": 1,
+                  "owner_ref": "pver_9f1e9840683a41da87e5a2e8",
+                  "sha256": "981ceafc70dfdc590c9ff4e84e63b35aec72e2784ff66a6ffe06ed4bd8745653",
+                  "table": "project_versions"
+                }
+              ],
+              "safety": {
+                "approval_inherited": false,
+                "automatic_render": false,
+                "child_projects_created": 0,
+                "new_inference_calls": 0,
+                "provider_calls": 0,
+                "publishing_enabled": false,
+                "rights_override_inherited": false,
+                "source_bytes_verified": false
+              },
+              "schema_version": "sql-variant-master-binding.v1",
+              "selected_transcript_id": null,
+              "source_analysis_id": null,
+              "source_content_version_id": "pver_9f1e9840683a41da87e5a2e8",
+              "source_mode": "storyboard_media",
+              "timeline_id": "tml_41bcb74c683a4a7e9ddb",
+              "timeline_snapshot_sha256": "f5cb6bb5593bfd3bb588d5582336d2f9bf010187c25863ba38830b2c4868dda7",
+              "timeline_version": 1,
+              "timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+              "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+            },
+            "binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+            "catalog": {
+              "catalog_ref": "master-platform-formats@1",
+              "profiles": [
+                {
+                  "aspect_ratio": "16:9",
+                  "final_profile": "landscape-1920x1080",
+                  "height": 1080,
+                  "label": "YouTube · 16:9",
+                  "platform": "youtube",
+                  "profile_ref": "youtube-landscape@1",
+                  "review_profile": "review-960x540",
+                  "schema_version": "sql-variant-profile.v1",
+                  "target": "youtube_landscape",
+                  "width": 1920
+                },
+                {
+                  "aspect_ratio": "9:16",
+                  "final_profile": "vertical-1080x1920",
+                  "height": 1920,
+                  "label": "YouTube Shorts · 9:16",
+                  "platform": "youtube",
+                  "profile_ref": "youtube-shorts@1",
+                  "review_profile": "review-540x960",
+                  "schema_version": "sql-variant-profile.v1",
+                  "target": "youtube_shorts",
+                  "width": 1080
+                },
+                {
+                  "aspect_ratio": "9:16",
+                  "final_profile": "vertical-1080x1920",
+                  "height": 1920,
+                  "label": "TikTok · 9:16",
+                  "platform": "tiktok",
+                  "profile_ref": "tiktok-short@1",
+                  "review_profile": "review-540x960",
+                  "schema_version": "sql-variant-profile.v1",
+                  "target": "tiktok",
+                  "width": 1080
+                },
+                {
+                  "aspect_ratio": "9:16",
+                  "final_profile": "vertical-1080x1920",
+                  "height": 1920,
+                  "label": "Instagram Reels · 9:16",
+                  "platform": "instagram_reels",
+                  "profile_ref": "instagram-reel@1",
+                  "review_profile": "review-540x960",
+                  "schema_version": "sql-variant-profile.v1",
+                  "target": "instagram_reels",
+                  "width": 1080
+                },
+                {
+                  "aspect_ratio": "1:1",
+                  "final_profile": "square-1080x1080",
+                  "height": 1080,
+                  "label": "Social · 1:1",
+                  "platform": null,
+                  "profile_ref": "social-square@1",
+                  "review_profile": "review-540x540",
+                  "schema_version": "sql-variant-profile.v1",
+                  "target": "social_square",
+                  "width": 1080
+                },
+                {
+                  "aspect_ratio": "4:5",
+                  "final_profile": "portrait-1080x1350",
+                  "height": 1350,
+                  "label": "Feed · 4:5",
+                  "platform": null,
+                  "profile_ref": "social-feed@1",
+                  "review_profile": "review-432x540",
+                  "schema_version": "sql-variant-profile.v1",
+                  "target": "social_feed",
+                  "width": 1080
+                }
+              ],
+              "schema_version": "sql-variant-catalog.v1"
+            },
+            "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+            "request": {
+              "acknowledge_draft_derivation": true,
+              "catalog_ref": "master-platform-formats@1",
+              "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+              "expected_binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+              "expected_project_version": 2,
+              "expected_timeline_version": 1,
+              "expected_timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+              "profile_refs": [
+                "youtube-landscape@1",
+                "youtube-shorts@1",
+                "tiktok-short@1",
+                "instagram-reel@1",
+                "social-square@1",
+                "social-feed@1"
+              ],
+              "schema_version": "sql-variant-family-reserve.v1"
+            },
+            "request_sha256": "b3d752d86a723ab9ff1b1274570c0a5166f080730c69a9a2ca88b4171937c4a2",
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-family-snapshot.v1"
+          },
+          "snapshot_sha256": "4c66bf974871e1169301c6af6bc500dac7feb9a80e9d2b5185fbd4c899cee606",
+          "source_current": true,
+          "source_current_reason": null,
+          "state": "needs_attention",
+          "version": 3,
+          "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+        }
+      ],
+      "next_cursor": null,
+      "schema_version": "sql-variant-family-page.v1"
+    },
+    "reserved_family_mutation": {
+      "family": {
+        "actor_ref": "usr:test-owner",
+        "created_at": "2026-10-13T18:03:17.139768Z",
+        "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+        "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+        "members": [
+          {
+            "child_project_id": null,
+            "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+            "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+            "planned_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+            "profile": {
+              "aspect_ratio": "16:9",
+              "final_profile": "landscape-1920x1080",
+              "height": 1080,
+              "label": "YouTube · 16:9",
+              "platform": "youtube",
+              "profile_ref": "youtube-landscape@1",
+              "review_profile": "review-960x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "youtube_landscape",
+              "width": 1920
+            },
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-member.v1",
+            "state": "reserved",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          },
+          {
+            "child_project_id": null,
+            "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+            "member_id": "vfm_1209648dbb7b52049a5da682468ce3b7",
+            "planned_project_id": "prj_bf8f402ce50156f1bba49a19b2ce307a",
+            "profile": {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "YouTube Shorts · 9:16",
+              "platform": "youtube",
+              "profile_ref": "youtube-shorts@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "youtube_shorts",
+              "width": 1080
+            },
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-member.v1",
+            "state": "reserved",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          },
+          {
+            "child_project_id": null,
+            "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+            "member_id": "vfm_12228f702e8a5dcab43fdbdddc63c419",
+            "planned_project_id": "prj_7a810238701a5fc0963ad4d5ec9a1332",
+            "profile": {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "TikTok · 9:16",
+              "platform": "tiktok",
+              "profile_ref": "tiktok-short@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "tiktok",
+              "width": 1080
+            },
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-member.v1",
+            "state": "reserved",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          },
+          {
+            "child_project_id": null,
+            "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+            "member_id": "vfm_9f46129c62c05cdeaaa90b8946c8ec9d",
+            "planned_project_id": "prj_6f7fd2bc3b05561a893e792b39adab91",
+            "profile": {
+              "aspect_ratio": "9:16",
+              "final_profile": "vertical-1080x1920",
+              "height": 1920,
+              "label": "Instagram Reels · 9:16",
+              "platform": "instagram_reels",
+              "profile_ref": "instagram-reel@1",
+              "review_profile": "review-540x960",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "instagram_reels",
+              "width": 1080
+            },
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-member.v1",
+            "state": "reserved",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          },
+          {
+            "child_project_id": null,
+            "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+            "member_id": "vfm_fc447b7440da5608a03f943277d50eac",
+            "planned_project_id": "prj_c73ea636acf35b66871bf183aa66cd79",
+            "profile": {
+              "aspect_ratio": "1:1",
+              "final_profile": "square-1080x1080",
+              "height": 1080,
+              "label": "Social · 1:1",
+              "platform": null,
+              "profile_ref": "social-square@1",
+              "review_profile": "review-540x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "social_square",
+              "width": 1080
+            },
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-member.v1",
+            "state": "reserved",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          },
+          {
+            "child_project_id": null,
+            "family_id": "vfa_be17ac5d36fa5f6491986668303319dc",
+            "member_id": "vfm_3abf4f702b3b54d0b84362ae8ef1959c",
+            "planned_project_id": "prj_3ea9196e8cc059628e5ca7cfb5af852e",
+            "profile": {
+              "aspect_ratio": "4:5",
+              "final_profile": "portrait-1080x1350",
+              "height": 1350,
+              "label": "Feed · 4:5",
+              "platform": null,
+              "profile_ref": "social-feed@1",
+              "review_profile": "review-432x540",
+              "schema_version": "sql-variant-profile.v1",
+              "target": "social_feed",
+              "width": 1080
+            },
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-member.v1",
+            "state": "reserved",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          }
+        ],
+        "result": {
+          "members": [
+            {
+              "member_id": "vfm_55d03b68297f5e1182e54347a69448ae",
+              "planned_project_id": "prj_b98b902900c75272bc5fa4b824f369c2",
+              "profile_ref": "youtube-landscape@1"
+            },
+            {
+              "member_id": "vfm_1209648dbb7b52049a5da682468ce3b7",
+              "planned_project_id": "prj_bf8f402ce50156f1bba49a19b2ce307a",
+              "profile_ref": "youtube-shorts@1"
+            },
+            {
+              "member_id": "vfm_12228f702e8a5dcab43fdbdddc63c419",
+              "planned_project_id": "prj_7a810238701a5fc0963ad4d5ec9a1332",
+              "profile_ref": "tiktok-short@1"
+            },
+            {
+              "member_id": "vfm_9f46129c62c05cdeaaa90b8946c8ec9d",
+              "planned_project_id": "prj_6f7fd2bc3b05561a893e792b39adab91",
+              "profile_ref": "instagram-reel@1"
+            },
+            {
+              "member_id": "vfm_fc447b7440da5608a03f943277d50eac",
+              "planned_project_id": "prj_c73ea636acf35b66871bf183aa66cd79",
+              "profile_ref": "social-square@1"
+            },
+            {
+              "member_id": "vfm_3abf4f702b3b54d0b84362ae8ef1959c",
+              "planned_project_id": "prj_3ea9196e8cc059628e5ca7cfb5af852e",
+              "profile_ref": "social-feed@1"
+            }
+          ],
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-reservation-result.v1"
+        },
+        "result_sha256": "92655cfffb67b4b2d1cba56744d2dbe5c16d5c8541675f6388b8e1bdb329b337",
+        "safety": {
+          "approval_inherited": false,
+          "automatic_render": false,
+          "child_projects_created": 0,
+          "new_inference_calls": 0,
+          "provider_calls": 0,
+          "publishing_enabled": false,
+          "rights_override_inherited": false,
+          "source_bytes_verified": false
+        },
+        "schema_version": "sql-variant-family.v1",
+        "snapshot": {
+          "binding": {
+            "assets": [
+              {
+                "asset_class": "generated",
+                "asset_id": "ast_0edccaa164424163b0f16d2b",
+                "checksum_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+                "content_type": "image/png",
+                "kind": "image",
+                "object_key_sha256": "5dc8d4a4832ee4b750b99182b735edce3ed57a735de2f0db9e3e20a31573e810",
+                "project_id": "prj_d8dd5da35d8b41c48825b477",
+                "project_version_id": "pver_9f1e9840683a41da87e5a2e8",
+                "record_sha256": "010df602699a3a2c4f230ea290ae9577f2c0e39b5bfab834e79dc20be1fbdbf3",
+                "size_bytes": 1729,
+                "storage_provider": "local",
+                "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+              }
+            ],
+            "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+            "project_current_version_id": "pver_9f1e9840683a41da87e5a2e8",
+            "project_version": 2,
+            "records": [
+              {
+                "count": 1,
+                "owner_ref": "prj_d8dd5da35d8b41c48825b477",
+                "sha256": "3dc92b10bbf4b8a78acca82cec9f942348b1d05a3a77a8a4e023fb4cc026d9f5",
+                "table": "video_projects"
+              },
+              {
+                "count": 1,
+                "owner_ref": "tlv_d63fbced68694a5cb7fe",
+                "sha256": "ca2060a1af08242d94373fc525284fa9ce580251bda0970d0e34962cbcefd48b",
+                "table": "timeline_versions"
+              },
+              {
+                "count": 1,
+                "owner_ref": "pver_9f1e9840683a41da87e5a2e8",
+                "sha256": "981ceafc70dfdc590c9ff4e84e63b35aec72e2784ff66a6ffe06ed4bd8745653",
+                "table": "project_versions"
+              }
+            ],
+            "safety": {
+              "approval_inherited": false,
+              "automatic_render": false,
+              "child_projects_created": 0,
+              "new_inference_calls": 0,
+              "provider_calls": 0,
+              "publishing_enabled": false,
+              "rights_override_inherited": false,
+              "source_bytes_verified": false
+            },
+            "schema_version": "sql-variant-master-binding.v1",
+            "selected_transcript_id": null,
+            "source_analysis_id": null,
+            "source_content_version_id": "pver_9f1e9840683a41da87e5a2e8",
+            "source_mode": "storyboard_media",
+            "timeline_id": "tml_41bcb74c683a4a7e9ddb",
+            "timeline_snapshot_sha256": "f5cb6bb5593bfd3bb588d5582336d2f9bf010187c25863ba38830b2c4868dda7",
+            "timeline_version": 1,
+            "timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+            "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+          },
+          "binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+          "catalog": {
+            "catalog_ref": "master-platform-formats@1",
+            "profiles": [
+              {
+                "aspect_ratio": "16:9",
+                "final_profile": "landscape-1920x1080",
+                "height": 1080,
+                "label": "YouTube · 16:9",
+                "platform": "youtube",
+                "profile_ref": "youtube-landscape@1",
+                "review_profile": "review-960x540",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "youtube_landscape",
+                "width": 1920
+              },
+              {
+                "aspect_ratio": "9:16",
+                "final_profile": "vertical-1080x1920",
+                "height": 1920,
+                "label": "YouTube Shorts · 9:16",
+                "platform": "youtube",
+                "profile_ref": "youtube-shorts@1",
+                "review_profile": "review-540x960",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "youtube_shorts",
+                "width": 1080
+              },
+              {
+                "aspect_ratio": "9:16",
+                "final_profile": "vertical-1080x1920",
+                "height": 1920,
+                "label": "TikTok · 9:16",
+                "platform": "tiktok",
+                "profile_ref": "tiktok-short@1",
+                "review_profile": "review-540x960",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "tiktok",
+                "width": 1080
+              },
+              {
+                "aspect_ratio": "9:16",
+                "final_profile": "vertical-1080x1920",
+                "height": 1920,
+                "label": "Instagram Reels · 9:16",
+                "platform": "instagram_reels",
+                "profile_ref": "instagram-reel@1",
+                "review_profile": "review-540x960",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "instagram_reels",
+                "width": 1080
+              },
+              {
+                "aspect_ratio": "1:1",
+                "final_profile": "square-1080x1080",
+                "height": 1080,
+                "label": "Social · 1:1",
+                "platform": null,
+                "profile_ref": "social-square@1",
+                "review_profile": "review-540x540",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "social_square",
+                "width": 1080
+              },
+              {
+                "aspect_ratio": "4:5",
+                "final_profile": "portrait-1080x1350",
+                "height": 1350,
+                "label": "Feed · 4:5",
+                "platform": null,
+                "profile_ref": "social-feed@1",
+                "review_profile": "review-432x540",
+                "schema_version": "sql-variant-profile.v1",
+                "target": "social_feed",
+                "width": 1080
+              }
+            ],
+            "schema_version": "sql-variant-catalog.v1"
+          },
+          "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+          "request": {
+            "acknowledge_draft_derivation": true,
+            "catalog_ref": "master-platform-formats@1",
+            "catalog_sha256": "2ce8b3ccf4bcca5b7946b56036f1ddf43042d22090fe1540b27daa4e449125fd",
+            "expected_binding_sha256": "1f8abe6df55555308683533dd478ebed32b6a629e1661f300da1d58190bb5cbe",
+            "expected_project_version": 2,
+            "expected_timeline_version": 1,
+            "expected_timeline_version_id": "tlv_d63fbced68694a5cb7fe",
+            "profile_refs": [
+              "youtube-landscape@1",
+              "youtube-shorts@1",
+              "tiktok-short@1",
+              "instagram-reel@1",
+              "social-square@1",
+              "social-feed@1"
+            ],
+            "schema_version": "sql-variant-family-reserve.v1"
+          },
+          "request_sha256": "b3d752d86a723ab9ff1b1274570c0a5166f080730c69a9a2ca88b4171937c4a2",
+          "safety": {
+            "approval_inherited": false,
+            "automatic_render": false,
+            "child_projects_created": 0,
+            "new_inference_calls": 0,
+            "provider_calls": 0,
+            "publishing_enabled": false,
+            "rights_override_inherited": false,
+            "source_bytes_verified": false
+          },
+          "schema_version": "sql-variant-family-snapshot.v1"
+        },
+        "snapshot_sha256": "4c66bf974871e1169301c6af6bc500dac7feb9a80e9d2b5185fbd4c899cee606",
+        "source_current": true,
+        "source_current_reason": null,
+        "state": "reserved",
+        "version": 1,
+        "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+      },
+      "replayed": false,
+      "schema_version": "sql-variant-api-family-result.v1"
+    }
+  },
+  "fixture_scope": "owned actual SQLite + Local + ASGI; supplied manual script and first-party PNG; no ASR/model/provider/renderer",
+  "head": "8b2ed1b87fca837e919313e8a5e34e5140e1ec55",
+  "master_project_id": "prj_d8dd5da35d8b41c48825b477",
+  "model_results_used": false,
+  "owner_uat": false,
+  "provider_calls": 0,
+  "renderer_calls": 0,
+  "repository_root": "C:\\vfns-variants-01",
+  "schema_version": "sql-variant-family-actual-asgi-fixtures.v1",
+  "source_sha256": {
+    "apps/api/app/sql_variant_api_service.py": "00a6e7a0bfeac9cea95668e12920b8decbd771eda350e035c1d9342e401149f1",
+    "apps/api/app/sql_variant_routes.py": "578a06a139213f3b0c0a6d348b99b35931e581e3d401ad51af394adcb304b4b7",
+    "apps/api/tests/test_sql_variant_api.py": "64e3e8c8e1617d2912352d9e183c5e17bcf1ac49c7b8874d6ba5bc1b3c688617"
+  },
+  "workspace_id": "wsp_5c10e33753c8417b950ca0d1"
+}

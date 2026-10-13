@@ -43,6 +43,7 @@ from .auto_edit_job_service import AutoEditJobService
 from .auto_edit_job_routes import router as auto_edit_job_router
 from .auto_edit_transcription_runtime import provider_from_settings as auto_edit_transcription_provider
 from .auto_edit_service import AutoEditAnalysisService, UploadService
+from .sql_variant_api_service import configure_sql_variant_api, register_sql_variant_routes
 from .artifacts import (
     ArtifactAccessError,
     resolve_recorded_artifact,
@@ -279,6 +280,8 @@ async def lifespan(app: FastAPI):
     app.state.auto_edit_job_service = AutoEditJobService(analysis_service=app.state.auto_edit_analysis_service,
         queue=redis,max_source_bytes=settings.upload_max_size_bytes,lease_seconds=settings.auto_edit_job_lease_seconds,
         timeout_seconds=settings.auto_edit_job_timeout_seconds)
+    configure_sql_variant_api(app,session_factory=session_factory,object_storage=object_storage,
+        uploaded_enabled=True,register_routes=False)
     if settings.vision_provider == "fixture":
         vision_provider = DeterministicVisionProvider()
     elif settings.vision_provider == "openai":
@@ -428,6 +431,8 @@ app = FastAPI(
     openapi_url=None if _production_mode else "/openapi.json",
 )
 _human_route_dependencies = [Depends(authorize_human_request)]
+# This router authenticates before body parsing and applies its own scoped RBAC.
+register_sql_variant_routes(app)
 app.include_router(platform_router, dependencies=_human_route_dependencies)
 app.include_router(trend_router, dependencies=_human_route_dependencies)
 app.include_router(auto_edit_router, dependencies=_human_route_dependencies)

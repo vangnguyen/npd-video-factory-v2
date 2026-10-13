@@ -31,6 +31,7 @@ import {initializeChannelLearning} from '/channel-learning.mjs';
 import {initializeUploadedAudioReview} from '/uploaded-audio-review.mjs?v=sql-audio-1';
 import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-stock-1';
 import {initializeVideoAnalysisJobs,videoReviewSelection,selectedVideoReviewAnalysis} from '/video-analysis-jobs.mjs?v=sql-video-jobs-1';
+import {initializeSqlVariantFamilies} from '/sql-variant-families.mjs?v=sql-family-1';
 
 const state = {
   workspaceId: null,
@@ -113,16 +114,36 @@ const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs')
     renderAnalysisReview();
     if(!state.timeline)render();
   }});
-const unsubscribeVideoBusy = multiInput.onBusyChanged(() => videoReview.sync());
+function sqlFamilyState(){return{...state,busy: state.projectLoading > 0 || multiInput.isBusy(),
+    dirty: audioReview.isDirty() || stockReview.isPending() || videoReview.isPending() || state.transcriptDrafts.size > 0
+      || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline};}
+const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-families'),api,getState:sqlFamilyState,
+  onMessage: toast,onChild: async selection => {
+    const principal=state.principal,subject=principal?.subject,tokenId=principal?.token_id;
+    const projects=await api(`/api/v1/workspaces/${selection.workspace_id}/projects`);
+    if(state.workspaceId!==selection.workspace_id||state.projectId!==selection.master_project_id
+      ||state.principal?.subject!==subject||state.principal?.token_id!==tokenId)return;
+    const latest=sqlFamilyState();
+    if(latest.busy||latest.dirty)throw Error('Lưu thay đổi đang sửa và chờ thao tác hiện tại xong trước khi mở bản nháp.');
+    if(!projects.some(project=>project.project_id===selection.child_project_id&&project.workspace_id===selection.workspace_id))
+      throw Error('Chưa tìm thấy bản nháp trong workspace hiện tại.');
+    state.projects=projects;
+    $('#project-select').innerHTML=projects.map(project=>`<option value="${escapeHtml(project.project_id)}">${escapeHtml(project.name)}</option>`).join('');
+    state.projectId=selection.child_project_id;$('#project-select').value=state.projectId;
+    window.localStorage.setItem('npd-studio-project',state.projectId);await loadProject();
+  }});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();});
 document.addEventListener('input', event => {
   if (event.target.closest('#multi-input-workbench') || event.target.closest('[data-transcript-text]')) audioReview.sync();
   stockReview.sync();
   videoReview.sync();
+  variantFamilies.sync();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
   stockReview.sync();
   videoReview.sync();
+  variantFamilies.sync();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -246,6 +267,7 @@ async function loadProject({ quiet = false } = {}) {
   stockReview.sync();
   videoReview.sync();
   multiInput.setBusy(true);
+  variantFamilies.sync();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -330,6 +352,7 @@ async function loadProject({ quiet = false } = {}) {
     audioReview.sync();
     stockReview.sync();
     videoReview.sync();
+    variantFamilies.sync();
   }
   if (state.projectId === loadedProjectId) {
     await audioReview.reload();
@@ -341,6 +364,7 @@ function renderNoProject(title, description) {
   audioReview.sync();
   stockReview.sync();
   videoReview.sync();
+  variantFamilies.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -353,6 +377,7 @@ function renderNoProject(title, description) {
 function render() {
   audioReview.sync();
   stockReview.sync();
+  variantFamilies.sync();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -381,6 +406,7 @@ function render() {
 }
 
 function renderReframe(){
+  if(state.timeline?.snapshot?.metadata?.reframe)$('#final-profile').value=reframeProfiles(state.timeline.snapshot).final;
   const source=activeAnalysis();
   $('#reframe-review').hidden=!state.timeline?.source_analysis_id||!source;
   if($('#reframe-review').hidden)return;
@@ -390,7 +416,6 @@ function renderReframe(){
     `<option value="${escapeHtml(item.vision_analysis_id)}">${escapeHtml(item.provider_key)} · ${escapeHtml(item.model)} · ${item.frames.length} khung hình</option>`).join('');
   $('#reframe-vision').value=binding?.vision_analysis_id??'';
   $('#reframe-status').textContent=binding?`${binding.aspect_ratio} · ${binding.fallback==='center_crop'?'Cắt giữa':binding.strategy} · ${binding.needs_attention?'Cần kiểm tra chủ thể trong A/V review':'Xem A/V review trước khi duyệt'} · timeline v${state.timeline.current_version}`:'Chọn tỷ lệ và kết quả phân tích chủ thể đã lưu. Nếu chưa có, dùng cắt giữa và kiểm tra trong A/V review.';
-  if(binding)$('#final-profile').value=reframeProfiles(state.timeline.snapshot).final;
 }
 
 function renderAnalysisReview(){
@@ -1368,6 +1393,10 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if(variantFamilies.isBusy()||variantFamilies.isPending()){
+    event.target.value=state.projectId??'';
+    return toast('Chờ thao tác phiên bản hoàn tất hoặc đối chiếu yêu cầu cũ trước khi đổi dự án.',true);
+  }
   if (stockReview.isPending()) {
     event.target.value = state.projectId ?? '';
     return toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi đổi dự án.', true);
@@ -1716,6 +1745,7 @@ window.addEventListener("beforeunload", () => {
   audioReview.dispose();
   stockReview.dispose();
   videoReview.dispose();
+  variantFamilies.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();
