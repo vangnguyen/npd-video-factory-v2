@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import shutil
-import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import FileResponse
-from starlette.background import BackgroundTask
+from .verified_artifact_delivery import (ArtifactDeliveryRejected, output_asset_read, deliver_verified_artifact,
+    output_sql_snapshot, asset_output_identity)
+from .timeline_db import PreviewJobORM
 
 from .timeline_logic import TimelineEditError
 from .timeline_models import (
@@ -182,30 +182,35 @@ async def cancel_preview(project_id: str, preview_id: str, request: Request) -> 
     return preview
 
 
-@router.get("/projects/{project_id}/previews/{preview_id}/content", response_class=FileResponse)
+@router.api_route("/projects/{project_id}/previews/{preview_id}/content", methods=['GET','HEAD'], response_class=FileResponse)
 async def preview_content(project_id: str, preview_id: str, request: Request) -> FileResponse:
+    await authorize_project(request, project_id, 'viewer')
     preview = await preview_service(request).get(project_id, preview_id)
     if preview is None or preview.output_asset_id is None:
         raise missing("preview content")
     asset = await request.app.state.auto_edit_repository.get_asset(preview.output_asset_id)
-    if asset is None or asset.project_id != project_id:
+    if asset is None or asset.project_id != project_id or asset.workspace_id != preview.workspace_id:
         raise missing("preview asset")
-    download_root = Path(request.app.state.preview_download_root).resolve()
-    target_dir = (download_root / uuid.uuid4().hex).resolve()
-    if download_root not in target_dir.parents:
-        raise HTTPException(status_code=500, detail={"code": "INVALID_PREVIEW_PATH"})
-    target = target_dir / "preview.mp4"
+    asset = asset.model_copy(deep=True)
+    factory = request.app.state.auto_edit_repository.session_factory
+    expected = await output_sql_snapshot(factory,PreviewJobORM,PreviewJobORM.preview_id,preview_id,
+        project_id=project_id,workspace_id=preview.workspace_id)
+    if expected is None:
+        raise missing('preview asset')
+    if expected['asset'] != asset_output_identity(asset):
+        raise HTTPException(409,detail={'code':'ARTIFACT_OUTPUT_CHANGED'})
+    async def current():
+        latest = await output_sql_snapshot(factory,PreviewJobORM,PreviewJobORM.preview_id,preview_id,
+            project_id=project_id,workspace_id=preview.workspace_id)
+        if latest != expected:
+            raise ArtifactDeliveryRejected('ARTIFACT_OUTPUT_CHANGED')
     try:
-        await request.app.state.object_storage.download_file(
-            object_key=asset.object_key,
-            destination=target,
-        )
-    except FileNotFoundError as exc:
-        shutil.rmtree(target_dir, ignore_errors=True)
-        raise missing("preview object") from exc
-    return FileResponse(
-        target,
-        media_type="video/mp4",
-        filename="preview.mp4",
-        background=BackgroundTask(shutil.rmtree, target_dir, ignore_errors=True),
-    )
+        proof = output_asset_read(asset, workspace_id=preview.workspace_id, project_id=project_id,
+            storage=request.app.state.object_storage, kind='proxy-preview')
+        return await deliver_verified_artifact(proof=proof, storage=request.app.state.object_storage,
+            staging_root=Path(request.app.state.preview_download_root), basename='preview.mp4',
+            filename='preview.mp4', media_type='video/mp4', current=current)
+    except FileNotFoundError:
+        raise missing('preview object') from None
+    except ArtifactDeliveryRejected as error:
+        raise HTTPException(error.status, detail={'code':error.code}) from None

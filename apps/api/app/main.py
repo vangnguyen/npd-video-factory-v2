@@ -45,10 +45,9 @@ from .auto_edit_transcription_runtime import provider_from_settings as auto_edit
 from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .artifacts import (
     ArtifactAccessError,
-    recorded_artifact,
-    recorded_artifact_path,
     resolve_recorded_artifact,
 )
+from .legacy_artifact_recovery import recover_legacy_artifact
 from .config import settings
 from .db import create_engine, create_session_factory, verify_database
 from .media_intelligence_repository import MediaIntelligenceRepository
@@ -70,7 +69,7 @@ from .human_auth import (
 from .models import JobCreateResponse, JobRecord, VideoJobCreate
 from .content_generation import ContentGenerationService, content_provider_definition
 from .storyboard_content_provider import create_storyboard_content_provider
-from .object_storage import create_object_storage, sha256_file
+from .object_storage import create_object_storage
 from .openai_transcription_provider import (
     OpenAITranscriptionProvider,
     openai_asr_compatibility_matrix,
@@ -1325,8 +1324,9 @@ async def get_video_job(job_id: str, request: Request) -> JobRecord:
     return record
 
 
-@app.get(
+@app.api_route(
     "/api/v1/video-jobs/{job_id}/artifacts/{artifact_name}",
+    methods=['GET','HEAD'],
     dependencies=_human_route_dependencies,
 )
 async def get_video_artifact(job_id: str, artifact_name: str, request: Request) -> FileResponse:
@@ -1335,19 +1335,10 @@ async def get_video_artifact(job_id: str, artifact_name: str, request: Request) 
         raise not_found()
     try:
         path = resolve_recorded_artifact(settings.job_storage_root, record, artifact_name)
-    except ArtifactAccessError as exc:
+    except ArtifactAccessError:
         try:
-            artifact = recorded_artifact(record, artifact_name)
-            if not artifact.object_key:
-                raise exc
-            path = recorded_artifact_path(settings.job_storage_root, record, artifact_name)
-            await request.app.state.object_storage.download_file(
-                object_key=artifact.object_key,
-                destination=path,
-            )
-            if artifact.checksum_sha256 and sha256_file(path) != artifact.checksum_sha256:
-                path.unlink(missing_ok=True)
-                raise ArtifactAccessError("artifact checksum mismatch")
+            return await recover_legacy_artifact(root=settings.job_storage_root, record=record,
+                artifact_name=artifact_name, store=store_from(request), storage=request.app.state.object_storage)
         except Exception as recovery_exc:
             raise not_found("Artifact not found.") from recovery_exc
     return FileResponse(path=path, filename=artifact_name)

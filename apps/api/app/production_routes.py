@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import shutil
-import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query, Request, status
 from fastapi.responses import FileResponse
-from starlette.background import BackgroundTask
+from .human_auth import authorize_project
+from .verified_artifact_delivery import (ArtifactDeliveryRejected, output_asset_read, deliver_verified_artifact,
+    output_sql_snapshot, asset_output_identity)
+from .production_db import ProductionRenderJobORM
 
 from .production_logic import ProductionContractError
 from .production_models import (
@@ -207,33 +208,38 @@ async def cancel_render(
     return render
 
 
-@router.get("/projects/{project_id}/renders/{render_id}/content", response_class=FileResponse)
+@router.api_route("/projects/{project_id}/renders/{render_id}/content", methods=['GET','HEAD'], response_class=FileResponse)
 async def render_content(project_id: str, render_id: str, request: Request) -> FileResponse:
+    await authorize_project(request, project_id, 'viewer')
     render = await service(request).get_render(project_id, render_id)
     if render is None or render.output_asset_id is None:
         raise missing("render content")
     asset = await request.app.state.auto_edit_repository.get_asset(render.output_asset_id)
-    if asset is None or asset.project_id != project_id:
+    if asset is None or asset.project_id != project_id or asset.workspace_id != render.workspace_id:
         raise missing("render asset")
-    download_root = Path(request.app.state.production_render_download_root).resolve()
-    target_dir = (download_root / uuid.uuid4().hex).resolve()
-    if download_root not in target_dir.parents:
-        raise HTTPException(status_code=500, detail={"code": "INVALID_RENDER_PATH"})
-    target = target_dir / asset.filename
+    asset = asset.model_copy(deep=True)
+    factory = request.app.state.auto_edit_repository.session_factory
+    expected = await output_sql_snapshot(factory,ProductionRenderJobORM,ProductionRenderJobORM.render_id,render_id,
+        project_id=project_id,workspace_id=render.workspace_id)
+    if expected is None:
+        raise missing('render asset')
+    if expected['asset'] != asset_output_identity(asset):
+        raise HTTPException(409,detail={'code':'ARTIFACT_OUTPUT_CHANGED'})
+    async def current():
+        latest = await output_sql_snapshot(factory,ProductionRenderJobORM,ProductionRenderJobORM.render_id,render_id,
+            project_id=project_id,workspace_id=render.workspace_id)
+        if latest != expected:
+            raise ArtifactDeliveryRejected('ARTIFACT_OUTPUT_CHANGED')
     try:
-        await request.app.state.object_storage.download_file(
-            object_key=asset.object_key,
-            destination=target,
-        )
-    except FileNotFoundError as exc:
-        shutil.rmtree(target_dir, ignore_errors=True)
-        raise missing("render object") from exc
-    return FileResponse(
-        target,
-        media_type="video/mp4",
-        filename=asset.filename,
-        background=BackgroundTask(shutil.rmtree, target_dir, ignore_errors=True),
-    )
+        proof = output_asset_read(asset, workspace_id=render.workspace_id, project_id=project_id,
+            storage=request.app.state.object_storage, kind='av-review' if render.render_kind=='review' else 'final-render')
+        return await deliver_verified_artifact(proof=proof, storage=request.app.state.object_storage,
+            staging_root=Path(request.app.state.production_render_download_root), basename='render.mp4',
+            filename=asset.filename, media_type='video/mp4', current=current)
+    except FileNotFoundError:
+        raise missing('render object') from None
+    except ArtifactDeliveryRejected as error:
+        raise HTTPException(error.status, detail={'code':error.code}) from None
 
 
 @router.post(
