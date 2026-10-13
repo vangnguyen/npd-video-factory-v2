@@ -362,11 +362,25 @@ class AutoEditRepository:
             row.updated_at = utc_now()
             await session.commit()
 
-    async def mark_analysis_failed(self, analysis_id: str, error_code: str) -> None:
+    async def mark_analysis_failed(self, analysis_id: str, error_code: str, *, local_evidence=None,
+                                   expected_source_sha256=None) -> None:
         async with self.session_factory() as session:
-            row = await session.get(AutoEditAnalysisORM, analysis_id)
+            row = await session.get(AutoEditAnalysisORM, analysis_id, with_for_update=True)
             if row is None:
                 return
+            if row.status == 'succeeded':
+                return
+            if local_evidence is not None:
+                from .uploaded_audio_repository import digest
+                if (row.provenance_json.get('source_asset_checksum') != expected_source_sha256
+                    or local_evidence.get('source_sha256') != expected_source_sha256):
+                    raise ValueError('AUTO_EDIT_LOCAL_FAILURE_SOURCE_CHANGED')
+                snapshot = {'evidence': local_evidence, 'sha256': digest(local_evidence)}
+                previous = row.provenance_json.get('local_video_rejected_evidence')
+                if previous is not None and previous != snapshot:
+                    raise ValueError('AUTO_EDIT_LOCAL_FAILURE_EVIDENCE_IMMUTABLE')
+                row.provenance_json = {**row.provenance_json, 'local_video_rejected_evidence': snapshot,
+                    'human_review_required': True, 'automatic_model_replay': False}
             row.status = "failed"
             row.error_code = error_code
             row.updated_at = utc_now()
@@ -383,6 +397,7 @@ class AutoEditRepository:
         silence_decisions: list[dict[str, Any]],
         highlights: list[dict[str, Any]],
         signal_evidence: dict[str, Any] | None = None,
+        local_source_snapshot: dict[str, Any] | None = None,
     ) -> None:
         async with self.session_factory() as session:
             async with session.begin():
@@ -395,6 +410,12 @@ class AutoEditRepository:
                     raise KeyError(analysis_id)
                 if analysis.status == "succeeded":
                     return
+                if local_source_snapshot is not None:
+                    from .auto_edit_source_custody import trusted_video_in_session
+                    current = await trusted_video_in_session(session, analysis.project_id, asset_id,
+                        local_source_snapshot['storage_provider'], local_source_snapshot['source_size_bytes'])
+                    if current != local_source_snapshot or analysis.source_media_json != current['media_metadata']:
+                        raise ValueError('AUTO_EDIT_LOCAL_COMMIT_SOURCE_CHANGED')
                 if signal_evidence is not None:
                     analysis.provenance_json = {**analysis.provenance_json, "media_signals": signal_evidence}
                 if transcript is None:

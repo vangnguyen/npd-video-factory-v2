@@ -70,6 +70,7 @@ class Settings(BaseSettings):
     local_asr_model_key: Literal["base", "small"] = "base"
     local_asr_decoder_timeout_seconds: int = Field(default=60, ge=1, le=120)
     local_asr_max_file_bytes: int = Field(default=25_000_000, ge=1, le=25_000_000)
+    local_asr_video_max_file_bytes: int = Field(default=2*1024**3, ge=1, le=2*1024**3)
     local_asr_max_duration_seconds: float = Field(default=1800, gt=0, le=1800, allow_inf_nan=False)
     openai_transcription_model: str = ""
     openai_transcription_prompt_profile_id: str = ""

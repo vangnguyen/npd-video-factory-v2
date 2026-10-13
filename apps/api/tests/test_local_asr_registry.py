@@ -40,6 +40,22 @@ def row(definitions):
     return next(value for value in definitions if value['provider_key']=='local-faster-whisper')
 
 
+@pytest.mark.parametrize('audio,video',[(False,False),(True,False),(False,True),(True,True)])
+def test_video_and_audio_configuration_truth_is_scoped_and_reads_do_not_select_runtime(tmp_path,monkeypatch,audio,video):
+    monkeypatch.setattr(main_module,'settings',settings_for(tmp_path))
+    def forbidden(_settings):raise AssertionError('GET_OR_DEFINITION_MUST_NOT_SELECT_RUNTIME')
+    monkeypatch.setattr(main_module,'uploaded_audio_provider',forbidden)
+    monkeypatch.setattr(main_module,'auto_edit_transcription_provider',forbidden)
+    configured=SimpleNamespace(key='local-faster-whisper',external_call=False,paid=False)
+    selected=row(main_module._provider_definitions(configured if audio else ContractOnlyTranscriptionProvider(),
+        configured if video else ContractOnlyTranscriptionProvider()))
+    assert selected['enabled']==(audio or video)
+    assert selected['metadata']['uploaded_audio_runtime_configured']==audio
+    assert selected['metadata']['video_analysis_runtime_configured']==video
+    assert selected['metadata']['video_execution']=='synchronous_partial'
+    assert not selected['metadata']['production_acceptance_verified']
+
+
 @pytest.mark.asyncio
 async def test_invalid_owned_runtime_and_unsupplied_instance_remain_not_configured(tmp_path,monkeypatch):
     settings=settings_for(tmp_path);monkeypatch.setattr(main_module,'settings',settings)
@@ -90,9 +106,14 @@ async def test_actual_isolated_lifespan_seeds_same_selected_instance_once_and_ge
     def factory(actual_settings):
         assert actual_settings is settings;calls.append('one_explicit_fixture_runtime_selection');return selected
     monkeypatch.setattr(main_module,'uploaded_audio_provider',factory)
+    video_calls=[]
+    def video_factory(actual_settings):
+        assert actual_settings is settings;video_calls.append('one_video_selection');return ContractOnlyTranscriptionProvider()
+    monkeypatch.setattr(main_module,'auto_edit_transcription_provider',video_factory)
     original_seed=main_module.PlatformRepository.seed_providers
     async def tracked_seed(repository,definitions):
         assert calls==['one_explicit_fixture_runtime_selection']
+        assert video_calls==['one_video_selection']
         seeds.append(copy.deepcopy(row(definitions)))
         await original_seed(repository,definitions)
     monkeypatch.setattr(main_module.PlatformRepository,'seed_providers',tracked_seed)
@@ -116,5 +137,6 @@ async def test_actual_isolated_lifespan_seeds_same_selected_instance_once_and_ge
                     observed=next(value for value in snapshot.json()['providers'] if value['provider_key']=='local-faster-whisper')
                     assert observed['enabled']==configured and not observed['production_eligible']
             assert calls==['one_explicit_fixture_runtime_selection']
+            assert video_calls==['one_video_selection']
         assert redis.closed
     finally:await engine.dispose()

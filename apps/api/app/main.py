@@ -39,6 +39,7 @@ from .auto_edit_routes import router as auto_edit_router
 from .uploaded_audio_routes import router as uploaded_audio_router
 from .uploaded_audio_service import UploadedAudioService
 from .uploaded_audio_runtime import provider_from_settings as uploaded_audio_provider
+from .auto_edit_transcription_runtime import provider_from_settings as auto_edit_transcription_provider
 from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .artifacts import (
     ArtifactAccessError,
@@ -169,7 +170,9 @@ async def lifespan(app: FastAPI):
     # Runtime custody is evaluated once; registry and execution share this
     # exact selection instead of claiming configuration from settings alone.
     selected_uploaded_audio_provider = uploaded_audio_provider(settings)
-    provider_definitions = normalize_provider_definitions(_provider_definitions(selected_uploaded_audio_provider))
+    selected_video_transcription_provider = auto_edit_transcription_provider(settings)
+    provider_definitions = normalize_provider_definitions(_provider_definitions(
+        selected_uploaded_audio_provider, selected_video_transcription_provider))
     await platform.seed_providers(provider_definitions)
     await trend_repository.seed_sources(trend_providers.definitions())
     app.state.database_engine = engine
@@ -241,43 +244,7 @@ async def lifespan(app: FastAPI):
     # No substitution of the historical ASR key for the content alias. The
     # separate capability resolver/admission must be configured under fresh authority.
     media_probe = FFprobeMediaProbe(settings.ffprobe_path)
-    if settings.transcription_provider == "fixture":
-        transcription_provider = DeterministicTranscriptionProvider()
-    elif settings.transcription_provider == "openai":
-        transcription_provider = OpenAITranscriptionProvider(
-            model=settings.openai_transcription_model,
-            credential_alias=settings.openai_transcription_credential_alias,
-            credential_resolver=lambda alias: (
-                settings.openai_api_key
-                if alias == settings.openai_transcription_credential_alias
-                else ""
-            ),
-            base_url=settings.openai_base_url,
-            language=settings.openai_transcription_language,
-            provider_http_timeout_seconds=settings.provider_http_timeout_seconds,
-            controller_hard_timeout_seconds=settings.controller_hard_timeout_seconds,
-            max_file_bytes=settings.openai_transcription_max_file_bytes,
-            max_duration_seconds=settings.openai_transcription_max_duration_seconds,
-            estimated_cost_vnd=settings.openai_transcription_estimated_cost_vnd,
-            vnd_per_minute=settings.openai_transcription_vnd_per_minute,
-            asr_prompt_profile=profile_for_id(settings.openai_transcription_prompt_profile_id),
-        )
-    elif settings.transcription_provider == "assemblyai":
-        transcription_provider = AssemblyAITranscriptionProvider(
-            model=settings.assemblyai_transcription_model,
-            credential_alias=settings.assemblyai_transcription_credential_alias,
-            credential_resolver=lambda _alias: "",
-            profile=assemblyai_asr_profile(),
-            language=settings.assemblyai_transcription_language,
-            provider_http_timeout_seconds=settings.provider_http_timeout_seconds,
-            controller_hard_timeout_seconds=settings.controller_hard_timeout_seconds,
-            max_file_bytes=settings.assemblyai_transcription_max_file_bytes,
-            max_duration_seconds=settings.assemblyai_transcription_max_duration_seconds,
-            estimated_cost_vnd=settings.assemblyai_transcription_estimated_cost_vnd,
-            vnd_per_minute=settings.assemblyai_transcription_vnd_per_minute,
-        )
-    else:
-        transcription_provider = ContractOnlyTranscriptionProvider()
+    transcription_provider = selected_video_transcription_provider
     signal_provider = (
         DeterministicMediaSignalProvider()
         if settings.auto_edit_signal_provider == "fixture"
@@ -529,7 +496,7 @@ def store_from(request: Request) -> PostgresJobStore:
     return request.app.state.job_store
 
 
-def _provider_definitions(uploaded_audio_instance=None) -> list[dict[str, object]]:
+def _provider_definitions(uploaded_audio_instance=None, video_transcription_instance=None) -> list[dict[str, object]]:
     # The durable provider registry describes the original video-job pipeline,
     # whose worker is still selected with TTS_PROVIDER. V2-08 has a separate,
     # fail-closed AUDIO_TTS_PROVIDER contract exposed by the production package.
@@ -538,6 +505,11 @@ def _provider_definitions(uploaded_audio_instance=None) -> list[dict[str, object
         and getattr(uploaded_audio_instance, 'key', None) == 'local-faster-whisper'
         and getattr(uploaded_audio_instance, 'external_call', None) is False
         and getattr(uploaded_audio_instance, 'paid', None) is False)
+    local_video_configured = bool(settings.transcription_provider == 'local_cpu' and settings.local_asr_enabled
+        and getattr(video_transcription_instance, 'key', None) == 'local-faster-whisper'
+        and getattr(video_transcription_instance, 'external_call', None) is False
+        and getattr(video_transcription_instance, 'paid', None) is False)
+    local_runtime_configured = local_audio_configured or local_video_configured
     # Pure selection metadata only. This never constructs the TTS adapter,
     # reads its server/model files, resolves a secret, or checks service health.
     from .vieneu_contracts import SELECTED_VOICE, selected_vieneu_profile
@@ -657,17 +629,21 @@ def _provider_definitions(uploaded_audio_instance=None) -> list[dict[str, object
         },
         {
             "provider_key": "local-faster-whisper",
-            "display_name": "Explicit Offline CPU Uploaded Audio ASR",
+            "display_name": "Explicit Offline CPU Audio/Video ASR",
             "capability": "transcription",
-            "adapter": "app.local_uploaded_audio_provider.LocalUploadedAudioProvider",
-            "routing_mode": "primary" if local_audio_configured else "disabled",
-            "status": "degraded" if local_audio_configured else "not_configured",
-            "enabled": local_audio_configured,
+            "adapter": "app.local_video_transcription_provider.LocalVideoTranscriptionProvider" if local_video_configured
+                else "app.local_uploaded_audio_provider.LocalUploadedAudioProvider",
+            "routing_mode": "primary" if local_runtime_configured else "disabled",
+            "status": "degraded" if local_runtime_configured else "not_configured",
+            "enabled": local_runtime_configured,
             "supports_dry_run": False,
             "config_ref": "env:LOCAL_ASR_*",
             "metadata": {"paid": False, "external_call": False, "fixture": False,
                 "default_enabled": False, "immutable_runtime_binding_required": True,
-                "runtime_configured": local_audio_configured,
+                "runtime_configured": local_runtime_configured,
+                "uploaded_audio_runtime_configured": local_audio_configured,
+                "video_analysis_runtime_configured": local_video_configured,
+                "video_execution": "synchronous_partial",
                 "provider_health_verified": False, "semantic_quality_verified": False,
                 "production_acceptance_required": True, "production_acceptance_verified": False,
                 "human_review_required": True, "production_deployed": False},
@@ -1203,6 +1179,9 @@ async def capabilities() -> dict[str, object]:
         "uploaded_audio_transcription": "independent_async_versioned_evidence",
         "uploaded_audio_default_provider": "not_configured",
         "uploaded_audio_canonical_caption_edit": "explicit_versioned_binding_and_review",
+        "local_video_asr_execution": "explicit_synchronous_cpu_partial",
+        "local_video_asr_async_queue": False,
+        "local_video_asr_semantic_quality_accepted": False,
         "auto_edit_timeline": True,
         "timeline_versioning": True,
         "timeline_optimistic_concurrency": True,
