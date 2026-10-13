@@ -1,0 +1,12 @@
+{
+  "schema_version": "sql-variant-catalog.v1",
+  "catalog_ref": "master-platform-formats@1",
+  "profiles": [
+    {"schema_version":"sql-variant-profile.v1","profile_ref":"youtube-landscape@1","target":"youtube_landscape","label":"YouTube · 16:9","aspect_ratio":"16:9","width":1920,"height":1080,"platform":"youtube","review_profile":"review-960x540","final_profile":"landscape-1920x1080"},
+    {"schema_version":"sql-variant-profile.v1","profile_ref":"youtube-shorts@1","target":"youtube_shorts","label":"YouTube Shorts · 9:16","aspect_ratio":"9:16","width":1080,"height":1920,"platform":"youtube","review_profile":"review-540x960","final_profile":"vertical-1080x1920"},
+    {"schema_version":"sql-variant-profile.v1","profile_ref":"tiktok-short@1","target":"tiktok","label":"TikTok · 9:16","aspect_ratio":"9:16","width":1080,"height":1920,"platform":"tiktok","review_profile":"review-540x960","final_profile":"vertical-1080x1920"},
+    {"schema_version":"sql-variant-profile.v1","profile_ref":"instagram-reel@1","target":"instagram_reels","label":"Instagram Reels · 9:16","aspect_ratio":"9:16","width":1080,"height":1920,"platform":"instagram_reels","review_profile":"review-540x960","final_profile":"vertical-1080x1920"},
+    {"schema_version":"sql-variant-profile.v1","profile_ref":"social-square@1","target":"social_square","label":"Social · 1:1","aspect_ratio":"1:1","width":1080,"height":1080,"platform":null,"review_profile":"review-540x540","final_profile":"square-1080x1080"},
+    {"schema_version":"sql-variant-profile.v1","profile_ref":"social-feed@1","target":"social_feed","label":"Feed · 4:5","aspect_ratio":"4:5","width":1080,"height":1350,"platform":null,"review_profile":"review-432x540","final_profile":"portrait-1080x1350"}
+  ]
+}
