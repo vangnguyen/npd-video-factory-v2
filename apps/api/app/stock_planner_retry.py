@@ -140,12 +140,23 @@ async def initialize(repository, identity, binding, stamp):
         transition(session, row, value, 'scheduled', details={'wire_calls': 0})
 
 
-async def claim(repository, identity, stamp):
+async def claim(repository, identity, stamp, *, expected_version=None, binding_sha256=None, allow_claim=True):
     stamp = clock(stamp)
+    reviewed = expected_version is not None or binding_sha256 is not None
+    if reviewed and (type(expected_version) is not int or expected_version < 1
+            or not isinstance(binding_sha256, str) or not re.fullmatch(r'[a-f0-9]{64}', binding_sha256)):
+        raise ValueError('STOCK_PLANNER_REVIEW_INVALID')
+    if type(allow_claim) is not bool:
+        raise ValueError('STOCK_PLANNER_CLAIM_PERMISSION_INVALID')
     async with repository.session_factory() as session, session.begin():
         row = await locked(session, identity)
         value = state(row.provenance_json)
-        if value is None or value['status'] in TERMINAL or value['next_at'] is not None and value['next_at'] > stamp \
+        # A reviewed HTTP retry must fence the claim itself, not a prior read.
+        # Workers can checkpoint/defer between that read and this transaction.
+        if reviewed and (value is None or row.version != expected_version
+                or value['binding_sha256'] != binding_sha256):
+            raise StockPlannerConflict('STOCK_PLANNER_REVIEW_STALE')
+        if not allow_claim or value is None or value['status'] in TERMINAL or value['next_at'] is not None and value['next_at'] > stamp \
                 or value['claim_id'] is not None and value['lease_until'] > stamp:
             return None
         expired = value['claim_id'] is not None

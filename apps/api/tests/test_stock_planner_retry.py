@@ -19,7 +19,8 @@ from app.media_intelligence_service import MediaProviderBundle, MediaPlanningSer
 from app.media_intelligence_repository import MediaIntelligenceRepository
 from app.media_intelligence_db import MediaPlanORM
 from app.db import ProviderUsageORM, CostRecordORM
-from app.media_intelligence_providers import ContractOnlyImageGenerationProvider, ContractOnlyVideoGenerationProvider
+from app.media_intelligence_providers import (ContractOnlyImageGenerationProvider, ContractOnlyVideoGenerationProvider,
+    ContractOnlyStockMediaProvider)
 from app.stock_media_providers import PexelsStockMediaProvider
 from app.stock_wire_quota import StockWireQuotaRepository, StockWireQuotaGuard
 from app.stock_planner_models import StockPlannerAction
@@ -238,6 +239,80 @@ async def test_api_scheduled_202_read_history_stale_and_viewer_cannot_retry_or_c
             assert (await client.get(endpoint)).status_code==200
             assert (await client.post(endpoint+'/retry',json=body)).status_code==403
             assert (await client.post(endpoint+'/cancel',json=body)).status_code==403
+    finally:await adapter.aclose();await env['engine'].dispose()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('later_transition', ['deferred', 'cancelled'])
+async def test_http_review_race_is_fenced_inside_claim_before_any_new_wire(tmp_path, monkeypatch, later_transition):
+    env,adapter,payload,calls,stamp=await prepared(tmp_path,{'all_429':True})
+    second_engine=create_async_engine(env['engine'].url)
+    other=MediaIntelligenceRepository(async_sessionmaker(second_engine,expire_on_commit=False))
+    original_claim=retry.claim
+    entered=asyncio.Event();resume=asyncio.Event();request_task=None
+    try:
+        reviewed=await env['planner'].create(project_id=env['project'].project_id,payload=payload)
+        stamp[0]=NOW+61
+        # Stop the HTTP request after its prior reads, just before the locked
+        # claim. Another actual database instance changes the reviewed version.
+        async def paused_claim(repository, identity, current_stamp, **review):
+            assert review['expected_version']==reviewed.version
+            assert review['binding_sha256']==reviewed.stock_planning.binding_sha256
+            entered.set();await resume.wait()
+            return await original_claim(repository,identity,current_stamp,**review)
+        monkeypatch.setattr(retry,'claim',paused_claim)
+        app.state.media_planning_service=env['planner'];app.state.media_resolution_service=env['resolver']
+        install_test_human_auth(app,platform_repository=env['platform'])
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test',
+                                    headers=TEST_HUMAN_HEADERS) as client:
+            endpoint=f"/api/v1/projects/{reviewed.project_id}/media-plans/{reviewed.media_plan_id}/stock-search/retry"
+            request_task=asyncio.create_task(client.post(endpoint,json=action(reviewed).model_dump(mode='json')))
+            await asyncio.wait_for(entered.wait(),10)
+            other_claim=await original_claim(other,reviewed.media_plan_id,stamp[0])
+            assert other_claim
+            running=await other.get_plan(reviewed.media_plan_id)
+            execution=retry.state(running.provenance)
+            if later_transition=='deferred':
+                assert await retry.wait(other,reviewed.media_plan_id,other_claim,
+                    scene_id=execution['binding']['searches'][0]['scene_id'],code='STOCK_PROVIDER_GLOBAL_WAIT',
+                    next_at=stamp[0],calls=0,stamp=stamp[0])
+            else:
+                await retry.cancel(other,reviewed.media_plan_id,running.version,running.stock_planning.binding_sha256)
+            changed=await other.get_plan(reviewed.media_plan_id)
+            history=await retry.history(other,reviewed.media_plan_id)
+            costs=await env['platform'].list_cost_records(reviewed.project_id)
+            wires=len(calls)
+            resume.set();response=await asyncio.wait_for(request_task,20)
+            assert response.status_code==409,response.text
+            assert response.json()['detail']['error']['code']=='STOCK_PLANNER_REVIEW_STALE'
+            assert len(calls)==wires and changed.version>reviewed.version
+            assert await other.get_plan(reviewed.media_plan_id)==changed
+            assert await retry.history(other,reviewed.media_plan_id)==history
+            assert await env['platform'].list_cost_records(reviewed.project_id)==costs
+    finally:
+        resume.set()
+        if request_task is not None and not request_task.done():
+            request_task.cancel();await asyncio.gather(request_task,return_exceptions=True)
+        await adapter.aclose();await second_engine.dispose();await env['engine'].dispose()
+
+
+@pytest.mark.asyncio
+async def test_reviewed_disabled_provider_checks_atomic_version_without_claim_or_dispatch(tmp_path):
+    env,adapter,payload,calls,stamp=await prepared(tmp_path,{'all_429':True})
+    try:
+        reviewed=await env['planner'].create(project_id=env['project'].project_id,payload=payload)
+        history=await env['planner'].stock_search_history(reviewed.media_plan_id)
+        wires=len(calls);stamp[0]=NOW+61
+        env['planner'].providers=replace(env['planner'].providers,stock=ContractOnlyStockMediaProvider())
+        assert await env['planner'].retry_stock_search(reviewed.media_plan_id,action(reviewed))==reviewed
+        assert await env['planner'].process_stock_plan(reviewed.media_plan_id)==reviewed
+        assert await env['planner'].stock_search_history(reviewed.media_plan_id)==history and len(calls)==wires
+        with pytest.raises(retry.StockPlannerConflict,match='STOCK_PLANNER_REVIEW_STALE'):
+            await retry.claim(env['media_repository'],reviewed.media_plan_id,stamp[0],allow_claim=False,
+                expected_version=reviewed.version,binding_sha256='b'*64)
+        with pytest.raises(ValueError,match='STOCK_PLANNER_REVIEW_INVALID'):
+            await retry.claim(env['media_repository'],reviewed.media_plan_id,stamp[0],expected_version=reviewed.version)
+        assert await env['planner'].stock_search_history(reviewed.media_plan_id)==history and len(calls)==wires
     finally:await adapter.aclose();await env['engine'].dispose()
 
 

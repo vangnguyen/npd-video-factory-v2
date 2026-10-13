@@ -432,16 +432,19 @@ class MediaPlanningService:
         latest = await self.repository.get_plan(plan.media_plan_id)
         await self._verify_stock_plan_inputs(latest, binding, verify_bytes=False)
 
-    async def process_stock_plan(self, media_plan_id: str) -> MediaPlanRead:
+    async def process_stock_plan(self, media_plan_id: str, *, expected_version=None,
+                                 binding_sha256=None) -> MediaPlanRead:
         plan = await self.repository.get_plan(media_plan_id)
         if plan is None:
             raise KeyError(media_plan_id)
         value = stock_planner.state(plan.provenance)
-        if value is None or value['status'] in stock_planner.TERMINAL:
+        reviewed = expected_version is not None or binding_sha256 is not None
+        configured = isinstance(self.providers.stock, OfficialStockProvider) and self.providers.stock.wire_guard is not None
+        if not reviewed and (value is None or value['status'] in stock_planner.TERMINAL or not configured):
             return plan
-        if not isinstance(self.providers.stock, OfficialStockProvider) or self.providers.stock.wire_guard is None:
-            return plan
-        claim_id = await stock_planner.claim(self.repository, media_plan_id, self._stock_clock())
+        stamp = self._stock_clock() if configured else time.time()
+        claim_id = await stock_planner.claim(self.repository, media_plan_id, stamp,
+            expected_version=expected_version, binding_sha256=binding_sha256, allow_claim=configured)
         if claim_id is None:
             return await self.repository.get_plan(media_plan_id)
         try:
@@ -544,7 +547,8 @@ class MediaPlanningService:
         value = stock_planner.state(plan.provenance)
         if value is None or plan.version != payload.expected_version or value['binding_sha256'] != payload.binding_sha256:
             raise stock_planner.StockPlannerConflict('STOCK_PLANNER_REVIEW_STALE')
-        return await self.process_stock_plan(media_plan_id)
+        return await self.process_stock_plan(media_plan_id, expected_version=payload.expected_version,
+            binding_sha256=payload.binding_sha256)
 
     async def cancel_stock_search(self, media_plan_id, payload):
         await stock_planner.cancel(self.repository, media_plan_id, payload.expected_version, payload.binding_sha256)
