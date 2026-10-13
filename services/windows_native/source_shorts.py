@@ -4,7 +4,7 @@ import json
 from types import SimpleNamespace
 from typing import Literal
 import uuid
-from pydantic import Field
+from pydantic import Field,model_validator
 from .contracts import WorkflowError,digest
 from .auto_edit_timeline import SCHEMA,_cas,_selected,validate_document,view as timeline_view
 from .source_preview import resolve_assets
@@ -13,6 +13,7 @@ from app.highlight_draft_logic import HighlightDraftRequest,build_drafts,Highlig
 from app.scene_evidence import combine_scene_evidence
 from app.scene_evidence import SceneObservation
 from .scene_selection import Selection
+from .scene_assessments import Selection as LocalSceneSelection
 
 ALGORITHM='native-auto-shorts-v1'
 ACTION='auto_shorts_created_unapproved'
@@ -28,6 +29,11 @@ class Create(HighlightDraftRequest):
     request_key:str=Field(pattern=r'^[a-f0-9]{32}$')
     aspect_ratio:Literal['9:16','16:9','1:1','4:5']='9:16'
     reviewed_scene:Selection|None=None
+    reviewed_local_scene:LocalSceneSelection|None=None
+    @model_validator(mode='after')
+    def one_review(self):
+        if self.reviewed_scene is not None and self.reviewed_local_scene is not None:raise ValueError('choose one reviewed evidence family')
+        return self
 
 
 def records(con,project_id):
@@ -47,6 +53,7 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
     except ValueError:raise WorkflowError('AUTO_SHORTS_REQUEST_INVALID',400) from None
     payload_json=payload.model_dump(mode='json')
     if payload.reviewed_scene is None:payload_json.pop('reviewed_scene')
+    if payload.reviewed_local_scene is None:payload_json.pop('reviewed_local_scene')
     request_sha=digest({'revision':revision,'payload':payload_json})
     from .scene_selection import reader,selected,lineage
     # Preserve exact historical idempotency even when current inputs/consent
@@ -77,14 +84,19 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
             from .media_frame_analysis import asset_summary
             measured=asset_summary(document,project_id,asset,config.data_root)
             scenes=combine_scene_evidence(analysis,reference,pixel_frames=measured.frames if measured else ())
-            reviewed=None
+            reviewed=None;local_reviewed=None
             if payload.reviewed_scene is not None:
                 reviewed=selected(store,config,project,payload.reviewed_scene,payload.analysis_id,con,getter)
                 scenes=[SceneObservation.model_validate(v) for v in reviewed['recommendation']['result']['scenes']]
+            if payload.reviewed_local_scene is not None:
+                from .scene_assessments import selected as local_selected
+                local_reviewed=local_selected(store,project,payload.reviewed_local_scene,payload.analysis_id,con)
+                scenes=[SceneObservation.model_validate(v) for v in local_reviewed['assessment']['result']['scenes']]
             assessment=SimpleNamespace(scenes=scenes,assessment_id='sci_'+digest([analysis.analysis_id,payload.transcript_id])[:24],
                 fingerprint=digest([scene.model_dump(mode='json') for scene in scenes]))
             try:prepared=build_drafts(analysis,reference,payload.model_copy(update={'count':5}),assessment,
-                scored_highlights=reviewed['recommendation']['result']['scene_ranking'] if reviewed else None)
+                scored_highlights=reviewed['recommendation']['result']['scene_ranking'] if reviewed else
+                    local_reviewed['assessment']['result']['scene_ranking'] if local_reviewed else None)
             except (HighlightDraftConflict,ValueError):raise WorkflowError('AUTO_SHORTS_SELECTION_INVALID',400) from None
             if not prepared:raise WorkflowError('AUTO_SHORTS_NO_COMPLETE_SPEECH_WINDOW_FITS',400)
             from .store import now
@@ -108,6 +120,10 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
                 if reviewed is not None:
                     evidence['reviewed_scene_selection']=lineage(reviewed)
                     snapshot.metadata['highlight_draft']['reviewed_scene_selection']=lineage(reviewed)
+                if local_reviewed is not None:
+                    from .scene_assessments import lineage as local_lineage
+                    evidence['reviewed_local_scene_selection']=local_lineage(local_reviewed)
+                    snapshot.metadata['highlight_draft']['reviewed_local_scene_selection']=local_lineage(local_reviewed)
                 for track in snapshot.tracks:
                     for clip in track.clips:
                         if clip.asset_id:clip.metadata['native_asset_id']=asset['id']
@@ -120,6 +136,8 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
                 child_document['canonical_timeline']['snapshot']['metadata']['source_short']=copy.deepcopy(snapshot.metadata['source_short'])
                 if reviewed is not None:
                     child_document['canonical_timeline']['snapshot']['metadata']['highlight_draft']['reviewed_scene_selection']=lineage(reviewed)
+                if local_reviewed is not None:
+                    child_document['canonical_timeline']['snapshot']['metadata']['highlight_draft']['reviewed_local_scene_selection']=local_lineage(local_reviewed)
                 child_document['canonical_timeline']['sha256']=digest(child_document['canonical_timeline']['snapshot'])
                 validate_document(child_document)
                 child_document['name']=document['name'][:110]+' — Short '+str(rank)
@@ -144,6 +162,9 @@ def create(store,config,project_id,revision,body,*,official_vision=None):
                 'provider_calls':0,'paid_operations':0,'parent_document_mutated':False,
                 'human_approval_required':True,'created_at':timestamp}
             if reviewed is not None:result['scene_evidence']['reviewed_scene_selection']=lineage(reviewed)
+            if local_reviewed is not None:
+                from .scene_assessments import lineage as local_lineage
+                result['scene_evidence']['reviewed_local_scene_selection']=local_lineage(local_reviewed)
             store.event(con,project_id,ACTION,result)
     # No nested write transaction while materializing canonical projections.
     return {'batch':result,'projects':[timeline_view(store,item['project_id']) for item in result['drafts']]}

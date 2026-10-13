@@ -26,6 +26,7 @@ from app.speech_windows import protected_window as protected_source_window
 from app.timeline_logic import apply_operations, build_initial_timeline, TimelineEditError
 from app.timeline_models import TimelineOperation, TimelineSnapshot
 from .scene_selection import Selection
+from .scene_assessments import Selection as LocalSceneSelection
 
 SCHEMA = 'native-auto-edit-timeline-v1'
 MAX_DURATION = 600.
@@ -40,11 +41,13 @@ class CreateTimeline(StrictModel):
     source_window: tuple[float, float] | None = None
     aspect_ratio: Literal['9:16', '16:9', '1:1', '4:5'] = '9:16'
     reviewed_scene:Selection|None=None
+    reviewed_local_scene:LocalSceneSelection|None=None
     reviewed_highlight_id:str|None=Field(default=None,pattern=r'^hig_[a-f0-9]{24}$')
 
     @model_validator(mode='after')
     def valid_selection(self):
-        if (self.reviewed_scene is None)!=(self.reviewed_highlight_id is None) or self.reviewed_scene is not None and self.source_window is not None:
+        reviews=int(self.reviewed_scene is not None)+int(self.reviewed_local_scene is not None)
+        if reviews>1 or (reviews==0)!=(self.reviewed_highlight_id is None) or reviews and self.source_window is not None:
             raise ValueError('Reviewed highlights require original recommendation selection, without client window overrides')
         if len(set(self.silence_decision_ids)) != len(self.silence_decision_ids):
             raise ValueError('duplicate cut selection')
@@ -103,6 +106,8 @@ def validate_document(document):
     validate_source_decisions(snapshot)
     from .scene_selection import validate_timeline
     validate_timeline(document)
+    from .scene_assessments import validate_lineage
+    validate_lineage(document)
     from .source_reframe_vision import validate_timeline as validate_reframe
     validate_reframe(document)
     if snapshot.metadata.get('local_tracking_selection') is not None:
@@ -200,11 +205,20 @@ def create(store, project_id, revision, body,*,config=None,official_vision=None)
         analysis, asset = _selected(document, project_id, payload.analysis_id)
         if payload.transcript_id != (analysis.transcript.transcript_id if analysis.transcript else None):
             raise WorkflowError('AUTO_EDIT_TRANSCRIPT_VERSION_CHANGED')
-        reviewed=None;window=payload.source_window
+        reviewed=None;local_reviewed=None;window=payload.source_window
         if payload.reviewed_scene is not None:
             reviewed=selected(store,config,project,payload.reviewed_scene,payload.analysis_id,con,getter)
             highlight=next((v for v in reviewed['recommendation']['result']['scene_ranking'] if v['highlight_id']==payload.reviewed_highlight_id),None)
             if highlight is None:raise WorkflowError('NATIVE_SCENE_SELECTION_HIGHLIGHT_CHANGED')
+            window=(highlight['recommended_start'],highlight['recommended_end'])
+        if payload.reviewed_local_scene is not None:
+            from .scene_assessments import selected as local_selected
+            from app.scene_evidence import SceneObservation
+            local_reviewed=local_selected(store,project,payload.reviewed_local_scene,payload.analysis_id,con)
+            assessment=local_reviewed['assessment']
+            highlight=next((v for v in assessment['result']['scene_ranking'] if v['highlight_id']==payload.reviewed_highlight_id),None)
+            if highlight is None:raise WorkflowError('NATIVE_SCENE_ASSESSMENT_HIGHLIGHT_CHANGED')
+            analysis=analysis.model_copy(update={'scenes':[SceneObservation.model_validate(v) for v in assessment['result']['scenes']]})
             window=(highlight['recommended_start'],highlight['recommended_end'])
         if window:
             if window[1] > analysis.source_media.duration_seconds:
@@ -229,6 +243,9 @@ def create(store, project_id, revision, body,*,config=None,official_vision=None)
             'silence_decision_ids':payload.silence_decision_ids}, human_review_required=True,
             timing_source='measured_source_footage_and_saved_transcript', native_project_id=project_id)
         if reviewed is not None:snapshot.metadata.update(reviewed_scene_selection=lineage(reviewed),reviewed_highlight_id=payload.reviewed_highlight_id)
+        if local_reviewed is not None:
+            from .scene_assessments import lineage as local_lineage
+            snapshot.metadata.update(reviewed_local_scene_selection=local_lineage(local_reviewed),reviewed_highlight_id=payload.reviewed_highlight_id)
         from .channel_profiles import bind_source
         snapshot=bind_source(snapshot,project['document'])
         _save(store, con, project, snapshot, 'auto_edit_canonical_timeline_created')

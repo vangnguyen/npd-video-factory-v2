@@ -855,6 +855,11 @@ class Handler(BaseHTTPRequestHandler):
             from .costs import CostLedger
             return self.reply(CostLedger(self.server.store).summary(cost_route[1]))
         analysis_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit', path)
+        scene_assessments = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-assessments',path)
+        if scene_assessments:
+            if self.path!=path:raise WorkflowError('NATIVE_SCENE_ASSESSMENT_QUERY_INVALID',400)
+            from .scene_assessments import page
+            return self.reply(page(self.server.store,scene_assessments[1],self.server.publications.workspace_id),headers={'Cache-Control':'no-store'})
         scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews', path)
         thumbnail_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/thumbnail-reviews',path)
         if thumbnail_reviews:
@@ -899,7 +904,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
                 "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
@@ -1012,6 +1017,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-scene-review.mjs'] = 'native-scene-review.mjs'
+        static['/native-scene-assessments.mjs'] = 'native-scene-assessments.mjs'
         static['/native-source-crop-review.mjs'] = 'native-source-crop-review.mjs'
         static['/project-quality.mjs'] = 'project-quality.mjs'
         static['/native-rights.mjs'] = 'native-rights.mjs'
@@ -1074,6 +1080,9 @@ class Handler(BaseHTTPRequestHandler):
             raise WorkflowError("INVALID_JSON_BODY", 400) from None
 
     def dispatch_post(self):
+        scene_assessment_base=self.path.split('?',1)[0]
+        if self.path!=scene_assessment_base and re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-assessments',scene_assessment_base):
+            raise WorkflowError('NATIVE_SCENE_ASSESSMENT_QUERY_INVALID',400)
         if self.path=='/api/channel-profiles/admin':
             self.boundary(write=True)
             from .channel_registry import Mutation
@@ -1223,6 +1232,12 @@ class Handler(BaseHTTPRequestHandler):
         source_timeline_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/timeline', self.path)
         broll_route = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/broll', self.path)
         scene_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-reviews',self.path)
+        scene_assessments = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/scene-assessments',self.path)
+        if scene_assessments:
+            from .scene_assessments import create
+            actor=self.auth_session.principal.token_id if self.server.access is not None else 'legacy-local-editor'
+            return self.reply(create(self.server.store,scene_assessments[1],self.read_body(max_bytes=16000),
+                workspace=self.server.publications.workspace_id,actor_ref=actor),headers={'Cache-Control':'no-store'})
         thumbnail_reviews = re.fullmatch(r'/api/projects/([0-9a-f]{32})/auto-edit/thumbnail-reviews(/select)?',self.path)
         if thumbnail_reviews:
             from .source_thumbnail_review import create,select

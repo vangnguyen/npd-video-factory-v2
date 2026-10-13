@@ -27,6 +27,11 @@ def protect_and_sync(document,base,derived):
     spans=windows(snapshot,base.asset_id)
     changed=set(derived.provenance['reviewed_segment_ids'])
     mapping={old.segment_id:new for old,new in zip(base.segments,derived.segments,strict=True)}
+    caption_tracks=[t for t in snapshot['tracks'] if t['kind']=='subtitles' and not human_layout(snapshot,t)]
+    captions_by_track={t['track_id']:[c for c in t['clips'] if c['metadata'].get('transcript_id')==base.transcript_id] for t in caption_tracks}
+    covered={c['metadata'].get('segment_id') for clips in captions_by_track.values() for c in clips}
+    default_track=next((t['track_id'] for t in caption_tracks if captions_by_track[t['track_id']]),
+        next((t['track_id'] for t in caption_tracks if not t['clips']),None))
     if spans:
         first=min(s['source_start'] for s in spans);last=max(s['source_end'] for s in spans)
         for old,new in zip(base.segments,derived.segments,strict=True):
@@ -37,7 +42,11 @@ def protect_and_sync(document,base,derived):
                     raise WorkflowError('TRANSCRIPT_WORD_REVIEW_EXISTING_SOURCE_CUT_REQUIRES_REVIEW')
     for track in snapshot['tracks']:
         if track['kind']!='subtitles' or human_layout(snapshot,track):continue
-        originals=[c for c in track['clips'] if c['metadata'].get('transcript_id')==base.transcript_id]
+        before=copy.deepcopy(track['clips'])
+        originals=captions_by_track[track['track_id']]
+        destinations={c['metadata'].get('segment_id') for c in originals}&changed
+        if track['track_id']==default_track:destinations|=changed-covered
+        if not originals and not destinations:continue
         if track.get('locked') and (any(c['metadata'].get('segment_id') in changed for c in originals)
             or any(min(mapping[i].end_seconds,s['source_end'])>max(mapping[i].start_seconds,s['source_start']) for i in changed for s in spans)):
             raise WorkflowError('AUTO_EDIT_SUBTITLE_TRACK_LOCKED')
@@ -49,12 +58,12 @@ def protect_and_sync(document,base,derived):
             if old_id not in changed:
                 meta.update(segment_id=mapping[old_id].segment_id,transcript_id=derived.transcript_id)
                 replacement.append(clip)
-        for old_id in changed:
+        for old_id in destinations:
             segment=mapping[old_id]
             prototype=next((c for c in originals if c['metadata'].get('segment_id')==old_id),None)
             if prototype is None:
                 prototype=originals[0] if originals else TimelineClip(clip_id='clip_'+uuid.uuid4().hex[:24],kind='subtitle',
-                    label=segment.text[:120],timeline_start=0,duration=.1,metadata={'language':derived.language}).model_dump(mode='json')
+                    label=segment.text[:120],source_end=.1,timeline_start=0,duration=.1,metadata={'language':derived.language}).model_dump(mode='json')
             for span in spans:
                 start=max(segment.start_seconds,span['source_start']);end=min(segment.end_seconds,span['source_end'])
                 if end-start<.05:continue
@@ -75,7 +84,7 @@ def protect_and_sync(document,base,derived):
                     human_word_timing_review=True)
                 replacement.append(item)
         if len(replacement)>2000:raise WorkflowError('TRANSCRIPT_WORD_REVIEW_CAPTION_LIMIT')
-        if track.get('locked') and replacement!=track['clips']:
+        if track.get('locked') and replacement!=before:
             raise WorkflowError('AUTO_EDIT_SUBTITLE_TRACK_LOCKED')
         track['clips']=sorted(replacement,key=lambda c:(c['timeline_start'],c['clip_id']))
     snapshot['metadata']['transcript_revision']={'transcript_id':derived.transcript_id,'version':derived.version,

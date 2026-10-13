@@ -89,7 +89,7 @@ def permission_for(method, path):
     if re.fullmatch(r'/api/projects/'+ID+r'/auto-edit/media-tracks/(audio|subtitles|captions)',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/narrated-timeline/(edit|configure|restore)',path):return 'edit'
     edit = [r'/api/projects', r'/api/projects/' + ID + '/(draft|image|jobs|auto-plan|duplicate|archive|brand-template|voice-quality|shots|preview|ai-edit|asset-association|media|documents|music)',
-        r'/api/projects/' + ID + '/auto-edit/(timeline|broll|shorts|scene-reviews|thumbnail-reviews(?:/select)?)',
+        r'/api/projects/' + ID + '/auto-edit/(timeline|broll|shorts|scene-reviews|scene-assessments|thumbnail-reviews(?:/select)?)',
         r'/api/projects/' + ID + '/auto-edit/ana_[a-f0-9]{24}/transcript', r'/api/jobs/' + ID + '/resume',
         r'/api/intelligence/runs', r'/api/intelligence/runs/' + ID + '/(research|ideas)',
         r'/api/intelligence/ideas/' + ID + '/(select|edit|reject)',

@@ -21,12 +21,50 @@ def archive_scene_reviews(document,source_id,revision):
             raise WorkflowError('NATIVE_SCENE_REVIEW_HISTORY_INVALID')
         document.setdefault('source_scene_inherited_reviewed_history',[]).append({'source_project_id':source_id,'source_revision':revision,
             'original_record':copy.deepcopy(record),'original_record_sha256':digest(record),'authority_transferred':False,'new_review_required':True})
+    assessments=document.get('source_scene_assessments',[])
+    if not isinstance(assessments,list):raise WorkflowError('NATIVE_SCENE_ASSESSMENT_HISTORY_INVALID')
+    timeline=document.get('canonical_timeline')
+    snapshot=timeline.get('snapshot') if isinstance(timeline,dict) else None
+    metadata=snapshot.get('metadata') if isinstance(snapshot,dict) else None
+    # Saved assessments also exist before the user creates a timeline. Only an
+    # existing canonical selection can carry selection authority to validate.
+    if isinstance(metadata,dict) and metadata.get('reviewed_local_scene_selection') is not None:
+        from .scene_assessments import validate_lineage
+        validate_lineage(document)
+    document.pop('source_scene_assessments',None)
+    for record in assessments:
+        assessment=record.get('assessment') if isinstance(record,dict) else None
+        if (not isinstance(assessment,dict) or set(record)!={'assessment','sha256'} or
+                assessment.get('schema_version')!='native-current-scene-assessment.v1' or
+                assessment.get('project_id')!=source_id or type(assessment.get('version')) is not int or
+                assessment['version']<1 or not isinstance(assessment.get('input_refs'),dict) or
+                digest(assessment)!=record.get('sha256')):
+            raise WorkflowError('NATIVE_SCENE_ASSESSMENT_HISTORY_INVALID')
+        document.setdefault('source_scene_inherited_assessment_history',[]).append({
+            'source_project_id':source_id,'source_revision':revision,'original_record':copy.deepcopy(record),
+            'original_record_sha256':digest(record),'authority_transferred':False,'new_review_required':True})
+
+
+def transcript_checks(document):
+    """Validate original custody before making new scoped identities/digests."""
+    versions=document.get('auto_edit_transcripts',[])
+    checks=document.get('auto_edit_transcript_version_sha256',{})
+    if not isinstance(checks,dict):raise WorkflowError('TRANSCRIPT_WORD_REVIEW_HISTORY_CHANGED')
+    identifiers=[value.get('transcript_id') for value in versions]
+    if len(identifiers)!=len(set(identifiers)) or not set(checks)<=set(identifiers):
+        raise WorkflowError('TRANSCRIPT_WORD_REVIEW_HISTORY_CHANGED')
+    for value in versions:
+        identifier=value.get('transcript_id')
+        if identifier in checks or value.get('provenance',{}).get('word_timestamp_policy')=='human_supplied_source_intervals':
+            if checks.get(identifier)!=digest(value):raise WorkflowError('TRANSCRIPT_WORD_REVIEW_HISTORY_CHANGED')
+    return checks
 
 
 def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sha256=None):
     state=validate_document(document)
     if state['snapshot']['metadata']['native_project_id']!=source_id:
         raise WorkflowError('AUTO_EDIT_TIMELINE_PROJECT_MISMATCH')
+    checks=transcript_checks(document)
     assets={item['id']:item for item in project_assets(document)}
     mapping={source_id:target_id,'prj_'+source_id:'prj_'+target_id}
     origin={'algorithm':ALGORITHM,'source_project_id':source_id,'source_revision':revision,
@@ -74,7 +112,7 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
     def rewrite(value):
         if isinstance(value,str):return mapping.get(value,value)
         if isinstance(value,list):return [rewrite(item) for item in value]
-        if isinstance(value,dict):return {key:rewrite(item) for key,item in value.items()}
+        if isinstance(value,dict):return {mapping.get(key,key):rewrite(item) for key,item in value.items()}
         return copy.deepcopy(value)
     output=copy.deepcopy(document)
     archive_scene_reviews(output,source_id,revision)
@@ -96,10 +134,19 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         changed['sha256']=digest({key:value for key,value in changed.items() if key!='sha256'})
         output['auto_edit_analyses'].append(changed)
     output['auto_edit_transcripts']=[]
+    rebound_checks={}
     for value in document.get('auto_edit_transcripts',[]):
         changed=rewrite(value);changed['provenance']['identity_rebinding']={**origin,
             'source_transcript_id':value['transcript_id'],'source_transcript_sha256':digest(value)}
         TranscriptRead.model_validate(changed);output['auto_edit_transcripts'].append(changed)
+        if value['transcript_id'] in checks:
+            rebound_checks[changed['transcript_id']]=digest(changed)
+            output.setdefault('auto_edit_transcript_inherited_original_history',[]).append({
+                'source_project_id':source_id,'source_revision':revision,'original_transcript':copy.deepcopy(value),
+                'original_transcript_sha256':digest(value),'original_index_sha256':checks[value['transcript_id']],
+                'authority_transferred':False,'fresh_provider_measurement':False,'new_review_required':True})
+    if checks or 'auto_edit_transcript_version_sha256' in document:
+        output['auto_edit_transcript_version_sha256']=rebound_checks
     output['source_broll_plans']=[]
     plan_fingerprints={}
     for record in plans:
@@ -122,6 +169,14 @@ def rebind(document,source_id,target_id,revision,created_at,*,parent_document_sh
         output['source_broll_plans'].append({'plan':changed,'sha256':digest(changed)})
         plan_fingerprints[changed['media_plan_id']]=changed['fingerprint']
     snapshot=rewrite(state['snapshot'])
+    local_selection=state['snapshot']['metadata'].get('reviewed_local_scene_selection')
+    if local_selection is not None:
+        snapshot['metadata'].pop('reviewed_local_scene_selection',None)
+        snapshot['metadata'].pop('reviewed_highlight_id',None)
+        snapshot['metadata']['inherited_reviewed_local_scene_selection']={
+            'original_selection':copy.deepcopy(local_selection),
+            'original_highlight_id':state['snapshot']['metadata'].get('reviewed_highlight_id'),
+            'authority_transferred':False,'new_review_required':True}
     original_selection=state['snapshot']['metadata'].get('reviewed_scene_selection')
     if original_selection is not None:
         snapshot['metadata'].pop('reviewed_scene_selection',None);snapshot['metadata'].pop('reviewed_highlight_id',None)
