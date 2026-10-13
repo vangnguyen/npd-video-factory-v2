@@ -9,7 +9,7 @@ from .official_analytics import typed
 from .official_learning_models import Create
 from .official_publications import utc
 from .store import now
-from app.analytics_channel_policy import bucket
+from app.analytics_channel_policy import bucket,META_COUNTER_VERSION
 from app.learning_models import LearningObservation,aggregate,DIMENSIONS
 
 TABLES=('native_official_learning_snapshots','native_official_learning_events')
@@ -53,7 +53,12 @@ class NativeOfficialLearning:
     def observation(self,value):
         candidate=value['snapshot']['candidate'];features=candidate['features'];evidence=features['evidence'];assessment=value['assessment']
         if assessment['state']=='insufficient_data' or assessment['score'] is None:return None
-        if not any(f['factor'] in ('retention','completion') and f['score'] is not None for f in assessment['factors']):return None
+        meta_counter=(assessment['algorithm_version']==META_COUNTER_VERSION
+            and candidate['scope'].get('counter_comparison_schema')=='native-meta-counter-comparison-scope-v1')
+        available={f['factor'] for f in assessment['factors'] if f['score'] is not None and f['weight']>0}
+        if meta_counter:
+            if 'engagement' not in available or not available & {'shares','saves'}:return None
+        elif not any(f['factor'] in ('retention','completion') and f['score'] is not None for f in assessment['factors']):return None
         data={k:None for k in DIMENSIONS};data.update(trend_family=features['trend_cluster_id'],hook=features['hook_type'],duration=bucket(features['duration_seconds']),
             visual_strategy=features['visual_strategy'],subtitle_style=features['subtitle_template'],voice_profile=features['voice_profile'])
         try:
@@ -62,6 +67,12 @@ class NativeOfficialLearning:
                 remote_post_sha256=digest([self.workspace,candidate['scope']['target_binding_sha256'],candidate['remote_post_id']]),collected_at=datetime.fromisoformat(candidate['collected_at']),
                 score=assessment['score'],features=data,winner_policy_sha256=value['snapshot']['policy_sha256'],assessment_basis_sha256=self.basis(value))
         except (ValueError,TypeError):return None
+    @staticmethod
+    def limitations(anchor):
+        if anchor['assessment']['algorithm_version']!=META_COUNTER_VERSION:return LIMITATIONS
+        return [*LIMITATIONS[:2],
+            'Meta scoped counter associations compare frozen API/metric definitions; watch time, retention and equal publication age are not inferred.',
+            *LIMITATIONS[3:]]
     def reference(self,value):
         return {'project_id':value['project_id'],'assessment_id':value['assessment_id'],'snapshot_sha256':value['snapshot_sha256'],
             'candidate_sha256':digest(value['snapshot']['candidate']),'observation':self.observation(value).model_dump(mode='json')}
@@ -104,7 +115,7 @@ class NativeOfficialLearning:
                 or request.acknowledged_protocol_mock is not anchor['mock'] or snapshot['authority']['token_id']!=value['created_by']
                 or not isinstance(refs,list) or len(refs)>request.policy.maximum_posts or type(snapshot['candidate_rows_truncated']) is not bool or type(snapshot['selected_posts_truncated']) is not bool
                 or snapshot['recommendation_only'] is not True or snapshot['automatic_action'] is not False or snapshot['publishing_enabled'] is not False
-                or snapshot['limitations']!=LIMITATIONS or not isinstance(excluded,dict) or set(excluded)-EXCLUSIONS
+                or snapshot['limitations']!=self.limitations(anchor) or not isinstance(excluded,dict) or set(excluded)-EXCLUSIONS
                 or any(type(n) is not int or n<0 for n in excluded.values()) or sum(excluded.values())>500):raise ValueError()
             observations=[]
             for ref in refs:
@@ -137,7 +148,7 @@ class NativeOfficialLearning:
                 'request':request,'authority':authority,'scope':self.scope(anchor),'winner_policy_sha256':anchor['snapshot']['policy_sha256'],'winner_factor_basis_sha256':self.basis(anchor),
                 'selected_assessments':selected,'observations':[v.model_dump(mode='json') for v in observations],'dimensions':[v.model_dump(mode='json') for v in aggregate(observations,payload.policy)],
                 'candidate_rows_truncated':truncated,'selected_posts_truncated':posts_truncated,'excluded_rows':excluded,
-                'recommendation_only':True,'automatic_action':False,'publishing_enabled':False,'limitations':LIMITATIONS}
+                'recommendation_only':True,'automatic_action':False,'publishing_enabled':False,'limitations':self.limitations(anchor)}
             self.winners.analytics.identity(authority=authority);identity,stamp='nols_'+uuid.uuid4().hex,now()
             con.execute('INSERT INTO native_official_learning_snapshots VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',(identity,self.workspace,project,anchor['publication_id'],anchor['assessment_id'],anchor['result_snapshot_id'],key,fp,digest(snapshot),json.dumps(snapshot),authority['token_id'],stamp))
             con.execute('INSERT INTO native_official_learning_events(learning_id,workspace_id,project_id,action,actor_ref,evidence_json,created_at) VALUES(?,?,?,?,?,?,?)',
