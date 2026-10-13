@@ -40,3 +40,6 @@ Mốc [biên nhận/sự kiện cùng giao dịch lõi](SERVICE_CANONICAL_OUTCOM
 
 
 Mốc [phục hồi upload/preview/duyệt](SERVICE_INTAKE_OUTCOMES.md): thêm 3 loại giao dịch atomic; thử lại không sinh thêm upload/job/quyết định, lỗi outbox rollback, mất handoff preview phục hồi đúng ID. Duyệt vẫn yêu cầu người có quyền cả khi replay. 10 ca mới nằm trong 34 outcome/facade đạt; 34 hồi quy đạt. v2 mới giữ nguyên v1; media/provider/Redis/identity là fixture. Không nghiệm thu Owner, Hub/provider thật, production hay full A/B/C. Còn 59 nhóm chưa đóng; SHA/bundle cuối ở recovery/20261007/service-intake-outcomes-program-state.json.
+
+
+Mốc [ASR CPU local](NATIVE_LOCAL_CPU_ASR.md): thêm lựa chọn Việt/Anh/auto vào worker/transcript/Auto Edit cũ, giữ raw/timing ước lượng/versions, không fallback API. Native40 (11 mới)/consumer30/Studio787 đạt; 3 inference thật local và khôi phục3 project ở tiến trình mới đạt. Tiếng Việt nhận sai tên riêng, chưa nghiệm thu chất lượng; mẫu Anh là benchmark, hình/danh tính/chỉnh sửa CI là fixture. Không nhận diện bằng API trả phí, không nghiệm thu Owner/full A/B/C hay production.59 nhóm mở; nguồn/bundle cuối: recovery/20261007/local-cpu-asr-program-state.json.

@@ -1,0 +1,165 @@
+{
+  "schema_version": "north-star-local-cpu-asr-evidence-v1",
+  "recorded_at": "2026-10-13T04:55:34.701152+00:00",
+  "source_parent": "20f76d6d554689e0df5691dc4eca79e25e121647",
+  "tests": {
+    "Native": 40,
+    "Native_consumers": 30,
+    "Studio": 787
+  },
+  "new_distinct_native_cases": 11,
+  "test_logs": {
+    "Native": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-native-final-n2.log",
+      "sha256": "bd41526bd9712b544f0c702f960523564d789193674a1fdbc007636379e923c1",
+      "bytes": 103,
+      "passed": 40
+    },
+    "Native_consumers": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-consumers-final.log",
+      "sha256": "491ba87a0877b590251b8387f211b07c07765c33fbf412a87259352ff49ee368",
+      "bytes": 103,
+      "passed": 30
+    },
+    "Studio": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-studio-all-n2.log",
+      "sha256": "ee43487b117733accd0e45e897945b52cbe5b71f4235eb9dff80f7804a1efc98",
+      "bytes": 81224,
+      "passed": 787
+    }
+  },
+  "actual_local_proof": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-real-native-n2\\evidence.json",
+    "sha256": "73eb7c28bff1a52a072f51978477eceb9c598670c801c44207a792a059ff0e55",
+    "bytes": 3507
+  },
+  "actual_local_cases": [
+    {
+      "language_request": "vi",
+      "language_result": "vi",
+      "project_id": "1bdada68ad924ec1866ef6145db0cc2d",
+      "asr_job_id": "5831b22d0be04a5eadf6a82cf360960d",
+      "analysis_job_id": "6d2487a9fc43465685603e58eb36de37",
+      "actual_cpu_inference_seconds": 4.547000000005937,
+      "words": 31,
+      "model_estimated_timing": true,
+      "low_confidence_words": 8,
+      "human_review_required": true,
+      "source_sha256": "19d6817460755ed7686cbf40023df146fc37491dd2a41c20b340ddcbb668b59d",
+      "original_transcript_unchanged": true,
+      "versioned_ci_edit": true,
+      "source_is_existing_local_TTS": true,
+      "source_is_public_software_benchmark": false,
+      "visual_is_generated_fixture": true,
+      "rights_status": "unknown",
+      "external_calls": 0,
+      "paid_calls": 0
+    },
+    {
+      "language_request": "en",
+      "language_result": "en",
+      "project_id": "42ba7b951a36461e9f50ee385d3f598d",
+      "asr_job_id": "2ab83df3fc8f43ad954896cc130650aa",
+      "analysis_job_id": "1e902baff03e42ccb013b48906effc85",
+      "actual_cpu_inference_seconds": 4.234000000011292,
+      "words": 22,
+      "model_estimated_timing": true,
+      "low_confidence_words": 0,
+      "human_review_required": true,
+      "source_sha256": "a945a61456a3458694f05f0d23f1c7e28c444b567764bf5aa10ae54b0b27cbe3",
+      "original_transcript_unchanged": true,
+      "versioned_ci_edit": true,
+      "source_is_existing_local_TTS": false,
+      "source_is_public_software_benchmark": true,
+      "visual_is_generated_fixture": true,
+      "rights_status": "unknown",
+      "external_calls": 0,
+      "paid_calls": 0
+    },
+    {
+      "language_request": "auto",
+      "language_result": "en",
+      "project_id": "9ceec0ce81f349898a1938e6f48ab2dd",
+      "asr_job_id": "c8b2963a9b9a41d3b22056f74ef1e7bf",
+      "analysis_job_id": "96cc54800ed1434fbbae17b0e80ead6c",
+      "actual_cpu_inference_seconds": 6.421999999991385,
+      "words": 22,
+      "model_estimated_timing": true,
+      "low_confidence_words": 0,
+      "human_review_required": true,
+      "source_sha256": "a945a61456a3458694f05f0d23f1c7e28c444b567764bf5aa10ae54b0b27cbe3",
+      "original_transcript_unchanged": true,
+      "versioned_ci_edit": true,
+      "source_is_existing_local_TTS": false,
+      "source_is_public_software_benchmark": true,
+      "visual_is_generated_fixture": true,
+      "rights_status": "unknown",
+      "external_calls": 0,
+      "paid_calls": 0
+    }
+  ],
+  "portable_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-cpu-asr-evidence-n1.zip",
+    "sha256": "8ad7624571bc19bb580f81122cc41d7fca2c2c49ce98944c128869c4d1b89c9c",
+    "bytes": 3779325,
+    "entries": 35,
+    "all_bytes_verified": true,
+    "model_weights_copied": false
+  },
+  "model_manifest": {
+    "path": "C:\\vfns01\\packages\\contracts\\local-asr-model.v1.json",
+    "sha256": "725ae74948f2b6f9df8b9d91b69a60e466da17151a437705a60aa96e972a07cc",
+    "bytes": 1028
+  },
+  "model_download_bytes": 147884936,
+  "runtime_packages": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-runtime-packages-n1.txt",
+    "sha256": "e88a1edf75ba96e29467748e7867fbd01429cc83f8559284f7d3a11345a26619",
+    "bytes": 424
+  },
+  "scope": {
+    "provider_neutral_normalized_transcript": true,
+    "default_local_runtime_disabled": true,
+    "Native_queued_worker_and_existing_versioned_transcript": true,
+    "signed_HTTP_and_controller_fixtures": true,
+    "actual_local_cpu_inferences": 3,
+    "external_ASR_provider_calls": 0,
+    "paid_calls": 0,
+    "model_download_was_public_setup_network": true,
+    "no_remote_fallback": true,
+    "timestamps_are_model_estimates": true,
+    "zero_duration_word_not_rewritten": true,
+    "original_transcripts_preserved": true,
+    "fresh_process_restore_exact": true,
+    "owned_new_temporary_roots_cleaned": true,
+    "same_size_model_tamper_rejected": true,
+    "legacy_AssemblyAI_identity_preserved": true,
+    "VI_quality_accepted": false,
+    "genuine_user_footage_accepted": false,
+    "actual_browser_verified": false,
+    "Owner_UAT": false,
+    "real_external_publishing": false,
+    "real_external_provider_acceptance": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "retained_attempts": [
+    "local-asr-real-smoke-n1",
+    "local-asr-new-n1.log",
+    "local-asr-native-debug-n1.log",
+    "local-asr-studio-all-n1.log",
+    "local-asr-consumers-n1.log",
+    "local-asr-real-native-n1"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

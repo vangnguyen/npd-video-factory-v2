@@ -318,6 +318,9 @@ def source_mapped_transcript(value,metadata,source_duration):
 def analyze(config, job, out, stage, *, transport_factory=DurableTransport):
     from .asr_request import from_job
     selected_profile = from_job(job)
+    if isinstance(selected_profile,dict) and selected_profile.get('provider')=='faster-whisper':
+        from .local_asr import analyze_local
+        return analyze_local(config,job,out,stage,selected_profile)
     document = job["snapshot"]["document"]
     assets = pending_assets(document)
     needs_provider=[a for a in pending_speech(document) if not Artifacts(out/"analysis"/a["id"],job).load("transcript-candidate")]

@@ -802,8 +802,15 @@ class Store:
                     if language_profile is not None and record.get('transcript') is not None:
                         from app.assemblyai_studio_profile import studio_profile_sha256
                         transcript=record['transcript'];proof=transcript.get('provenance',{})
-                        if (transcript.get('language') not in {'vi','en'} or language_profile.language!='auto' and transcript.get('language')!=language_profile.language
-                            or proof.get('profile_sha256')!=studio_profile_sha256(language_profile) or proof.get('requested_language')!=language_profile.language):
+                        if isinstance(language_profile,dict):
+                            language=language_profile['language'];expected_profile_sha=digest(language_profile)
+                            if (proof.get('provider')!='faster-whisper' or proof.get('model_revision')!=language_profile['model_revision']
+                                or proof.get('external_call') is not False or proof.get('paid_call') is not False):
+                                raise WorkflowError('LOCAL_ASR_RESULT_BINDING_MISMATCH')
+                        else:
+                            language=language_profile.language;expected_profile_sha=studio_profile_sha256(language_profile)
+                        if (transcript.get('language') not in {'vi','en'} or language!='auto' and transcript.get('language')!=language
+                            or proof.get('profile_sha256')!=expected_profile_sha or proof.get('requested_language')!=language):
                             raise WorkflowError('ASR_RESULT_LANGUAGE_BINDING_MISMATCH')
                 replaced = {r["asset_id"] for r in incoming}
                 doc["media_analysis"] = [r for r in doc.get("media_analysis", []) if r["asset_id"] not in replaced] + incoming

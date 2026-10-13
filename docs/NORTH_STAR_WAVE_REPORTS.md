@@ -3916,3 +3916,8 @@ Full report: [SERVICE_CANONICAL_OUTCOMES.md](SERVICE_CANONICAL_OUTCOMES.md). Fou
 ## Wave 14/15/16 — Upload/preview/verified decision transaction recovery
 
 Full 13-field report: [SERVICE_INTAKE_OUTCOMES.md](SERVICE_INTAKE_OUTCOMES.md). 10 new cases included in 34 outcome/facade and 34 core PASS; immutable intake responses, preview queue recovery and human decision replay/rollback. New v2, preserved v1; no migration, outbound delivery, real provider/Owner/Hub/production/full A/B/C acceptance. 59 groups remain. Final source: recovery/20261007/service-intake-outcomes-program-state.json.
+
+
+## Wave 3B/3C/8/16 — Local CPU speech integration
+
+Full 13-field report: [NATIVE_LOCAL_CPU_ASR.md](NATIVE_LOCAL_CPU_ASR.md). Native40/consumer30/Studio787 pass; actual CPU VI/EN/auto inference3, existing analysis, immutable originals/versioned CI edits and exact separate-process restore. Vietnamese quality/proper names, actual user footage/word alignment/browser/Owner/production remain unaccepted. No paid/external ASR calls, main merge or deployment.59 groups open. Final source: recovery/20261007/local-cpu-asr-program-state.json.

@@ -32,6 +32,7 @@ class Config:
     sdk_source: Path = Path(r"C:\NPD-Video-Factory\runtime\sdk\vieneu-85344322")
     git: Path = Path(r"C:\Users\PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe")
     ffmpeg_bin: Path = Path(r"C:\Users\PC\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin")
+    local_asr_manifest: Path = Path('__vf_local_asr_not_configured__.json')
 
     @classmethod
     def load(cls, path=None):

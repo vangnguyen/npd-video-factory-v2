@@ -17,7 +17,9 @@ LIFECYCLE = {"queued": "CREATED", "running": "RUNNING", "retrying": "RETRYING",
 def failure(code, step="", http_status=None):
     """Only known identifiers enter logs, never exception text/provider bodies/secrets."""
     value = (str(code) + " " + step).upper()
-    if code=='ASR_WORD_OVER_SOURCE_AUDIO_GAP_REVIEW_REQUIRED':
+    if code.startswith('LOCAL_ASR_'):
+        category,action='ASR_ERROR','Kiểm tra mô hình nhận diện trên máy và transcript nguồn. Kết quả cần được kiểm tra trước khi chỉnh video; yêu cầu này giữ lựa chọn xử lý local.'
+    elif code=='ASR_WORD_OVER_SOURCE_AUDIO_GAP_REVIEW_REQUIRED':
         category,action='ASR_ERROR','Mở mục Từ nhận diện cần kiểm tra ở Tư liệu. Sửa hoặc bỏ từ đi qua khoảng thiếu audio, lưu bản sửa và tiếp tục job đã biết.'
     elif "ASR" in value or "TRANSCRIPT" in value:
         category, action = "ASR_ERROR", "Kiểm tra kết nối và job nhận diện lời nói. Chỉ tiếp tục quan sát job đã biết; yêu cầu chưa rõ kết quả không được gửi lại."

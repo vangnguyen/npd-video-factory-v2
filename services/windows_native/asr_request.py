@@ -9,13 +9,18 @@ from app.assemblyai_studio_profile import studio_profile, studio_profile_sha256,
 
 class NativeAsrRequest(StrictModel):
     language: Literal['vi', 'en', 'auto']
+    provider: Literal['assemblyai','local-whisper']='assemblyai'
 
 
 def bind(value):
     try:
         request = NativeAsrRequest.model_validate(value)
+        if request.provider=='local-whisper':
+            from app.local_asr_profile import profile,digest
+            local=profile(request.language)
+            return {'request':request.model_dump(mode='json'),'profile':local,'profile_sha256':digest(local)}
         profile = studio_profile(request.language)
-        return {'request': request.model_dump(mode='json'),
+        return {'request': {'language':request.language},
             'profile': profile.model_dump(mode='json'), 'profile_sha256': studio_profile_sha256(profile)}
     except (ValueError, TypeError):
         raise WorkflowError('ASR_LANGUAGE_REQUEST_INVALID', 400) from None
@@ -29,6 +34,7 @@ def from_snapshot(snapshot):
         expected = bind(saved['request'])
         if saved != expected:
             raise ValueError()
+        if saved['request'].get('provider')=='local-whisper':return saved['profile']
         return AssemblyAIStudioProfile.model_validate(saved['profile'])
     except (KeyError, ValueError, TypeError, WorkflowError):
         raise WorkflowError('ASR_LANGUAGE_PROFILE_BINDING_CHANGED') from None
