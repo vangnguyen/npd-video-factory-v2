@@ -3886,3 +3886,8 @@ The complete per-wave report, tests, limits, Owner gate and next wave are in [NA
 ## Wave11/12/15 — Native Meta counter feedback component
 
 Full per-wave report is in [NATIVE_META_COUNTER_FEEDBACK.md](NATIVE_META_COUNTER_FEEDBACK.md), with [indexed evidence](north-star/native-meta-counter-feedback-evidence.json). Native10/new-label2/legacy41 and Studio786 pass; two exact cold restores preserve qualified feedback. All provider/publication/identity/media inputs remain synthetic. No new Meta HTTP/browser/Bridge, SQL production parity or real provider/Owner/full-flow acceptance is inferred;59 groups unclosed. Final source seal: recovery/20261007/native-meta-counter-feedback-program-state.json.
+
+
+## Wave11/12/14 — Native Meta signed feedback/browser/outbox
+
+Full report: [NATIVE_META_FEEDBACK_E2E.md](NATIVE_META_FEEDBACK_E2E.md); [evidence](north-star/native-meta-feedback-e2e-evidence.json).6 signed HTTP/786 Studio pass; final browser views/projections pass on both platforms at3 widths. No Meta webhook delivery/real Hub/SQL production parity/genuine provider/Owner/full-flow acceptance.59 groups remain; final source state is recovery/20261007/native-meta-feedback-e2e-program-state.json.

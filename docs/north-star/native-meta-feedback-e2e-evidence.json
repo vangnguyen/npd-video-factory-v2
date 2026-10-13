@@ -1,0 +1,202 @@
+{
+  "schema_version": "north-star-native-meta-feedback-e2e-evidence-v1",
+  "recorded_at": "2026-10-13T01:37:42.028658+00:00",
+  "source_parent": "cc9d18168e12ac43577cffc274b18a0c9363e52d",
+  "tests": {
+    "Native_signed_feedback_HTTP": 6,
+    "Studio": 786
+  },
+  "test_logs": {
+    "Native_signed_feedback_HTTP": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-http-final.log",
+      "sha256": "b8bbf6be4befeb8f2e526be6985df9e9f3935a11f59b8379a2be85757233085a",
+      "bytes": 1764,
+      "passed": 6
+    },
+    "Studio": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-studio-final.log",
+      "sha256": "fdc79dca3d5035edd2eee77ed67ecd5da8add3c8967fbed9f814606285531e0d",
+      "bytes": 81125,
+      "passed": 786
+    }
+  },
+  "browser_rehearsals": [
+    {
+      "platform": "instagram_reels",
+      "owned_root_cleaned": true,
+      "browser_projection_events_harvested": 1,
+      "files": [
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\backup.json",
+          "sha256": "5fec334ca4a3c507fc3e7676783d52d72bcfe289c2e1366d8f46549daa270b24",
+          "bytes": 3548
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\bridge.json",
+          "sha256": "88e811010530874edf2a615b387159d34b73d1f08e89b58b4ed18705cc35704d",
+          "bytes": 2240
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\browser.json",
+          "sha256": "5e9dfe2846bebdffeac719cbf13bc68844c08f3ec1282f25d014828e89a617e0",
+          "bytes": 565
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\cost.json",
+          "sha256": "70ccdfa765e7a6f33861bed4a1ac08b1dc06af278bbae392fd7a12acf523a1c1",
+          "bytes": 17626
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\helper.json",
+          "sha256": "d16c1ffba291f1595d9f9a42fdc9858d79a631beadd550cea22e72080660f2e6",
+          "bytes": 244
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\learning-history.json",
+          "sha256": "cb50365cd933dba308e952f89da32e7cce361b716d37cd99476e39c3f82fdf9f",
+          "bytes": 21902
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\owned-state.zip",
+          "sha256": "8243f4b6989f4fdbc52dfed7933cb70db7ad2768838e21fb3d12bfabc5f43fc7",
+          "bytes": 2629182
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\project.json",
+          "sha256": "88ee65201fc349f67abbe98849cec34be01ae7a0815abbd1e8ee3e5bb48f9109",
+          "bytes": 18083
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\recommendations-1366.png",
+          "sha256": "aeba39c0d4b9dd62036033f87aa425c2668d96f4302c758a7c0b515acccdb3d2",
+          "bytes": 107668
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\recommendations-1920.png",
+          "sha256": "47fc3800ce1fab1c6594a7c20ba4594559ba87d085356f3bbff1722efa02d4b3",
+          "bytes": 150345
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\recommendations-2560.png",
+          "sha256": "9846f80d1b25c8e81ca9c5f56e2faac3fa5fa0de596c3caecb68232ccdd8af09",
+          "bytes": 234354
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\ui-proof.json",
+          "sha256": "125bea2293f19ec10062b2467ff079bebf70d1853653aec73b57b1ce24e35ffe",
+          "bytes": 1828
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-ig-n2\\winner-history.json",
+          "sha256": "7a0e383dde3ee4a97451e963a985f9baac00cbe9ecd445be4f9d73c3adec460b",
+          "bytes": 46553
+        }
+      ]
+    },
+    {
+      "platform": "facebook",
+      "owned_root_cleaned": true,
+      "browser_projection_events_harvested": 2,
+      "files": [
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\backup.json",
+          "sha256": "d70f0d52f8e47bdbeb5343bfc367e8fd0c5712810e2b75db536fcb7f644226ac",
+          "bytes": 3548
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\bridge.json",
+          "sha256": "9305cb137b853ddb3e25d2c7d8c9035758a0755dfa469ebebdc8d867b9d91889",
+          "bytes": 4324
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\browser.json",
+          "sha256": "74299fc2a0524a530ee92630ab012f89cbe841a4dda1922043d15de93f0234bd",
+          "bytes": 558
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\cost.json",
+          "sha256": "ee69b246dc7a76434fa54fc7602c98f8096232a4d23bfdebeef8cd8412ec74c7",
+          "bytes": 17532
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\helper.json",
+          "sha256": "d16c1ffba291f1595d9f9a42fdc9858d79a631beadd550cea22e72080660f2e6",
+          "bytes": 244
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\learning-history.json",
+          "sha256": "bc3d08280dcb95d7616192bb20745c9e1e861a828c0ad994b9786e9cbb3fb321",
+          "bytes": 6127
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\owned-state.zip",
+          "sha256": "0aca2fd70833fa0ec205d2394950b3848b27b53f44e9d5cab3667df462e911a5",
+          "bytes": 2686526
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\project.json",
+          "sha256": "2089e804c77fb0d00c66d84b6f04fff999cdc54211d74edf48906e9d1fc598fa",
+          "bytes": 18083
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\recommendations-1366.png",
+          "sha256": "2c6b5a1efe029738d6b73a3801828a14e3081b72ef57a00ba577df3c6618b11a",
+          "bytes": 109987
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\recommendations-1920.png",
+          "sha256": "27779126ab9e64fa2c71e5a50e2f61383e2203c717c80bcae36c52442fd2f613",
+          "bytes": 141404
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\recommendations-2560.png",
+          "sha256": "4ad432c63a0e2cee411740c622125b9ed4a2ad362534e99f94c7032020cb623c",
+          "bytes": 219545
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\ui-proof.json",
+          "sha256": "69a184ebf6ef04b5e3f32dee3f016064ed53ee15fbad26e675dea3c4bb14a713",
+          "bytes": 1731
+        },
+        {
+          "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-browser-fb-n1\\winner-history.json",
+          "sha256": "95e8f913cfc82c10cb9fb892e69e68d65eb2afe0f24d303dcf4cc2af00a0d4ff",
+          "bytes": 45280
+        }
+      ]
+    }
+  ],
+  "scope": {
+    "actual_signed_localhost_HTTP": true,
+    "actual_Studio_browser": true,
+    "Meta_winner_learning_projection_outbox_capture": true,
+    "service_authenticated_event_reads_nonce_replay_rejected": true,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "Owner_UAT": false,
+    "new_Meta_webhook_delivery_verified": false,
+    "real_Agent_Hub_used": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "SQL_API_parity_verified": false,
+    "nonplayable_media_and_provider_publication_identity_are_fixtures": true,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "retained_attempts": [
+    "native-meta-feedback-http-n1.log",
+    "native-meta-feedback-http-n2.log",
+    "native-meta-feedback-http-n3.log",
+    "native-meta-feedback-browser-ig-n1"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

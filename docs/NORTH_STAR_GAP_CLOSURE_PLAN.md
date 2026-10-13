@@ -457,3 +457,8 @@ Signed HTTP6/Studio780 pass; browser manual and finite paths pass for both platf
 ## Native Meta counter feedback
 
 See NATIVE_META_COUNTER_FEEDBACK.md: separately versioned interaction scoring, exact definition scope, immutable counter learning/qualified projections and fresh-process recovery are implemented/mock tested. Source snapshots keep missing time/retention/revenue null; unverified genuine semantics and sparse Facebook observations remain insufficient. Continue SQL/API parity, new Meta HTTP/browser/Bridge, genuine feature/metric calibration and every original Mode A/B/A-B-C/Owner/production gap.59 groups remain open.
+
+
+## Native Meta signed feedback verification
+
+Actual local signed HTTP/browser/outbox capture now passes for Meta winner/learning/projections;6 HTTP and786 Studio tests pass. JSON technical evidence is folded in normal review. Independent projection harvest and service nonce/idempotence are verified with delivery disabled. Continue actual new Meta webhook/Hub and SQL/API parity, genuine feature/metric acceptance, self-contained CI dataset generation and every original full Mode A/B/A-B-C/Owner/production gap.59 groups remain unclosed. See NATIVE_META_FEEDBACK_E2E.md.

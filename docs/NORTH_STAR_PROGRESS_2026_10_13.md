@@ -22,3 +22,6 @@ Mốc kiểm chứng mới: [Native Meta local E2E](NATIVE_META_ANALYTICS_E2E.md
 
 
 Mốc [Native Meta counter feedback](NATIVE_META_COUNTER_FEEDBACK.md): thuật toán riêng cho tương tác/chia sẻ/lưu, giữ API/định nghĩa chỉ số/cấu hình kênh trong nhóm so sánh; learning và khuyến nghị giữ nguyên nguồn/basis. Instagram giả lập có6 quan sát đủ điều kiện và gợi ý hook; Facebook tiếp tục thiếu dữ liệu.10 kiểm tra Native mới,2 kiểm tra nhãn cuối,41 hồi quy và786 Studio đạt;2 khôi phục tiến trình mới đạt. Provider/media/publication/identity đều giả lập; chưa kiểm chứng HTTP/browser/Bridge mới, SQL/API parity, dữ liệu thật, Owner hoặc full A/B/C.59 nhóm vẫn mở. SHA/bundle mới ở recovery/20261007/native-meta-counter-feedback-program-state.json.
+
+
+Mốc [Native Meta signed feedback](NATIVE_META_FEEDBACK_E2E.md):6 kiểm tra HTTP xác thực và786 Studio đạt; cả Instagram/Facebook review và lưu khuyến nghị qua trình duyệt, kiểm tra1366/1920/2560px. Bridge thu sự kiện qua ranh giới DB độc lập, xác thực dịch vụ/chống dùng lại nonce và không nhân bản khi replay; gửi webhook vẫn tắt. JSON kỹ thuật được thu gọn mặc định. Provider/identity/publication/media đều giả lập; SQL/API parity, webhook/Hub thật, metric/feature thật và full Owner/A/B/C/production chưa hoàn tất.59 nhóm vẫn mở. SHA/bundle cuối ở recovery/20261007/native-meta-feedback-e2e-program-state.json.
