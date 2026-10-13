@@ -43,3 +43,6 @@ Mốc [phục hồi upload/preview/duyệt](SERVICE_INTAKE_OUTCOMES.md): thêm 3
 
 
 Mốc [ASR CPU local](NATIVE_LOCAL_CPU_ASR.md): thêm lựa chọn Việt/Anh/auto vào worker/transcript/Auto Edit cũ, giữ raw/timing ước lượng/versions, không fallback API. Native40 (11 mới)/consumer30/Studio787 đạt; 3 inference thật local và khôi phục3 project ở tiến trình mới đạt. Tiếng Việt nhận sai tên riêng, chưa nghiệm thu chất lượng; mẫu Anh là benchmark, hình/danh tính/chỉnh sửa CI là fixture. Không nhận diện bằng API trả phí, không nghiệm thu Owner/full A/B/C hay production.59 nhóm mở; nguồn/bundle cuối: recovery/20261007/local-cpu-asr-program-state.json.
+
+
+Mốc [ASR model/reference quality](NATIVE_LOCAL_ASR_QUALITY.md): small bổ sung giảm lỗi token trên đúng3 mẫu FLEURS từ21/64 xuống13/64; không được coi là chất lượng tiếng Việt đầy đủ. Lựa chọn model/custody/job/UI rõ; experimental PhoWhisper không đạt bị runtime chặn. Native51/Studio789 đạt; small ASR/analysis/edit và khôi phục3 project đạt. Corpus/model licenses và model-estimated timing giữ nguồn, quyền video dẫn xuất vẫn unknown. Không Owner/full A/B/C/production acceptance;59 nhóm mở. Cleanup251MB bị policy chặn, giữ root và không thử lại. Source cuối: recovery/20261007/local-asr-quality-program-state.json.

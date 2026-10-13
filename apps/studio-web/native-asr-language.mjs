@@ -6,9 +6,22 @@ export const asrLanguageChoices=Object.freeze([
   Object.freeze({value:'local-vi',label:'CPU local · tiếng Việt'}),
   Object.freeze({value:'local-en',label:'CPU local · tiếng Anh'}),
   Object.freeze({value:'local-auto',label:'CPU local · tự phát hiện Việt / Anh'}),
+  Object.freeze({value:'local-small-vi',label:'CPU local · tiếng Việt · mô hình lớn hơn'}),
+  Object.freeze({value:'local-small-en',label:'CPU local · tiếng Anh · mô hình lớn hơn'}),
+  Object.freeze({value:'local-small-auto',label:'CPU local · tự phát hiện · mô hình lớn hơn'}),
+  Object.freeze({value:'local-pho-vi',label:'CPU local · chuyên tiếng Việt'}),
 ]);
 
-export function asrLanguageSelection(value,enabled=false,localEnabled=false){
+export function asrLanguageSelection(value,enabled=false,localEnabled=false,localSmallEnabled=false,localPhoEnabled=false){
+  if(value==='local-pho-vi'){
+    if(!enabled||!localPhoEnabled)throw Error('Mô hình chuyên tiếng Việt chưa được cấu hình.');
+    return {request:{language:'vi',provider:'local-whisper',model_key:'phowhisper-small'},keySuffix:'-local-phowhisper-vi-v2'};
+  }
+  if(typeof value==='string'&&value.startsWith('local-small-')){
+    if(!enabled||!localSmallEnabled||!asrLanguageChoices.some(choice=>choice.value===value))throw Error('Mô hình nhận diện local này chưa được cấu hình.');
+    const language=value.slice(12);
+    return {request:{language,provider:'local-whisper',model_key:'small'},keySuffix:`-local-small-${language}-v2`};
+  }
   if(typeof value==='string'&&value.startsWith('local-')){
     if(!enabled||!localEnabled||!asrLanguageChoices.some(choice=>choice.value===value))throw Error('Nhận diện trên CPU local chưa được cấu hình.');
     return {request:{language:value.slice(6),provider:'local-whisper'},keySuffix:`-local-${value.slice(6)}-v1`};
@@ -20,7 +33,7 @@ export function asrLanguageSelection(value,enabled=false,localEnabled=false){
 
 export function asrLanguageHint(value){
   if(!asrLanguageChoices.some(choice=>choice.value===value))throw Error('Chọn ngôn ngữ nhận diện hợp lệ.');
-  if(value.startsWith('local-'))return 'Nhận diện bằng mô hình trên CPU của máy. Âm thanh không được gửi đến API; không có phí API. Timestamp từng từ do mô hình ước lượng. Kiểm tra transcript trước khi dùng; kết quả đã lưu được giữ nguyên.';
+  if(value.startsWith('local-'))return 'Nhận diện bằng mô hình trên CPU của máy. Âm thanh không được gửi đến API; không có phí API. Timestamp từng từ do mô hình ước lượng. Kiểm tra transcript trước khi dùng; kết quả đã lưu được giữ nguyên.'+(value.startsWith('local-small-')||value==='local-pho-vi'?' Mô hình lớn hơn có thể cần nhiều bộ nhớ và thời gian xử lý hơn.':'');
   const language=value==='auto'?'phát hiện ngôn ngữ từ âm thanh':value==='en'?'nhận diện tiếng Anh':'nhận diện tiếng Việt';
   return `Âm thanh nguồn sẽ được gửi đến AssemblyAI để ${language} và có thể phát sinh phí. Kiểm tra transcript trước khi dùng. Lựa chọn áp dụng cho nguồn chưa được phân tích; kết quả đã lưu được giữ nguyên.`;
 }

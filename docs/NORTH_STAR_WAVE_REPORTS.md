@@ -3921,3 +3921,8 @@ Full 13-field report: [SERVICE_INTAKE_OUTCOMES.md](SERVICE_INTAKE_OUTCOMES.md). 
 ## Wave 3B/3C/8/16 — Local CPU speech integration
 
 Full 13-field report: [NATIVE_LOCAL_CPU_ASR.md](NATIVE_LOCAL_CPU_ASR.md). Native40/consumer30/Studio787 pass; actual CPU VI/EN/auto inference3, existing analysis, immutable originals/versioned CI edits and exact separate-process restore. Vietnamese quality/proper names, actual user footage/word alignment/browser/Owner/production remain unaccepted. No paid/external ASR calls, main merge or deployment.59 groups open. Final source: recovery/20261007/local-cpu-asr-program-state.json.
+
+
+## Wave3B/8/16 — Local ASR model/reference-quality control
+
+Full 13-field report: [NATIVE_LOCAL_ASR_QUALITY.md](NATIVE_LOCAL_ASR_QUALITY.md). Native51/Studio789 PASS. Fixed licensed speech comparison and actual small-model Native/cold flow; failed experimental model quarantined, default provider/base identity unchanged. Partial VI quality/timing/proper names/browser/Owner/full acceptance;59 groups remain. Automatic deletion rejection retained251MB, no bypass. Final state: recovery/20261007/local-asr-quality-program-state.json.

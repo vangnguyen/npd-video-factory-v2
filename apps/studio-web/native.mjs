@@ -152,6 +152,8 @@ if (typeof document !== "undefined") {
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   let asrLanguageEnabled=false;
   let localAsrEnabled=false;
+  let localSmallAsrEnabled=false;
+  let localPhoAsrEnabled=false;
   async function refreshCosts() {
     if(!costUI||!$('cost-summary'))return;
     const serial=++costRequest, identifier=project?.id;
@@ -410,7 +412,9 @@ if (typeof document !== "undefined") {
   async function initializeSupportedStudio(session){
     asrLanguageEnabled=session.capabilities?.native_asr_language_selection===true;
     localAsrEnabled=session.capabilities?.native_local_asr===true;
-    if($('asr-language'))for(const option of $('asr-language').options??[])if(option.value.startsWith('local-'))option.hidden=!localAsrEnabled;
+    localSmallAsrEnabled=session.capabilities?.native_local_asr_small===true;
+    localPhoAsrEnabled=session.capabilities?.native_local_asr_phowhisper===true;
+    if($('asr-language'))for(const option of $('asr-language').options??[])if(option.value.startsWith('local-'))option.hidden=!(option.value==='local-pho-vi'?localPhoAsrEnabled:option.value.startsWith('local-small-')?localSmallAsrEnabled:localAsrEnabled);
     if($('asr-language-label'))$('asr-language-label').hidden=!asrLanguageEnabled;
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
     musicLoopEnabled=session.capabilities?.native_source_music_loop_crossfade===true;
@@ -642,7 +646,7 @@ if (typeof document !== "undefined") {
   }));
   async function enqueue(kind,fresh=false) {
     if(dirty)throw new Error("Lưu chỉnh sửa trước khi chạy job.");
-    const selection=kind==='asr'?asrLanguageSelection($('asr-language')?.value??'legacy',asrLanguageEnabled,localAsrEnabled):{request:undefined,keySuffix:''};
+    const selection=kind==='asr'?asrLanguageSelection($('asr-language')?.value??'legacy',asrLanguageEnabled,localAsrEnabled,localSmallAsrEnabled,localPhoAsrEnabled):{request:undefined,keySuffix:''};
     const key=`vf-native-${project.id}-${project.revision}-${kind}${selection.keySuffix}`;
     let requestKey=sessionStorage.getItem(key);
     if(!requestKey||fresh){requestKey=crypto.randomUUID();sessionStorage.setItem(key,requestKey);}

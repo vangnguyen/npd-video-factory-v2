@@ -1,0 +1,152 @@
+{
+  "schema_version": "north-star-local-asr-quality-evidence-v1",
+  "recorded_at": "2026-10-13T05:42:48.126601+00:00",
+  "source_parent": "acfcb42a29d8d6a0ae09eadf03f28f9909f02d56",
+  "tests": {
+    "Native": 51,
+    "Studio": 789
+  },
+  "new_distinct_Native_cases": 11,
+  "new_Studio_cases": 2,
+  "test_logs": {
+    "Native": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-quality-final-n2.log",
+      "sha256": "dc239215d37864ae30800f9848a0902676cb6adb2fd8acbf6d013f730fe4e0a6",
+      "bytes": 103,
+      "passed": 51
+    },
+    "Studio": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-quality-studio-final.log",
+      "sha256": "2d1b3b543014cd3ae271dc56233c38ad484362b7285587cbc872be4b2b3c04fc",
+      "bytes": 81434,
+      "passed": 789
+    }
+  },
+  "benchmark_manifest": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-fleurs-vi-n2\\manifest.json",
+    "sha256": "182078eac6498855881b817d8a6e6ad781c3ab0bdb3ff6ce093aa7da639c5afa",
+    "bytes": 4167
+  },
+  "reference_comparison": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-vi-comparison-n2\\evidence.json",
+    "sha256": "bb617c97496541676181ddea2fc062afa72960739abd154a42ca6ab19247a7cf",
+    "bytes": 2264
+  },
+  "quarantined_vad_comparison": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-pho-vad-comparison-n1\\evidence.json",
+    "sha256": "d085676bf5cbf421b8548bfcdd9e07c94729df2559f563143b2a4c8753024273",
+    "bytes": 1400
+  },
+  "actual_small_native_flow": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-small-native-n1\\evidence.json",
+    "sha256": "bc423c8ce517231aa9502b9e8449bbda5420f0192a614a92fe30c6f01201ca00",
+    "bytes": 3698
+  },
+  "scores": {
+    "base": {
+      "samples": 3,
+      "reference_tokens": 64,
+      "token_edit_distance": 21,
+      "whitespace_token_error_rate": 0.328125,
+      "reference_characters": 209,
+      "character_edit_distance": 40,
+      "character_error_rate": 0.19138755980861244,
+      "normalizer": "unicode-nfc-casefold-letter-number-whitespace.v1",
+      "sample_scope_only": true,
+      "full_ASR_quality_accepted": false
+    },
+    "small": {
+      "samples": 3,
+      "reference_tokens": 64,
+      "token_edit_distance": 13,
+      "whitespace_token_error_rate": 0.203125,
+      "reference_characters": 209,
+      "character_edit_distance": 20,
+      "character_error_rate": 0.09569377990430622,
+      "normalizer": "unicode-nfc-casefold-letter-number-whitespace.v1",
+      "sample_scope_only": true,
+      "full_ASR_quality_accepted": false
+    },
+    "phowhisper-small": {
+      "samples": 3,
+      "reference_tokens": 64,
+      "token_edit_distance": 44,
+      "whitespace_token_error_rate": 0.6875,
+      "reference_characters": 209,
+      "character_edit_distance": 164,
+      "character_error_rate": 0.784688995215311,
+      "normalizer": "unicode-nfc-casefold-letter-number-whitespace.v1",
+      "sample_scope_only": true,
+      "full_ASR_quality_accepted": false
+    }
+  },
+  "vad_attempt_scores": {
+    "phowhisper-small": {
+      "samples": 3,
+      "reference_tokens": 64,
+      "token_edit_distance": 196,
+      "whitespace_token_error_rate": 3.0625,
+      "reference_characters": 209,
+      "character_edit_distance": 726,
+      "character_error_rate": 3.473684210526316,
+      "normalizer": "unicode-nfc-casefold-letter-number-whitespace.v1",
+      "sample_scope_only": true,
+      "full_ASR_quality_accepted": false
+    }
+  },
+  "portable_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\local-asr-quality-evidence-n1.zip",
+    "sha256": "59db2aa2db09a0453a2e5b9cc9549fa7d92a4583b4324d4ffd570b739723c41d",
+    "bytes": 6842676,
+    "entries": 60,
+    "all_bytes_verified": true,
+    "model_weights_copied": false
+  },
+  "scope": {
+    "runtime_v1_and_original_base_profile_unchanged": true,
+    "runtime_v2_approved_model_selection": true,
+    "actual_speech_samples": 3,
+    "primary_comparison_CPU_inferences": 9,
+    "additional_failed_policy_CPU_inferences": 3,
+    "actual_small_Native_ASR_analysis_edit_restore_cases": 3,
+    "input_audio_unchanged": true,
+    "reference_hints_supplied": false,
+    "token_error_definition": "NFC casefold, punctuation removed, whitespace tokens, weighted Levenshtein/reference token count",
+    "timestamp_reference_alignment_evaluated": false,
+    "proper_name_quality_evaluated": false,
+    "PhoWhisper_runtime_quarantined": true,
+    "quarantined_optional_model_does_not_disable_base_or_small": true,
+    "temporary_converter_and_upstream_weights_cleaned": true,
+    "rejected_model_cleanup_blocked_by_policy": true,
+    "rejected_model_root_retained": "C:/vfns-local-asr-c1/models/phowhisper-small-int8",
+    "rejected_model_bytes_retained": 251531738,
+    "blocked_cleanup_retried_or_bypassed": false,
+    "actual_new_browser_verified": false,
+    "external_ASR_calls": 0,
+    "paid_calls": 0,
+    "VI_quality_accepted": false,
+    "genuine_user_footage_accepted": false,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false
+  },
+  "retained_attempts": [
+    "local-asr-fleurs-vi-n1",
+    "local-asr-vi-comparison-n1",
+    "phowhisper-conversion-n1.log",
+    "local-asr-models-initial-n1.log",
+    "local-asr-models-new-n2.log",
+    "local-asr-models-regression-n1.log"
+  ],
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

@@ -35,3 +35,6 @@ OWNER ACTION REQUIRED: none for safe implementation; original listening/UAT defe
 NEXT WAVE: genuine source/quality/word review and full original Mode A/B/media/production gaps
 
 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED;59 groups unclosed. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+
+Latest approved base/small selection, fixed licensed reference comparison, failed experimental-model quarantine and exact scope: [NATIVE_LOCAL_ASR_QUALITY.md](NATIVE_LOCAL_ASR_QUALITY.md). Original v1/base evidence remains unchanged; no whole-program readiness change.

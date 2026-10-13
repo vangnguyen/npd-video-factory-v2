@@ -42,11 +42,12 @@ def analyze_local(config,job,out,stage,profile,*,provider_factory=LocalCpuTransc
                 value=asdict(transcript);value.pop('actual_cost_vnd',None)
                 if digest(value)!=digest(result['transcript']):raise WorkflowError('LOCAL_ASR_RECEIPT_CHANGED')
             else:
-                provider=provider_factory(config.local_asr_manifest,profile['language'])
+                provider=(provider_factory(config.local_asr_manifest,profile['language'],model_key=profile['model_key'])
+                    if profile.get('model_key') else provider_factory(config.local_asr_manifest,profile['language']))
                 if provider.profile!=profile:raise WorkflowError('LOCAL_ASR_PROFILE_CHANGED')
                 ledger=CostLedger(Store(config.data_root))
                 operation=ledger.begin(project_id=job['project_id'],job_id=job['id'],provider='faster-whisper',
-                    model='faster-whisper-base:'+profile['model_revision'][:12],operation='local-asr-'+asset['id'],request_sha256=profile_digest({
+                    model=profile['model'].split('/')[-1]+':'+profile['model_revision'][:12],operation='local-asr-'+asset['id'],request_sha256=profile_digest({
                         'job':job['id'],'source':asset['sha256'],'pcm':metadata['sha256'],'profile':profile}),
                     estimated_cost=0,paid=False,external_call=False)
                 stage('asr_local_cpu_inference')

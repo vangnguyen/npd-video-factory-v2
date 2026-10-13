@@ -1,0 +1,95 @@
+{
+  "schema_version": "local-asr-model.v1",
+  "provider": "faster-whisper",
+  "model": "vinai/PhoWhisper-small",
+  "revision": "a86b604c346caf7148c37512eafe783a16420adb",
+  "source": "https://huggingface.co/vinai/PhoWhisper-small/tree/a86b604c346caf7148c37512eafe783a16420adb",
+  "license": "BSD-3-Clause",
+  "files": {
+    "config.json": {
+      "sha256": "364e66f09ce360358f61e549786419eedc8e6ab709186304dc77f84a3c4966c8",
+      "bytes": 2609
+    },
+    "model.bin": {
+      "sha256": "25c9e77010ce22372d6c12831d2f33fb1a86bdceb9fa9cd41f4596fd37b71db1",
+      "bytes": 248203797
+    },
+    "preprocessor_config.json": {
+      "sha256": "a6a76d28c93edb273669eb9e0b0636a2bddbb1272c3261e47b7ca6dfdbac1b8d",
+      "bytes": 339
+    },
+    "README.md": {
+      "sha256": "736bfe608f0cf60fd942fbf734b10e0df70659ab5b9504f8bf2e194365e0c0a1",
+      "bytes": 1021
+    },
+    "tokenizer.json": {
+      "sha256": "c218b12acbc2168cad951ae8a8c8d345df09dfa63b787214d4ac27762170fd7b",
+      "bytes": 2204003
+    },
+    "vocabulary.json": {
+      "sha256": "aa4e6188766a36f6a7f3e44db3f74823c6fee0bf33a9559247e18fedb3bc8d55",
+      "bytes": 1119969
+    }
+  },
+  "conversion": {
+    "engine": "ctranslate2",
+    "version": "4.6.0",
+    "transformers": "4.55.4",
+    "torch": "2.8.0+cpu",
+    "quantization": "int8",
+    "device": "cpu",
+    "upstream_files": {
+      "README.md": {
+        "sha256": "736bfe608f0cf60fd942fbf734b10e0df70659ab5b9504f8bf2e194365e0c0a1",
+        "bytes": 1021
+      },
+      "added_tokens.json": {
+        "sha256": "ce949fe720c14311cb6c446e69cfe340dc669d7b006077a6feed6ae571dd7e88",
+        "bytes": 2082
+      },
+      "config.json": {
+        "sha256": "c9d7e721876727d437cfb145229936926b439d1ab483db572e5f9b5fb6b6d0bf",
+        "bytes": 1329
+      },
+      "generation_config.json": {
+        "sha256": "ba8dbcc6416b036d6f596ab70619bb713f0e996a0bbd142cc8e8eea80b93ebd7",
+        "bytes": 3832
+      },
+      "merges.txt": {
+        "sha256": "78f27f801feb4283ae969d4cadacb28fc051b655647402b1a252c7079ea11c46",
+        "bytes": 493864
+      },
+      "normalizer.json": {
+        "sha256": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd",
+        "bytes": 52666
+      },
+      "preprocessor_config.json": {
+        "sha256": "a6a76d28c93edb273669eb9e0b0636a2bddbb1272c3261e47b7ca6dfdbac1b8d",
+        "bytes": 339
+      },
+      "pytorch_model.bin": {
+        "sha256": "9ec6f07c5bd321fc8f477cf778c43c3fd94b0e33a9f20283fc61cc6d22cbfded",
+        "bytes": 967102729
+      },
+      "special_tokens_map.json": {
+        "sha256": "b0aac6950381c4ae2f60b3f0fab04bcfe399a6a320cb3e4c7aee2d52924d733e",
+        "bytes": 2077
+      },
+      "tokenizer.json": {
+        "sha256": "c218b12acbc2168cad951ae8a8c8d345df09dfa63b787214d4ac27762170fd7b",
+        "bytes": 2204003
+      },
+      "tokenizer_config.json": {
+        "sha256": "14f84bdf4b9ecdbd4738ddc81c17a1baedfc02bb93c6e049c951e15a1b40b70d",
+        "bytes": 805
+      },
+      "vocab.json": {
+        "sha256": "8f680bba319e01a653d2e8a5dbc17a9157179e0576e6ce74ce0c06356c6e24f9",
+        "bytes": 835550
+      }
+    },
+    "remote_code_enabled": false,
+    "source_weights_verified": true,
+    "temporary_conversion_root_cleaned_after_subprocess_exit": true
+  }
+}

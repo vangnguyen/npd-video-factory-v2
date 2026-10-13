@@ -898,6 +898,8 @@ class Handler(BaseHTTPRequestHandler):
                 "native_studio_ux": True, "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
+                "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
+                "native_local_asr_phowhisper":local_asr_status(self.server.config.local_asr_manifest,model_key='phowhisper-small')['configured'],
                 "native_publication_review":True,"native_live_publishing":False,"native_official_publication_review":self.server.access is not None,"native_analytics_review":True,
                 "native_official_analytics":False,"native_vision_review":True,"native_official_vision":False,"native_render_vision_review":True,"native_render_thumbnail_review":True,"native_render_thumbnail_rights_review":True,"native_source_variants":True,"native_channel_profiles":True,"native_channel_profile_admin":True,"native_local_subject_tracking":importlib.util.find_spec("numpy") is not None and importlib.util.find_spec("PIL") is not None,"native_bridge_operator":True,"native_rights_review":True,"native_stock_media":True,"native_generation_media":True,"native_storyboard_media_planner":True,"native_storyboard_media_resolution":True,"native_narration_preparation":True,"native_narrated_workflow":True,"native_trend_radar":True,"native_owner_rights_override_review":True,"native_narration_rights_review":True,"native_source_music_loop_crossfade":True,"native_analytics_refresh":True,"native_narrated_variants":True,"native_narrated_music_loop":True,"native_official_account_review":True}}, headers=headers)
         if path == "/api/health":
@@ -1372,7 +1374,7 @@ class Handler(BaseHTTPRequestHandler):
                 if isinstance(selected,dict) and selected.get('provider')=='local-whisper':
                     from .asr_request import bind
                     bind(selected)
-                    if not local_asr_status(self.server.config.local_asr_manifest)['configured']:
+                    if not local_asr_status(self.server.config.local_asr_manifest,model_key=selected.get('model_key') or 'base')['configured']:
                         raise WorkflowError('LOCAL_ASR_NOT_CONFIGURED',503)
                 elif pending_speech(doc) and not assemblyai_connection.status(self.server.config)["connected"]:
                     raise WorkflowError("ASR_PROVIDER_UNAVAILABLE_NO_TRANSCRIPT", 503)

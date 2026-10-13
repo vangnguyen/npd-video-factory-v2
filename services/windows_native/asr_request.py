@@ -10,6 +10,7 @@ from app.assemblyai_studio_profile import studio_profile, studio_profile_sha256,
 class NativeAsrRequest(StrictModel):
     language: Literal['vi', 'en', 'auto']
     provider: Literal['assemblyai','local-whisper']='assemblyai'
+    model_key: Literal['base','small','phowhisper-small']|None=None
 
 
 def bind(value):
@@ -17,8 +18,11 @@ def bind(value):
         request = NativeAsrRequest.model_validate(value)
         if request.provider=='local-whisper':
             from app.local_asr_profile import profile,digest
-            local=profile(request.language)
-            return {'request':request.model_dump(mode='json'),'profile':local,'profile_sha256':digest(local)}
+            key=request.model_key or 'base';local=profile(request.language,key)
+            saved={'language':request.language,'provider':'local-whisper'}
+            if key!='base':saved['model_key']=key
+            return {'request':saved,'profile':local,'profile_sha256':digest(local)}
+        if request.model_key is not None:raise ValueError('ASR_PROVIDER_MODEL_MISMATCH')
         profile = studio_profile(request.language)
         return {'request': {'language':request.language},
             'profile': profile.model_dump(mode='json'), 'profile_sha256': studio_profile_sha256(profile)}

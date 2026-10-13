@@ -15,8 +15,11 @@ def write(path,value):path.write_text(json.dumps(value,ensure_ascii=False,indent
 def main():
  p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--runtime-manifest',required=True)
  p.add_argument('--vietnamese-wav',required=True);p.add_argument('--english-audio',required=True)
+ p.add_argument('--model-key',choices=['base','small'],default='base')
+ p.add_argument('--languages',nargs='+',choices=['vi','en','auto'],default=['vi','en','auto'])
+ p.add_argument('--vi-source-kind',choices=['existing-local-tts','licensed-speech-benchmark'],default='existing-local-tts')
  args=p.parse_args();out=Path(args.output).resolve();assert not out.exists();out.mkdir()
- inputs=[('vi',Path(args.vietnamese_wav).resolve()),('en',Path(args.english_audio).resolve()),('auto',Path(args.english_audio).resolve())]
+ inputs=[(language,Path(args.vietnamese_wav if language=='vi' else args.english_audio).resolve()) for language in args.languages]
  before={str(source):file_sha(source) for language,source in inputs}
  with tempfile.TemporaryDirectory(prefix='vf-local-asr-real-') as temporary:
   root=Path(temporary)/'state';config=Config(data_root=root,local_asr_manifest=Path(args.runtime_manifest).resolve())
@@ -29,8 +32,9 @@ def main():
    asset=ingest_media(config,video,'video/mp4','local-asr-speech-'+language+'.mp4',rights_confirmed=True,illustration=False)
    assert asset['rights_status']=='unknown'
    project=store.append_media(project['id'],project['revision'],asset)
-   job=store.enqueue(project['id'],project['revision'],'asr',uuid.uuid4().hex,
-     asr_request={'language':language,'provider':'local-whisper'})
+   request={'language':language,'provider':'local-whisper'}
+   if args.model_key!='base':request['model_key']=args.model_key
+   job=store.enqueue(project['id'],project['revision'],'asr',uuid.uuid4().hex,asr_request=request)
    started=time.monotonic();Runner(store,Pipeline(config)).run_one();saved=store.get_job(job['id'])
    write(folder/'asr-job.json',saved);assert saved['status']=='succeeded',saved.get('error')
    project=store.get(project['id']);original=copy.deepcopy(project['document']['media_analysis'])
@@ -56,7 +60,9 @@ def main():
      'words':sum(len(s['words']) for s in transcript['segments']),'model_estimated_timing':True,
      'low_confidence_words':transcript['provenance']['low_confidence_word_count'],'human_review_required':True,
      'source_sha256':asset['sha256'],'original_transcript_unchanged':True,'versioned_ci_edit':True,
-     'source_is_existing_local_TTS':language=='vi','source_is_public_software_benchmark':language!='vi',
+     'source_is_existing_local_TTS':language=='vi' and args.vi_source_kind=='existing-local-tts',
+     'source_is_licensed_human_speech_benchmark':language=='vi' and args.vi_source_kind=='licensed-speech-benchmark',
+     'source_is_public_software_benchmark':language!='vi',
      'visual_is_generated_fixture':True,'rights_status':'unknown','external_calls':0,'paid_calls':0})
   backup=out/'local-asr-state.zip';receipt=create_backup(config,backup);write(out/'backup.json',receipt)
   projects={item['project_id']:digest(store.get(item['project_id'])) for item in results}
@@ -77,11 +83,11 @@ with tempfile.TemporaryDirectory(prefix="vf-local-asr-cold-") as tmp:
   restore=json.loads(child.stdout.strip().splitlines()[-1]);write(out/'fresh-process-restore.json',restore)
  assert all(file_sha(Path(name))==sha for name,sha in before.items())
  report={'schema_version':'north-star-local-cpu-asr-real-v1','cases':results,'input_hashes':before,
-  'original_inputs_unchanged':True,'actual_local_cpu_inferences':3,'external_calls':0,'paid_calls':0,
+  'original_inputs_unchanged':True,'actual_local_cpu_inferences':len(results),'model_key':args.model_key,'external_calls':0,'paid_calls':0,
   'separate_process_restore':restore,'owned_temporary_roots_cleaned':True,'model_weights_in_backup':False,
   'VI_quality_accepted':False,'genuine_user_uploaded_footage_accepted':False,'Owner_UAT':False,
   'full_Mode_A_B_accepted':False,'production_deployed':False}
- write(out/'evidence.json',report);print(json.dumps({'cases':3,'local_inferences':3,'external_calls':0,
+ write(out/'evidence.json',report);print(json.dumps({'cases':len(results),'local_inferences':len(results),'external_calls':0,
   'words':[item['words'] for item in results],'exact_restore':True,'VI_quality_accepted':False,'full_Mode_A_B_accepted':False}))
 
 if __name__=='__main__':main()

@@ -12,8 +12,10 @@ def normalize(value,selected,checksum,duration):
     if (not isinstance(value,dict) or value.get('version')!='local-asr-result.v1'
         or value.get('profile_sha256')!=digest(selected) or value.get('source_sha256')!=checksum
         or value.get('model_revision')!=selected['model_revision'] or value.get('library_version')!='1.2.1'
-        or value.get('device')!='cpu' or value.get('compute_type')!='int8' or value.get('external_calls')!=0
-        or value.get('paid_calls')!=0 or value.get('model_inferences')!=1 or value.get('vad_filter') is not False):
+        or value.get('device')!='cpu' or value.get('compute_type')!='int8'
+        or any(type(value.get(key)) is not int for key in ('external_calls','paid_calls','model_inferences'))
+        or value.get('external_calls')!=0 or value.get('paid_calls')!=0 or value.get('model_inferences')!=1
+        or type(value.get('vad_filter')) is not bool or value.get('vad_filter')!=selected['vad_filter']):
         raise ValueError('LOCAL_ASR_RESULT_BINDING_INVALID')
     language=value.get('language')
     if language not in ('vi','en') or selected['language']!='auto' and language!=selected['language']:
@@ -27,6 +29,11 @@ def normalize(value,selected,checksum,duration):
     if probability is not None and (type(probability) not in (int,float) or not math.isfinite(probability) or not 0<=probability<=1):
         raise ValueError('LOCAL_ASR_CONFIDENCE_INVALID')
     if selected['language']=='auto' and probability is None:raise ValueError('LOCAL_ASR_CONFIDENCE_INVALID')
+    if selected['vad_filter']:
+        kept=value.get('duration_after_vad_seconds')
+        if (type(kept) not in (int,float) or not math.isfinite(kept) or not 0<kept<=duration+1/16000
+            or value.get('timestamp_coordinate_system')!='original_input_pcm_seconds'):
+            raise ValueError('LOCAL_ASR_VAD_SOURCE_CLOCK_INVALID')
     segments=[];previous=0.;count=0
     if not isinstance(value.get('segments'),list) or not 1<=len(value['segments'])<=2000:
         raise ValueError('LOCAL_ASR_NO_SPEECH_OR_RESULT_LIMIT')
@@ -53,16 +60,20 @@ def normalize(value,selected,checksum,duration):
             'language_detection_performed':selected['language']=='auto','language_confidence':probability,
             'word_alignment_source':'model_estimate','word_timing_rewritten':False,'original_evidence':True,
             'recognition_review_required':True,'low_confidence_word_count':sum(w.confidence<.5 for s in segments for w in s.words),
-            'local_inference':True,'external_call':False,'paid_call':False,'model_inferences':1,'diarization_supported':False})
+            'local_inference':True,'external_call':False,'paid_call':False,'model_inferences':1,'diarization_supported':False,
+            **({'vad_filter':True,'duration_after_vad_seconds':value['duration_after_vad_seconds'],
+                'timestamp_coordinate_system':value['timestamp_coordinate_system'],'vad_time_mapping':'faster-whisper-estimated-to-original-pcm'}
+                if selected['vad_filter'] else {})})
 
 class LocalCpuTranscriptionProvider:
     key='local-faster-whisper';model='Systran/faster-whisper-base';external_call=False;paid=False
     credential_alias=None;estimated_cost_vnd=Decimal('0')
-    def __init__(self,manifest,language='auto'):
-        self.manifest=manifest;self.profile=profile(language);self.raw_result=None
+    def __init__(self,manifest,language='auto',model_key='base'):
+        self.manifest=manifest;self.profile=profile(language,model_key);self.raw_result=None
+        self.model_key=model_key;self.model=self.profile['model']
 
     async def transcribe(self,path,*,metadata,checksum_sha256,execution_trace=None):
-        try:config=await asyncio.to_thread(runtime,self.manifest)
+        try:config=await asyncio.to_thread(runtime,self.manifest,model_key=self.model_key)
         except (OSError,ValueError,TypeError,KeyError):raise ProviderNotConfigured('LOCAL_ASR_NOT_CONFIGURED_OR_CHANGED') from None
         source=plain(path)
         if file_sha(source)!=checksum_sha256:raise ValueError('LOCAL_ASR_AUDIO_CHANGED')
@@ -83,7 +94,7 @@ class LocalCpuTranscriptionProvider:
             if child.returncode is None:child.kill()
             await child.communicate();raise
         if child.returncode or len(output)>4*1024*1024:raise ValueError('LOCAL_ASR_EXECUTION_FAILED')
-        if await asyncio.to_thread(runtime,self.manifest)!=config:raise ValueError('LOCAL_ASR_RUNTIME_CHANGED')
+        if await asyncio.to_thread(runtime,self.manifest,model_key=self.model_key)!=config:raise ValueError('LOCAL_ASR_RUNTIME_CHANGED')
         if file_sha(source)!=checksum_sha256:raise ValueError('LOCAL_ASR_AUDIO_CHANGED')
         self.raw_result=json.loads(output)
         return normalize(self.raw_result,self.profile,checksum_sha256,duration)

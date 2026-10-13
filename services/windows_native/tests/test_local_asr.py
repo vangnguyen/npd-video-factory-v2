@@ -50,7 +50,7 @@ class LocalAsrContractTests(unittest.TestCase):
     def test_bound_input_language_duration_and_nonfinite_words_are_rejected(self):
         selected=profile('vi')
         for field,changed in [('source_sha256','b'*64),('profile_sha256','c'*64),('language','en'),
-            ('duration_seconds',2.),('external_calls',1),('language_confidence',1.)]:
+            ('duration_seconds',2.),('external_calls',1),('external_calls',False),('paid_calls',False),('model_inferences',True),('language_confidence',1.)]:
             raw=result(selected,'a'*64);raw[field]=changed
             with self.assertRaises(ValueError):normalize(raw,selected,'a'*64,1.)
         for field in ('start_seconds','end_seconds','confidence'):
@@ -84,6 +84,39 @@ class LocalAsrContractTests(unittest.TestCase):
                 weights.write_bytes(b'original');value['client_graph']={'forbidden':True}
                 manifest.write_text(json.dumps(value),encoding='utf-8')
                 with self.assertRaisesRegex(ValueError,'RUNTIME_INVALID'):runtime(manifest)
+    def test_runtime_v2_resolves_only_explicit_approved_model_and_missing_selection_is_not_fallback(self):
+        from app.local_asr_runtime import runtime,file_sha
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);binary=root/'python.exe';binary.write_bytes(b'explicit runtime fixture')
+            weights=root/'model.bin';weights.write_bytes(b'original')
+            expected={'files':{'model.bin':{'sha256':file_sha(weights),'bytes':8}}}
+            value={'version':'local-asr-runtime.v2','enabled':True,'python':str(binary),'python_sha256':file_sha(binary),
+                'models':{'small':{'model_root':str(root),'model_manifest_sha256':digest(expected)}},'cpu_threads':2,'timeout_seconds':30}
+            manifest=root/'runtime.json';manifest.write_text(json.dumps(value),encoding='utf-8')
+            with patch('app.local_asr_runtime.model_manifest',return_value=expected):
+                selected=runtime(manifest,model_key='small');self.assertEqual(selected['selected_model'],'small')
+                value['models']['phowhisper-small']={'model_root':'missing-quarantined-model','model_manifest_sha256':'a'*64}
+                manifest.write_text(json.dumps(value),encoding='utf-8')
+                self.assertEqual(runtime(manifest,model_key='small')['selected_model'],'small')
+                with self.assertRaisesRegex(ValueError,'QUALITY_QUARANTINED'):runtime(manifest,model_key='phowhisper-small')
+                with self.assertRaisesRegex(ValueError,'NOT_CONFIGURED'):runtime(manifest,model_key='base')
+                value['models']['unapproved-client-model']=value['models']['small']
+                manifest.write_text(json.dumps(value),encoding='utf-8')
+                with self.assertRaisesRegex(ValueError,'RUNTIME_INVALID'):runtime(manifest,model_key='small')
+    def test_vad_profile_requires_original_source_coordinates_and_valid_observed_kept_duration(self):
+        selected=profile('vi','phowhisper-small');raw=result(selected,'a'*64)
+        raw.update(vad_filter=True,duration_after_vad_seconds=.8,timestamp_coordinate_system='original_input_pcm_seconds')
+        value=normalize(raw,selected,'a'*64,1.)
+        self.assertTrue(value.provenance['vad_filter']);self.assertEqual(value.segments[0].words[0].start_seconds,.05)
+        for field,replacement in [('duration_after_vad_seconds',2.),('duration_after_vad_seconds',math.nan),
+                                 ('timestamp_coordinate_system','trimmed_audio_seconds'),('vad_filter',False)]:
+            invalid=copy.deepcopy(raw);invalid[field]=replacement
+            with self.assertRaises(ValueError):normalize(invalid,selected,'a'*64,1.)
+    def test_failed_quality_model_is_quarantined_even_when_custody_is_enabled(self):
+        from app.local_asr_runtime import runtime,status
+        with self.assertRaisesRegex(ValueError,'QUALITY_QUARANTINED'):runtime(None,model_key='phowhisper-small')
+        value=status(None,model_key='phowhisper-small')
+        self.assertFalse(value['configured']);self.assertEqual(value['state'],'quality_quarantined')
 
 class FakeLocalProvider:
     calls=0
