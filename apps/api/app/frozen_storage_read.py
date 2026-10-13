@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 
-from .object_storage import validate_object_key
+from .object_storage import validate_object_key, download_cancellation_is_drained
 
 MAX_SOURCE_BYTES = 2 * 1024**3
 
@@ -78,7 +78,8 @@ class FrozenStorageRead:
         # An adapter with an old signature fails closed; never retry unbounded.
         await completed_read(storage.download_file(object_key=self.object_key, destination=Path(destination),
             max_bytes=self.maximum, expected_size_bytes=self.size_bytes,
-            expected_sha256=self.checksum_sha256, expected_prefix=self.prefix), cancel_operation=True)
+            expected_sha256=self.checksum_sha256, expected_prefix=self.prefix),
+            cancel_operation=download_cancellation_is_drained(storage))
 
 
 def asset_custody(asset):

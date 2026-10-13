@@ -24,6 +24,7 @@ from .transcript_word_review import revised
 from .uploaded_audio_db import UploadedAudioORM
 from .uploaded_audio_repository import UploadedAudioRepository, AudioConflict, source, digest, identity, actor
 from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES, FrozenReadRejected
+from .bounded_storage_download import StorageDownloadError
 
 AUDIO_QUEUE = 'npd:video-factory:v2:uploaded-audio:queued'
 
@@ -210,6 +211,12 @@ class UploadedAudioService:
         try:
             try:
                 await proof.download(self.object_storage,path)
+            except StorageDownloadError as error:
+                if error.code in {'STORAGE_DOWNLOAD_SIZE_LIMIT','STORAGE_DOWNLOAD_SIZE_MISMATCH',
+                    'STORAGE_DOWNLOAD_HASH_MISMATCH','STORAGE_DOWNLOAD_STAGE_HASH_MISMATCH',
+                    'STORAGE_DOWNLOAD_PATH_CHANGED'}:
+                    raise AudioConflict('AUDIO_SOURCE_CHANGED') from None
+                raise AudioConflict('AUDIO_SOURCE_DOWNLOAD_FAILED') from None
             except Exception:
                 raise AudioConflict('AUDIO_SOURCE_DOWNLOAD_FAILED') from None
             if path.stat().st_size!=size or await completed_read(asyncio.to_thread(sha256_file,path))!=sha:

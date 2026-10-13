@@ -7,7 +7,7 @@ from types import SimpleNamespace
 import pytest
 
 from app.frozen_storage_read import FrozenStorageRead, FrozenReadRejected, completed_read
-from app.object_storage import LocalObjectStorageProvider, create_object_storage
+from app.object_storage import LocalObjectStorageProvider, create_object_storage, download_cancellation_is_drained
 from app.bounded_storage_download import StorageDownloadError
 from test_bounded_storage_download import fake_s3, Body, KEY, PREFIX
 
@@ -16,6 +16,15 @@ def proof(data, *, provider='local', **updates):
     values=dict(object_key=KEY,workspace_id='wsp_fixture',project_id='prj_fixture',size_bytes=len(data),
         checksum_sha256=hashlib.sha256(data).hexdigest(),storage_provider=provider,maximum=len(data)+10)
     return FrozenStorageRead(**{**values,**updates})
+
+
+def test_cancellation_claim_is_explicit_and_not_inherited_by_an_override(tmp_path):
+    native=LocalObjectStorageProvider(tmp_path)
+    assert download_cancellation_is_drained(native)
+    class UnknownOverride(LocalObjectStorageProvider):
+        async def download_file(self,**kwargs):
+            await asyncio.to_thread(lambda: None)
+    assert not download_cancellation_is_drained(UnknownOverride(tmp_path))
 
 
 @pytest.mark.asyncio

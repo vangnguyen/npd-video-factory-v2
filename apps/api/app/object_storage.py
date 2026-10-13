@@ -49,8 +49,15 @@ class ObjectStorageProvider(Protocol):
     async def put_file(self, *, object_key: str, path: Path, content_type: str | None = None) -> StoredObject: ...
     async def download_file(self, *, object_key: str, destination: Path,
                             max_bytes: int | None = None, expected_size_bytes: int | None = None,
-                            expected_sha256: str | None = None, expected_prefix: str | None = None) -> None: ...
+                            expected_sha256: str | None = None, expected_prefix: str | None = None) -> None:
+        """Await owned I/O; explicitly opt in to forwarding cancellation only when it drains."""
+        ...
     async def exists(self, *, object_key: str) -> bool: ...
+
+
+def download_cancellation_is_drained(storage) -> bool:
+    """Unknown adapters remain shielded; an inherited claim cannot cover an override."""
+    return vars(type(storage)).get('download_cancellation_drained') is True
 
 
 def validate_object_key(object_key: str) -> str:
@@ -148,6 +155,7 @@ def _require_bounded_download_client(client):
 
 class LocalObjectStorageProvider:
     name = "local"
+    download_cancellation_drained = True
 
     def __init__(self, root: Path):
         self._download_root = Path(root).absolute()
@@ -229,6 +237,7 @@ def _copy_file(source: Path, destination: Path) -> None:
 
 class S3ObjectStorageProvider:
     name = "s3"
+    download_cancellation_drained = True
 
     def __init__(
         self,
