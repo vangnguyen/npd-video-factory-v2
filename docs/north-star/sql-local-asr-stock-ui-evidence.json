@@ -1,0 +1,1227 @@
+{
+  "schema_version": "north-star-sql-local-asr-stock-ui-evidence.v1",
+  "recorded_at": "2026-10-13T12:14:45.382243+00:00",
+  "program_parent": "0904fc1bc2b55ec0094572e19d006b224cc26d43",
+  "source_parent": "e5e7f8d0df5fad8e641d574e4ba422aa0dab3637",
+  "capability_commits": [
+    "684b06c1c51ac339bfdb2f6a0f4a0b86f6f9f848",
+    "e1d831e91923a16638c06771d271b1c32593b26b",
+    "c16532056b31ad0dfc056698103fd2ed24d79e66",
+    "e5e7f8d0df5fad8e641d574e4ba422aa0dab3637"
+  ],
+  "tests": {
+    "full_Studio": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-studio-full-n1.log",
+      "bytes": 92684,
+      "sha256": "5c36107b8a48fd744ce37bb411adbc60b1a8d44faeea10f50cbdc2459d528150",
+      "passed": 897,
+      "skipped": 0
+    },
+    "stock_media_provider_backend": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-backend-final-n1.log",
+      "bytes": 195,
+      "sha256": "782537dfefc62a9034db6e71a3aa9fcc24d3da31495515ab960129c3068bcbcb",
+      "passed": 113,
+      "skipped": 0
+    },
+    "local_provider_audio_SQL": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-evidence-final-n1.log",
+      "bytes": 112,
+      "sha256": "0f99461aa6e4b9dde98feaeb0c4e979bc551c8cc4cbb06cece7fe7efa6d95edc",
+      "passed": 61,
+      "skipped": 0
+    },
+    "Native_voice_canonical_timeline": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-native-regression-n1.log",
+      "bytes": 103,
+      "sha256": "11b2e382a5168f8b1e5cb9e2536dfc00fdb2d69601f0860141f55786810a0008",
+      "passed": 53,
+      "skipped": 0
+    },
+    "planner_atomic_claim": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-planner-atomic-review-regression-n1.log",
+      "bytes": 112,
+      "sha256": "2ca0fe23c4ca28a01209582d5308ed191fbe05a9a3ec51ecaa05caea2ee680e3",
+      "passed": 24,
+      "skipped": 0
+    },
+    "stock_UI_independent": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-stock-planning-ui-review-n1.log",
+      "bytes": 2509,
+      "sha256": "44be2d70c46a3ad3d8ec21d770f47e120ad811121812b078d517454ae1a005e7",
+      "passed": 24,
+      "skipped": 0
+    },
+    "rejected_evidence_new_subset": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-evidence-new-n1.log",
+      "bytes": 117,
+      "sha256": "620b1677879ddb9cabcc5f4d43fd17ed5e37db28f82476f90105f6360346ee88",
+      "passed": 13,
+      "skipped": 0
+    },
+    "registry_and_provider_safety": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-registry-final-n1.log",
+      "bytes": 102,
+      "sha256": "9eb315568b2dadab98eaf7db760632128258da54e70b833ceced859c7597e645",
+      "passed": 32,
+      "skipped": 0
+    }
+  },
+  "test_batches_overlap_do_not_sum": true,
+  "artifact_files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-local-asr-registry-review-evidence.json",
+      "bytes": 3311,
+      "sha256": "ec599e84cea5307dff315e2a514177f8f200ede409dbbc6db9d568c2154b5988",
+      "archive_name": "independent-local-asr-registry-review-evidence.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-local-asr-registry-review-n1.log",
+      "bytes": 2202,
+      "sha256": "83e19d35f8b09db3ed2eda79ed6a2cf8e0427aaa1f0d313d5986ba1c63249747",
+      "archive_name": "independent-local-asr-registry-review-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-local-asr-registry-review-n1.py",
+      "bytes": 3395,
+      "sha256": "5ba6939963e4e89abdeea84697af37e0a8f328ffecce6e16b61da6759a2875e1",
+      "archive_name": "independent-local-asr-registry-review-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-sql-local-audio-evidence-fixed-n1.log",
+      "bytes": 653,
+      "sha256": "61ed2919bf5f1921aa7bd90c1ff7a00126e6aba360e25d474439d63557826131",
+      "archive_name": "independent-sql-local-audio-evidence-fixed-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-sql-local-audio-evidence-n1.log",
+      "bytes": 1817,
+      "sha256": "80730da93d7cffd2be4776592b863b740a1494f9823698c357297ad1b8e8e3a3",
+      "archive_name": "independent-sql-local-audio-evidence-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-sql-local-audio-evidence-n1.py",
+      "bytes": 3341,
+      "sha256": "9a6542b353b199c7c29158e5911f78752e82307261411647074254ba70e805ad",
+      "archive_name": "independent-sql-local-audio-evidence-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-stock-planning-ui-review-n1.log",
+      "bytes": 2509,
+      "sha256": "44be2d70c46a3ad3d8ec21d770f47e120ad811121812b078d517454ae1a005e7",
+      "archive_name": "independent-stock-planning-ui-review-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent-stock-retry-cas-review-n1.log",
+      "bytes": 446,
+      "sha256": "069d85fbb0f0859f0e787b55dee8a7aefd738ece0e1f6d929da0e073147097c7",
+      "archive_name": "independent-stock-retry-cas-review-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\independent_stock_retry_cas_review_n1.py",
+      "bytes": 3353,
+      "sha256": "53b113407b158f35a3d09a96a54b44228f4ef2e74c342c38c43b83389352b0b5",
+      "archive_name": "independent_stock_retry_cas_review_n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\beforestop-n1-hashes.json",
+      "bytes": 883,
+      "sha256": "8fd50211810602e074977b121ada6605da95bae4b38758019a18f4ac147752e6",
+      "archive_name": "sql-audio-rehearsal-20261013/beforestop-n1-hashes.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\beforestop-n1.json",
+      "bytes": 75303,
+      "sha256": "d766b56f81995e86880d83b04128a54f40c1b000c8a33223d6bcd8f8edc5e544",
+      "archive_name": "sql-audio-rehearsal-20261013/beforestop-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\browser-first-failure-n1-hashes.json",
+      "bytes": 883,
+      "sha256": "7aab1943e9e3a71418d90815af69eb9582c7fa7b6eb7de76d4cc1d9e3f325bff",
+      "archive_name": "sql-audio-rehearsal-20261013/browser-first-failure-n1-hashes.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\browser-first-failure-n1.json",
+      "bytes": 24367,
+      "sha256": "71062cae941009a43c2685b06f85ecb12475f84cfc83023f008e32d653fb1945",
+      "archive_name": "sql-audio-rehearsal-20261013/browser-first-failure-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\browser-first-failure.png",
+      "bytes": 234129,
+      "sha256": "93ae308b286f00b0d37d066f7736bfe20ed52382289a0c9ff8d9e0815865b7be",
+      "archive_name": "sql-audio-rehearsal-20261013/browser-first-failure.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\browser-word-pending-n1-hashes.json",
+      "bytes": 880,
+      "sha256": "024380ca9d73308880b21742184423007c46af329de048be1d8b1513025f3e90",
+      "archive_name": "sql-audio-rehearsal-20261013/browser-word-pending-n1-hashes.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\browser-word-pending-n1.json",
+      "bytes": 47212,
+      "sha256": "1a62da4c9fe999dce970c738c4ca4faec177efd5ae6b4ee85bec3993c53d4e11",
+      "archive_name": "sql-audio-rehearsal-20261013/browser-word-pending-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\cold-custody-manifest-n1.json",
+      "bytes": 2190,
+      "sha256": "cba9bd77f35ddb91b3bfad43863592221f570e65d8e33e0e9e64113f68282967",
+      "archive_name": "sql-audio-rehearsal-20261013/cold-custody-manifest-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\cold-read-proof-n1.json",
+      "bytes": 73655,
+      "sha256": "5c56f72835abe381a5373dbbfe7389546d621d0f1667765eee2728d3c03fd410",
+      "archive_name": "sql-audio-rehearsal-20261013/cold-read-proof-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\layout-observations.json",
+      "bytes": 421,
+      "sha256": "a3927ef316b15d0762a10bd23510bfee912f56890371454ed5310cbb421381e7",
+      "archive_name": "sql-audio-rehearsal-20261013/layout-observations.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\prepare-http.json",
+      "bytes": 11422,
+      "sha256": "dd5099cc27c3d9a6d01e3778ec4441f8c3f582d7f2a2477fe6151a78d04e4f23",
+      "archive_name": "sql-audio-rehearsal-20261013/prepare-http.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\prepared-n1-hashes.json",
+      "bytes": 880,
+      "sha256": "f4ce545f0fdc1388554aeccd819c5be7edbb65f370ebfb4dab6c619ab4ad1b31",
+      "archive_name": "sql-audio-rehearsal-20261013/prepared-n1-hashes.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\prepared-n1.json",
+      "bytes": 16266,
+      "sha256": "04016d4f6b3dfccb28aa6ec57ca8acef4f32d2b3caf74ce5e41ec8bb497021e3",
+      "archive_name": "sql-audio-rehearsal-20261013/prepared-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\registry-fix-check-n1.json",
+      "bytes": 9458,
+      "sha256": "b4d2f3e9d2f62d6a0f0cba8a08198b13f1d034ee2265dd59dcb0932135fe32fd",
+      "archive_name": "sql-audio-rehearsal-20261013/registry-fix-check-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\review-1366.png",
+      "bytes": 291491,
+      "sha256": "f87e4092a4e2e74f2df90bcac6935894391e3c8792c813c3df33c3c0c5e133ff",
+      "archive_name": "sql-audio-rehearsal-20261013/review-1366.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\review-1920.png",
+      "bytes": 307104,
+      "sha256": "5d4fc0420d73f169e2fb9cfae7e289c7e95d30e31ef70ef285544ec7c8b095f1",
+      "archive_name": "sql-audio-rehearsal-20261013/review-1920.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\review-2560.png",
+      "bytes": 321744,
+      "sha256": "7769f79e6581744ba082c2fc0ecb07cb4006e65eb41505b647e45299db8acd7d",
+      "archive_name": "sql-audio-rehearsal-20261013/review-2560.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-audio-rehearsal-20261013\\viewer-review.png",
+      "bytes": 267171,
+      "sha256": "111604653e14b58424a50b49d72e065d44d8033c5cd9ab812201210f979cabfe",
+      "archive_name": "sql-audio-rehearsal-20261013/viewer-review.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-consumer-n1\\normalized-transcript.json",
+      "bytes": 78388,
+      "sha256": "b30195a0ccfaed05582593e5408a9ef7b1474438e768c60c5a3ed841937222a1",
+      "archive_name": "sql-local-asr-real-consumer-n1/normalized-transcript.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-consumer-n1\\result.json",
+      "bytes": 1227,
+      "sha256": "c4cdd35780e2c4f64a39f58b214cb6540c69d9429701a6c26ffead835b7a4d20",
+      "archive_name": "sql-local-asr-real-consumer-n1/result.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\backup-copy-manifest-n1.json",
+      "bytes": 14532,
+      "sha256": "c551e077c615024d5b909923f858bcc4d3ce20fb9a831d7295cce0018927eb7c",
+      "archive_name": "sql-local-asr-real-job-cold-n1/backup-copy-manifest-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-audio-http-read-n1.json",
+      "bytes": 258912,
+      "sha256": "7f493d1fa06004e9a9e856e14e9046f52976ff9696f1ab8bd174d852023b8e36",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-audio-http-read-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-cost-http-read-n1.json",
+      "bytes": 568,
+      "sha256": "f23e6b9e111f11231f7f9b64e4011f5cae10c5f9bc4c8f74ae64304e4b3ea81e",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-cost-http-read-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-custody-manifest-n1.json",
+      "bytes": 12418,
+      "sha256": "21773aeba1d493c4e489bed77b7f5b57c4c34cf886ad6e5598c128b409fd21ae",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-custody-manifest-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-job-events-http-read-n1.json",
+      "bytes": 1594,
+      "sha256": "da38a5c5ea31e5e9bcf7dc32ebab07cf50df131f4a5b82edfe3234478aebfde3",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-job-events-http-read-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-read-report-n1.json",
+      "bytes": 2325,
+      "sha256": "4d3c985c5d7a6600d5662f34b51fadd7d56ec37ef7c07d4006befca06476e38c",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-read-report-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-source-http-bytes.wav",
+      "bytes": 725818,
+      "sha256": "33318a8f837de6c2953248729f658292c31520b57aa36ee0fe55c234d55c4b54",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-source-http-bytes.wav"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold-timeline-http-read-n1.json",
+      "bytes": 6021,
+      "sha256": "999e77fe6613084247395cb4567ba941845faa38f925337b19be6c2eaeb2690f",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold-timeline-http-read-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\cold_recovery_once.py",
+      "bytes": 17026,
+      "sha256": "a7968ed28e83c466ad6862c299587177da753b42b46720a4e0416425e1e2468c",
+      "archive_name": "sql-local-asr-real-job-cold-n1/cold_recovery_once.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\database-after-read-n1.json",
+      "bytes": 145606,
+      "sha256": "133ac4fdad94687cc869c98e174af522986fb0b7db46a6d1bd7452db6b495432",
+      "archive_name": "sql-local-asr-real-job-cold-n1/database-after-read-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-cold-n1\\database-before-read-n1.json",
+      "bytes": 145606,
+      "sha256": "133ac4fdad94687cc869c98e174af522986fb0b7db46a6d1bd7452db6b495432",
+      "archive_name": "sql-local-asr-real-job-cold-n1/database-before-read-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\approved-model-runtime-manifest.json",
+      "bytes": 876,
+      "sha256": "8def7a49b2e00b0ec4581ada0c3857d280ef3c3542dbf0e2389d7d10df812093",
+      "archive_name": "sql-local-asr-real-job-win-n1/approved-model-runtime-manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\custody-manifest.json",
+      "bytes": 15579,
+      "sha256": "f0f82c62f36c5dc31c69e82d0cbfa1ec702bfd61d3c13445857beaef4afc0a14",
+      "archive_name": "sql-local-asr-real-job-win-n1/custody-manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\actual-sql-state.json",
+      "bytes": 142681,
+      "sha256": "8f83fce509ba1e97921ccb01c6b8b2a0d5d27bf6c14f31514167f03a70a40322",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/actual-sql-state.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\decoded-audio-clock.json",
+      "bytes": 43907,
+      "sha256": "7e4f99984c7e9d359f684c80cd9a9021efc1e5460580edf69c1b13f60d8a61b1",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/decoded-audio-clock.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\full-hash-manifest.json",
+      "bytes": 4474,
+      "sha256": "27c69f2065c287067ef0153075206608e8e768d5e7a16b184e6c8928a8095eb4",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/full-hash-manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\inference-attempt.json",
+      "bytes": 2754,
+      "sha256": "f664de16cdfebb00e7be89ec67f2cbfbc4a9e1b1a00349aa2f05ac253d4a1509",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/inference-attempt.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\local-evidence.json",
+      "bytes": 59628,
+      "sha256": "1d2b4211a78786cc919e96207d93220e3895ae5f6360d05bd3f886abc90b4a4f",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/local-evidence.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\original-transcript.json",
+      "bytes": 78879,
+      "sha256": "7dfa13e1ce100f3dd201d21b5c480b90319a209eb449fbc2ec37638d67397754",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/original-transcript.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\outcome.json",
+      "bytes": 795,
+      "sha256": "a9b347df839ef6a8a884efb112412438064913a134e039f5d0bbf28719a3f9e3",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/outcome.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\prepare-control.json",
+      "bytes": 387,
+      "sha256": "d35619c2dbb7f55afbbe9c3fdbc9b7b2338c934ec9730b2f764483155ca4d9b7",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/prepare-control.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\project-manifest.json",
+      "bytes": 467,
+      "sha256": "5db1e3224e5b920020f175ec4b09c65e7f49d8afa3decf3065e6517124cd8de4",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/project-manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\provider-pcm-transcript.json",
+      "bytes": 6074,
+      "sha256": "f05ed8395e50ad8ebbdd3bb84666f4c9117969a739e4590a6ab83b2d51af8076",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/provider-pcm-transcript.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\queued-job.json",
+      "bytes": 1297,
+      "sha256": "124023fec2b6bd5a89f2bbb7322a28a47191d84d0f0983fec4db322a01ddc446",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/queued-job.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\raw-model-result.json",
+      "bytes": 5769,
+      "sha256": "b5c0bfa6503cacee66cb0a115a31b4821a3d13be5138cdf37e198eeb0602761c",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/raw-model-result.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\readonly-preflight-at-dispatch.json",
+      "bytes": 9716,
+      "sha256": "fa828ce759441077731a3857a16cca7dc7fb39a835df79f1de8c64caeba87612",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/readonly-preflight-at-dispatch.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\readonly-preflight-n1.json",
+      "bytes": 9557,
+      "sha256": "dfd68f5ed56740a0daf256344f565956fa619ea3db4298fb6871d0233a3db66f",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/readonly-preflight-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\runtime-binding.json",
+      "bytes": 4874,
+      "sha256": "0e401db86a7c963627b56c6dba7f480dc5712c63d729c2f7d95ed5953e0c2330",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/runtime-binding.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\source-clock-projection.json",
+      "bytes": 435,
+      "sha256": "56e9f999df8d809781d162da89ce1264749a1342595c459f3d1915b35072d2d8",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/source-clock-projection.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\source-freeze.json",
+      "bytes": 7024,
+      "sha256": "b9d219aa9866bdd2372c528c496d6721439475c105c1c68935e367e7357df15b",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/source-freeze.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\source-read-proof.json",
+      "bytes": 183,
+      "sha256": "5e024040ebd551c855974f003ef8121ab85711edf964dd8980fee05063d9df94",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/source-read-proof.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\sql-audio-read.json",
+      "bytes": 258912,
+      "sha256": "7f493d1fa06004e9a9e856e14e9046f52976ff9696f1ab8bd174d852023b8e36",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/sql-audio-read.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\storyboard-context.json",
+      "bytes": 8712,
+      "sha256": "8d421a5e8541215eca1a8ec7af21efdf51fdaffc7d68e503919d3c3885b20199",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/storyboard-context.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\trusted-upload.json",
+      "bytes": 4175,
+      "sha256": "a998905bf855bf5199b742d07e95db3242560f093dc8c9e4e26ad68a969ca72f",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/trusted-upload.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\evidence\\validation-readonly-n1.json",
+      "bytes": 1717,
+      "sha256": "f16a2eeab7f04cfbd26c04c97b2c0686406d2d16761983993acbcbde10ce3bdc",
+      "archive_name": "sql-local-asr-real-job-win-n1/evidence/validation-readonly-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\job.sqlite",
+      "bytes": 1417216,
+      "sha256": "6494514d3a22443301e9fe74d1f3489cea54b584f22c46c63a0c7a7fcb980de4",
+      "archive_name": "sql-local-asr-real-job-win-n1/job.sqlite"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\licensed-source-manifest.json",
+      "bytes": 4167,
+      "sha256": "182078eac6498855881b817d8a6e6ad781c3ab0bdb3ff6ce093aa7da639c5afa",
+      "archive_name": "sql-local-asr-real-job-win-n1/licensed-source-manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\licensed-source.wav",
+      "bytes": 725818,
+      "sha256": "33318a8f837de6c2953248729f658292c31520b57aa36ee0fe55c234d55c4b54",
+      "archive_name": "sql-local-asr-real-job-win-n1/licensed-source.wav"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\objects\\workspaces\\wsp_2ed4973230004b16b07c85c6\\projects\\prj_ad0b604810da4754bbc2f213\\templates\\fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7.png",
+      "bytes": 1729,
+      "sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+      "archive_name": "sql-local-asr-real-job-win-n1/objects/workspaces/wsp_2ed4973230004b16b07c85c6/projects/prj_ad0b604810da4754bbc2f213/templates/fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\objects\\workspaces\\wsp_2ed4973230004b16b07c85c6\\projects\\prj_ad0b604810da4754bbc2f213\\uploads\\33318a8f837de6c295324872\\licensed-fleurs-00.wav",
+      "bytes": 725818,
+      "sha256": "33318a8f837de6c2953248729f658292c31520b57aa36ee0fe55c234d55c4b54",
+      "archive_name": "sql-local-asr-real-job-win-n1/objects/workspaces/wsp_2ed4973230004b16b07c85c6/projects/prj_ad0b604810da4754bbc2f213/uploads/33318a8f837de6c295324872/licensed-fleurs-00.wav"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\freeze_source.py",
+      "bytes": 1992,
+      "sha256": "ad6c3564cee2bcf0c9ce6e9e9997539f2478b861cfac3d973dbea148d369eb7b",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/freeze_source.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\install-report-n1.json",
+      "bytes": 587160,
+      "sha256": "48ea815f2622883c3cfd8ee2b961150479a46f70ad1706d6ab2253d7b86f1cdb",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/install-report-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\install_owned.py",
+      "bytes": 1819,
+      "sha256": "cd43c1bf02ea8490c021e7dccb15d41a2015474099878e0a0a9e90552c90f7b4",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/install_owned.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\logs\\download-n1.log",
+      "bytes": 16410,
+      "sha256": "9462ea04520944d76ad4487e85c48c08456ab980cb1c50a1a7242557dbba0e0e",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/logs/download-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\logs\\freeze-n1.txt",
+      "bytes": 973,
+      "sha256": "6fc9ea39bc5b873c50d705c8e9d0d0eb2249d52606dff6df23ab9ab4d784efcc",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/logs/freeze-n1.txt"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\logs\\install-n1.log",
+      "bytes": 9670,
+      "sha256": "4d4a6c312de77bd7dd5c23c62f4957fdd9b69753c54bef4e300f4078bde28ee5",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/logs/install-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\logs\\pip-check-n1.log",
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/logs/pip-check-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\requirements-pinned.txt",
+      "bytes": 269,
+      "sha256": "4c77038ed4f8852eac1164dbf078d45bf80b15482107ccfe563ed018e388812e",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/requirements-pinned.txt"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\seal_evidence.py",
+      "bytes": 7140,
+      "sha256": "cf26b4fea9d432196ff82846751dc244bcd6f477f4f4b6ab13ef8d6a872fd11e",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/seal_evidence.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\sql_job_once.py",
+      "bytes": 21948,
+      "sha256": "505ba0a50d768674b0f6a5ff70c52e96368ab094337358629b2eeca830eb7fbe",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/sql_job_once.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-job-win-n1\\runtime-custody\\wheelhouse-manifest-n1.json",
+      "bytes": 8137,
+      "sha256": "8f41e893b3c41f70ed289628673b26b5c6f52e4b77594f52481ef5b13574677f",
+      "archive_name": "sql-local-asr-real-job-win-n1/runtime-custody/wheelhouse-manifest-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\cost.json",
+      "bytes": 406,
+      "sha256": "d239fc384df31ab6eb38f09d97682480af7b7590d55d6db40152a78729bd5b9d",
+      "archive_name": "sql-local-asr-real-small-vi-n2/cost.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\decoded-audio-clock.json",
+      "bytes": 43907,
+      "sha256": "4853cd94aa7a6637af9f98fdd7965e1118569ddeff8907a0f122e9d99010296c",
+      "archive_name": "sql-local-asr-real-small-vi-n2/decoded-audio-clock.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\inference-attempt.json",
+      "bytes": 425,
+      "sha256": "694cad33681ac835ba5a16ed69644c9e5ff57958b3ce854ce46638e56b8270d6",
+      "archive_name": "sql-local-asr-real-small-vi-n2/inference-attempt.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\local-evidence.json",
+      "bytes": 59526,
+      "sha256": "4467f242c4ba58979800d083f3d642ecef69458d46f09701585f7046cdf9133f",
+      "archive_name": "sql-local-asr-real-small-vi-n2/local-evidence.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\manifest.json",
+      "bytes": 2031,
+      "sha256": "084ae9ff5f19c87d3e747b94b472de2e3165589a1e1cb3d9cb41403ce76614d2",
+      "archive_name": "sql-local-asr-real-small-vi-n2/manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\outcome.json",
+      "bytes": 1321,
+      "sha256": "85d7286f71cf5f6bb1a972011272f5372d7a1844cc05b4a0401c4a7a236d2d3d",
+      "archive_name": "sql-local-asr-real-small-vi-n2/outcome.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\preflight.json",
+      "bytes": 660,
+      "sha256": "4e09545d37d92097ecb28fc902dee02b5ad3a390b1d8e8f939c526b6aeeacde9",
+      "archive_name": "sql-local-asr-real-small-vi-n2/preflight.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\provider-pcm-transcript.json",
+      "bytes": 6074,
+      "sha256": "5418e820e717ede8e97c38225e8bdd64a333c9d14bd43f53d0841caf6a2789bb",
+      "archive_name": "sql-local-asr-real-small-vi-n2/provider-pcm-transcript.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\raw-model-result.json",
+      "bytes": 5769,
+      "sha256": "38ce8a80e7af24b6adf3fb60e0b70c0b57a15cbb15f87076906e1c320670e26d",
+      "archive_name": "sql-local-asr-real-small-vi-n2/raw-model-result.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\run-control.json",
+      "bytes": 1104,
+      "sha256": "a6b77c78376bb2da1066c124d870d0955b9bd1cb74a94cda6803eec8a1b696d0",
+      "archive_name": "sql-local-asr-real-small-vi-n2/run-control.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\runtime-binding.json",
+      "bytes": 4874,
+      "sha256": "44c0a83d9e73c640f2aef735a355dbd451994dd9e3593611cd1ba443679ce736",
+      "archive_name": "sql-local-asr-real-small-vi-n2/runtime-binding.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\source-clock-projection.json",
+      "bytes": 435,
+      "sha256": "973f0fe75600844141ba93bd7c244f8e8a95e151d805d4b2036deacd8d95b613",
+      "archive_name": "sql-local-asr-real-small-vi-n2/source-clock-projection.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\source-proof.json",
+      "bytes": 1923,
+      "sha256": "0700b09a15f8f8e0ceb4d8c0e4e1c0430e84a54412778705c1cea4de43fb35dc",
+      "archive_name": "sql-local-asr-real-small-vi-n2/source-proof.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-real-small-vi-n2\\source-transcript.json",
+      "bytes": 77353,
+      "sha256": "91f5922a2b82a87b416428c5f5dd66360a32f9b63bc7ac0b1e62178701c9c6e8",
+      "archive_name": "sql-local-asr-real-small-vi-n2/source-transcript.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-registry-agent-evidence.json",
+      "bytes": 4969,
+      "sha256": "14f6a40b63b5f199e1a958fddc350a3fbbe92e239fd99b15cef95e8ee278646c",
+      "archive_name": "sql-local-asr-registry-agent-evidence.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-registry-final-n1.log",
+      "bytes": 102,
+      "sha256": "9eb315568b2dadab98eaf7db760632128258da54e70b833ceced859c7597e645",
+      "archive_name": "sql-local-asr-registry-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-registry-new-n1.log",
+      "bytes": 11235,
+      "sha256": "067e3389b1f0a588ee7d89930b8338bd3b6c9a9ea1c5ab036513cc54aafcab68",
+      "archive_name": "sql-local-asr-registry-new-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-registry-new-n2.log",
+      "bytes": 115,
+      "sha256": "637ad87ab7eda9b209bb6839f7ce87582ab552378ca450c5c9a45d36ca6eb0e7",
+      "archive_name": "sql-local-asr-registry-new-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-saved-consumer-n1.log",
+      "bytes": 1176,
+      "sha256": "0d073313d7457a23f78b03d6a8b6f559cc8d03405d61f0ce447d0669d648cd25",
+      "archive_name": "sql-local-asr-saved-consumer-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-service-binding-n1.log",
+      "bytes": 338,
+      "sha256": "b98880b7ab6d0855ae52c450c83902a895b87d797970ef9a98758a51109e21c0",
+      "archive_name": "sql-local-asr-service-binding-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-service-binding-n2.log",
+      "bytes": 113,
+      "sha256": "bb2bdff82b3eef4a0672680175496db39548994c8349f1db41c7064a8c195a0b",
+      "archive_name": "sql-local-asr-service-binding-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-single-real-n1.log",
+      "bytes": 1308,
+      "sha256": "04f241fc46e0811758e2556dbe62d5bddd8657fe201b7aaf5b03fb3d2aca46ad",
+      "archive_name": "sql-local-asr-single-real-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-single-real-n2.log",
+      "bytes": 290,
+      "sha256": "06deddc83be5a38b65dc8305ba1aadfd866252af17e75c09546c8a2d75323072",
+      "archive_name": "sql-local-asr-single-real-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-backend-final-n1.log",
+      "bytes": 195,
+      "sha256": "782537dfefc62a9034db6e71a3aa9fcc24d3da31495515ab960129c3068bcbcb",
+      "archive_name": "sql-local-asr-stock-backend-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-native-regression-n1.log",
+      "bytes": 103,
+      "sha256": "11b2e382a5168f8b1e5cb9e2536dfc00fdb2d69601f0860141f55786810a0008",
+      "archive_name": "sql-local-asr-stock-native-regression-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-studio-full-n1.log",
+      "bytes": 92684,
+      "sha256": "5c36107b8a48fd744ce37bb411adbc60b1a8d44faeea10f50cbdc2459d528150",
+      "archive_name": "sql-local-asr-stock-studio-full-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-evidence-agent-evidence.json",
+      "bytes": 4645,
+      "sha256": "8ddc3372624c757de0a7492708cb4fe57561b0957a57772571c1dd35254b4c1e",
+      "archive_name": "sql-local-audio-evidence-agent-evidence.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-evidence-final-n1.log",
+      "bytes": 112,
+      "sha256": "0f99461aa6e4b9dde98feaeb0c4e979bc551c8cc4cbb06cece7fe7efa6d95edc",
+      "archive_name": "sql-local-audio-evidence-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-evidence-new-n1.log",
+      "bytes": 117,
+      "sha256": "620b1677879ddb9cabcc5f4d43fd17ed5e37db28f82476f90105f6360346ee88",
+      "archive_name": "sql-local-audio-evidence-new-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-native-regression-n1.log",
+      "bytes": 102,
+      "sha256": "2aa4202ae0a4e60092bce4b0ddf39df779decc64cb94ed0156be3db7922a4c15",
+      "archive_name": "sql-local-audio-native-regression-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-provider-first-n1.log",
+      "bytes": 113,
+      "sha256": "882f5420b9d5c29dd0a62c9a4eb06a7a946ac5c2c4f5119602452ebf42f7a497",
+      "archive_name": "sql-local-audio-provider-first-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-provider-regression-n2.log",
+      "bytes": 112,
+      "sha256": "b494c82e7658814eeab3bb00e7af4d7e88ebae63c9905f1eaaf849a1e3209aeb",
+      "archive_name": "sql-local-audio-provider-regression-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-audio-service-integration-n1.log",
+      "bytes": 115,
+      "sha256": "f40981a144a6dcd1513be517ee8300e23c6748b2720b3f9a9a2d84f8c92d4e91",
+      "archive_name": "sql-local-audio-service-integration-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\cancelled.png",
+      "bytes": 105055,
+      "sha256": "90ad757b85f16b7bd432c2c3b520c91523b6f379918f3ca275e48713d6910470",
+      "archive_name": "sql-stock-browser-replay-n1/cancelled.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\http-events.json",
+      "bytes": 4524,
+      "sha256": "870bb733ded916aad3830a2b47e506e34e812ca8f6b3f3272895b95a10203e76",
+      "archive_name": "sql-stock-browser-replay-n1/http-events.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\layout-observations.json",
+      "bytes": 786,
+      "sha256": "284aee62b8609773ed05a886523aa52142d6c0b712fc52cd3dd95cc86e225609",
+      "archive_name": "sql-stock-browser-replay-n1/layout-observations.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\manifest.json",
+      "bytes": 1450,
+      "sha256": "ff9d243cf97373ba2bfcb2cbe64ad221b6a0ec46c533fe53e9470d935845978d",
+      "archive_name": "sql-stock-browser-replay-n1/manifest.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\succeeded-1366.png",
+      "bytes": 113205,
+      "sha256": "599ed9fbf3ecc2e3ee29fa477d1e8c8e886fb4a35fecf29e7bb81fb2a59ff5cc",
+      "archive_name": "sql-stock-browser-replay-n1/succeeded-1366.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\succeeded-1920.png",
+      "bytes": 119120,
+      "sha256": "300627b9493c5fc519b739b89777d17eab9ed3962711ec23c7a0f40d5c126652",
+      "archive_name": "sql-stock-browser-replay-n1/succeeded-1920.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\succeeded-2560.png",
+      "bytes": 131360,
+      "sha256": "e12373ac8c3e253cb43d8efddc95561af611ef4499f6fecc94adffe5d93dac16",
+      "archive_name": "sql-stock-browser-replay-n1/succeeded-2560.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-browser-replay-n1\\viewer.png",
+      "bytes": 101480,
+      "sha256": "b4ccefff1dd5e8340dc5e8732baa3a7717cb961badad2193a390c0eca43506b8",
+      "archive_name": "sql-stock-browser-replay-n1/viewer.png"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-agent-evidence.json",
+      "bytes": 4576,
+      "sha256": "66c9c40a600ce5c8a8124b6f2feb75974c8747fd7c087a843d17f7c085c5257b",
+      "archive_name": "sql-stock-panel-agent-evidence.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-capability-export-n1.log",
+      "bytes": 93,
+      "sha256": "68fbbdb0e3b75455f4254071df59bd0f8e312948996456b3702cbe83a054226e",
+      "archive_name": "sql-stock-panel-capability-export-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-fixture-export-n1.log",
+      "bytes": 737,
+      "sha256": "1c956378707eb1d148588464c2728bf0cbee230cd628bb9fbf2f52b19878985b",
+      "archive_name": "sql-stock-panel-fixture-export-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-fixture-export-n2.log",
+      "bytes": 273,
+      "sha256": "d191a6f1d4e1cb23485de117e2b235616f191d19fc929bd2ac699104c15f750f",
+      "archive_name": "sql-stock-panel-fixture-export-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-node-final-n1.log",
+      "bytes": 2511,
+      "sha256": "a2acef840b49793adea2e4e0447b4469c0e0232bafae3f22f66d55f2d5732fed",
+      "archive_name": "sql-stock-panel-node-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-node-new-n1.log",
+      "bytes": 9058,
+      "sha256": "d25cfd5039abfd93d1b2d25e41cacb3d5588a8afd3430477124063ef38bcfcb5",
+      "archive_name": "sql-stock-panel-node-new-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-stock-panel-node-new-n2.log",
+      "bytes": 1941,
+      "sha256": "bf715104ea1b976d94931c119f9cad02a745da9ca25ee36c68e3ca55caec13c2",
+      "archive_name": "sql-stock-panel-node-new-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql_local_asr_single_real_n1.py",
+      "bytes": 9774,
+      "sha256": "8170ece9a9d446d4f62476cfedbbe5187c8334dca6633dd9467cb0d8f1006cff",
+      "archive_name": "sql_local_asr_single_real_n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql_local_asr_single_real_n2.py",
+      "bytes": 9786,
+      "sha256": "2e6520a6d66b6a44a4905a571ce52e60f3d4647faef6bb8b55b0ce9f1a59d487",
+      "archive_name": "sql_local_asr_single_real_n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-planner-atomic-review-regression-n1.log",
+      "bytes": 112,
+      "sha256": "2ca0fe23c4ca28a01209582d5308ed191fbe05a9a3ec51ecaa05caea2ee680e3",
+      "archive_name": "stock-planner-atomic-review-regression-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock-planner-atomic-review-targeted-n1.log",
+      "bytes": 116,
+      "sha256": "33e463250fbcc997a661e1a4030863d12d475d451946160ff73f6052ae9bf810",
+      "archive_name": "stock-planner-atomic-review-targeted-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\stock_panel_browser_replay_n1.py",
+      "bytes": 7382,
+      "sha256": "77c7dc5012eefffa73078c48df49c4ff6efbda0efa4e5565d3871fe14698c2dc",
+      "archive_name": "stock_panel_browser_replay_n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\wave7-bounded-source-audit-n1.json",
+      "bytes": 5861,
+      "sha256": "f97ae2d15fbeeeb1946e090f2b42977be5435b48ce97f67999ea4eb5195909be",
+      "archive_name": "wave7-bounded-source-audit-n1.json"
+    },
+    {
+      "path": "C:\\vfar09\\cold-backup-n1\\audio.sqlite",
+      "bytes": 1363968,
+      "sha256": "ca950ebd35671bcf1499328c945a83afa1879a287186b7b09faaef17f023a876",
+      "archive_name": "owned-audio-browser/cold-backup-n1/audio.sqlite"
+    },
+    {
+      "path": "C:\\vfar09\\cold-backup-n1\\manifest.json",
+      "bytes": 731,
+      "sha256": "66d1ee4369dcfc692a365c57da7cbd91fa5c6f8ef53bb1fd33f7b83e9e52bf3f",
+      "archive_name": "owned-audio-browser/cold-backup-n1/manifest.json"
+    },
+    {
+      "path": "C:\\vfar09\\cold-backup-n1\\mock-dispatch.jsonl",
+      "bytes": 478,
+      "sha256": "969f2cf7b08427af9f00a8eb629efeaa468fa18ead9c2e30aa59195a00cabe8f",
+      "archive_name": "owned-audio-browser/cold-backup-n1/mock-dispatch.jsonl"
+    },
+    {
+      "path": "C:\\vfar09\\cold-backup-n1\\objects\\workspaces\\wsp_49582117152d44768e09155e\\projects\\prj_d29af323c98e489e8cebcaa5\\templates\\fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7.png",
+      "bytes": 1729,
+      "sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+      "archive_name": "owned-audio-browser/cold-backup-n1/objects/workspaces/wsp_49582117152d44768e09155e/projects/prj_d29af323c98e489e8cebcaa5/templates/fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7.png"
+    },
+    {
+      "path": "C:\\vfar09\\cold-backup-n1\\objects\\workspaces\\wsp_49582117152d44768e09155e\\projects\\prj_d29af323c98e489e8cebcaa5\\uploads\\20eaebffe1816e0ffa6f7f85\\owned-silent-source.wav",
+      "bytes": 64044,
+      "sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+      "archive_name": "owned-audio-browser/cold-backup-n1/objects/workspaces/wsp_49582117152d44768e09155e/projects/prj_d29af323c98e489e8cebcaa5/uploads/20eaebffe1816e0ffa6f7f85/owned-silent-source.wav"
+    },
+    {
+      "path": "C:\\vfar09\\cold-backup-n1\\source.wav",
+      "bytes": 64044,
+      "sha256": "20eaebffe1816e0ffa6f7f854f5ef4ea80d5349faaf0ce1fec1b713e7fde58fa",
+      "archive_name": "owned-audio-browser/cold-backup-n1/source.wav"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\approved-model-runtime-manifest.json",
+      "bytes": 876,
+      "sha256": "8def7a49b2e00b0ec4581ada0c3857d280ef3c3542dbf0e2389d7d10df812093",
+      "archive_name": "owned-cold-sql/approved-model-runtime-manifest.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\actual-sql-state.json",
+      "bytes": 142681,
+      "sha256": "8f83fce509ba1e97921ccb01c6b8b2a0d5d27bf6c14f31514167f03a70a40322",
+      "archive_name": "owned-cold-sql/evidence/actual-sql-state.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\decoded-audio-clock.json",
+      "bytes": 43907,
+      "sha256": "7e4f99984c7e9d359f684c80cd9a9021efc1e5460580edf69c1b13f60d8a61b1",
+      "archive_name": "owned-cold-sql/evidence/decoded-audio-clock.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\full-hash-manifest.json",
+      "bytes": 4474,
+      "sha256": "27c69f2065c287067ef0153075206608e8e768d5e7a16b184e6c8928a8095eb4",
+      "archive_name": "owned-cold-sql/evidence/full-hash-manifest.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\inference-attempt.json",
+      "bytes": 2754,
+      "sha256": "f664de16cdfebb00e7be89ec67f2cbfbc4a9e1b1a00349aa2f05ac253d4a1509",
+      "archive_name": "owned-cold-sql/evidence/inference-attempt.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\local-evidence.json",
+      "bytes": 59628,
+      "sha256": "1d2b4211a78786cc919e96207d93220e3895ae5f6360d05bd3f886abc90b4a4f",
+      "archive_name": "owned-cold-sql/evidence/local-evidence.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\original-transcript.json",
+      "bytes": 78879,
+      "sha256": "7dfa13e1ce100f3dd201d21b5c480b90319a209eb449fbc2ec37638d67397754",
+      "archive_name": "owned-cold-sql/evidence/original-transcript.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\outcome.json",
+      "bytes": 795,
+      "sha256": "a9b347df839ef6a8a884efb112412438064913a134e039f5d0bbf28719a3f9e3",
+      "archive_name": "owned-cold-sql/evidence/outcome.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\prepare-control.json",
+      "bytes": 387,
+      "sha256": "d35619c2dbb7f55afbbe9c3fdbc9b7b2338c934ec9730b2f764483155ca4d9b7",
+      "archive_name": "owned-cold-sql/evidence/prepare-control.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\project-manifest.json",
+      "bytes": 467,
+      "sha256": "5db1e3224e5b920020f175ec4b09c65e7f49d8afa3decf3065e6517124cd8de4",
+      "archive_name": "owned-cold-sql/evidence/project-manifest.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\provider-pcm-transcript.json",
+      "bytes": 6074,
+      "sha256": "f05ed8395e50ad8ebbdd3bb84666f4c9117969a739e4590a6ab83b2d51af8076",
+      "archive_name": "owned-cold-sql/evidence/provider-pcm-transcript.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\queued-job.json",
+      "bytes": 1297,
+      "sha256": "124023fec2b6bd5a89f2bbb7322a28a47191d84d0f0983fec4db322a01ddc446",
+      "archive_name": "owned-cold-sql/evidence/queued-job.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\raw-model-result.json",
+      "bytes": 5769,
+      "sha256": "b5c0bfa6503cacee66cb0a115a31b4821a3d13be5138cdf37e198eeb0602761c",
+      "archive_name": "owned-cold-sql/evidence/raw-model-result.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\readonly-preflight-at-dispatch.json",
+      "bytes": 9716,
+      "sha256": "fa828ce759441077731a3857a16cca7dc7fb39a835df79f1de8c64caeba87612",
+      "archive_name": "owned-cold-sql/evidence/readonly-preflight-at-dispatch.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\readonly-preflight-n1.json",
+      "bytes": 9557,
+      "sha256": "dfd68f5ed56740a0daf256344f565956fa619ea3db4298fb6871d0233a3db66f",
+      "archive_name": "owned-cold-sql/evidence/readonly-preflight-n1.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\runtime-binding.json",
+      "bytes": 4874,
+      "sha256": "0e401db86a7c963627b56c6dba7f480dc5712c63d729c2f7d95ed5953e0c2330",
+      "archive_name": "owned-cold-sql/evidence/runtime-binding.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\source-clock-projection.json",
+      "bytes": 435,
+      "sha256": "56e9f999df8d809781d162da89ce1264749a1342595c459f3d1915b35072d2d8",
+      "archive_name": "owned-cold-sql/evidence/source-clock-projection.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\source-freeze.json",
+      "bytes": 7024,
+      "sha256": "b9d219aa9866bdd2372c528c496d6721439475c105c1c68935e367e7357df15b",
+      "archive_name": "owned-cold-sql/evidence/source-freeze.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\source-read-proof.json",
+      "bytes": 183,
+      "sha256": "5e024040ebd551c855974f003ef8121ab85711edf964dd8980fee05063d9df94",
+      "archive_name": "owned-cold-sql/evidence/source-read-proof.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\sql-audio-read.json",
+      "bytes": 258912,
+      "sha256": "7f493d1fa06004e9a9e856e14e9046f52976ff9696f1ab8bd174d852023b8e36",
+      "archive_name": "owned-cold-sql/evidence/sql-audio-read.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\storyboard-context.json",
+      "bytes": 8712,
+      "sha256": "8d421a5e8541215eca1a8ec7af21efdf51fdaffc7d68e503919d3c3885b20199",
+      "archive_name": "owned-cold-sql/evidence/storyboard-context.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\trusted-upload.json",
+      "bytes": 4175,
+      "sha256": "a998905bf855bf5199b742d07e95db3242560f093dc8c9e4e26ad68a969ca72f",
+      "archive_name": "owned-cold-sql/evidence/trusted-upload.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\evidence\\validation-readonly-n1.json",
+      "bytes": 1717,
+      "sha256": "f16a2eeab7f04cfbd26c04c97b2c0686406d2d16761983993acbcbde10ce3bdc",
+      "archive_name": "owned-cold-sql/evidence/validation-readonly-n1.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\job.sqlite",
+      "bytes": 1417216,
+      "sha256": "fd772fb2e78284400de4c49ace54ffa9aaf9b4ae4b0e48156ecc8139de7bba3a",
+      "archive_name": "owned-cold-sql/job.sqlite"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\licensed-source-manifest.json",
+      "bytes": 4167,
+      "sha256": "182078eac6498855881b817d8a6e6ad781c3ab0bdb3ff6ce093aa7da639c5afa",
+      "archive_name": "owned-cold-sql/licensed-source-manifest.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\licensed-source.wav",
+      "bytes": 725818,
+      "sha256": "33318a8f837de6c2953248729f658292c31520b57aa36ee0fe55c234d55c4b54",
+      "archive_name": "owned-cold-sql/licensed-source.wav"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\objects\\workspaces\\wsp_2ed4973230004b16b07c85c6\\projects\\prj_ad0b604810da4754bbc2f213\\templates\\fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7.png",
+      "bytes": 1729,
+      "sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+      "archive_name": "owned-cold-sql/objects/workspaces/wsp_2ed4973230004b16b07c85c6/projects/prj_ad0b604810da4754bbc2f213/templates/fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7.png"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\objects\\workspaces\\wsp_2ed4973230004b16b07c85c6\\projects\\prj_ad0b604810da4754bbc2f213\\uploads\\33318a8f837de6c295324872\\licensed-fleurs-00.wav",
+      "bytes": 725818,
+      "sha256": "33318a8f837de6c2953248729f658292c31520b57aa36ee0fe55c234d55c4b54",
+      "archive_name": "owned-cold-sql/objects/workspaces/wsp_2ed4973230004b16b07c85c6/projects/prj_ad0b604810da4754bbc2f213/uploads/33318a8f837de6c295324872/licensed-fleurs-00.wav"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\freeze_source.py",
+      "bytes": 1992,
+      "sha256": "ad6c3564cee2bcf0c9ce6e9e9997539f2478b861cfac3d973dbea148d369eb7b",
+      "archive_name": "owned-cold-sql/runtime-custody/freeze_source.py"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\install-report-n1.json",
+      "bytes": 587160,
+      "sha256": "48ea815f2622883c3cfd8ee2b961150479a46f70ad1706d6ab2253d7b86f1cdb",
+      "archive_name": "owned-cold-sql/runtime-custody/install-report-n1.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\install_owned.py",
+      "bytes": 1819,
+      "sha256": "cd43c1bf02ea8490c021e7dccb15d41a2015474099878e0a0a9e90552c90f7b4",
+      "archive_name": "owned-cold-sql/runtime-custody/install_owned.py"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\logs\\download-n1.log",
+      "bytes": 16410,
+      "sha256": "9462ea04520944d76ad4487e85c48c08456ab980cb1c50a1a7242557dbba0e0e",
+      "archive_name": "owned-cold-sql/runtime-custody/logs/download-n1.log"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\logs\\freeze-n1.txt",
+      "bytes": 973,
+      "sha256": "6fc9ea39bc5b873c50d705c8e9d0d0eb2249d52606dff6df23ab9ab4d784efcc",
+      "archive_name": "owned-cold-sql/runtime-custody/logs/freeze-n1.txt"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\logs\\install-n1.log",
+      "bytes": 9670,
+      "sha256": "4d4a6c312de77bd7dd5c23c62f4957fdd9b69753c54bef4e300f4078bde28ee5",
+      "archive_name": "owned-cold-sql/runtime-custody/logs/install-n1.log"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\logs\\pip-check-n1.log",
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "archive_name": "owned-cold-sql/runtime-custody/logs/pip-check-n1.log"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\requirements-pinned.txt",
+      "bytes": 269,
+      "sha256": "4c77038ed4f8852eac1164dbf078d45bf80b15482107ccfe563ed018e388812e",
+      "archive_name": "owned-cold-sql/runtime-custody/requirements-pinned.txt"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\seal_evidence.py",
+      "bytes": 7140,
+      "sha256": "cf26b4fea9d432196ff82846751dc244bcd6f477f4f4b6ab13ef8d6a872fd11e",
+      "archive_name": "owned-cold-sql/runtime-custody/seal_evidence.py"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\sql_job_once.py",
+      "bytes": 21948,
+      "sha256": "505ba0a50d768674b0f6a5ff70c52e96368ab094337358629b2eeca830eb7fbe",
+      "archive_name": "owned-cold-sql/runtime-custody/sql_job_once.py"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\runtime-custody\\wheelhouse-manifest-n1.json",
+      "bytes": 8137,
+      "sha256": "8f41e893b3c41f70ed289628673b26b5c6f52e4b77594f52481ef5b13574677f",
+      "archive_name": "owned-cold-sql/runtime-custody/wheelhouse-manifest-n1.json"
+    },
+    {
+      "path": "C:\\vfsqlcold01\\source-custody-manifest.json",
+      "bytes": 15579,
+      "sha256": "f0f82c62f36c5dc31c69e82d0cbfa1ec702bfd61d3c13445857beaef4afc0a14",
+      "archive_name": "owned-cold-sql/source-custody-manifest.json"
+    },
+    {
+      "path": "C:\\vfns01\\apps\\studio-web\\tests\\fixtures\\sql-stock-planner\\read.json",
+      "bytes": 4030688,
+      "sha256": "ad318121e7a555eccbf4adeaf79a221e98f43bbd6b2b98cc1b09a0e1fe0640a1",
+      "archive_name": "repo-fixtures/apps/studio-web/tests/fixtures/sql-stock-planner/read.json"
+    }
+  ],
+  "portable_evidence_archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\sql-local-asr-stock-ui-evidence-n1.zip",
+    "bytes": 5797025,
+    "sha256": "d0cf195225c4c417aefc11d8b73f561b968e8de02440eab43300ef29307406a7"
+  },
+  "portable_archive_entries": 181,
+  "all_portable_archive_bytes_verified": true,
+  "actual_local_CPU_ASR_calls": 2,
+  "direct_local_CPU_ASR_calls": 1,
+  "actual_SQL_local_CPU_ASR_calls": 1,
+  "new_model_downloads": 0,
+  "new_real_external_provider_calls": 0,
+  "paid_operations": 0,
+  "real_SQL_attempt_source_commit": "c16532056b31ad0dfc056698103fd2ed24d79e66",
+  "SQL_original_current_version": 1,
+  "SQL_actual_words": 23,
+  "SQL_receipt_attempts": 1,
+  "SQL_receipt_retries": 0,
+  "SQL_job_awaiting_review": true,
+  "recognition_accuracy_accepted": false,
+  "alignment_accepted": false,
+  "recognized_error_preserved": "mộ lạc versus reference bộ lạc",
+  "provider_billed_cost_vnd": 0,
+  "electricity_hardware_cost_vnd": null,
+  "SQL_timeline_unchanged_draft_version": 1,
+  "source_audio_sha256": "33318a8f837de6c2953248729f658292c31520b57aa36ee0fe55c234d55c4b54",
+  "browser_audio_is_owned_silence_and_MockASR": true,
+  "browser_audio_SQL_history_versions": 3,
+  "browser_audio_canonical_timeline_versions": 5,
+  "stock_browser_is_saved_SQL_DTO_replay_not_SQL_provider_dispatch": true,
+  "stock_browser_viewports": [
+    1366,
+    1920,
+    2560
+  ],
+  "all_Studio_responsive_or_non_developer_acceptance": false,
+  "browser_genuine_speech_acceptance": false,
+  "Owner_UAT_accepted": false,
+  "stock_retry_CAS_fenced_at_locked_claim": true,
+  "rejected_normalizer_projection_evidence_request_scoped": true,
+  "runtime_registry_actual_instance_reused_once": true,
+  "local_ASR_production_acceptance_not_inferred": true,
+  "isolated_Windows_SQL_CI_official_PyPI_dependencies_downloaded": true,
+  "fixture_antivirus_and_script_review_are_not_production_or_Owner": true,
+  "accepted_old_videos_replaced": false,
+  "new_preview_final_video_produced": false,
+  "SQL_six_variant_family_complete": false,
+  "full_Mode_A_B_accepted": false,
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO",
+  "parallel_feature_worktree": {
+    "path": "C:/vfns-tts-reuse-01",
+    "branch": "codex/vf-sql-tts-reuse-01",
+    "feature": "qualified cross-render SQL TTS reuse",
+    "state": "IN_PROGRESS_not_certified"
+  },
+  "cleanup": {
+    "policy_blocked_roots": 9,
+    "retained_OS_browser_roots": 4,
+    "blocked_cleanup_retried_or_bypassed": false,
+    "older_roots_touched": false,
+    "new_browser_tabs_closed": true,
+    "temporary_viewport_reset": true,
+    "new_owned_rehearsal_listeners_stopped": true,
+    "PC_freed_bytes_not_measured": true
+  }
+}
