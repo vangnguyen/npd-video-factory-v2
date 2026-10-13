@@ -452,3 +452,8 @@ Protected separate read profile/token, Native v3 collector/finite refresh and St
 ## Native Meta local E2E verification
 
 Signed HTTP6/Studio780 pass; browser manual and finite paths pass for both platforms; the hidden finite card is now in Video review. Two separate-process domain restores pass without credentials/replay. See NATIVE_META_ANALYTICS_E2E.md. Remaining: genuine provider/metric coverage, complete time-series/comparison, qualified Meta winner/learning/Bridge calibration, production-wide restore and original full Mode A/B/A-B-C/Owner acceptance. All59 groups remain unclosed.
+
+
+## Native Meta counter feedback
+
+See NATIVE_META_COUNTER_FEEDBACK.md: separately versioned interaction scoring, exact definition scope, immutable counter learning/qualified projections and fresh-process recovery are implemented/mock tested. Source snapshots keep missing time/retention/revenue null; unverified genuine semantics and sparse Facebook observations remain insufficient. Continue SQL/API parity, new Meta HTTP/browser/Bridge, genuine feature/metric calibration and every original Mode A/B/A-B-C/Owner/production gap.59 groups remain open.

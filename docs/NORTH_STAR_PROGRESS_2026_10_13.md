@@ -19,3 +19,6 @@ Mốc Native Meta: [NATIVE_META_ANALYTICS.md](NATIVE_META_ANALYTICS.md) nối c�
 
 
 Mốc kiểm chứng mới: [Native Meta local E2E](NATIVE_META_ANALYTICS_E2E.md) đạt6 ca HTTP có xác thực,780 hồi quy Studio,2 ca khôi phục domain qua tiến trình mới, và đọc thủ công/lịch hai lần đọc qua trình duyệt cho cả Instagram/Facebook. Đã sửa lịch analytics bị ẩn ngoài vùng Video; kiểm tra1366/1920/2560px trong các màn này. Dữ liệu provider/publication/identity đều giả lập; không nghiệm thu video hoặc Owner.59 nhóm vẫn chưa đóng. SHA/bảo toàn nguồn mới ở recovery/20261007/native-meta-analytics-e2e-program-state.json.
+
+
+Mốc [Native Meta counter feedback](NATIVE_META_COUNTER_FEEDBACK.md): thuật toán riêng cho tương tác/chia sẻ/lưu, giữ API/định nghĩa chỉ số/cấu hình kênh trong nhóm so sánh; learning và khuyến nghị giữ nguyên nguồn/basis. Instagram giả lập có6 quan sát đủ điều kiện và gợi ý hook; Facebook tiếp tục thiếu dữ liệu.10 kiểm tra Native mới,2 kiểm tra nhãn cuối,41 hồi quy và786 Studio đạt;2 khôi phục tiến trình mới đạt. Provider/media/publication/identity đều giả lập; chưa kiểm chứng HTTP/browser/Bridge mới, SQL/API parity, dữ liệu thật, Owner hoặc full A/B/C.59 nhóm vẫn mở. SHA/bundle mới ở recovery/20261007/native-meta-counter-feedback-program-state.json.

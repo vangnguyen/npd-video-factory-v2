@@ -1,0 +1,154 @@
+{
+  "schema_version": "north-star-native-meta-counter-feedback-evidence-v1",
+  "recorded_at": "2026-10-13T00:59:56.213674+00:00",
+  "source_parent": "46cd1f693482e7471c4ee29d9c07643d39af9123",
+  "tests": {
+    "Native_new": 10,
+    "Native_final_scope_labels": 2,
+    "Native_legacy": 41,
+    "Studio": 786
+  },
+  "test_logs": {
+    "Native_new": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-n4.log",
+      "sha256": "5634963a12dc1d8fb8cced76f4c4456a93a3d92867d1e709130e781933f46583",
+      "bytes": 2546,
+      "passed": 10
+    },
+    "Native_final_scope_labels": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-label-final.log",
+      "sha256": "7c1d8a686d0a707e28e8c2f162c3a3852f1985bb5943212c5b694a6b66fee345",
+      "bytes": 524,
+      "passed": 2
+    },
+    "Native_legacy": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-legacy-n2.log",
+      "sha256": "8821b64bc8460fa3c82886adbf35051a9d5ec15fd87ed34dc50ca192f5343e99",
+      "bytes": 10293,
+      "passed": 41
+    },
+    "Studio": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-studio-final.log",
+      "sha256": "9b3a726dd26d16a4a0ae76a26168e81843836a6e0695e6568b56c2e2a9c573b0",
+      "bytes": 81129,
+      "passed": 786
+    }
+  },
+  "domain_exports": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\captured-controller-fixtures.json",
+      "sha256": "c2edbb2c6268397571723cd871e55562301259863aaddb4527b98607a63c29bd",
+      "bytes": 329766
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\evidence.json",
+      "sha256": "915357738d71f18d553119f8ec48dc7aee13b10ba51e2bbac436b3e148647c5c",
+      "bytes": 802
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\facebook\\backup.json",
+      "sha256": "6c8057d4dea70363008c87474aaee1ed1b92e80a38b50593a10d6f491919c0d3",
+      "bytes": 2247
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\facebook\\cost.json",
+      "sha256": "ee69b246dc7a76434fa54fc7602c98f8096232a4d23bfdebeef8cd8412ec74c7",
+      "bytes": 17532
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\facebook\\owned-state.zip",
+      "sha256": "c487444e3c4bcef7d26c82c6e6204887e373c8080ef01e62814751e69842ed6c",
+      "bytes": 2150357
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\facebook\\public-fixture.json",
+      "sha256": "37af666e0ea21e06d44a08a55903958e41dcf1edfc4019392f2d764b09ed7285",
+      "bytes": 145933
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\instagram_reels\\backup.json",
+      "sha256": "7f13f09f758330a67ba89d694e5136cf1712dd97a9da5b27774703fa671eaa05",
+      "bytes": 2254
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\instagram_reels\\cost.json",
+      "sha256": "70ccdfa765e7a6f33861bed4a1ac08b1dc06af278bbae392fd7a12acf523a1c1",
+      "bytes": 17626
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\instagram_reels\\owned-state.zip",
+      "sha256": "16b33273f92bb23a9031b2cae4821d7406eb4d4b52a9cb511c5118f1006c0dbf",
+      "bytes": 2125781
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-winners-contract-n3\\instagram_reels\\public-fixture.json",
+      "sha256": "374032c61a1c59b4b20fed9951771fb0a240f205707062dea9e7feb85d62e3c8",
+      "bytes": 183801
+    }
+  ],
+  "cold_restore": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-meta-feedback-cold-n1\\evidence.json",
+    "sha256": "2d7a4cc292091ed978076a0104ff73a2279e8e5925d2bb716c6278ba3e2bd20d",
+    "bytes": 4180
+  },
+  "scope": {
+    "new_counter_algorithm": "winner-meta-counter-assessment-v1",
+    "actual_Native_domain_and_route_DTOs": true,
+    "Studio_fake_DOM_uses_captured_actual_DTOs": true,
+    "new_Meta_signed_HTTP_browser_verified": false,
+    "separate_process_exact_winner_learning_projection_restore": true,
+    "provider_publication_identity_media_are_explicit_fixtures": true,
+    "real_provider_calls": 0,
+    "paid_calls": 0,
+    "Owner_UAT": false,
+    "real_publishing": false,
+    "production_deployed": false,
+    "full_Mode_A_B_accepted": false,
+    "original_A_B_C_accepted": false
+  },
+  "outcomes": {
+    "facebook": {
+      "learning_observations": 0,
+      "learning_state": "insufficient_data",
+      "peers": 8,
+      "projection_consumers": [
+        "trend_radar",
+        "idea_engine",
+        "media_planner",
+        "template_recommendations"
+      ],
+      "source_basis": "matching_native_official_meta_counter_scope",
+      "state": "insufficient_data"
+    },
+    "instagram_reels": {
+      "learning_observations": 6,
+      "learning_state": "recommendations_available",
+      "peers": 8,
+      "projection_consumers": [
+        "trend_radar",
+        "idea_engine",
+        "media_planner",
+        "template_recommendations"
+      ],
+      "source_basis": "matching_native_official_meta_counter_scope",
+      "state": "winner_candidate"
+    }
+  },
+  "matrix": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "retained_attempts": [
+    "native-meta-winners-n1.log",
+    "native-meta-winners-n2.log",
+    "native-meta-winners-n3.log",
+    "native-meta-winners-contract-n1",
+    "native-meta-winners-contract-n2"
+  ],
+  "IMPLEMENTATION_COMPLETE": "NO",
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": "NO",
+  "PRODUCTION_DEPLOYED": "NO",
+  "VIDEO_FACTORY_NORTH_STAR_READY": "NO"
+}

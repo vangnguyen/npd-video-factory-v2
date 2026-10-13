@@ -3881,3 +3881,8 @@ NEXT WAVE: signed Native HTTP/browser/cold restore and qualified Meta downstream
 ## Wave 10 / 15 — Native Meta local E2E component
 
 The complete per-wave report, tests, limits, Owner gate and next wave are in [NATIVE_META_ANALYTICS_E2E.md](NATIVE_META_ANALYTICS_E2E.md); indexed evidence is [native-meta-analytics-e2e-evidence.json](north-star/native-meta-analytics-e2e-evidence.json). Native signed HTTP6/Studio780 pass; two cold domain restores and three actual browser rehearsals pass. No paid/real-provider/publish/deploy/main-merge acceptance.59 groups remain unclosed; final HEAD/source recovery pair is in workspace recovery/20261007/native-meta-analytics-e2e-program-state.json.
+
+
+## Wave11/12/15 — Native Meta counter feedback component
+
+Full per-wave report is in [NATIVE_META_COUNTER_FEEDBACK.md](NATIVE_META_COUNTER_FEEDBACK.md), with [indexed evidence](north-star/native-meta-counter-feedback-evidence.json). Native10/new-label2/legacy41 and Studio786 pass; two exact cold restores preserve qualified feedback. All provider/publication/identity/media inputs remain synthetic. No new Meta HTTP/browser/Bridge, SQL production parity or real provider/Owner/full-flow acceptance is inferred;59 groups unclosed. Final source seal: recovery/20261007/native-meta-counter-feedback-program-state.json.
