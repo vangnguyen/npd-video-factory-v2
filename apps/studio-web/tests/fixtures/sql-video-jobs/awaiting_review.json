@@ -1,0 +1,1058 @@
+{
+  "schema_version": "actual-sql-video-job-ui-fixture.v1",
+  "state": "awaiting_review",
+  "responses": {
+    "job": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f/analysis-jobs/job_analysis_da1d901aba47c3f2d30796a5",
+      "status": 200,
+      "sha256": "f6e9c45538de5b4bd675fbe26600fb95b2790aadb3a723366c5c0cac337e88ca",
+      "bytes": 25302,
+      "body": {
+        "schema_version": "auto-edit-analysis-job.v1",
+        "job": {
+          "job_id": "job_analysis_da1d901aba47c3f2d30796a5",
+          "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+          "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+          "project_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+          "status": "awaiting_review",
+          "stage": "awaiting_review",
+          "progress": 100,
+          "request": {
+            "kind": "auto_edit_analysis",
+            "analysis_id": "ana_a0550b8de46542ada7e33b2a",
+            "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+            "provider_binding_sha256": "ae338869ed7b4da9c6f2607e8af1ea03537d770c20d6979946d5db65fdc5891f",
+            "actor_ref": "usr:fixture-editor"
+          },
+          "artifacts": [
+            {
+              "kind": "metadata",
+              "name": "video-analysis.json",
+              "url": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f/analyses/ana_a0550b8de46542ada7e33b2a",
+              "asset_id": null,
+              "object_key": null,
+              "checksum_sha256": null,
+              "size_bytes": null,
+              "storage_provider": null,
+              "content_type": null
+            }
+          ],
+          "error": null,
+          "created_at": "2026-10-13T14:51:28.010922",
+          "updated_at": "2026-10-13T14:51:28.430693"
+        },
+        "analysis": {
+          "analysis_id": "ana_a0550b8de46542ada7e33b2a",
+          "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+          "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+          "project_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+          "asset_id": "ast_f10fdbd9e072497a88bef300",
+          "status": "succeeded",
+          "fingerprint": "3531661cdd4971495a6c635b6220cbebccd084af79b69c9e65b41ac83a995fb2",
+          "configuration": {
+            "asset_id": "ast_f10fdbd9e072497a88bef300",
+            "acceptance_operation_id": null,
+            "top_highlights": 3,
+            "silence_threshold_db": -35.0,
+            "minimum_silence_duration": 0.5,
+            "padding_before": 0.08,
+            "padding_after": 0.08,
+            "word_timing_policy": "strict_provider_intervals"
+          },
+          "source_media": {
+            "media_kind": "video",
+            "detected_content_type": "video/mp4",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 16.0,
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "video_codec": "h264",
+            "audio_codec": "aac",
+            "audio_channels": 2,
+            "audio_sample_rate": 48000
+          },
+          "transcript": {
+            "transcript_id": "trn_b6bfadc3e0b44b20ac03af4b",
+            "analysis_id": "ana_a0550b8de46542ada7e33b2a",
+            "asset_id": "ast_f10fdbd9e072497a88bef300",
+            "version": 1,
+            "is_original_evidence": true,
+            "provider_key": "local-faster-whisper",
+            "language": "vi",
+            "confidence": null,
+            "segments": [
+              {
+                "segment_id": "seg_a2e6bb2d8d584f3d9dbcdbb4",
+                "ordinal": 0,
+                "start_seconds": 0.1,
+                "end_seconds": 0.8,
+                "text": "Xin chào.",
+                "speaker": null,
+                "confidence": null,
+                "words": [
+                  {
+                    "word_id": "wrd_3f8e7df4ba7a4c13a7dd9c39",
+                    "ordinal": 0,
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.4,
+                    "text": "Xin",
+                    "confidence": 0.8
+                  },
+                  {
+                    "word_id": "wrd_41e11c38a99649efaa7ea3b5",
+                    "ordinal": 1,
+                    "start_seconds": 0.4,
+                    "end_seconds": 0.8,
+                    "text": "chào.",
+                    "confidence": 0.3
+                  }
+                ]
+              }
+            ],
+            "provenance": {
+              "fixture": true,
+              "local_inference": false,
+              "model_inferences": 0,
+              "word_alignment_source": "model_estimate",
+              "requested_language": "vi",
+              "source_checksum": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+              "source_pcm_sha256": "643f8a8dc8bd9c19225afffad2becfec5426180b3749cb208abdf1a6c8354efc",
+              "local_runtime_binding": {
+                "schema_version": "sql-local-video-runtime.v1",
+                "runtime_manifest": {
+                  "path_sha256": "5cd3e5240d4b589490febe1860d37bb07f042a0ed030a5086ca8f431666144c7",
+                  "bytes": 409,
+                  "sha256": "fac86d743ea212bb30416d040582ccdaf5843b54fa7549148aebcbf4b7c8e3ca"
+                },
+                "python": {
+                  "path_sha256": "a122955f7d24e185d7de8d1f6221a1036ab766ee3143a5e6a0516ab82100e8f5",
+                  "bytes": 49,
+                  "sha256": "c6a1a9d292d4d491d9688cb1a4b7a43daa62b16c787897a9c1d9338297d0311f"
+                },
+                "model_root_sha256": "7d9d646b39aa70cc32deaf66efa1fe553efe742bc472456194d2bb98af00692b",
+                "model_manifest_sha256": "7f07a040ce73eed5bac01226f46453165fe8a1a5e00440238315f6f1a1fc7f23",
+                "model_files": {
+                  "model.bin": {
+                    "path_sha256": "fb668193ba724d368d293b32219caa3fbc8b24961d12efd9467df6c54bc248cd",
+                    "bytes": 46,
+                    "sha256": "bc593e4dbb3e677e279d4510657176ee18a3d03f5c04c069cd6bc6f48b87e8d1"
+                  }
+                },
+                "decoder": {
+                  "path_sha256": "d3aed3323fd2b235cb8a8f320972995cceb806d06fc8c6b28537ba5561489729",
+                  "bytes": 50,
+                  "sha256": "9c221801e2e8d533578b4e3337903ceb83b7cb12ed9b95cbf592ea740fd32e64"
+                },
+                "inference_script": {
+                  "path_sha256": "d62d81293d1707128dd4db768efbd17420ec3a81288a747cba7c8f84a6abf803",
+                  "bytes": 4641,
+                  "sha256": "7e82852b90e22d965756c236dc39fe47b97002b2ed3b960f99a83dc31799a75d"
+                },
+                "uploaded_audio_adapter": {
+                  "path_sha256": "3f3187d2d88d1c5d4fc3d6f717147098cee77bff25f521145dd92d0fe76788a0",
+                  "bytes": 17416,
+                  "sha256": "95cd0a98acea7e0239e922bf42dd14b36854dfd6ced741b7c7b91aee80cf8b0a"
+                },
+                "code_files": {
+                  "profile": {
+                    "path_sha256": "0248c65c51d66c2d32d5cd3f2d5e88e7be428e7d282e36733eeda1450d707d34",
+                    "bytes": 2033,
+                    "sha256": "c54f62c04715239309118a47dfa48c4dcf1bda9a1d47e511232cca74b2eb6564"
+                  },
+                  "runtime": {
+                    "path_sha256": "d2c3d6fa9671082c7d0de95057b98c9275766dbf1b10175da895cef508f9275b",
+                    "bytes": 3618,
+                    "sha256": "2711b8e62de9052dddb28990299dedc9be2439862f44497dfc856af37914f11e"
+                  },
+                  "cpu_provider": {
+                    "path_sha256": "1a65f9b32103edf2afdeef97f3e27b00a93cc99c39f47006a81fcf5d8cdf2e37",
+                    "bytes": 7691,
+                    "sha256": "eac5f2819a099d2662136abf8ebc530f6eb09d16881ad9d140f34d64e65d0c59"
+                  },
+                  "audio_clock": {
+                    "path_sha256": "2b218545647576a886cf203795716d5fbf5a8851e0cdc2b172fb1b5e1e7e8d36",
+                    "bytes": 4322,
+                    "sha256": "b8dab1e16e53e448e2b1551cf691dbc2d48dcaadd87c6e83528534e806e754e6"
+                  },
+                  "canonical_source_clock": {
+                    "path_sha256": "f5df4a665408699178510c4f597028fdc89a8c327f2cdf207784fe8a57159a61",
+                    "bytes": 4078,
+                    "sha256": "ea6140a5c4bc3231dd3757fc3eb45925f57158395ddf22d4173ec6f49bb7146c"
+                  }
+                },
+                "model": "Systran/faster-whisper-base",
+                "model_revision": "explicit-synthetic-model-revision",
+                "license": "MIT",
+                "library": "faster-whisper",
+                "library_version": "1.2.1",
+                "device": "cpu",
+                "compute_type": "int8",
+                "cpu_threads": 2,
+                "inference_timeout_seconds": 300,
+                "video_adapter": {
+                  "path_sha256": "39b3d61d0b8291ec11f303b3e4da1a5dcbe4f6596a465594062bc082576008a2",
+                  "bytes": 11242,
+                  "sha256": "3c7790a94576aa5adfac09670152e39b77121d7a2bc14ddd8d05a06673edca61"
+                },
+                "profile": {
+                  "provider": "faster-whisper",
+                  "model": "Systran/faster-whisper-base",
+                  "model_revision": "explicit-synthetic-model-revision",
+                  "model_manifest_sha256": "7f07a040ce73eed5bac01226f46453165fe8a1a5e00440238315f6f1a1fc7f23",
+                  "language": "vi",
+                  "device": "cpu",
+                  "compute_type": "int8",
+                  "word_timestamps": true,
+                  "vad_filter": false,
+                  "beam_size": 5,
+                  "temperature": 0.0,
+                  "condition_on_previous_text": false,
+                  "initial_prompt": null,
+                  "version": "local-asr-cpu.v1"
+                },
+                "decoder_timeout_seconds": 60,
+                "max_file_bytes": 2147483648,
+                "max_duration_seconds": 1800,
+                "max_pcm_bytes": 57604096,
+                "input_media_kind": "video",
+                "clock_policy": "observed_contiguous_pcm_affine_source_projection.v1",
+                "sha256": "83a88792e37cf4320836929ea2618ec8b685933f9dcab1bb5f472988bc14b47c"
+              },
+              "decoded_audio_clock": {
+                "schema_version": "decoded-mono-audio-clock-v1",
+                "sample_rate": 16000,
+                "time_base_numerator": 1,
+                "time_base_denominator": 16000,
+                "normalization": "copyts_start_at_zero; asettb_1_over_sample_rate",
+                "contiguous": true,
+                "source_start_seconds": 0.0,
+                "source_end_seconds": 1.0,
+                "pcm_samples": 16000,
+                "frames": [
+                  {
+                    "ordinal": 0,
+                    "pts": 0,
+                    "sample_rate": 16000,
+                    "nb_samples": 16000,
+                    "pcm_start_sample": 0,
+                    "pcm_end_sample": 16000,
+                    "source_start_seconds": 0.0,
+                    "source_end_seconds": 1.0
+                  }
+                ],
+                "implicit_gap_fill_performed": false,
+                "implicit_overlap_removal_performed": false
+              },
+              "decoded_audio_clock_sha256": "1c9c5f228ab7f188ae14b745e6b04bf33419384bf7cbf1328ffe40a20b3b4498",
+              "provider_pcm_transcript": {
+                "language": "vi",
+                "confidence": null,
+                "segments": [
+                  {
+                    "start_seconds": 0.1,
+                    "end_seconds": 0.8,
+                    "text": "Xin chào.",
+                    "speaker": null,
+                    "confidence": null,
+                    "words": [
+                      {
+                        "start_seconds": 0.1,
+                        "end_seconds": 0.4,
+                        "text": "Xin",
+                        "confidence": 0.8,
+                        "timing_semantics": "positive_interval"
+                      },
+                      {
+                        "start_seconds": 0.4,
+                        "end_seconds": 0.8,
+                        "text": "chào.",
+                        "confidence": 0.3,
+                        "timing_semantics": "positive_interval"
+                      }
+                    ]
+                  }
+                ],
+                "provenance": {
+                  "fixture": true,
+                  "local_inference": false,
+                  "model_inferences": 0,
+                  "word_alignment_source": "model_estimate",
+                  "requested_language": "vi",
+                  "source_checksum": "643f8a8dc8bd9c19225afffad2becfec5426180b3749cb208abdf1a6c8354efc"
+                },
+                "actual_cost_vnd": null
+              },
+              "provider_pcm_transcript_sha256": "72c43da79070fb43eafcff42e284732f15d2b93e34c1280bb12e9723d46e803c",
+              "source_clock_projection": {
+                "schema_version": "sql-local-audio-source-projection.v1",
+                "offset_seconds": 0.0,
+                "mapping": "source_seconds = provider_pcm_seconds + observed_source_start_seconds",
+                "derived_projection": true,
+                "provider_pcm_evidence_mutated": false,
+                "time_scale_changed": false,
+                "observed_clock_tolerance_samples": 1,
+                "observed_clock_tolerance_seconds": 6.25e-05,
+                "bounds_clipped": false,
+                "provider_interval_end_imputed": false
+              },
+              "word_timing_rewritten": false,
+              "source_media_mutated": false,
+              "recognition_review_required": true,
+              "canonical_source_clock_policy": "observed-source-pts-before-trim-tempo-v1",
+              "canonical_source_alignment_filter": "aresample=48000:async=1:first_pts=0:min_comp=0:min_hard_comp=0:max_soft_comp=0",
+              "word_confidence_calibrated": false,
+              "provider_billed_cost_vnd": 0,
+              "operating_electricity_hardware_cost_vnd": null,
+              "owner_uat_accepted": false,
+              "publishing_enabled": false,
+              "raw_model_result": {
+                "fixture": true,
+                "model_inferences": 0,
+                "source_sha256": "643f8a8dc8bd9c19225afffad2becfec5426180b3749cb208abdf1a6c8354efc",
+                "language": "vi",
+                "segments": [
+                  {
+                    "start": 0.1,
+                    "end": 0.8,
+                    "text": "Xin chào."
+                  }
+                ]
+              },
+              "raw_model_result_sha256": "0425610806bfcb56e730f284f0719de5c23fb7611e82d7fed6c60cc63bfc2eb2",
+              "local_video_evidence": {
+                "schema_version": "sql-local-video-evidence.v1",
+                "model_result": {
+                  "fixture": true,
+                  "model_inferences": 0,
+                  "source_sha256": "643f8a8dc8bd9c19225afffad2becfec5426180b3749cb208abdf1a6c8354efc",
+                  "language": "vi",
+                  "segments": [
+                    {
+                      "start": 0.1,
+                      "end": 0.8,
+                      "text": "Xin chào."
+                    }
+                  ]
+                },
+                "model_result_sha256": "0425610806bfcb56e730f284f0719de5c23fb7611e82d7fed6c60cc63bfc2eb2",
+                "decoded_audio_clock": {
+                  "schema_version": "decoded-mono-audio-clock-v1",
+                  "sample_rate": 16000,
+                  "time_base_numerator": 1,
+                  "time_base_denominator": 16000,
+                  "normalization": "copyts_start_at_zero; asettb_1_over_sample_rate",
+                  "contiguous": true,
+                  "source_start_seconds": 0.0,
+                  "source_end_seconds": 1.0,
+                  "pcm_samples": 16000,
+                  "frames": [
+                    {
+                      "ordinal": 0,
+                      "pts": 0,
+                      "sample_rate": 16000,
+                      "nb_samples": 16000,
+                      "pcm_start_sample": 0,
+                      "pcm_end_sample": 16000,
+                      "source_start_seconds": 0.0,
+                      "source_end_seconds": 1.0
+                    }
+                  ],
+                  "implicit_gap_fill_performed": false,
+                  "implicit_overlap_removal_performed": false
+                },
+                "decoded_audio_clock_sha256": "1c9c5f228ab7f188ae14b745e6b04bf33419384bf7cbf1328ffe40a20b3b4498",
+                "pcm_sha256": "643f8a8dc8bd9c19225afffad2becfec5426180b3749cb208abdf1a6c8354efc",
+                "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                "source_size_bytes": 100000,
+                "immutable_binding": {
+                  "schema_version": "sql-local-video-runtime.v1",
+                  "runtime_manifest": {
+                    "path_sha256": "5cd3e5240d4b589490febe1860d37bb07f042a0ed030a5086ca8f431666144c7",
+                    "bytes": 409,
+                    "sha256": "fac86d743ea212bb30416d040582ccdaf5843b54fa7549148aebcbf4b7c8e3ca"
+                  },
+                  "python": {
+                    "path_sha256": "a122955f7d24e185d7de8d1f6221a1036ab766ee3143a5e6a0516ab82100e8f5",
+                    "bytes": 49,
+                    "sha256": "c6a1a9d292d4d491d9688cb1a4b7a43daa62b16c787897a9c1d9338297d0311f"
+                  },
+                  "model_root_sha256": "7d9d646b39aa70cc32deaf66efa1fe553efe742bc472456194d2bb98af00692b",
+                  "model_manifest_sha256": "7f07a040ce73eed5bac01226f46453165fe8a1a5e00440238315f6f1a1fc7f23",
+                  "model_files": {
+                    "model.bin": {
+                      "path_sha256": "fb668193ba724d368d293b32219caa3fbc8b24961d12efd9467df6c54bc248cd",
+                      "bytes": 46,
+                      "sha256": "bc593e4dbb3e677e279d4510657176ee18a3d03f5c04c069cd6bc6f48b87e8d1"
+                    }
+                  },
+                  "decoder": {
+                    "path_sha256": "d3aed3323fd2b235cb8a8f320972995cceb806d06fc8c6b28537ba5561489729",
+                    "bytes": 50,
+                    "sha256": "9c221801e2e8d533578b4e3337903ceb83b7cb12ed9b95cbf592ea740fd32e64"
+                  },
+                  "inference_script": {
+                    "path_sha256": "d62d81293d1707128dd4db768efbd17420ec3a81288a747cba7c8f84a6abf803",
+                    "bytes": 4641,
+                    "sha256": "7e82852b90e22d965756c236dc39fe47b97002b2ed3b960f99a83dc31799a75d"
+                  },
+                  "uploaded_audio_adapter": {
+                    "path_sha256": "3f3187d2d88d1c5d4fc3d6f717147098cee77bff25f521145dd92d0fe76788a0",
+                    "bytes": 17416,
+                    "sha256": "95cd0a98acea7e0239e922bf42dd14b36854dfd6ced741b7c7b91aee80cf8b0a"
+                  },
+                  "code_files": {
+                    "profile": {
+                      "path_sha256": "0248c65c51d66c2d32d5cd3f2d5e88e7be428e7d282e36733eeda1450d707d34",
+                      "bytes": 2033,
+                      "sha256": "c54f62c04715239309118a47dfa48c4dcf1bda9a1d47e511232cca74b2eb6564"
+                    },
+                    "runtime": {
+                      "path_sha256": "d2c3d6fa9671082c7d0de95057b98c9275766dbf1b10175da895cef508f9275b",
+                      "bytes": 3618,
+                      "sha256": "2711b8e62de9052dddb28990299dedc9be2439862f44497dfc856af37914f11e"
+                    },
+                    "cpu_provider": {
+                      "path_sha256": "1a65f9b32103edf2afdeef97f3e27b00a93cc99c39f47006a81fcf5d8cdf2e37",
+                      "bytes": 7691,
+                      "sha256": "eac5f2819a099d2662136abf8ebc530f6eb09d16881ad9d140f34d64e65d0c59"
+                    },
+                    "audio_clock": {
+                      "path_sha256": "2b218545647576a886cf203795716d5fbf5a8851e0cdc2b172fb1b5e1e7e8d36",
+                      "bytes": 4322,
+                      "sha256": "b8dab1e16e53e448e2b1551cf691dbc2d48dcaadd87c6e83528534e806e754e6"
+                    },
+                    "canonical_source_clock": {
+                      "path_sha256": "f5df4a665408699178510c4f597028fdc89a8c327f2cdf207784fe8a57159a61",
+                      "bytes": 4078,
+                      "sha256": "ea6140a5c4bc3231dd3757fc3eb45925f57158395ddf22d4173ec6f49bb7146c"
+                    }
+                  },
+                  "model": "Systran/faster-whisper-base",
+                  "model_revision": "explicit-synthetic-model-revision",
+                  "license": "MIT",
+                  "library": "faster-whisper",
+                  "library_version": "1.2.1",
+                  "device": "cpu",
+                  "compute_type": "int8",
+                  "cpu_threads": 2,
+                  "inference_timeout_seconds": 300,
+                  "video_adapter": {
+                    "path_sha256": "39b3d61d0b8291ec11f303b3e4da1a5dcbe4f6596a465594062bc082576008a2",
+                    "bytes": 11242,
+                    "sha256": "3c7790a94576aa5adfac09670152e39b77121d7a2bc14ddd8d05a06673edca61"
+                  },
+                  "profile": {
+                    "provider": "faster-whisper",
+                    "model": "Systran/faster-whisper-base",
+                    "model_revision": "explicit-synthetic-model-revision",
+                    "model_manifest_sha256": "7f07a040ce73eed5bac01226f46453165fe8a1a5e00440238315f6f1a1fc7f23",
+                    "language": "vi",
+                    "device": "cpu",
+                    "compute_type": "int8",
+                    "word_timestamps": true,
+                    "vad_filter": false,
+                    "beam_size": 5,
+                    "temperature": 0.0,
+                    "condition_on_previous_text": false,
+                    "initial_prompt": null,
+                    "version": "local-asr-cpu.v1"
+                  },
+                  "decoder_timeout_seconds": 60,
+                  "max_file_bytes": 2147483648,
+                  "max_duration_seconds": 1800,
+                  "max_pcm_bytes": 57604096,
+                  "input_media_kind": "video",
+                  "clock_policy": "observed_contiguous_pcm_affine_source_projection.v1",
+                  "sha256": "83a88792e37cf4320836929ea2618ec8b685933f9dcab1bb5f472988bc14b47c"
+                },
+                "provider_result_normalized": true,
+                "source_projection_validated": true,
+                "source_checksum_verified_before_inference": true,
+                "source_checksum_verified_after_result": true,
+                "provider_billed_cost_vnd": 0,
+                "operating_electricity_hardware_cost_vnd": null,
+                "human_accepted": false,
+                "publishing_enabled": false
+              },
+              "input_media_kind": "video",
+              "provider_safety_receipt": {
+                "operation_key": "ana_a0550b8de46542ada7e33b2a:transcription",
+                "acceptance_lineage_id": null,
+                "provider_key": "local-faster-whisper",
+                "capability": "transcription",
+                "status": "succeeded",
+                "attempts": 1,
+                "retries": 0,
+                "charged_cost_vnd": "0",
+                "currency": "VND",
+                "budget_alerts": [],
+                "circuit_state": "closed",
+                "external_call": false,
+                "paid": false,
+                "rights_allowed": true
+              }
+            },
+            "created_at": "2026-10-13T14:51:28.427175"
+          },
+          "scenes": [
+            {
+              "scene_id": "scn_40488e03337f4c029839c614",
+              "ordinal": 0,
+              "start_seconds": 0.0,
+              "end_seconds": 4.0,
+              "semantic_label": "Mở đầu",
+              "description": "Xin chào.",
+              "subjects": [],
+              "quality_score": 0.6515,
+              "motion_score": 0.5,
+              "speech_score": 0.175,
+              "confidence": 0.685,
+              "evidence": {
+                "shot_boundary": false,
+                "transcript_segment_count": 1,
+                "transcript_keywords": [],
+                "subjects_available": false,
+                "local_metrics": {
+                  "sample_count": 0,
+                  "motion_score": null,
+                  "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+                  "local_quality_score": null,
+                  "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+                  "black_frame_ratio": null,
+                  "overexposure_ratio": null,
+                  "underexposure_ratio": null,
+                  "mean_luma": null,
+                  "mean_edge_strength": null,
+                  "duplicate_frame_ratio": null,
+                  "audio_rms": null,
+                  "audio_energy_score": null,
+                  "sample_timestamps": []
+                },
+                "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+                "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+                "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+                "audio_boundaries": [
+                  {
+                    "start_seconds": 3.6,
+                    "end_seconds": 4.24
+                  }
+                ],
+                "shot_detection_score": null,
+                "vision_used": false,
+                "vision_deferred_to": "V2-05"
+              }
+            },
+            {
+              "scene_id": "scn_bc9662c0693e43c0a9a98231",
+              "ordinal": 1,
+              "start_seconds": 4.0,
+              "end_seconds": 8.0,
+              "semantic_label": "Phân đoạn 2",
+              "description": "Phân đoạn hình ảnh không có lời thoại nhận diện.",
+              "subjects": [],
+              "quality_score": 0.62,
+              "motion_score": 0.82,
+              "speech_score": 0.0,
+              "confidence": 0.714,
+              "evidence": {
+                "shot_boundary": true,
+                "transcript_segment_count": 0,
+                "transcript_keywords": [],
+                "subjects_available": false,
+                "local_metrics": {
+                  "sample_count": 0,
+                  "motion_score": null,
+                  "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+                  "local_quality_score": null,
+                  "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+                  "black_frame_ratio": null,
+                  "overexposure_ratio": null,
+                  "underexposure_ratio": null,
+                  "mean_luma": null,
+                  "mean_edge_strength": null,
+                  "duplicate_frame_ratio": null,
+                  "audio_rms": null,
+                  "audio_energy_score": null,
+                  "sample_timestamps": []
+                },
+                "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+                "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+                "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+                "audio_boundaries": [
+                  {
+                    "start_seconds": 3.6,
+                    "end_seconds": 4.24
+                  },
+                  {
+                    "start_seconds": 7.6,
+                    "end_seconds": 8.24
+                  }
+                ],
+                "shot_detection_score": 0.82,
+                "vision_used": false,
+                "vision_deferred_to": "V2-05"
+              }
+            },
+            {
+              "scene_id": "scn_229ab40a63f343e38bd1ac54",
+              "ordinal": 2,
+              "start_seconds": 8.0,
+              "end_seconds": 12.0,
+              "semantic_label": "Phân đoạn 3",
+              "description": "Phân đoạn hình ảnh không có lời thoại nhận diện.",
+              "subjects": [],
+              "quality_score": 0.62,
+              "motion_score": 0.78,
+              "speech_score": 0.0,
+              "confidence": 0.706,
+              "evidence": {
+                "shot_boundary": true,
+                "transcript_segment_count": 0,
+                "transcript_keywords": [],
+                "subjects_available": false,
+                "local_metrics": {
+                  "sample_count": 0,
+                  "motion_score": null,
+                  "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+                  "local_quality_score": null,
+                  "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+                  "black_frame_ratio": null,
+                  "overexposure_ratio": null,
+                  "underexposure_ratio": null,
+                  "mean_luma": null,
+                  "mean_edge_strength": null,
+                  "duplicate_frame_ratio": null,
+                  "audio_rms": null,
+                  "audio_energy_score": null,
+                  "sample_timestamps": []
+                },
+                "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+                "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+                "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+                "audio_boundaries": [
+                  {
+                    "start_seconds": 7.6,
+                    "end_seconds": 8.24
+                  },
+                  {
+                    "start_seconds": 11.6,
+                    "end_seconds": 12.24
+                  }
+                ],
+                "shot_detection_score": 0.78,
+                "vision_used": false,
+                "vision_deferred_to": "V2-05"
+              }
+            },
+            {
+              "scene_id": "scn_6afe7cb944b140cfb7c676cb",
+              "ordinal": 3,
+              "start_seconds": 12.0,
+              "end_seconds": 16.0,
+              "semantic_label": "Phân đoạn 4",
+              "description": "Phân đoạn hình ảnh không có lời thoại nhận diện.",
+              "subjects": [],
+              "quality_score": 0.62,
+              "motion_score": 0.74,
+              "speech_score": 0.0,
+              "confidence": 0.698,
+              "evidence": {
+                "shot_boundary": true,
+                "transcript_segment_count": 0,
+                "transcript_keywords": [],
+                "subjects_available": false,
+                "local_metrics": {
+                  "sample_count": 0,
+                  "motion_score": null,
+                  "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+                  "local_quality_score": null,
+                  "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+                  "black_frame_ratio": null,
+                  "overexposure_ratio": null,
+                  "underexposure_ratio": null,
+                  "mean_luma": null,
+                  "mean_edge_strength": null,
+                  "duplicate_frame_ratio": null,
+                  "audio_rms": null,
+                  "audio_energy_score": null,
+                  "sample_timestamps": []
+                },
+                "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+                "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+                "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+                "audio_boundaries": [
+                  {
+                    "start_seconds": 11.6,
+                    "end_seconds": 12.24
+                  }
+                ],
+                "shot_detection_score": 0.74,
+                "vision_used": false,
+                "vision_deferred_to": "V2-05"
+              }
+            }
+          ],
+          "silence_decisions": [
+            {
+              "decision_id": "sil_19c9a37182334a0ca4d22288",
+              "start_seconds": 3.68,
+              "end_seconds": 4.16,
+              "padding_before_seconds": 0.08,
+              "padding_after_seconds": 0.08,
+              "enabled": false,
+              "reason": "Disabled because padding leaves less than the minimum silence duration.",
+              "conflicts_with_speech": false,
+              "evidence": {
+                "raw_start": 3.6,
+                "raw_end": 4.24,
+                "measured_db": -41.0,
+                "measured_db_available": true,
+                "speech_protection": [],
+                "threshold_db": -35.0,
+                "minimum_duration": 0.5,
+                "source_media_mutated": false
+              }
+            },
+            {
+              "decision_id": "sil_013320609bde4fa9a02ab87f",
+              "start_seconds": 7.68,
+              "end_seconds": 8.16,
+              "padding_before_seconds": 0.08,
+              "padding_after_seconds": 0.08,
+              "enabled": false,
+              "reason": "Disabled because padding leaves less than the minimum silence duration.",
+              "conflicts_with_speech": false,
+              "evidence": {
+                "raw_start": 7.6,
+                "raw_end": 8.24,
+                "measured_db": -41.0,
+                "measured_db_available": true,
+                "speech_protection": [],
+                "threshold_db": -35.0,
+                "minimum_duration": 0.5,
+                "source_media_mutated": false
+              }
+            },
+            {
+              "decision_id": "sil_9b744d67b81e423db79baed6",
+              "start_seconds": 11.68,
+              "end_seconds": 12.16,
+              "padding_before_seconds": 0.08,
+              "padding_after_seconds": 0.08,
+              "enabled": false,
+              "reason": "Disabled because padding leaves less than the minimum silence duration.",
+              "conflicts_with_speech": false,
+              "evidence": {
+                "raw_start": 11.6,
+                "raw_end": 12.24,
+                "measured_db": -41.0,
+                "measured_db_available": true,
+                "speech_protection": [],
+                "threshold_db": -35.0,
+                "minimum_duration": 0.5,
+                "source_media_mutated": false
+              }
+            }
+          ],
+          "highlights": [
+            {
+              "highlight_id": "hlt_1110d726ad1240e1b62aaf8c",
+              "rank": 1,
+              "highlight_score": 0.125,
+              "reason": "saved text keyword/information-density heuristics; transcript coverage",
+              "recommended_start": 0.0,
+              "recommended_end": 4.0,
+              "recommended_platform": "facebook_reels",
+              "scene_id": "scn_40488e03337f4c029839c614",
+              "evidence": {
+                "algorithm": "multimodal-highlight-v3",
+                "text_evidence_available": true,
+                "text_evidence_basis": "saved transcript/Vision evidence",
+                "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+                "audio_proxy": null,
+                "motion": null,
+                "information_density": 0.15625,
+                "hook_keywords": [],
+                "vision_used": false,
+                "factors": {
+                  "speech_coverage": 0.175,
+                  "motion": null,
+                  "information_density": 0.15625,
+                  "hook_keywords": 0.0,
+                  "quality": null,
+                  "pixel_novelty": null,
+                  "audio_energy": null
+                },
+                "weights": {
+                  "speech_coverage": 0.25,
+                  "motion": 0.15,
+                  "information_density": 0.2,
+                  "hook_keywords": 0.15,
+                  "quality": 0.1,
+                  "pixel_novelty": 0.05,
+                  "audio_energy": 0.1
+                },
+                "available_weight": 0.6,
+                "contributions": {
+                  "speech_coverage": 0.072917,
+                  "information_density": 0.052083,
+                  "hook_keywords": 0.0
+                },
+                "missing_factors": [
+                  "motion",
+                  "quality",
+                  "pixel_novelty",
+                  "audio_energy"
+                ],
+                "confidence": 0.411
+              }
+            },
+            {
+              "highlight_id": "hlt_dbeae77cfb8844d49c6b33c1",
+              "rank": 2,
+              "highlight_score": 0.0,
+              "reason": "semantic text evidence unavailable; transcript coverage",
+              "recommended_start": 4.0,
+              "recommended_end": 8.0,
+              "recommended_platform": "facebook_reels",
+              "scene_id": "scn_bc9662c0693e43c0a9a98231",
+              "evidence": {
+                "algorithm": "multimodal-highlight-v3",
+                "text_evidence_available": false,
+                "text_evidence_basis": "missing; placeholder text excluded",
+                "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+                "audio_proxy": null,
+                "motion": null,
+                "information_density": null,
+                "hook_keywords": [],
+                "vision_used": false,
+                "factors": {
+                  "speech_coverage": 0.0,
+                  "motion": null,
+                  "information_density": null,
+                  "hook_keywords": null,
+                  "quality": null,
+                  "pixel_novelty": null,
+                  "audio_energy": null
+                },
+                "weights": {
+                  "speech_coverage": 0.25,
+                  "motion": 0.15,
+                  "information_density": 0.2,
+                  "hook_keywords": 0.15,
+                  "quality": 0.1,
+                  "pixel_novelty": 0.05,
+                  "audio_energy": 0.1
+                },
+                "available_weight": 0.25,
+                "contributions": {
+                  "speech_coverage": 0.0
+                },
+                "missing_factors": [
+                  "motion",
+                  "information_density",
+                  "hook_keywords",
+                  "quality",
+                  "pixel_novelty",
+                  "audio_energy"
+                ],
+                "confidence": 0.1785
+              }
+            },
+            {
+              "highlight_id": "hlt_cc768c222e0f4670b22c639a",
+              "rank": 3,
+              "highlight_score": 0.0,
+              "reason": "semantic text evidence unavailable; transcript coverage",
+              "recommended_start": 8.0,
+              "recommended_end": 12.0,
+              "recommended_platform": "facebook_reels",
+              "scene_id": "scn_229ab40a63f343e38bd1ac54",
+              "evidence": {
+                "algorithm": "multimodal-highlight-v3",
+                "text_evidence_available": false,
+                "text_evidence_basis": "missing; placeholder text excluded",
+                "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+                "audio_proxy": null,
+                "motion": null,
+                "information_density": null,
+                "hook_keywords": [],
+                "vision_used": false,
+                "factors": {
+                  "speech_coverage": 0.0,
+                  "motion": null,
+                  "information_density": null,
+                  "hook_keywords": null,
+                  "quality": null,
+                  "pixel_novelty": null,
+                  "audio_energy": null
+                },
+                "weights": {
+                  "speech_coverage": 0.25,
+                  "motion": 0.15,
+                  "information_density": 0.2,
+                  "hook_keywords": 0.15,
+                  "quality": 0.1,
+                  "pixel_novelty": 0.05,
+                  "audio_energy": 0.1
+                },
+                "available_weight": 0.25,
+                "contributions": {
+                  "speech_coverage": 0.0
+                },
+                "missing_factors": [
+                  "motion",
+                  "information_density",
+                  "hook_keywords",
+                  "quality",
+                  "pixel_novelty",
+                  "audio_energy"
+                ],
+                "confidence": 0.1765
+              }
+            }
+          ],
+          "source_media_mutated": false,
+          "publish_requested": false,
+          "error_code": null,
+          "provenance": {
+            "algorithm_version": "v2-04.1",
+            "source_asset_checksum": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+            "source_media_mutated": false,
+            "publish_requested": false,
+            "paid_external_call": false,
+            "vision_analysis": "deferred-to-v2-05",
+            "local_video_execution": "durable_async",
+            "human_review_required": true,
+            "production_acceptance_verified": false,
+            "automatic_model_replay": false,
+            "local_video_binding_sha256": "83a88792e37cf4320836929ea2618ec8b685933f9dcab1bb5f472988bc14b47c",
+            "media_signals": {
+              "fixture": true,
+              "paid_call": false,
+              "deterministic": true,
+              "waveform": null,
+              "visual": null
+            }
+          },
+          "created_at": "2026-10-13T14:51:28.007922",
+          "updated_at": "2026-10-13T14:51:28.430693"
+        },
+        "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+        "custody_sha256": "a2f9737abb909a200fa0c9c26e10d1554e5e8c1c2f4b0ca4df019839d0f96e3a",
+        "human_review_required": true,
+        "source_media_mutated": false,
+        "timeline_mutated": false,
+        "publishing_enabled": false
+      }
+    },
+    "project": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f",
+      "status": 200,
+      "sha256": "c25b11aa647e3159248641f2a23c38dd73563ab0ed192874d7a5db0fa8357aaf",
+      "bytes": 347,
+      "body": {
+        "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+        "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+        "slug": "uploaded-footage",
+        "name": "Uploaded Footage",
+        "niche": "real_estate",
+        "status": "draft",
+        "current_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+        "version": 2,
+        "provenance": {},
+        "created_at": "2026-10-13T14:51:27.794329",
+        "updated_at": "2026-10-13T14:51:27.807421"
+      }
+    },
+    "workspace": {
+      "method": "GET",
+      "path": "/api/v1/workspaces/wsp_eb16c4924ff1405bac9c0336",
+      "status": 200,
+      "sha256": "fc6f1b657d13da7271d4fbaf7d6e1d806c0c6df6c6b3b9e503f41dec914ab4d7",
+      "bytes": 232,
+      "body": {
+        "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+        "slug": "auto-edit-test",
+        "name": "Auto Edit Test",
+        "owner_ref": "test-owner",
+        "version": 1,
+        "provenance": {},
+        "created_at": "2026-10-13T14:51:27.776386",
+        "updated_at": "2026-10-13T14:51:27.776386"
+      }
+    },
+    "assets": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f/assets",
+      "status": 200,
+      "sha256": "0e453c5821b11ab5f3c73ea7d019fa6fccec2761a6c5ef47dc522042cbc04458",
+      "bytes": 1181,
+      "body": [
+        {
+          "asset_id": "ast_f10fdbd9e072497a88bef300",
+          "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+          "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+          "project_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+          "job_id": null,
+          "asset_class": "source",
+          "kind": "video",
+          "filename": "Video-thu-nghiem.MP4",
+          "object_key": "workspaces/wsp_eb16c4924ff1405bac9c0336/projects/prj_66bab6c0584f4c31a82a4a2f/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+          "content_type": "video/mp4",
+          "size_bytes": 100000,
+          "checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+          "storage_provider": "local",
+          "version": 1,
+          "provenance": {
+            "source_type": "user_upload",
+            "rights_status": "owned",
+            "license": "user-provided",
+            "source_reference": "upl_ca033192e2af45bc85b2df70",
+            "generation_provenance": null,
+            "media_metadata": {
+              "media_kind": "video",
+              "detected_content_type": "video/mp4",
+              "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+              "duration_seconds": 16.0,
+              "width": 1080,
+              "height": 1920,
+              "fps": 30.0,
+              "video_codec": "h264",
+              "audio_codec": "aac",
+              "audio_channels": 2,
+              "audio_sample_rate": 48000
+            },
+            "client_filename_retained_as_evidence": "../Video thử nghiệm.MP4"
+          },
+          "created_at": "2026-10-13T14:51:27.965240",
+          "updated_at": "2026-10-13T14:51:27.965240"
+        }
+      ]
+    }
+  },
+  "context": {
+    "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+    "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+    "asset_id": "ast_f10fdbd9e072497a88bef300",
+    "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+    "job_id": "job_analysis_da1d901aba47c3f2d30796a5",
+    "actor_ref": "usr:fixture-editor",
+    "viewer_subject": "usr:test-owner",
+    "viewer_role": "viewer"
+  },
+  "fixture": {
+    "source": "Explicit synthetic MP4 upload/scanner/probe fixture",
+    "asr": "Explicit MockCPU from existing test scenario",
+    "asr_calls_added_for_capture": 0,
+    "model_inferences": 0,
+    "provider_wire_calls": 0,
+    "paid_calls": 0,
+    "owner_acceptance": false,
+    "source_rights": "user upload fixture only; no production rights approval"
+  },
+  "test_nodeid": "tests/test_auto_edit_jobs.py::test_queued_to_actual_video_transcript_original_and_idempotent_job_receipts"
+}
