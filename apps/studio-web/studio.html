@@ -56,8 +56,7 @@
           <form id="mvp-project-form"><label>Tên project <input id="mvp-project-name" required maxlength="240"></label><button type="submit">Tạo project</button></form>
           <label><input id="mvp-rights" type="checkbox"> Tôi có quyền sử dụng media cho project này.</label>
           <label>Thêm video/ảnh/audio <input id="mvp-upload" type="file" multiple accept="image/jpeg,image/png,video/mp4,audio/wav,audio/mpeg"></label>
-          <label>Video cần phân tích <select id="mvp-video-analysis"></select></label>
-          <button id="mvp-analyze-video" type="button">Phân tích video (ASR nếu có audio)</button>
+          <div id="video-analysis-jobs" aria-label="Phân tích video và tác vụ đã lưu"></div>
           <button id="mvp-from-media" type="button">Draft caption từ media (nội bộ, không AI)</button>
           <label>Loại nội dung <select id="mvp-kind"><option value="script">Kịch bản</option><option value="idea">Ý tưởng</option><option value="prompt">Prompt / chỉ dẫn sáng tạo</option></select></label>
           <label>Nội dung gốc (được lưu nguyên văn)<textarea id="mvp-original" rows="4" maxlength="20000"></textarea></label>

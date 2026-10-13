@@ -17,11 +17,14 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
   let generation = null;
   let generationTimer = null;
   let busy = 1; // Initial project/session bootstrap must finish before editing.
+  const busyListeners = new Set();
   function syncControls() {
     $("multi-input-workbench").dataset.loading = busy ? "true" : "false";
-    $("multi-input-workbench").querySelectorAll("input, textarea, select, button").forEach(control => {control.disabled=busy>0;});
+    $("multi-input-workbench").querySelectorAll("input, textarea, select, button").forEach(control => {
+      if (!control.closest('#video-analysis-jobs')) control.disabled=busy>0;
+    });
   }
-  function setBusy(active) {busy=Math.max(0,busy+(active?1:-1));syncControls();}
+  function setBusy(active) {busy=Math.max(0,busy+(active?1:-1));syncControls();for(const listener of busyListeners)listener();}
   syncControls();
   function captureScenes() {
     scenes = [...document.querySelectorAll(".mvp-scene")].map((row, index) => {
@@ -86,7 +89,6 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     $("mvp-protected").value = (doc?.protected_terms ?? []).join("\n");
     scenes = structuredClone(doc?.scenes ?? []);
     renderScenes();
-    $("mvp-video-analysis").innerHTML = state.assets.filter(a => a.content_type.startsWith("video/")).map(a => `<option value="${escape(a.asset_id)}">${escape(a.filename)}</option>`).join("");
     $("mvp-status").textContent = doc ? `${doc.input_kind === "prompt" && !doc.scenes.length ? "Prompt đã lưu; cần lời đọc/script. AI content chưa được cấu hình." : doc.approved ? "Đã duyệt nội dung" : "Draft deterministic cần duyệt"} · ${version.project_version_id} · Không phải kết quả AI` : "Nhập ảnh, video hoặc text; không bắt buộc video.";
     $("mvp-plan").textContent = doc ? JSON.stringify((await api(`/api/v1/projects/${state.projectId}/storyboard-media-plan`)).items.map(s => ({scene:s.scene_id,media:s.strategy,status:s.status})), null, 2) : "";
     $("mvp-script-diff").textContent = (version?.provenance.script_diff ?? []).join("\n");
@@ -196,12 +198,6 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     renderScenes();await save(false);
   }));
   $("mvp-save").addEventListener("click",guarded(() => save(false)));
-  $("mvp-analyze-video").addEventListener("click",guarded(async () => {
-    const assetId = $("mvp-video-analysis").value;
-    if (!assetId) throw new Error("Upload/chọn video trước.");
-    await api(`/api/v1/projects/${getState().projectId}/analyze`, {method:"POST", body:JSON.stringify({asset_id:assetId})});
-    await refresh();toast("Đã lưu phân tích video. Video có audio vẫn cần ASR thực sự được cấu hình/phê duyệt.");
-  }));
   $("mvp-approve").addEventListener("click",guarded(() => save(true)));
   $("mvp-add-scene").addEventListener("click",() => {captureScenes();scenes.push({scene_id:`scene_${Date.now()}`,narration:"",visual_brief:"",duration_seconds:4,media_strategy:"motion_graphic",asset_id:null,analysis_id:null,fit:"contain",transition:"cut",architectural_render:false,official_render:false,original_audio:"mute",source_start:0});renderScenes();});
   $("mvp-scenes").addEventListener("click",event => {
@@ -228,5 +224,5 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
       expected_timeline_version:state.timeline.current_version, review_render_id:review.render_id})});
     await refresh(); toast("Draft nhịp cảnh mới từ PCM; cảnh khóa giữ nguyên. Tạo package/review và duyệt lại. Caption chưa có word alignment.");
   }));
-  return {reload,setBusy};
+  return {reload,setBusy,isBusy:()=>busy>0,onBusyChanged:listener=>{busyListeners.add(listener);return()=>busyListeners.delete(listener);}};
 }

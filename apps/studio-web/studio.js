@@ -30,6 +30,7 @@ import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
 import {initializeChannelLearning} from '/channel-learning.mjs';
 import {initializeUploadedAudioReview} from '/uploaded-audio-review.mjs?v=sql-audio-1';
 import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-stock-1';
+import {initializeVideoAnalysisJobs,videoReviewSelection,selectedVideoReviewAnalysis} from '/video-analysis-jobs.mjs?v=sql-video-jobs-1';
 
 const state = {
   workspaceId: null,
@@ -69,6 +70,7 @@ const state = {
   visionAnalyses: [],
   sceneAssessments: [],
   selectedSceneAssessmentId: '',
+  videoReviewSelection: null,
   sceneIntelligenceSupported: false,
   draggingClipId: null,
   pollTimer: null,
@@ -98,13 +100,29 @@ const stockReview = initializeStockPlanningReview({root: $('#stock-planning-revi
     state.mediaPlans = [plan, ...state.mediaPlans.filter(item => item.media_plan_id !== plan.media_plan_id)];
     if (state.timeline) renderBrowser();
   }});
+const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs'), api,
+  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy(),
+    dirty: audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
+      || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  onMessage: toast, onReview: async value => {
+    const selection=videoReviewSelection(state,value);
+    await loadProject();
+    if(state.projectId!==selection.project_id||state.workspaceId!==selection.workspace_id)return;
+    state.videoReviewSelection=selection;
+    state.selectedSceneAssessmentId='';
+    renderAnalysisReview();
+    if(!state.timeline)render();
+  }});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => videoReview.sync());
 document.addEventListener('input', event => {
   if (event.target.closest('#multi-input-workbench') || event.target.closest('[data-transcript-text]')) audioReview.sync();
   stockReview.sync();
+  videoReview.sync();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
   stockReview.sync();
+  videoReview.sync();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -172,6 +190,7 @@ function activeAnalysis() {
   if (!state.timeline) return state.analyses.find((item) => item.status === "succeeded") ?? null;
   return state.analyses.find((item) => item.analysis_id === state.timeline.source_analysis_id) ?? null;
 }
+function reviewedAnalysis(){return selectedVideoReviewAnalysis(state,state.videoReviewSelection,activeAnalysis());}
 async function syncTimelineTranscript(){
   const id=timelineTranscriptId(state.timeline),analysis=activeAnalysis();
   if(!id||!analysis||analysis.transcript?.transcript_id===id)return;
@@ -225,6 +244,7 @@ async function loadProject({ quiet = false } = {}) {
   $('#project-select').disabled = true;
   audioReview.sync();
   stockReview.sync();
+  videoReview.sync();
   multiInput.setBusy(true);
   stopPreviewPolling();
   stopProductionPolling();
@@ -309,13 +329,18 @@ async function loadProject({ quiet = false } = {}) {
     $('#project-select').disabled = state.projectLoading > 0;
     audioReview.sync();
     stockReview.sync();
+    videoReview.sync();
   }
-  if (state.projectId === loadedProjectId) await audioReview.reload();
+  if (state.projectId === loadedProjectId) {
+    await audioReview.reload();
+    await videoReview.reload();
+  }
 }
 
 function renderNoProject(title, description) {
   audioReview.sync();
   stockReview.sync();
+  videoReview.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -331,7 +356,7 @@ function render() {
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
-    const analysis = activeAnalysis();
+    const analysis = reviewedAnalysis();
     renderNoProject(
       analysis ? "Kết quả phân tích đã sẵn sàng." : "Tạo storyboard từ ảnh/text ở workbench đa đầu vào.",
       analysis
@@ -369,9 +394,10 @@ function renderReframe(){
 }
 
 function renderAnalysisReview(){
-  const analysis=activeAnalysis();$("#analysis-review").hidden=!analysis;
+  const analysis=reviewedAnalysis();$("#analysis-review").hidden=!analysis;
   if(!analysis)return;
-  $("#analysis-review-summary").textContent=`${analysis.scenes.length} cảnh · ${analysis.transcript?.language??'Chưa có lời nhận diện'} · ${analysis.highlights.length} đoạn nổi bật${analysis.provenance?.semantic_analysis_refresh_required?' · Nhãn ngữ nghĩa cần cập nhật sau khi sửa lời nhận diện':''}`;
+  const sourceName=state.assets.find(asset=>asset.asset_id===analysis.asset_id)?.filename??'Video nguồn';
+  $("#analysis-review-summary").textContent=`${sourceName} · ${analysis.scenes.length} cảnh · ${analysis.transcript?.language??'Chưa có lời nhận diện'} · ${analysis.highlights.length} đoạn nổi bật${state.timeline&&state.timeline.source_analysis_id!==analysis.analysis_id?' · Đang xem video khác với timeline; áp dụng cắt sẽ tạo phiên bản timeline mới. Cần timeline của video này trước khi sửa lời nhận diện.':''}${analysis.provenance?.semantic_analysis_refresh_required?' · Nhãn ngữ nghĩa cần cập nhật sau khi sửa lời nhận diện':''}`;
   const previous=[...$("#silence-review-list").querySelectorAll('[data-silence-id]')];
   const selected=new Set(state.timeline?.snapshot.metadata.silence_review?.selected_ids??analysis.silence_decisions.filter(d=>d.enabled&&!d.conflicts_with_speech).map(d=>d.decision_id));
   const binding=`${state.projectId}:${analysis.analysis_id}:${state.timeline?.current_version??0}`;
@@ -397,7 +423,7 @@ function renderAnalysisReview(){
 
 function transcriptReviewForm(item,analysis){
   return `<article class="transcript-item"><button type="button" data-seek="${item.start_seconds}">${formatTime(item.start_seconds)} → ${formatTime(item.end_seconds)}</button>
-    <form data-transcript-edit="${escapeHtml(item.segment_id)}" data-transcript-version="${analysis.transcript.version}" data-transcript-id="${escapeHtml(analysis.transcript.transcript_id)}">
+    <form data-transcript-edit="${escapeHtml(item.segment_id)}" data-transcript-version="${analysis.transcript.version}" data-transcript-id="${escapeHtml(analysis.transcript.transcript_id)}" data-analysis-id="${escapeHtml(analysis.analysis_id)}">
     <label>Lời nhận diện · bản ${analysis.transcript.version}<textarea data-transcript-text="${escapeHtml(item.segment_id)}" required maxlength="4000">${escapeHtml(state.transcriptDrafts.get(item.segment_id)??item.text)}</textarea></label>
     <button type="submit">Lưu phiên bản mới</button><small>Sửa lời nhận diện giữ tệp gốc, yêu cầu duyệt lại và bỏ dấu thời gian từng từ của đoạn đã sửa.</small></form></article>`;
 }
@@ -1166,7 +1192,7 @@ async function decideProductionApproval(decision) {
 }
 
 async function createTimeline() {
-  const analysis = activeAnalysis();
+  const analysis = reviewedAnalysis();
   if (!analysis) return;
   const plan = state.mediaPlans.find((item) => item.analysis_id === analysis.analysis_id) ?? null;
   const button = $("#create-timeline-button");
@@ -1178,6 +1204,7 @@ async function createTimeline() {
       body: JSON.stringify({
         analysis_id: analysis.analysis_id,
         media_plan_id: plan?.media_plan_id ?? null,
+        expected_timeline_version: state.timeline?.current_version ?? null,
         actor_ref: "studio-user",
       }),
     });
@@ -1475,10 +1502,11 @@ $("#canonical-shot-list").addEventListener('click',event=>{const card=event.targ
 $("#apply-silence-review").addEventListener('click',async event=>{
   const button=event.currentTarget;button.disabled=true;
   try{
-    const analysis=activeAnalysis(),ids=[...$("#silence-review-list").querySelectorAll('[data-silence-id]:checked:not(:disabled)')].map(input=>input.dataset.silenceId);
+    const analysis=reviewedAnalysis(),ids=[...$("#silence-review-list").querySelectorAll('[data-silence-id]:checked:not(:disabled)')].map(input=>input.dataset.silenceId);
+    if(!analysis)throw new Error('Kết quả đang xem đã thay đổi. Chọn lại tác vụ để kiểm tra.');
     const selection=silenceSelection(analysis,ids);
     await api(`/api/v1/projects/${state.projectId}/timeline`,{method:'POST',body:JSON.stringify({analysis_id:analysis.analysis_id,
-      media_plan_id:activeMediaPlan()?.media_plan_id??null,silence_decision_ids:selection,expected_timeline_version:state.timeline?.current_version??null,actor_ref:'studio-user'})});
+      media_plan_id:activeMediaPlan()?.analysis_id===analysis.analysis_id?activeMediaPlan().media_plan_id:null,silence_decision_ids:selection,expected_timeline_version:state.timeline?.current_version??null,actor_ref:'studio-user'})});
     await loadProject();toast('Đã lưu timeline với các khoảng cắt đã chọn. Cần xem preview và duyệt lại.');
   }catch(error){toast(error.message,true);}finally{button.disabled=false;}
 });
@@ -1491,7 +1519,7 @@ $("#analysis-review").addEventListener('click',async event=>{
         method:'POST',body:JSON.stringify({expected_timeline_version:state.timeline?.current_version??null})});
       await loadProject();toast('Draft đã đưa vào timeline. Xem preview và duyệt trước khi render.');
     }else{
-      const analysis=activeAnalysis();
+      const analysis=reviewedAnalysis();
       if(!analysis)throw new Error('Chờ phân tích hoàn tất.');
       const drafts=await api(`/api/v1/projects/${state.projectId}/highlight-drafts`,{method:'POST',body:JSON.stringify({
         analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
@@ -1505,7 +1533,7 @@ $("#analysis-review").addEventListener('click',async event=>{
 function captureTranscriptInput(event){const input=event.target.closest('[data-transcript-text]');if(input)state.transcriptDrafts.set(input.dataset.transcriptText,input.value);}
 $('#scene-assessment').addEventListener('change',event=>{state.selectedSceneAssessmentId=event.target.value;renderAnalysisReview();});
 $('#assess-scenes').addEventListener('click',async()=>{
-  const analysis=activeAnalysis();if(!analysis)return;
+  const analysis=reviewedAnalysis();if(!analysis)return;
   const button=$('#assess-scenes');button.disabled=true;
   try{
     const assessment=await api(`/api/v1/projects/${state.projectId}/scene-intelligence`,{method:'POST',body:JSON.stringify({
@@ -1518,7 +1546,7 @@ $('#assess-scenes').addEventListener('click',async()=>{
 });
 async function saveTranscriptReview(event){
   const form=event.target.closest('[data-transcript-edit]');if(!form)return;event.preventDefault();
-  const analysis=activeAnalysis(),button=form.querySelector('button[type="submit"]');button.disabled=true;
+  const analysis=state.analyses.find(a=>a.analysis_id===form.dataset.analysisId&&a.project_id===state.projectId&&a.workspace_id===state.workspaceId),button=form.querySelector('button[type="submit"]');button.disabled=true;
   try{
     if(analysis?.transcript?.transcript_id!==form.dataset.transcriptId)throw new Error('Transcript đã thay đổi. Làm mới trước khi lưu.');
     const body=transcriptEditPayload(analysis,state.timeline,form.dataset.transcriptEdit,form.querySelector('textarea').value);
@@ -1687,6 +1715,8 @@ $("#preview-video").addEventListener("timeupdate", (event) => setPlayhead(event.
 window.addEventListener("beforeunload", () => {
   audioReview.dispose();
   stockReview.dispose();
+  videoReview.dispose();
+  unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();

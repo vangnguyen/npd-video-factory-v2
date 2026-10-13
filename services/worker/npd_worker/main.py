@@ -29,6 +29,10 @@ from app.bridge_service import (
 from app.auto_edit_repository import AutoEditRepository
 from app.uploaded_audio_service import UploadedAudioService, AUDIO_QUEUE
 from app.uploaded_audio_runtime import provider_from_settings as uploaded_audio_provider
+from app.auto_edit_transcription_runtime import provider_from_settings as video_analysis_provider
+from app.auto_edit_job_service import AutoEditJobService, ANALYSIS_QUEUE
+from app.auto_edit_service import AutoEditAnalysisService
+from app.auto_edit_providers import DeterministicMediaSignalProvider, FFmpegMediaSignalProvider
 from app.media_intelligence_repository import MediaIntelligenceRepository
 from app.media_intelligence_service import (
     MEDIA_RESOLUTION_PROCESSING_KEY,
@@ -361,6 +365,21 @@ async def recover_uploaded_audio_queue(service):
         await asyncio.sleep(30)
 
 
+async def run_analysis_queue(redis,service):
+    while True:
+        item=await redis.blpop(ANALYSIS_QUEUE,timeout=5)
+        if item:
+            try:await service.process(item[1])
+            except Exception:logger.warning('video_analysis_processing_failed')
+
+
+async def recover_analysis_queue(service):
+    while True:
+        try:await service.recover()
+        except Exception:logger.warning('video_analysis_recovery_failed')
+        await asyncio.sleep(30)
+
+
 async def main() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
     redis = Redis.from_url(redis_url, decode_responses=True)
@@ -400,6 +419,15 @@ async def main() -> None:
         object_storage=object_storage,queue=redis,provider=uploaded_audio_provider(settings),
         staging_root=settings.analysis_staging_root / 'uploaded-audio',provider_safety=audio_safety)
     await uploaded_audio.recover()
+    selected_video_provider=video_analysis_provider(settings)
+    analysis=AutoEditAnalysisService(repository=auto_edit_repository,platform=platform,object_storage=object_storage,
+        transcription_provider=selected_video_provider,
+        signal_provider=DeterministicMediaSignalProvider() if settings.auto_edit_signal_provider=='fixture' else FFmpegMediaSignalProvider(settings.ffmpeg_path),
+        staging_root=settings.analysis_staging_root,provider_safety=audio_safety,
+        derived_timing_enabled=settings.auto_edit_derived_timing_enabled)
+    analysis_jobs=AutoEditJobService(analysis_service=analysis,queue=redis,max_source_bytes=settings.upload_max_size_bytes,
+        lease_seconds=settings.auto_edit_job_lease_seconds,timeout_seconds=settings.auto_edit_job_timeout_seconds)
+    await analysis_jobs.recover()
     await recover_inflight(redis)
     from app.stock_wire_quota import StockWireQuotaRepository, StockWireQuotaGuard
     stock_wire_repository = StockWireQuotaRepository(session_factory)
@@ -486,6 +514,8 @@ async def main() -> None:
             run_content_generation_queue(redis, content_generation),
             run_uploaded_audio_queue(redis, uploaded_audio),
             recover_uploaded_audio_queue(uploaded_audio),
+            run_analysis_queue(redis,analysis_jobs),
+            recover_analysis_queue(analysis_jobs),
             run_media_resolution_queue(redis, media_resolution_service),
             recover_due_stock_jobs(media_resolution_service),
             recover_due_stock_plans(media_planning_service),

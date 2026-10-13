@@ -1,0 +1,40 @@
+{
+  "schema_version": "captured-sql-video-job-fixtures.v1",
+  "source_capture_manifest_sha256": "b4372f346a800a3695b89c6a2bbfa4b9c8023b3fa9c2dafb28eb4401e3cbc871",
+  "captured_backend_snapshot": "sql-video-job-final-snapshot-n2.json",
+  "fixture_source": "synthetic MP4 upload/scanner/probe, Explicit MockCPU, owned SQLite/viewer ASGI",
+  "files": [
+    {
+      "name": "queued.json",
+      "bytes": 8157,
+      "sha256": "e6c6707290a6ba52f9af94f76692aa6fdaccf7b5c0673efab3fade9413b20e25"
+    },
+    {
+      "name": "running.json",
+      "bytes": 8171,
+      "sha256": "12df9717c294dd98aa6279df39036be3018fa5664d6649ff18e5b4fe5ffcb519"
+    },
+    {
+      "name": "awaiting_review.json",
+      "bytes": 46859,
+      "sha256": "225fc73bb97e360596a9415685b9293c9b02cf36f940b8f8a5c63a5369eaf931"
+    },
+    {
+      "name": "cancelled.json",
+      "bytes": 8385,
+      "sha256": "40baab5490ef9b5d81b66e4097a3024bd1e4d18293c93a6672e07605a28ec705"
+    },
+    {
+      "name": "needs_attention.json",
+      "bytes": 8447,
+      "sha256": "7722ad76c1825719537d7ed5dd0ea4367480431531046176b192a41c13b61339"
+    }
+  ],
+  "model_inferences": 0,
+  "capture_additional_dispatches": 0,
+  "paid_calls": 0,
+  "real_provider_calls": 0,
+  "owner_acceptance": false,
+  "queued_running_ready_same_context": true,
+  "browser_role_for_write_tests": "explicit editor UI fixture; captures themselves used viewer ASGI"
+}

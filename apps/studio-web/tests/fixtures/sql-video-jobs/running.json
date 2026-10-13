@@ -1,0 +1,202 @@
+{
+  "schema_version": "actual-sql-video-job-ui-fixture.v1",
+  "state": "running",
+  "responses": {
+    "job": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f/analysis-jobs/job_analysis_da1d901aba47c3f2d30796a5",
+      "status": 200,
+      "sha256": "7997bb5e6b71350a94da9c741eefd2151b476da7819575b2ea79be2a66f4f40f",
+      "bytes": 2574,
+      "body": {
+        "schema_version": "auto-edit-analysis-job.v1",
+        "job": {
+          "job_id": "job_analysis_da1d901aba47c3f2d30796a5",
+          "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+          "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+          "project_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+          "status": "running",
+          "stage": "analyzing_video",
+          "progress": 10,
+          "request": {
+            "kind": "auto_edit_analysis",
+            "analysis_id": "ana_a0550b8de46542ada7e33b2a",
+            "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+            "provider_binding_sha256": "ae338869ed7b4da9c6f2607e8af1ea03537d770c20d6979946d5db65fdc5891f",
+            "actor_ref": "usr:fixture-editor"
+          },
+          "artifacts": [],
+          "error": null,
+          "created_at": "2026-10-13T14:51:28.010922",
+          "updated_at": "2026-10-13T14:51:28.139178"
+        },
+        "analysis": {
+          "analysis_id": "ana_a0550b8de46542ada7e33b2a",
+          "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+          "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+          "project_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+          "asset_id": "ast_f10fdbd9e072497a88bef300",
+          "status": "analyzing",
+          "fingerprint": "3531661cdd4971495a6c635b6220cbebccd084af79b69c9e65b41ac83a995fb2",
+          "configuration": {
+            "asset_id": "ast_f10fdbd9e072497a88bef300",
+            "acceptance_operation_id": null,
+            "top_highlights": 3,
+            "silence_threshold_db": -35.0,
+            "minimum_silence_duration": 0.5,
+            "padding_before": 0.08,
+            "padding_after": 0.08,
+            "word_timing_policy": "strict_provider_intervals"
+          },
+          "source_media": {
+            "media_kind": "video",
+            "detected_content_type": "video/mp4",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 16.0,
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "video_codec": "h264",
+            "audio_codec": "aac",
+            "audio_channels": 2,
+            "audio_sample_rate": 48000
+          },
+          "transcript": null,
+          "scenes": [],
+          "silence_decisions": [],
+          "highlights": [],
+          "source_media_mutated": false,
+          "publish_requested": false,
+          "error_code": null,
+          "provenance": {
+            "algorithm_version": "v2-04.1",
+            "source_asset_checksum": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+            "source_media_mutated": false,
+            "publish_requested": false,
+            "paid_external_call": false,
+            "vision_analysis": "deferred-to-v2-05",
+            "local_video_execution": "durable_async",
+            "human_review_required": true,
+            "production_acceptance_verified": false,
+            "automatic_model_replay": false,
+            "local_video_binding_sha256": "83a88792e37cf4320836929ea2618ec8b685933f9dcab1bb5f472988bc14b47c"
+          },
+          "created_at": "2026-10-13T14:51:28.007922",
+          "updated_at": "2026-10-13T14:51:28.144176"
+        },
+        "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+        "custody_sha256": "a2f9737abb909a200fa0c9c26e10d1554e5e8c1c2f4b0ca4df019839d0f96e3a",
+        "human_review_required": true,
+        "source_media_mutated": false,
+        "timeline_mutated": false,
+        "publishing_enabled": false
+      }
+    },
+    "project": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f",
+      "status": 200,
+      "sha256": "c25b11aa647e3159248641f2a23c38dd73563ab0ed192874d7a5db0fa8357aaf",
+      "bytes": 347,
+      "body": {
+        "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+        "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+        "slug": "uploaded-footage",
+        "name": "Uploaded Footage",
+        "niche": "real_estate",
+        "status": "draft",
+        "current_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+        "version": 2,
+        "provenance": {},
+        "created_at": "2026-10-13T14:51:27.794329",
+        "updated_at": "2026-10-13T14:51:27.807421"
+      }
+    },
+    "workspace": {
+      "method": "GET",
+      "path": "/api/v1/workspaces/wsp_eb16c4924ff1405bac9c0336",
+      "status": 200,
+      "sha256": "fc6f1b657d13da7271d4fbaf7d6e1d806c0c6df6c6b3b9e503f41dec914ab4d7",
+      "bytes": 232,
+      "body": {
+        "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+        "slug": "auto-edit-test",
+        "name": "Auto Edit Test",
+        "owner_ref": "test-owner",
+        "version": 1,
+        "provenance": {},
+        "created_at": "2026-10-13T14:51:27.776386",
+        "updated_at": "2026-10-13T14:51:27.776386"
+      }
+    },
+    "assets": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_66bab6c0584f4c31a82a4a2f/assets",
+      "status": 200,
+      "sha256": "0e453c5821b11ab5f3c73ea7d019fa6fccec2761a6c5ef47dc522042cbc04458",
+      "bytes": 1181,
+      "body": [
+        {
+          "asset_id": "ast_f10fdbd9e072497a88bef300",
+          "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+          "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+          "project_version_id": "pver_a9a26106ad754a0abdcc3bf7",
+          "job_id": null,
+          "asset_class": "source",
+          "kind": "video",
+          "filename": "Video-thu-nghiem.MP4",
+          "object_key": "workspaces/wsp_eb16c4924ff1405bac9c0336/projects/prj_66bab6c0584f4c31a82a4a2f/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+          "content_type": "video/mp4",
+          "size_bytes": 100000,
+          "checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+          "storage_provider": "local",
+          "version": 1,
+          "provenance": {
+            "source_type": "user_upload",
+            "rights_status": "owned",
+            "license": "user-provided",
+            "source_reference": "upl_ca033192e2af45bc85b2df70",
+            "generation_provenance": null,
+            "media_metadata": {
+              "media_kind": "video",
+              "detected_content_type": "video/mp4",
+              "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+              "duration_seconds": 16.0,
+              "width": 1080,
+              "height": 1920,
+              "fps": 30.0,
+              "video_codec": "h264",
+              "audio_codec": "aac",
+              "audio_channels": 2,
+              "audio_sample_rate": 48000
+            },
+            "client_filename_retained_as_evidence": "../Video thử nghiệm.MP4"
+          },
+          "created_at": "2026-10-13T14:51:27.965240",
+          "updated_at": "2026-10-13T14:51:27.965240"
+        }
+      ]
+    }
+  },
+  "context": {
+    "workspace_id": "wsp_eb16c4924ff1405bac9c0336",
+    "project_id": "prj_66bab6c0584f4c31a82a4a2f",
+    "asset_id": "ast_f10fdbd9e072497a88bef300",
+    "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+    "job_id": "job_analysis_da1d901aba47c3f2d30796a5",
+    "actor_ref": "usr:fixture-editor",
+    "viewer_subject": "usr:test-owner",
+    "viewer_role": "viewer"
+  },
+  "fixture": {
+    "source": "Explicit synthetic MP4 upload/scanner/probe fixture",
+    "asr": "Explicit MockCPU from existing test scenario",
+    "asr_calls_added_for_capture": 0,
+    "model_inferences": 0,
+    "provider_wire_calls": 0,
+    "paid_calls": 0,
+    "owner_acceptance": false,
+    "source_rights": "user upload fixture only; no production rights approval"
+  },
+  "test_nodeid": "tests/test_auto_edit_jobs.py::test_queued_to_actual_video_transcript_original_and_idempotent_job_receipts"
+}

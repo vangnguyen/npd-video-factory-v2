@@ -39,6 +39,8 @@ from .auto_edit_routes import router as auto_edit_router
 from .uploaded_audio_routes import router as uploaded_audio_router
 from .uploaded_audio_service import UploadedAudioService
 from .uploaded_audio_runtime import provider_from_settings as uploaded_audio_provider
+from .auto_edit_job_service import AutoEditJobService
+from .auto_edit_job_routes import router as auto_edit_job_router
 from .auto_edit_transcription_runtime import provider_from_settings as auto_edit_transcription_provider
 from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .artifacts import (
@@ -275,6 +277,9 @@ async def lifespan(app: FastAPI):
         session_factory=session_factory,platform=platform,object_storage=object_storage,queue=redis,
         provider=selected_uploaded_audio_provider,staging_root=settings.analysis_staging_root / 'uploaded-audio',
         provider_safety=app.state.provider_safety_controller)
+    app.state.auto_edit_job_service = AutoEditJobService(analysis_service=app.state.auto_edit_analysis_service,
+        queue=redis,max_source_bytes=settings.upload_max_size_bytes,lease_seconds=settings.auto_edit_job_lease_seconds,
+        timeout_seconds=settings.auto_edit_job_timeout_seconds)
     if settings.vision_provider == "fixture":
         vision_provider = DeterministicVisionProvider()
     elif settings.vision_provider == "openai":
@@ -428,6 +433,7 @@ app.include_router(platform_router, dependencies=_human_route_dependencies)
 app.include_router(trend_router, dependencies=_human_route_dependencies)
 app.include_router(auto_edit_router, dependencies=_human_route_dependencies)
 app.include_router(uploaded_audio_router, dependencies=_human_route_dependencies)
+app.include_router(auto_edit_job_router, dependencies=_human_route_dependencies)
 app.include_router(vision_router, dependencies=_human_route_dependencies)
 app.include_router(media_intelligence_router, dependencies=_human_route_dependencies)
 app.include_router(timeline_router, dependencies=_human_route_dependencies)
@@ -1180,7 +1186,8 @@ async def capabilities() -> dict[str, object]:
         "uploaded_audio_default_provider": "not_configured",
         "uploaded_audio_canonical_caption_edit": "explicit_versioned_binding_and_review",
         "local_video_asr_execution": "explicit_synchronous_cpu_partial",
-        "local_video_asr_async_queue": False,
+        "local_video_asr_async_queue": True,
+        "auto_edit_video_job": "durable_async_versioned_source_evidence",
         "local_video_asr_semantic_quality_accepted": False,
         "auto_edit_timeline": True,
         "timeline_versioning": True,
