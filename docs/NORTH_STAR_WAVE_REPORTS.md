@@ -3957,3 +3957,33 @@ OWNER ACTION REQUIRED: none for continued safe implementation; UAT/listening rem
 NEXT WAVE: genuine source/operator/quality acceptance and remaining original Mode A/B, media, profiles, Trend, publishing/analytics/learning, Agent Hub and production requirements
 
 SOURCE_PRESERVED=YES is established by the final preservation seal. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO. Matrix remains 5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED, 59 unclosed groups. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
+
+WAVE: 3B/3C/3E/3G/3I/8F/16 component
+
+STATUS: LOCAL_REAL_COMPONENT_PASS; full waves PARTIAL
+
+HEAD SHA: parent 656744e799cac80435895b550924048d984b6d74; SQL component 2fa2de85ce67991ce726a8d9bab2e957cbaf6e81; final in recovery/20261007/current-scene-assessment-program-state.json
+
+CAPABILITIES COMPLETED: saved-current-evidence assessment, immutable scoped history, stale-input rejection, explicit highlight selection and independent Shorts, Native Studio/HTTP integration, caption/copy custody fixes; scoped SQL word revisions described in [SQL_TRANSCRIPT_WORD_REVIEW.md](SQL_TRANSCRIPT_WORD_REVIEW.md)
+
+CAPABILITIES PARTIAL: full Mode A/B, genuine uploaded footage/non-developer/Owner acceptance, comprehensive ASR/timing quality, semantic Vision/tracking/confidence/source clock acceptance, SQL Studio word UI and standalone-audio parity, all renderer values/chains, complete provider and production requirements
+
+TESTS: final Native101/Studio811 PASS; SQL75 PASS/2 media skips, including20 new cases; targeted follow-ups overlap these batches and are not added to the total
+
+REAL PROVIDER TESTS: no new provider or local-model inference; real saved CPU ASR/audio/media reused; actual local authenticated HTTP/browser/SQLite transactions and backup/restore are component evidence
+
+MOCK TESTS: ASR/analysis/identity and review fixtures in unit/ASGI/HTTP tests; generated visual and browser Editor fixture; no Owner approval or audience data
+
+EVIDENCE: [indexed evidence](north-star/current-scene-assessment-evidence.json), current browser backup, original/current project facts, events, screenshots and fresh-process restore report; failures retained separately
+
+REGRESSIONS: original ASR/assets/jobs retained; malformed/stale/foreign/role/CSRF/query/body guards; no transferred approval; old accepted artifacts/live source are checked again at final preservation seal
+
+EXTERNAL BLOCKERS: original provider/GPU/Owner/production gates remain; full quality/whole-flow acceptance remains incomplete
+
+OWNER ACTION REQUIRED: none for continued safe implementation; listening/UAT remains deferred; no publishing/deployment approval requested
+
+NEXT WAVE: remaining original Auto Edit, media resolution/cache/providers, platform parity and full North Star capabilities
+
+The browser n2 process ended without its final export. After verifying its exact process and listener had stopped, its original retained state was exported offline, without restarting it. The source root is retained for recovery. Browser n1 and fresh cold roots use owned lifecycle cleanup. Eight older policy-blocked cleanup roots remain untouched; no rejected delete was retried or bypassed.
+
+SOURCE_PRESERVED=YES is justified by the final branch/bundle seal. PHASE10_TECHNICALLY_READY=YES; OWNER_UAT_REQUIRED=YES; PHASE10_READY=NO. Matrix remains 5 IMPLEMENTED_REAL/58 PARTIAL/1 NOT_VERIFIED, 59 unclosed groups. IMPLEMENTATION_COMPLETE=NO; REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO; VIDEO_FACTORY_NORTH_STAR_READY=NO.
