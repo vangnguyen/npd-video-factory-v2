@@ -72,7 +72,7 @@ export function initializeSqlVariantFamilies({root,api,getState,onMessage=()=>{}
   const text=make('p','status','Tải các định dạng của dự án để chuẩn bị bản nháp.');text.setAttribute('role','status');
   const buttons={};for(const[name,label]of[['load','Xem định dạng và nhóm đã lưu'],['create','Tạo nhóm đã chọn'],['refresh','Cập nhật nhóm'],
     ['derive','Chuẩn bị bản nháp'],['retry','Gửi lại đúng yêu cầu cũ'],['cancel','Hủy nhóm'],['open','Mở bản nháp']]){
-    buttons[name]=make('button',name,label);buttons[name].type='button';}
+    buttons[name]=make('button',name,label);buttons[name].type='button';buttons[name].className='secondary-button';}
   root.append(title,buttons.load,targets,ackLabel,buttons.create,saved,member,text,buttons.refresh,buttons.derive,buttons.retry,buttons.cancel,buttons.open);
   const endpoint=s=>`/api/v1/projects/${encodeURIComponent(s.projectId)}/variant-families`,key=s=>'npd-sql-variant-pending:'+scope(s);
   const selectedFamily=()=>rows.find(f=>f.family_id===selected);

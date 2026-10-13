@@ -18,3 +18,6 @@ evidence/post-mvp-roadmap/phase-10/final-uat/**/*.log -text whitespace=cr-at-eol
 # UX remediation captures are append-only receipts with exact raw hashes.
 evidence/post-mvp-roadmap/phase-10/studio-ux-02/** -text whitespace=cr-at-eol,-blank-at-eof
 evidence/post-mvp-roadmap/phase-10/studio-ux-02/**/*.log -text whitespace=cr-at-eol,-blank-at-eof,-blank-at-eol
+
+# Retained SQL HTTP fixtures bind exact original bytes, including Windows EOL.
+apps/studio-web/tests/fixtures/sql-variant-import-review/*.json -text whitespace=cr-at-eol
