@@ -6,7 +6,7 @@ import hmac
 import json
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Mapping, Protocol
 
@@ -36,6 +36,7 @@ class ServiceIdentity:
     service_id: str
     roles: tuple[str, ...]
     keys: Mapping[str, bytes]
+    workspace_grants: Mapping[str, tuple[str, ...]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -131,6 +132,7 @@ class ServiceAuthVerifier:
         raw_identities = payload.get("service_identities")
         if not isinstance(raw_identities, dict) or not raw_identities:
             raise ValueError("secret file is missing service_identities")
+        from .service_api_contract import grants
         identities: dict[str, ServiceIdentity] = {}
         for service_id, raw in raw_identities.items():
             if not isinstance(raw, dict):
@@ -142,6 +144,7 @@ class ServiceAuthVerifier:
                 service_id=str(service_id),
                 roles=roles,
                 keys=_decode_keys(raw.get("keys")),
+                workspace_grants=grants(raw.get('workspace_grants')),
             )
         return cls(
             identities,

@@ -18,6 +18,8 @@ from .bridge_auth import ServiceAuthVerifier, SigningKeyring
 from .bridge_repository import BridgeRepository
 from .bridge_routes import router as bridge_router
 from .bridge_service import AgentHubBridgeService
+from .service_api_routes import router as service_api_router
+from .service_api_runtime import configure as configure_service_api
 from .analytics_providers import AnalyticsProviderRegistry
 from .analytics_repository import AnalyticsRepository
 from .analytics_routes import router as analytics_router
@@ -416,29 +418,8 @@ async def lifespan(app: FastAPI):
         queue=redis,
         settings=settings,
     )
-    app.state.bridge_auth_verifier = None
-    app.state.agent_hub_bridge_service = None
-    if settings.agent_hub_bridge_enabled:
-        app.state.bridge_auth_verifier = ServiceAuthVerifier.from_file(
-            settings.agent_hub_service_keys_file,
-            redis,
-            max_clock_skew_seconds=settings.service_auth_max_clock_skew_seconds,
-            replay_ttl_seconds=settings.service_auth_replay_ttl_seconds,
-        )
-        app.state.agent_hub_bridge_service = AgentHubBridgeService(
-            repository=BridgeRepository(session_factory),
-            platform_repository=platform,
-            publishing_repository=publishing_repository,
-            analytics_repository=analytics_repository,
-            queue=redis,
-            default_workspace_id=default_workspace.workspace_id,
-            webhook_destination_ref=settings.agent_hub_webhook_destination_ref,
-            webhook_provider_mode=settings.agent_hub_webhook_mode,
-            webhook_max_attempts=settings.agent_hub_webhook_max_attempts,
-            production_deployed=settings.app_env.lower() == "production",
-        )
-        if settings.agent_hub_webhook_mode != "disabled":
-            SigningKeyring.from_file(settings.agent_hub_webhook_signing_keys_file)
+    configure_service_api(app,settings=settings,factory=session_factory,queue=redis,platform=platform,
+        publishing=publishing_repository,analytics=analytics_repository,default_workspace_id=default_workspace.workspace_id)
     app.state.production_render_download_root = settings.production_render_download_root
     try:
         yield
@@ -475,6 +456,7 @@ app.include_router(learning_router, dependencies=_human_route_dependencies)
 app.include_router(provider_safety_router, dependencies=_human_route_dependencies)
 app.include_router(operations_router, dependencies=_human_route_dependencies)
 app.include_router(bridge_router)
+app.include_router(service_api_router)
 
 
 @app.middleware("http")
