@@ -1967,6 +1967,8 @@ class ProviderSafetyController:
             and not contract
             and execution_allowed
             and (not rights_required or self.policy.rights_gate_approved)
+            and (metadata.get("production_acceptance_required") is not True
+                or metadata.get("production_acceptance_verified") is True)
         )
         return ProviderCapabilitySafetyRead(
             provider_key=provider_key,

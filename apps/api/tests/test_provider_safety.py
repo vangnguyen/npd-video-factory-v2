@@ -1038,3 +1038,30 @@ async def test_durable_retention_purges_only_expired_terminal_operations(tmp_pat
     assert snapshot.active_operations == 1
     assert snapshot.stale_active_operations == 1
     await engine.dispose()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('verified',[None,False,0,1,'true',True])
+async def test_explicit_production_acceptance_is_snapshot_only_and_requires_verified_boolean(verified):
+    metadata={'paid':False,'external_call':False,'production_acceptance_required':True}
+    if verified is not None:metadata['production_acceptance_verified']=verified
+    definitions=normalize_provider_definitions([{
+        'provider_key':'local-review-required','capability':'transcription','adapter':'owned.offline.LocalASR',
+        'enabled':True,'status':'degraded','routing_mode':'primary','supports_dry_run':False,'metadata':metadata,
+    },{
+        'provider_key':'legacy-local','capability':'transcription','adapter':'owned.offline.LegacyASR',
+        'enabled':True,'status':'healthy','routing_mode':'primary','supports_dry_run':False,'metadata':{'paid':False},
+    }])
+    controller=ProviderSafetyController.fail_closed(definitions)
+    snapshot=await controller.snapshot();required,legacy=snapshot.providers
+    assert required.enabled and required.production_eligible==(verified is True)
+    assert legacy.enabled and legacy.production_eligible
+    calls=[]
+    async def local_operation():calls.append('explicit-local-fixture');return 'fixture-result'
+    local_context=ProviderCallContext(operation_key='production-review-local-fixture',workspace_id='wsp_fixture',
+        project_id='prj_fixture',provider_key='local-review-required',capability='transcription',operation='transcribe',
+        external_call=False,paid=False,estimated_cost_vnd=Decimal('0'))
+    result=await controller.execute(local_context,local_operation)
+    assert calls==['explicit-local-fixture'] and result.value=='fixture-result'
+    assert result.receipt.charged_cost_vnd==Decimal('0') and not result.receipt.external_call and not result.receipt.paid
+    assert (await controller.preflight(context('unapproved-paid-stays-blocked'))).allowed is False

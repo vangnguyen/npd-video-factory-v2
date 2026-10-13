@@ -166,7 +166,10 @@ async def lifespan(app: FastAPI):
             provenance={"source": "bootstrap-config"},
         )
     )
-    provider_definitions = normalize_provider_definitions(_provider_definitions())
+    # Runtime custody is evaluated once; registry and execution share this
+    # exact selection instead of claiming configuration from settings alone.
+    selected_uploaded_audio_provider = uploaded_audio_provider(settings)
+    provider_definitions = normalize_provider_definitions(_provider_definitions(selected_uploaded_audio_provider))
     await platform.seed_providers(provider_definitions)
     await trend_repository.seed_sources(trend_providers.definitions())
     app.state.database_engine = engine
@@ -303,7 +306,7 @@ async def lifespan(app: FastAPI):
     )
     app.state.uploaded_audio_service = UploadedAudioService(
         session_factory=session_factory,platform=platform,object_storage=object_storage,queue=redis,
-        provider=uploaded_audio_provider(settings),staging_root=settings.analysis_staging_root / 'uploaded-audio',
+        provider=selected_uploaded_audio_provider,staging_root=settings.analysis_staging_root / 'uploaded-audio',
         provider_safety=app.state.provider_safety_controller)
     if settings.vision_provider == "fixture":
         vision_provider = DeterministicVisionProvider()
@@ -526,11 +529,15 @@ def store_from(request: Request) -> PostgresJobStore:
     return request.app.state.job_store
 
 
-def _provider_definitions() -> list[dict[str, object]]:
+def _provider_definitions(uploaded_audio_instance=None) -> list[dict[str, object]]:
     # The durable provider registry describes the original video-job pipeline,
     # whose worker is still selected with TTS_PROVIDER. V2-08 has a separate,
     # fail-closed AUDIO_TTS_PROVIDER contract exposed by the production package.
     selected_tts = settings.tts_provider.lower()
+    local_audio_configured = bool(settings.transcription_provider == 'local_cpu' and settings.local_asr_enabled
+        and getattr(uploaded_audio_instance, 'key', None) == 'local-faster-whisper'
+        and getattr(uploaded_audio_instance, 'external_call', None) is False
+        and getattr(uploaded_audio_instance, 'paid', None) is False)
     return [
         content_provider_definition(settings.content_generation_provider),
         {
@@ -623,14 +630,16 @@ def _provider_definitions() -> list[dict[str, object]]:
             "display_name": "Explicit Offline CPU Uploaded Audio ASR",
             "capability": "transcription",
             "adapter": "app.local_uploaded_audio_provider.LocalUploadedAudioProvider",
-            "routing_mode": "primary" if settings.transcription_provider == "local_cpu" and settings.local_asr_enabled else "disabled",
-            "status": "degraded" if settings.transcription_provider == "local_cpu" and settings.local_asr_enabled else "not_configured",
-            "enabled": bool(settings.transcription_provider == "local_cpu" and settings.local_asr_enabled),
+            "routing_mode": "primary" if local_audio_configured else "disabled",
+            "status": "degraded" if local_audio_configured else "not_configured",
+            "enabled": local_audio_configured,
             "supports_dry_run": False,
             "config_ref": "env:LOCAL_ASR_*",
             "metadata": {"paid": False, "external_call": False, "fixture": False,
                 "default_enabled": False, "immutable_runtime_binding_required": True,
+                "runtime_configured": local_audio_configured,
                 "provider_health_verified": False, "semantic_quality_verified": False,
+                "production_acceptance_required": True, "production_acceptance_verified": False,
                 "human_review_required": True, "production_deployed": False},
         },
         {
