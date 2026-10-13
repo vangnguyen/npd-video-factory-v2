@@ -23,6 +23,8 @@ from .media_intelligence_models import StockMediaCandidateRead
 from .media_intelligence_providers import MediaProviderNotConfigured,ProviderMaterializedMedia
 from .stock_retry_policy import retry_delay
 from .stock_wire_context import CURRENT_OPERATION
+from .stock_cache_policy import StockCachePolicy,StockResponseCache,StockCacheError,linked as cache_linked
+from dataclasses import asdict
 
 CACHE_SECONDS=86400
 JSON_LIMIT=2*1024*1024
@@ -55,8 +57,7 @@ def cache_io_path(path):
 
 
 def linked(path):
-    return any((item:=cache_io_path(p)).is_symlink() or getattr(item,'is_junction',lambda:False)()
-        for p in [path,*path.parents])
+    return cache_linked(path)
 
 
 class CredentialTransport(httpx.AsyncBaseTransport):
@@ -84,7 +85,7 @@ class OfficialStockProvider:
 
     def __init__(self,*,api_key='',enabled=False,cache_root:Path,cache_scope=None,transport=None,
                  timeout_seconds=20,max_download_bytes=250*1024*1024,cache_configuration_sha256=None,
-                 wire_guard=None,require_wire_guard=False):
+                 wire_guard=None,require_wire_guard=False,cache_policy=None):
         if not 1<=timeout_seconds<=60 or not 1<=max_download_bytes<=250*1024*1024:
             raise ValueError('STOCK_BOUNDS_INVALID')
         if not isinstance(api_key,str) or len(api_key)>8192 or any(c in api_key for c in '\r\n'):
@@ -98,6 +99,10 @@ class OfficialStockProvider:
         self._transport=transport;self._client=None;self._cache_lock=asyncio.Lock()
         self.mock_transport_used=isinstance(transport,httpx.MockTransport)
         self.cache_configuration_sha256=cache_configuration_sha256
+        self.cache_policy=cache_policy or StockCachePolicy()
+        if type(self.cache_policy) is not StockCachePolicy:raise ValueError('STOCK_CACHE_POLICY_INVALID')
+        self._frozen_cache_policy=digest(asdict(self.cache_policy))
+        self._cache_write_skips=0;self._cache_write_last_code=None
         self.cache_mode='fixture' if self.mock_transport_used else 'official'
         self.cache_binding_sha256=digest(self._cache_binding())
         self._frozen_cache_identity=(self.cache_binding_sha256,self.cache_mode,self.cache_configuration_sha256)
@@ -122,6 +127,8 @@ class OfficialStockProvider:
                 or digest(self._cache_binding())!=self.cache_binding_sha256
                 or self.mock_transport_used!=(self.cache_mode=='fixture')):
             raise StockProviderFailure('STOCK_CACHE_CONFIGURATION_CHANGED')
+        if type(self.cache_policy) is not StockCachePolicy or digest(asdict(self.cache_policy))!=self._frozen_cache_policy:
+            raise StockProviderFailure('STOCK_CACHE_POLICY_CHANGED')
         scope=self.cache_scope or SCOPE.get()
         if not isinstance(scope,str) or not 1<=len(scope)<=200:raise ValueError('STOCK_WORKSPACE_SCOPE_REQUIRED')
         return scope
@@ -186,26 +193,33 @@ class OfficialStockProvider:
         return scope,key,self._cache_path(scope,key)
 
     def _read_cache(self,scope,key,file):
-        actual=cache_io_path(file)
-        if not actual.exists():return None
-        if actual.stat().st_size>JSON_LIMIT+2048:raise StockProviderFailure('STOCK_CACHE_INVALID')
-        try:
-            cached=json.loads(actual.read_bytes())
-            bound=(type(cached['schema']) is int and cached['schema']==2
-                and cached['scope']==digest(scope) and cached['key']==key and cached['provider']==self.key
-                and cached['binding_sha256']==self.cache_binding_sha256 and cached['execution_mode']==self.cache_mode
-                and cached['configuration_sha256']==self.cache_configuration_sha256 and isinstance(cached['response'],dict)
-                and cached['sha256']==digest(cached['response']) and isinstance(cached['created_at'],(int,float))
-                and not isinstance(cached['created_at'],bool) and math.isfinite(cached['created_at']))
-        except (ValueError,KeyError,TypeError):raise StockProviderFailure('STOCK_CACHE_INVALID') from None
-        if not bound:raise StockProviderFailure('STOCK_CACHE_INVALID')
-        return cached['response'] if 0<=time.time()-cached['created_at']<CACHE_SECONDS else None
+        if Path(file).absolute()!=self._cache_path(scope,key).absolute():raise StockProviderFailure('STOCK_CACHE_PATH_INVALID')
+        try:return self._response_cache(scope).read(key)
+        except StockCacheError as error:raise StockProviderFailure(str(error),retryable=str(error)=='STOCK_CACHE_BUSY',retry_after_seconds=1 if str(error)=='STOCK_CACHE_BUSY' else None) from None
+
+    def _response_cache(self,scope):
+        return StockResponseCache(self.cache_root,scope_sha256=digest(scope),provider=self.key,binding_sha256=self.cache_binding_sha256,
+            execution_mode=self.cache_mode,configuration_sha256=self.cache_configuration_sha256,policy=self.cache_policy,clock=lambda:time.time())
+
+    async def cache_maintenance(self):
+        scope=self._require()
+        try:return await asyncio.to_thread(self._response_cache(scope).maintain)
+        except StockCacheError as error:raise StockProviderFailure(str(error)) from None
+
+    def _cache_write_skipped(self,code):
+        if code not in {'STOCK_CACHE_SCAN_LIMIT','STOCK_CACHE_BUSY','STOCK_CACHE_IO_FAILED','STOCK_CACHE_WRITE_UNAVAILABLE',
+            'STOCK_CACHE_GROWTH_BLOCKED','STOCK_CACHE_ENTRY_NOT_STORED'}:raise ValueError('STOCK_CACHE_DIAGNOSTIC_INVALID')
+        self._cache_write_skips=min(100000,self._cache_write_skips+1);self._cache_write_last_code=code
+
+    def cache_write_diagnostics(self):
+        """Process-local opaque counts; never infer provider health from cache IO."""
+        return {'schema_version':'stock-response-cache-write-diagnostic.v1','skipped_writes':self._cache_write_skips,
+            'last_code':self._cache_write_last_code,'cache_limits_bypassed':False,'provider_health_inferred':False}
 
     async def cached_metadata(self,provider_asset_id):
         path,params=self._metadata_request(provider_asset_id)
         scope,key,file=self._cache_request(path,params)
-        async with self._cache_lock:
-            body=self._read_cache(scope,key,file)
+        body=await asyncio.to_thread(self._read_cache,scope,key,file)
         return (digest(scope)+':'+key,body) if body is not None else None
 
     async def _json(self,path,params):
@@ -213,27 +227,31 @@ class OfficialStockProvider:
         operation=CURRENT_OPERATION.get()
         if operation is not None and memo_key in operation.cached_inputs:
             return operation.cached_inputs[memo_key]
-        async with self._cache_lock:
-            cached_body=self._read_cache(scope,key,file)
-            if cached_body is not None:return cached_body
-            raw,mime=await self._response('https://'+self.api_host+path,params,limit=JSON_LIMIT)
-            if mime!='application/json' or self._api_key.encode() in raw:raise StockProviderFailure('STOCK_RESPONSE_INVALID')
-            try:body=json.loads(raw)
-            except ValueError:raise StockProviderFailure('STOCK_RESPONSE_INVALID') from None
-            if not isinstance(body,dict):raise StockProviderFailure('STOCK_RESPONSE_INVALID')
-            cached={'schema':2,'scope':digest(scope),'key':key,'provider':self.key,
-                'binding_sha256':self.cache_binding_sha256,'execution_mode':self.cache_mode,
-                'configuration_sha256':self.cache_configuration_sha256,
-                'created_at':time.time(),'response':body,'sha256':digest(body)}
-            cache_io_path(file.parent).mkdir(parents=True,exist_ok=True)
-            if linked(file):raise StockProviderFailure('STOCK_CACHE_PATH_INVALID')
-            temporary=cache_io_path(file.with_name('.'+uuid.uuid4().hex+'.tmp'))
-            try:
-                with temporary.open('xb') as handle:
-                    handle.write(json.dumps(cached,ensure_ascii=False,separators=(',',':')).encode());handle.flush();os.fsync(handle.fileno())
-                os.replace(temporary,cache_io_path(file))
-            finally:temporary.unlink(missing_ok=True)
-            return body
+        cached_body=await asyncio.to_thread(self._read_cache,scope,key,file)
+        if cached_body is not None:return cached_body
+        # Neither the filesystem lock nor an asyncio cache lock spans wire/quota.
+        raw,mime=await self._response('https://'+self.api_host+path,params,limit=JSON_LIMIT)
+        if mime!='application/json' or self._api_key.encode() in raw:raise StockProviderFailure('STOCK_RESPONSE_INVALID')
+        try:body=json.loads(raw)
+        except ValueError:raise StockProviderFailure('STOCK_RESPONSE_INVALID') from None
+        if not isinstance(body,dict):raise StockProviderFailure('STOCK_RESPONSE_INVALID')
+        cached={'schema':2,'scope':digest(scope),'key':key,'provider':self.key,
+            'binding_sha256':self.cache_binding_sha256,'execution_mode':self.cache_mode,
+            'configuration_sha256':self.cache_configuration_sha256,
+            'created_at':time.time(),'response':body,'sha256':digest(body)}
+        try:
+            result=await asyncio.to_thread(self._response_cache(scope).write,key,cached)
+            if not result['stored']:self._cache_write_skipped(result['code'])
+        except StockCacheError as error:
+            if str(error) not in {'STOCK_CACHE_SCAN_LIMIT','STOCK_CACHE_BUSY','STOCK_CACHE_IO_FAILED'}:
+                raise StockProviderFailure(str(error)) from None
+            self._cache_write_skipped(str(error))
+        except OSError:
+            # Optional local cache IO cannot discard a validated provider 200.
+            # Read corruption/path/binding checks above retain their fail-closed
+            # boundary; no quota state is cleared and no limit is bypassed.
+            self._cache_write_skipped('STOCK_CACHE_WRITE_UNAVAILABLE')
+        return body
 
     @staticmethod
     def _orientation(value):
