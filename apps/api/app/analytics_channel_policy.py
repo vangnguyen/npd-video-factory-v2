@@ -1,5 +1,5 @@
 """Pure channel-relative winner policy; no database, transport or worker imports."""
-import hashlib,json,math
+import hashlib,json,math,re
 from datetime import datetime,timezone
 from statistics import median
 from typing import Annotated,Literal
@@ -15,6 +15,26 @@ def _utc_input(value):
 
 VERSION = 'winner-channel-assessment-v1'
 META_COUNTER_VERSION = 'winner-meta-counter-assessment-v1'
+
+def meta_counter_scope(platform,evidence):
+    """Closed comparable Meta definition identity; no metrics or time inference."""
+    scopes={'instagram_reels':'lifetime_media_insights','facebook':'cumulative_video_node_counters'}
+    keys=('metric_mapping','normalized_units','returned_metrics','unavailable_metrics','provider_metric_semantics_real_verified')
+    if platform not in scopes or not isinstance(evidence,dict):return None
+    if (evidence.get('metric_scope')!=scopes[platform] or not isinstance(evidence.get('api_version'),str)
+        or not re.fullmatch(r'v[1-9]\d{0,2}\.0',evidence['api_version']) or any(k not in evidence for k in keys)
+        or type(evidence['provider_metric_semantics_real_verified']) is not bool):return None
+    for key in ('metric_mapping','normalized_units'):
+        value=evidence[key]
+        if not isinstance(value,dict) or any(type(k) is not str or type(v) is not str for k,v in value.items()):return None
+    for key in ('returned_metrics','unavailable_metrics'):
+        value=evidence[key]
+        if not isinstance(value,list) or any(type(v) is not str for v in value) or len(value)!=len(set(value)):return None
+    definition={k:evidence[k] for k in keys}
+    encoded=json.dumps(definition,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()
+    return {'counter_comparison_schema':'native-meta-counter-comparison-scope-v1','metric_scope':scopes[platform],
+        'api_version':evidence['api_version'],'metric_definition_sha256':hashlib.sha256(encoded).hexdigest(),
+        'metric_semantics_real_verified':evidence['provider_metric_semantics_real_verified']}
 WEIGHTS = dict(view_velocity=.18, retention=.16, completion=.16, engagement=.13, shares=.08,
     saves=.07, ctr=.08, follower_conversion=.06, revenue_efficiency=.05, production_cost_efficiency=.03)
 
@@ -124,7 +144,7 @@ def assess_channel(metrics, *, duration, production_cost, context, policy):
 def assess_meta_counter_channel(metrics, *, duration, production_cost, context, policy):
     """Descriptive interaction comparisons, separated from retention-based quality.
 
-    The Native caller must freeze Meta API/metric definitions and matching distinct
+    Each caller must freeze Meta API/metric definitions and matching distinct
     post scope. Missing watch time, publication age and counter velocity stay null.
     """
     draft=assess_channel(metrics,duration=duration,production_cost=production_cost,context=context,policy=policy)

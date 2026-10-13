@@ -10,7 +10,7 @@ from .publishing_credentials import target_digest
 from .publishing_db import PublicationORM
 from .publishing_models import PublishingTargetBinding
 # Preserve existing public imports and persisted algorithm/policy versions.
-from .analytics_channel_policy import (VERSION,WEIGHTS,WinnerChannelPolicy,rate,values,bucket,counter_growth,assess_channel)
+from .analytics_channel_policy import (VERSION,WEIGHTS,WinnerChannelPolicy,rate,values,bucket,counter_growth,assess_channel,meta_counter_scope)
 
 async def channel_context(factory, *, sync, publication, collection, features, policy):
     """Bound candidate rows, preserve transport/date/account scope, dedupe remote posts."""
@@ -24,8 +24,28 @@ async def channel_context(factory, *, sync, publication, collection, features, p
     context['scope_verified'] = True
     context['target_binding_sha256'] = scope
     at = _utc_input(collection.collected_at); query = collection.evidence.get('query')
+    meta=sync.platform in ('instagram_reels','facebook')
+    identity=meta_counter_scope(sync.platform,collection.evidence) if meta else None
+    if meta:
+        if identity is None or query is not None:
+            context['scope_verified']=False;return context
+        context['meta_counter_comparison']=identity
     async with factory() as session:
         current_render = await session.get(ProductionRenderJobORM, publication.final_render_id)
+        if meta and (current_render is None or not features.niche):
+            context['scope_verified']=False;return context
+        if meta:
+            try:
+                frozen=read_render_features(current_render.manifest_json or {},workspace=sync.workspace_id,
+                    project=sync.project_id,timeline_version=current_render.timeline_version_id)
+            except ValueError:
+                context['scope_verified']=False;return context
+            if (frozen is None or frozen.niche!=features.niche or current_render.project_id!=sync.project_id
+                or current_render.workspace_id!=sync.workspace_id
+                or features.evidence.get('project_metadata_source')!='published_render_request_context'
+                or features.evidence.get('feature_context_sha256')!=(current_render.manifest_json or {}).get('feature_context_sha256')
+                or features.evidence.get('timeline_version_id')!=current_render.timeline_version_id):
+                context['scope_verified']=False;return context
         rank = select(AnalyticsMetricSnapshotORM.snapshot_id, func.row_number().over(
             partition_by=AnalyticsMetricSnapshotORM.publication_id,
             order_by=(AnalyticsMetricSnapshotORM.collected_at.desc(), AnalyticsMetricSnapshotORM.created_at.desc(),
@@ -58,7 +78,7 @@ async def channel_context(factory, *, sync, publication, collection, features, p
             if (parent.workspace_id != sync.workspace_id or parent.project_id != row.project_id or parent.platform != sync.platform
                 or parent.status != 'published' or parent.mode != 'live' or parent.dry_run
                 or evidence.get('account_match') is not True or evidence.get('target_binding_sha256') != scope
-                or evidence.get('query') != query): continue
+                or evidence.get('query') != query or meta and meta_counter_scope(row.platform,evidence)!=identity): continue
             try: peer_target = PublishingTargetBinding.model_validate((parent.provider_validation_json or {}).get('target_binding'))
             except ValueError: continue
             if target_digest(peer_target) != scope: continue
@@ -68,12 +88,12 @@ async def channel_context(factory, *, sync, publication, collection, features, p
             item = {'snapshot_id': row.snapshot_id, 'publication_id': row.publication_id, 'metrics': parsed,
                 'evidence': evidence, 'collected_at': _aware(row.collected_at)}
             if row.publication_id == sync.publication_id and remote == current_post:
-                if context['counter_growth'] is None: context['counter_growth'] = counter_growth(collection, item, policy)
+                if not meta and context['counter_growth'] is None: context['counter_growth'] = counter_growth(collection, item, policy)
                 continue
             if remote == current_post: continue
             if remote in selected:
                 saved = selected[remote]
-                if saved['publication_id'] == row.publication_id and saved.get('counter_growth') is None:
+                if not meta and saved['publication_id'] == row.publication_id and saved.get('counter_growth') is None:
                     growth = counter_growth(SimpleNamespace(metrics=saved['metrics'], evidence=saved['evidence'],
                         collected_at=saved['collected_at']), item, policy)
                     if growth:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from datetime import timedelta
 from typing import Protocol
 
@@ -297,11 +299,17 @@ class AnalyticsSyncProcessor:
             )
             if collection.source_kind == 'official_api':
                 from .analytics_cohort import channel_context, assess_channel
+                from .analytics_channel_policy import assess_meta_counter_channel
                 context = await channel_context(self.repository.session_factory, sync=sync, publication=publication,
                     collection=collection, features=features, policy=self.winner_policy)
-                assessment = assess_channel(collection.metrics, duration=features.duration_seconds,
+                evaluate=assess_meta_counter_channel if sync.platform in ('instagram_reels','facebook') else assess_channel
+                assessment = evaluate(collection.metrics, duration=features.duration_seconds,
                     production_cost=float(cost.actual_cost_total) if cost.actual_cost_complete and cost.actual_cost_total is not None else None,
                     context=context, policy=self.winner_policy)
+                if (context.get('meta_counter_comparison') and not collection.mock
+                    and not context['meta_counter_comparison']['metric_semantics_real_verified']):
+                    assessment=replace(assessment,state='insufficient_data',score=None,evidence=[*assessment.evidence,
+                        'Meta metric semantics are not real-provider verified; genuine observations remain insufficient.'])
             assessment.evidence.append(
                 "Production-cost input covers recorded operations only: "
                 f"records={cost.records}; unknown_actual_cost_operations="

@@ -6,6 +6,7 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 
 from .analytics_cohort import VERSION as WINNER_VERSION, bucket
+from .analytics_channel_policy import META_COUNTER_VERSION,meta_counter_scope
 from .analytics_db import AnalyticsMetricSnapshotORM, AnalyticsFeatureSnapshotORM, WinnerAssessmentORM
 from .analytics_repository import _aware
 from .db import utc_now
@@ -47,7 +48,7 @@ def assessment_basis(assessment):
 
 
 def frozen_observation(row, publication, feature, assessment, render):
-    if (feature is None or assessment is None or render is None or assessment.algorithm_version != WINNER_VERSION
+    if (feature is None or assessment is None or render is None or assessment.algorithm_version not in (WINNER_VERSION,META_COUNTER_VERSION)
         or assessment.score is None or assessment.state == 'insufficient_data'
         or feature.project_id != row.project_id or feature.publication_id != row.publication_id
         or assessment.project_id != row.project_id or assessment.publication_id != row.publication_id
@@ -59,7 +60,12 @@ def frozen_observation(row, publication, feature, assessment, render):
     except ValueError: return None
     if context is None or context.niche != feature.niche: return None
     factors = assessment.factors_json or []
-    if not any(item.get('factor') in ('retention', 'completion') and item.get('score') is not None for item in factors): return None
+    if assessment.algorithm_version==META_COUNTER_VERSION:
+        identity=meta_counter_scope(row.platform,row.evidence_json or {})
+        available={item.get('factor') for item in factors if item.get('score') is not None and item.get('weight',0)>0}
+        if (identity is None or not row.mock and not identity['metric_semantics_real_verified']
+            or 'engagement' not in available or not available & {'shares','saves'}):return None
+    elif not any(item.get('factor') in ('retention', 'completion') and item.get('score') is not None for item in factors): return None
     policies = {item.get('evidence', {}).get('policy_sha256') for item in factors}
     if len(policies) != 1 or not next(iter(policies)): return None
     remote = (publication.receipt_json or {}).get('remote_post_id')
@@ -142,6 +148,11 @@ class ChannelLearningService:
                 'target_binding_sha256': target, 'query': evidence.get('query'),
                 'niche': anchor_context.niche, 'render_profile': anchor_render.profile,
                 'actual_publishing_time_available': False, 'winner_algorithm_version': WINNER_VERSION}
+            anchor_assessment=await session.scalar(select(WinnerAssessmentORM).where(WinnerAssessmentORM.snapshot_id==anchor.snapshot_id))
+            if anchor_assessment and anchor_assessment.algorithm_version==META_COUNTER_VERSION:
+                identity=meta_counter_scope(anchor.platform,evidence)
+                if identity is None or evidence.get('query') is not None:raise LearningError('LEARNING_CHANNEL_SCOPE_UNVERIFIED')
+                scope.update(identity);scope['winner_algorithm_version']=META_COUNTER_VERSION
             rank = select(AnalyticsMetricSnapshotORM.snapshot_id, func.row_number().over(
                 partition_by=AnalyticsMetricSnapshotORM.publication_id,
                 order_by=(AnalyticsMetricSnapshotORM.collected_at.desc(), AnalyticsMetricSnapshotORM.created_at.desc(), AnalyticsMetricSnapshotORM.snapshot_id.desc())).label('position')).where(
@@ -159,7 +170,6 @@ class ChannelLearningService:
                 .outerjoin(WinnerAssessmentORM, WinnerAssessmentORM.snapshot_id == AnalyticsMetricSnapshotORM.snapshot_id)
                 .outerjoin(ProductionRenderJobORM, ProductionRenderJobORM.render_id == PublicationORM.final_render_id)
                 .where(rank.c.position == 1).order_by(AnalyticsMetricSnapshotORM.collected_at.desc(), AnalyticsMetricSnapshotORM.snapshot_id.desc()).limit(501))).all()
-            anchor_assessment = await session.scalar(select(WinnerAssessmentORM).where(WinnerAssessmentORM.snapshot_id == anchor.snapshot_id))
             anchor_policies = {item.get('evidence', {}).get('policy_sha256') for item in (anchor_assessment.factors_json if anchor_assessment else [])}
             winner_policy = next(iter(anchor_policies)) if len(anchor_policies) == 1 and next(iter(anchor_policies)) else None
             basis = assessment_basis(anchor_assessment)
@@ -172,6 +182,8 @@ class ChannelLearningService:
                     or parent.platform != anchor.platform or parent.status != 'published' or parent.mode != 'live' or parent.dry_run
                     or target_of(parent) != target or evidence.get('target_binding_sha256') != target
                     or evidence.get('account_match') is not True or evidence.get('query') != scope['query']): reason = 'incompatible_scope'
+                if not reason and (assessment is None or assessment.algorithm_version!=scope['winner_algorithm_version']):reason='incompatible_scope'
+                if not reason and scope['winner_algorithm_version']==META_COUNTER_VERSION and meta_counter_scope(row.platform,evidence)!=identity:reason='incompatible_scope'
                 item = None if reason else frozen_observation(row, parent, feature, assessment, render)
                 if not reason and item is None: reason = 'missing_or_invalid_frozen_assessment'
                 if item and (feature.niche != scope['niche'] or render.profile != scope['render_profile']): reason = 'incompatible_creative_scope'
@@ -203,6 +215,11 @@ class ChannelLearningService:
                     'UTC four-hour posting windows describe recorded history; posted time is not verified first public exposure or an optimal audience time.',
                     'Mock transport observations are synthetic evidence and are never combined with real provider observations.',
                     'Feature labels are frozen project annotations or edit facts, not independently verified semantic classifications.'])
+            if scope['winner_algorithm_version']==META_COUNTER_VERSION:
+                value.limitations.extend([
+                    'Meta counter associations require compatible engagement and sharing/saving evidence; they do not establish retention or completion.',
+                    'Meta API version, metric definitions, units and availability are frozen; incompatible definitions are excluded.',
+                    'Unverified genuine Meta metric semantics cannot qualify learning observations.'])
             value.content_sha256 = digest(snapshot_content(value.model_dump(mode='json')))
             session.add(ChannelLearningSnapshotORM(learning_snapshot_id=value.learning_snapshot_id, workspace_id=value.workspace_id,
                 project_id=project, publication_id=value.publication_id, anchor_snapshot_id=value.anchor_snapshot_id,
