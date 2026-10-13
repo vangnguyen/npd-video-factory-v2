@@ -12,6 +12,8 @@ const copy = value => structuredClone(value);
 const stable = value => JSON.stringify(value, (_key, v) => v && typeof v === 'object' && !Array.isArray(v)
   ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
 const same = (a, b) => stable(a) === stable(b);
+// Labels use milliseconds; inputs, drafts and payloads keep exact source numbers.
+const displaySeconds = value => Number.isFinite(value) ? String(Number(value.toFixed(3))) : '—';
 const demand = (condition, message) => {if (!condition) throw Error(message);};
 const duration = asset => asset?.provenance?.media_metadata?.duration_seconds;
 
@@ -487,7 +489,7 @@ export function initializeUploadedAudioReview({root, api, mediaFetch, getState, 
         : transcript.provenance.human_edit ? 'Bản người dùng sửa; thời gian có thể do người sửa cung cấp. ' : 'Lời dịch vụ trả về; cần nghe và kiểm tra. ')
       + `${transcript.segments.length} đoạn · ${transcript.segments.reduce((sum, s) => sum + s.words.length, 0)} từ có thời gian.` : 'Chưa có lời nhận diện. Job bị chặn không tạo nội dung giả.';
     for (const segment of draft?.segments ?? []) {
-      const area = create('fieldset'); area.append(create('legend', null, `Đoạn ${segment.ordinal + 1} · ${segment.start_seconds}–${segment.end_seconds} giây`));
+      const area = create('fieldset'); area.append(create('legend', null, `Đoạn ${segment.ordinal + 1} · ${displaySeconds(segment.start_seconds)}–${displaySeconds(segment.end_seconds)} giây`));
       const text = create('textarea'); text.rows = 2; text.maxLength = 4000; text.value = segment.text; text.setAttribute('data-audio-segment-text', segment.segment_id);
       text.addEventListener('input', () => {segment.text = text.value; markDirty();}); area.append(label('Lời của đoạn', text));
       const wordArea = create('details'); wordArea.append(create('summary', null, 'Sửa từng từ và thời gian theo audio gốc'));

@@ -66,6 +66,42 @@ function harness({transport, fetcher, values = [captured.original], storageMap =
   return {...data, data, controller, root, calls, media, messages, created, revoked, timeouts, storageMap, all: () => all(root), get, click, change, check, textInput, textDraft};
 }
 
+test('compact segment labels preserve exact timing inputs, raw recognized text and submitted word payload', async () => {
+  // Explicit UI-only high-precision fixture based on captured MockASR structure.
+  // No assertion of a real provider result or the fixture WAV's physical duration.
+  const row = clone(captured.original), high = 1.359999999999999;
+  for (const transcript of [row.original, row.current, ...row.versions]) {
+    const segment = transcript.segments[0];segment.text = 'mộ lạc';segment.start_seconds = high;segment.end_seconds = 9.74;
+    Object.assign(segment.words[0], {text: 'mộ', start_seconds: high, end_seconds: 4.200000000000001});
+    Object.assign(segment.words[1], {text: 'lạc', start_seconds: 4.25, end_seconds: 9.74});
+  }
+  const untouched = clone(row);
+  const h = harness({values: [row], transport: (_path, body) => {
+    if (body) throw Error('EXPLICIT FIXTURE LOST REPLY; payload inspected without a real write');
+  }});
+  h.state.assets[0].provenance.media_metadata.duration_seconds = 10.5;
+  await h.click('read');
+  const area = h.all().find(n => n.tagName === 'fieldset');
+  const children = n => [n, ...n.children.flatMap(children)];
+  const nodes = children(area), numbers = nodes.filter(n => n.tagName === 'input' && n.type === 'number');
+  assert.equal(nodes.find(n => n.tagName === 'legend').textContent, 'Đoạn 1 · 1.36–9.74 giây');
+  assert.equal(h.textInput().value, 'mộ lạc');
+  assert.deepEqual(numbers.map(n => n.value), [String(high), '9.74', String(high), '4.200000000000001', '4.25', '9.74']);
+  assert.equal(h.calls.some(c => c.method === 'POST'), false);
+  // A deliberate human word edit makes a save meaningful. Formatting must not
+  // rewrite either timing or the raw segment recognition to perform that edit.
+  const word = nodes.find(n => n.tagName === 'input' && n.type === 'text');word.value = 'mộ!';word.listeners.input();
+  h.check('word-ack');await h.click('save-words');
+  const submitted = h.calls.find(c => c.method === 'POST').body;
+  assert.equal(submitted.edit.segments[0].start_seconds, high);
+  assert.equal(submitted.edit.segments[0].end_seconds, 9.74);
+  assert.equal(submitted.edit.segments[0].words[0].start_seconds, high);
+  assert.equal(submitted.edit.segments[0].words[0].end_seconds, 4.200000000000001);
+  assert.equal(submitted.edit.segments[0].words[1].end_seconds, 9.74);
+  assert.equal(submitted.edit.segments[0].words[0].text, 'mộ!');
+  assert.equal(h.textInput().value, 'mộ lạc');assert.deepEqual(row, untouched);
+});
+
 test('captured SQL HTTP history uses actual source checksum and immutable original across edits and restore', async () => {
   const {state, original, text, words, restored} = fixture();
   assert.match(captured.fixture_notice, /MockASR.*No real ASR/);
