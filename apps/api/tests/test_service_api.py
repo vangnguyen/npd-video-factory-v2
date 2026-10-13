@@ -49,7 +49,9 @@ async def test_project_scope_idempotence_conflict_and_current_grant_revocation(a
     replay=await signed(api.client,'POST','/v1/projects',payload)
     assert replay.status_code==201 and replay.json()==first.json() and replay.headers['X-Idempotent-Replay']=='true'
     pid=first.json()['project_id'];read=await signed(api.client,'GET','/v1/projects/'+pid)
-    assert read.status_code==200 and read.json()==first.json() and read.headers['Cache-Control']=='no-store'
+    assert read.status_code==200 and read.headers['Cache-Control']=='no-store'
+    assert {k:v for k,v in read.json().items() if k not in ('created_at','updated_at')}=={
+        k:v for k,v in first.json().items() if k not in ('created_at','updated_at')}
     conflict=await signed(api.client,'POST','/v1/projects',{**payload,'name':'different'})
     assert conflict.status_code==409 and conflict.json()['detail']['error']['code']=='SERVICE_IDEMPOTENCY_CONFLICT'
     foreign=await api.stack.platform.create_workspace(WorkspaceCreate(slug='foreign-fixture',name='Foreign fixture',owner_ref='foreign'))
@@ -99,15 +101,19 @@ def test_scoped_service_grants_load_from_existing_key_custody_without_exposing_k
 
 @pytest.mark.asyncio
 async def test_uncertain_completion_never_redispatches_a_committed_canonical_mutation(api,monkeypatch):
+    created=await signed(api.client,'POST','/v1/projects',create_payload(api));assert created.status_code==201
+    pid=created.json()['project_id'];path='/v1/projects/'+pid+'/versions'
     async def fail(*_):raise RuntimeError('explicit receipt completion interruption')
     monkeypatch.setattr(api.app.state.service_api_repository,'complete',fail)
-    payload=create_payload(api);first=await signed(api.client,'POST','/v1/projects',payload)
+    payload={'label':'explicit-uncaptured-version','snapshot':{'fixture':True}}
+    first=await signed(api.client,'POST',path,payload,key='service-api-uncertain-version-fixture-key')
     assert first.status_code==409 and first.json()['detail']['error']['code']=='SERVICE_OPERATION_UNCERTAIN'
-    again=await signed(api.client,'POST','/v1/projects',payload);assert again.status_code==409
+    again=await signed(api.client,'POST',path,payload,key='service-api-uncertain-version-fixture-key');assert again.status_code==409
     async with api.stack.platform.session_factory() as session:
         assert await session.scalar(select(func.count()).select_from(VideoProjectORM))==1
-        operation=await session.scalar(select(ServiceOperationORM))
+        operation=await session.scalar(select(ServiceOperationORM).where(ServiceOperationORM.action=='project.write'))
         assert operation.status=='uncertain' and operation.response_json is None
+    assert len(await api.stack.platform.list_versions(pid))==1
     status=await signed(api.client,'GET','/v1/operations/'+operation.operation_id)
     assert status.status_code==200 and status.json()['automatic_redispatch'] is False
 

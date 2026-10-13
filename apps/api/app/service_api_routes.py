@@ -10,7 +10,9 @@ from fastapi.responses import JSONResponse
 from pydantic import Field
 from .service_api_auth import ServiceRoute,verify,workspace,project,human,error
 from .service_api_contract import VERSION,CAPABILITIES
-from .service_api_repository import OperationConflict,digest
+from .service_api_repository import OperationConflict,digest,ServiceOperationORM
+from .service_outcome_context import bind
+from .service_outcome_events import ServiceOutcomeEventORM,validate as validate_outcome_event
 from .platform_models import ProjectCreate,ProjectVersionCreate
 from .auto_edit_models import UploadInitRequest,UploadCompleteRequest,AutoEditAnalysisRequest
 from .timeline_models import TimelineCreateRequest,TimelineMutationRequest,PreviewCreateRequest
@@ -53,8 +55,16 @@ async def command(request,action,ws,pid,payload,call,*,actor=None,status=200):
             detail={'error':{'code':'SERVICE_OPERATION_UNCERTAIN','message':'Inspect the persisted operation before any new dispatch.'}})
         if row.response_sha256!=digest(row.response_json):raise error(409,'SERVICE_OPERATION_EVIDENCE_INVALID')
         return JSONResponse(row.response_json,status_code=row.response_status,headers=headers)
+    kinds={'/v1/projects':'project.create'}
+    kind=kinds.get(request.url.path)
+    if request.method=='PUT' and request.url.path.endswith('/timeline'):kind='timeline.mutate'
+    if request.url.path.endswith(('/review-render','/render')):kind='render.queue'
+    if request.url.path.endswith('/publish'):kind='publication.finalize'
+    async def writer(session,value):
+        await repository.canonical_outcome(session,row.operation_id,status,media_response(value),kind)
     try:
-        value=await call();content=media_response(value);result_status=status
+        with bind(kind,writer):value=await call()
+        content=media_response(value);result_status=status
     except HTTPException as exc:
         content={'detail':jsonable_encoder(exc.detail)};result_status=exc.status_code
     except KeyError:
@@ -81,6 +91,7 @@ async def contract(request:Request):
         'service_id':actor.service_id,'workspace_grants':dict(actor.workspace_grants),'capabilities':sorted(CAPABILITIES),
         'operations':[{'method':method,'path':route.path} for route in router.routes for method in sorted(route.methods)],
         'human_approval_required':True,'publication_requires_human_owner':True,'shared_database':False,'shared_redis':False,
+        'outcome_event_contract_versions':['agent-hub-service-outcomes.v1'],'outcome_event_delivery_enabled':False,
         'agent_hub_runtime_dependency':False,'production_deployed':False,'canonical_services_reused':True}
 
 @router.post('/projects',status_code=201)
@@ -299,3 +310,23 @@ async def operation(operation_id:str,request:Request):
         'project_id':row.project_id,'actor_ref':row.actor_ref,'status':row.status,'response_status':row.response_status,
         'response':row.response_json,'response_sha256':row.response_sha256,'automatic_redispatch':False,
         'created_at':row.created_at,'updated_at':row.updated_at}
+
+@router.get('/operation-events')
+async def operation_events(request:Request,workspace_id:str,after:int=0,limit:int=25):
+    from sqlalchemy import select
+    actor=await verify(request)
+    if after<0 or not 1<=limit<=100:raise error(422,'SERVICE_EVENT_PAGE_INVALID')
+    if workspace_id not in actor.workspace_grants:raise error(404,'NOT_FOUND')
+    async with request.app.state.service_api_repository.factory() as session:
+        events=(await session.scalars(select(ServiceOutcomeEventORM).where(ServiceOutcomeEventORM.workspace_id==workspace_id,
+            ServiceOutcomeEventORM.service_id==actor.service_id,ServiceOutcomeEventORM.sequence>after)
+            .order_by(ServiceOutcomeEventORM.sequence).limit(limit+1))).all()
+        result=[]
+        for item in events[:limit]:
+            operation=await session.get(ServiceOperationORM,item.operation_id)
+            if operation.action not in actor.workspace_grants[workspace_id]:raise error(403,'SERVICE_CAPABILITY_REQUIRED')
+            if not validate_outcome_event(item,operation):
+                raise error(409,'SERVICE_EVENT_EVIDENCE_INVALID')
+            result.append({'sequence':item.sequence,'envelope':item.envelope_json,'envelope_sha256':item.envelope_sha256,'delivery_enabled':False})
+    return {'contract_version':'agent-hub-service-outcomes.v1','items':result,'next_after':events[limit-1].sequence if len(events)>limit else None,
+        'delivery_enabled':False,'real_Agent_Hub':False}

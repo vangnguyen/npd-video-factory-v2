@@ -179,6 +179,10 @@ class PublishingRepository:
                         created_at=row.updated_at,
                     )
                 )
+                if row.status not in ('blocked','failed','not_configured'):
+                    await session.flush()
+                    from .service_outcome_context import capture
+                    await capture('publication.finalize',session,_publication_read(row))
             return _publication_read(row)
 
     async def get(self, project_id: str, publication_id: str) -> PublicationRead | None:

@@ -138,6 +138,9 @@ class TimelineRepository:
                 timeline = await self.commit_mutation_in_session(session=session,
                     project_id=project_id, expected_version=expected_version, snapshot=snapshot,
                     mutation=mutation, actor_ref=actor_ref)
+                await session.flush()
+                from .service_outcome_context import capture
+                await capture('timeline.mutate',session,await self._timeline_read(session,timeline))
             return await self._timeline_read(session, timeline)
 
     async def commit_mutation_in_session(

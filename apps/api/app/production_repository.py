@@ -315,6 +315,8 @@ class ProductionRepository:
                     ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"]),
                 ).order_by(ProductionRenderJobORM.version.desc()).limit(1))
                 if existing:
+                    from .service_outcome_context import capture
+                    await capture('render.queue',session,_render_read(existing))
                     return _render_read(existing)
                 if render_kind == "final":
                     approval = await session.get(ProductionApprovalORM, approval_id)
@@ -382,6 +384,9 @@ class ProductionRepository:
                     actor_ref=actor_ref,
                     payload={"version": next_version, "profile": profile, "approval_id": approval_id},
                 )
+                await session.flush()
+                from .service_outcome_context import capture
+                await capture('render.queue',session,_render_read(render))
             return _render_read(render)
 
     async def get_render(self, render_id: str) -> RenderJobRead | None:

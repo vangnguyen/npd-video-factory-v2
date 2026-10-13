@@ -26,3 +26,28 @@ def test_receipt_migration_preserves_existing_rows_and_blocks_destructive_downgr
         with Operations.context(MigrationContext.configure(con)):
             with pytest.raises(RuntimeError,match='explicit Owner approval'):migration.downgrade()
     engine.dispose()
+
+def test_outcome_migration_preserves_receipts_and_all_prior_domain_rows(tmp_path):
+    engine=sa.create_engine('sqlite:///'+(tmp_path/'owned-outcome-migration.db').as_posix())
+    old=[t for t in Base.metadata.sorted_tables if t.name!='service_outcome_events'];Base.metadata.create_all(engine,tables=old)
+    spec=importlib.util.spec_from_file_location('owned_service_0026',Path(__file__).parents[1]/'migrations/versions/0026_north_star_service_outcomes.py')
+    migration=importlib.util.module_from_spec(spec);spec.loader.exec_module(migration)
+    with engine.begin() as con:
+        con.exec_driver_sql('PRAGMA foreign_keys=ON')
+        from datetime import datetime,timezone
+        now=datetime.now(timezone.utc)
+        con.execute(Base.metadata.tables['workspaces'].insert().values(workspace_id='wsp_outcome_migration_fixture',slug='outcome-migration',
+            name='EXPLICIT OWNED FIXTURE',owner_ref='fixture'))
+        con.execute(Base.metadata.tables['service_api_operations'].insert().values(operation_id='sop_'+'0'*32,
+            workspace_id='wsp_outcome_migration_fixture',service_id='migration-fixture',action='project.create',actor_ref='svc:migration-fixture',
+            key_sha256='a'*64,request_sha256='b'*64,status='uncertain',created_at=now,updated_at=now))
+        rows={t.name:con.exec_driver_sql('SELECT * FROM "'+t.name+'"').fetchall() for t in old}
+        schema={t.name:con.exec_driver_sql('PRAGMA table_info("'+t.name+'")').fetchall() for t in old}
+        with Operations.context(MigrationContext.configure(con)):migration.upgrade()
+        assert all(con.exec_driver_sql('SELECT * FROM "'+n+'"').fetchall()==v for n,v in rows.items())
+        assert all(con.exec_driver_sql('PRAGMA table_info("'+n+'")').fetchall()==v for n,v in schema.items())
+        assert {c['name'] for c in sa.inspect(con).get_columns('service_outcome_events')}==set(Base.metadata.tables['service_outcome_events'].columns.keys())
+        assert not con.exec_driver_sql('PRAGMA foreign_key_check').fetchall()
+        with Operations.context(MigrationContext.configure(con)):
+            with pytest.raises(RuntimeError,match='explicit Owner approval'):migration.downgrade()
+    engine.dispose()

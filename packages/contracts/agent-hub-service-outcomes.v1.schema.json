@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.ngocphuongdong.com/video-factory/agent-hub-service-outcomes.v1.schema.json",
+  "title": "Canonical service transaction outcome v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "event_id", "event_type", "occurred_at", "payload"],
+  "properties": {
+    "contract_version": {"const": "agent-hub-service-outcomes.v1"},
+    "event_id": {"type": "string", "pattern": "^sevt_[a-f0-9]{48}$"},
+    "event_type": {"const": "service.operation.completed"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "payload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["operation_id", "workspace_id", "service_id", "action", "project_id", "source_kind", "canonical_reference", "response_sha256", "response_status", "actor_ref", "recommendation_only", "automatic_execution", "publishing_enabled", "real_provider_acceptance"],
+      "properties": {
+        "operation_id": {"type": "string", "pattern": "^sop_[a-f0-9]{32}$"},
+        "workspace_id": {"type": "string", "pattern": "^wsp_[A-Za-z0-9_-]{4,60}$"},
+        "service_id": {"type": "string"}, "action": {"type": "string"},
+        "project_id": {"type": ["string", "null"]},
+        "source_kind": {"enum": ["project.create", "timeline.mutate", "render.queue", "publication.finalize"]},
+        "canonical_reference": {"type": "object", "additionalProperties": false,
+          "properties": {
+            "project_id": {"type": "string"}, "timeline_id": {"type": "string"},
+            "current_version_id": {"type": ["string", "null"]}, "current_version": {"type": "integer"},
+            "render_id": {"type": "string"}, "publication_id": {"type": "string"},
+            "final_render_id": {"type": "string"}, "output_asset_id": {"type": ["string", "null"]},
+            "version": {"type": "integer"}, "status": {"type": "string"}, "mode": {"type": "string"},
+            "mock": {"type": "boolean"}, "external_action": {"type": "boolean"}
+          }
+        },
+        "response_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "response_status": {"type": "integer", "minimum": 200, "maximum": 299},
+        "actor_ref": {"type": "string"}, "recommendation_only": {"const": true},
+        "automatic_execution": {"const": false}, "publishing_enabled": {"const": false},
+        "real_provider_acceptance": {"const": false}
+      }
+    }
+  }
+}

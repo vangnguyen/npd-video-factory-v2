@@ -234,10 +234,15 @@ class PlatformRepository:
             )
             session.add(row)
             try:
+                await session.flush()
+                from .service_outcome_context import capture
+                result=_project_read(row)
+                captured=await capture('project.create',session,result)
                 await session.commit()
             except IntegrityError as exc:
                 await session.rollback()
                 raise ValueError("project slug already exists in workspace") from exc
+            if captured:return result
             await session.refresh(row)
             return _project_read(row)
 
