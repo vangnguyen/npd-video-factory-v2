@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 import math
 from typing import Any, Literal
 
@@ -350,6 +350,14 @@ class TimelineRead(StrictModel):
     publish_requested: Literal[False] = False
     created_at: datetime
     updated_at: datetime
+
+    @field_validator("created_at", "updated_at")
+    @classmethod
+    def canonical_utc_clock(cls, value: datetime) -> datetime:
+        # Repository clocks come from utc_now. SQLite returns those stored UTC
+        # values without tzinfo; emit the same DTO after a commit and a read.
+        return (value.replace(tzinfo=timezone.utc) if value.tzinfo is None
+                else value.astimezone(timezone.utc))
 
 
 class PreviewCreateRequest(StrictModel):

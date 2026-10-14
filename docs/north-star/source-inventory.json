@@ -1,6 +1,6 @@
 {
-  "head": "4196b31615dd584bd3f55ac87748978ae8a24528",
-  "audited_at": "2026-10-14T05:03:55.269643+00:00",
+  "head": "e70941e30e7135bab08153980c1e4c60cd43a5f0",
+  "audited_at": "2026-10-14T05:15:27.357060+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -191,7 +191,7 @@
     "apps/api/app/timeline_audio_processing_api.py": "6f6b61cb0e11b804a9099314bc03b6aa5f62e5679a369a4c2cd802eca7aac8f4",
     "apps/api/app/timeline_audio_processing_command.py": "67537f3318dc321a0e112e06180e715d6beb56410e10e252a8022a7b221de4f0",
     "apps/api/app/timeline_logic.py": "e8373cc93a0532796e2caa854b7bd0161596a195a3968ec3696e12177a7fb6dc",
-    "apps/api/app/timeline_models.py": "38241a4502e2a7494974a611f89e7d508484d5a1ff79391bd048d33262851a27",
+    "apps/api/app/timeline_models.py": "ba5e776d640539667ec0d09bdd23cd314c1a73fecb36bdd836f31e027f52e786",
     "apps/api/app/timeline_proxy.py": "f1300418f3ac57163463c807cd5bfd94453cd4a94bec79db5fe25f40b3abb7cd",
     "apps/api/app/timeline_reframe.py": "4aae70d8f8c47aa275748ac9a4a488768a839c0b216680be0aef7c2742351bae",
     "apps/api/app/timeline_repository.py": "d8a14448370f9703f3d7ceb4e65e7ef2c3f0182bf63c602bd4cbc00fc0beef98",
@@ -331,7 +331,7 @@
     "apps/api/tests/test_silence_word_safety.py": "bb8cb8358053cb022db3ac0e2379a80ed216a40bb1d3eb28d3e40939a1086122",
     "apps/api/tests/test_source_asset_delivery.py": "e0f4620547966b941e4834cefb7173f5e660dc2ae6e2e7bffd5127fc58ebc94d",
     "apps/api/tests/test_source_custody_snapshot.py": "0fa918821fb383ac9b57a231f353ddfdf3dacc85d2be6f60fae3f18d7f1b316c",
-    "apps/api/tests/test_sql_audio_processing_main.py": "41d0d0dd01fb4e37c07a8f082e3718c326db5b43ba360f1b66256130307e40d4",
+    "apps/api/tests/test_sql_audio_processing_main.py": "49241b9b2fdbd65950e0931aeadb5967cd34b84db1f96fcd6ba6248259a3bd2b",
     "apps/api/tests/test_sql_tts_artifact_reuse.py": "7eb0a24a0438822d9b18d23c071a630a1eeef65ff4c4ae788041011d17fd3ede",
     "apps/api/tests/test_sql_tts_prepared_pcm_bounds.py": "edc9b1bb1fcf587180c15160c5a778d845c946661a5832475ed2e65b151d854c",
     "apps/api/tests/test_sql_tts_reuse_boundaries.py": "4194c81beb66acb4388d8e90b397509c431cc7897956b29ea9f0197f2caea474",

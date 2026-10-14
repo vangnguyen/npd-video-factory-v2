@@ -9,6 +9,28 @@ from test_mvp1_multi_input import env
 
 
 @pytest.mark.asyncio
+async def test_main_processing_write_read_and_canonical_route_have_identical_timestamps(processing_api):
+    a, app = processing_api, main.app
+    prior = dict(app.state._state)
+    object.__setattr__(app.state, '_state', dict(a.app.state._state))
+    try:
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url='http://owned-processing-clock') as client:
+            update = await client.put(a.path, json=body(a), headers=TEST_HUMAN_HEADERS)
+            read = await client.get(a.path, headers=TEST_HUMAN_HEADERS)
+            canonical = await client.get(f'/api/v1/projects/{a.env.project.project_id}/timeline', headers=TEST_HUMAN_HEADERS)
+            assert update.status_code == read.status_code == canonical.status_code == 200
+            assert update.json()['timeline'] == read.json()['timeline'] == canonical.json()
+            assert read.json()['timeline']['created_at'].endswith('Z')
+            assert read.json()['timeline']['updated_at'].endswith('Z')
+            replay = await client.put(a.path, json=body(a), headers=TEST_HUMAN_HEADERS)
+            assert replay.status_code == 200 and replay.json()['replayed'] is True
+            assert replay.json()['timeline'] == canonical.json()
+        assert a.env.queue.values == []
+    finally:
+        object.__setattr__(app.state, '_state', prior)
+
+
+@pytest.mark.asyncio
 async def test_main_processing_read_revision_and_exact_replay(processing_api):
     a, app = processing_api, main.app
     prior = dict(app.state._state)
