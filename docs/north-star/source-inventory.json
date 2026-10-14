@@ -1,6 +1,6 @@
 {
-  "head": "13c57c0a7fbf3af4152bb0a656851524f6a84540",
-  "audited_at": "2026-10-13T19:15:10.058383+00:00",
+  "head": "b182783c01c0f107614169d040a9d1e908c9df3a",
+  "audited_at": "2026-10-14T00:36:29.636058+00:00",
   "sha256": {
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
     ".gitattributes": "0ecffc5523b4f3e26f9019776a41fc228ac786ef80531fbce2ad27a99e05f8ff",
@@ -449,8 +449,8 @@
     "apps/studio-web/studio-shell.mjs": "762bb9c1e1acc6058b3e4ba0bfc25b0bfdb92e05c68e136dace48ae739907f09",
     "apps/studio-web/studio-utils.mjs": "572dee5e39e10691e58ea371e7ff5da1d88577b69955a7ab3c618b5984df5e8d",
     "apps/studio-web/studio.css": "0b36c8f7b0cf19511058ad8f7ef2f47e2af0c0151833a897a0a0971de0bc5033",
-    "apps/studio-web/studio.html": "88f9a2a7944c8f11784be2ed133e7b393d8238a6b6d1df9ac81f49b40d68f245",
-    "apps/studio-web/studio.js": "8aab08e731d997c256d6114fbb970eabcf6954b631906fdf49f279da30de25b5",
+    "apps/studio-web/studio.html": "99e6159317bc0f693993c48c9e82d3dd009c9ad6b70da5a6ed52b2e9ede56ac0",
+    "apps/studio-web/studio.js": "2a849b0c47dd463584dd6c5b9703121e7e04d538d2bb3c9e9e4e1c749739b25e",
     "apps/studio-web/subtitle-editor.mjs": "50f3cb658aeeff09a3f802a4b699484b39f5f108b0bf9af4818288eceff98b28",
     "apps/studio-web/tests/analytics-channels.test.mjs": "33ab5f11c13b6374a4d427abfe4a6d2546222c0c39a383883cdcfff7d0108da3",
     "apps/studio-web/tests/analytics-console.test.mjs": "116b6e8360b0a6bf6cd29126cdaeebe947fca8de2a672eb40c08be29d37a201e",

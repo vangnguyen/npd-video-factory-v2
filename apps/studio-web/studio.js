@@ -461,7 +461,7 @@ function renderSummary() {
   $("#metric-version-note").textContent = `${state.versions.length} phiên bản đã lưu`;
   $("#metric-duration").textContent = formatTime(state.timeline.snapshot.duration_seconds);
   $("#metric-clips").textContent = clips.length;
-  $("#metric-scenes").textContent = `${analysis?.scenes?.length ?? 0} scene AI`;
+  $("#metric-scenes").textContent = `${analysis?.scenes?.length ?? 0} cảnh có dữ liệu`;
   $("#metric-preview").textContent = previewState.label.split(" · ")[0];
   $("#metric-approval").textContent = describeApproval(state.productionPackage?.approval).label;
 }
@@ -488,7 +488,7 @@ function renderBrowser() {
     const scenes = (analysis?.scenes ?? []).filter((item) => matches(`${item.semantic_label} ${item.description}`));
     panel.innerHTML = scenes.length ? scenes.map((item) => `
       <article class="scene-item" data-seek="${item.start_seconds}"><time>Cảnh ${item.ordinal + 1} · ${formatTime(item.start_seconds)}</time><p><strong>${escapeHtml(item.semantic_label)}</strong><br>${escapeHtml(item.description)}</p></article>
-    `).join("") : browserEmpty("Chưa có scene AI phù hợp.");
+    `).join("") : browserEmpty("Chưa có dữ liệu cảnh phù hợp.");
   } else {
     renderBrollBrowser(panel,analysis,matches);
   }
