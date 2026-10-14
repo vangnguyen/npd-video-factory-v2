@@ -21,8 +21,10 @@ const freeze = value => {if (value && typeof value === 'object') {Object.values(
 const scope = s => stable([s.workspaceId, s.projectId, s.principal?.subject, s.principal?.token_id,
   s.principal?.expires_at, audioRole(s)]);
 function session(s, write = false) {
+  // /auth/session exposes subject, roles and expiry; the actual bearer token
+  // is fenced separately by requireTransient/still and its persisted SHA256.
   demand(s.workspaceId && s.projectId && typeof s.principal?.subject === 'string' && s.principal.subject
-    && typeof s.principal.token_id === 'string' && s.principal.token_id && Number.isFinite(Date.parse(s.principal.expires_at))
+    && Number.isFinite(Date.parse(s.principal.expires_at))
     && Date.parse(s.principal.expires_at) > Date.now() && ['viewer', 'editor', 'reviewer', 'owner'].includes(audioRole(s)),
   'Cần phiên truy cập còn hiệu lực của dự án.');
   if (write) demand(['editor', 'reviewer', 'owner'].includes(audioRole(s)), 'Cần quyền biên tập để sửa từ.');

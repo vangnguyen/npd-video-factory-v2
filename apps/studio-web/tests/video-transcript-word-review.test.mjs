@@ -8,6 +8,14 @@ import {validateVideoWords, videoWordPayload, videoWordReceiptMatches, boundedVi
 // Actual ASGI/SQLite captures preserve historical genuine ASR. Transport races
 // below are explicit UI fixtures, with no model, listening or Owner acceptance.
 const clone = structuredClone;
+// Public /auth/session DTO intentionally does not expose a token identifier.
+function publicSessionState(role = 'editor') {
+  const s = state();
+  s.principal = {subject: fixture.context.actor_ref, display_name: 'Explicit public session fixture',
+    platform_role: null, workspace_roles: {[s.workspaceId]: role},
+    expires_at: '2100-01-01T00:00:00Z', human_write_enabled: true};
+  return s;
+}
 const capturedBytes = readFileSync(new URL('./fixtures/sql-video-word-review/asgi.json', import.meta.url));
 const fixture = JSON.parse(capturedBytes), manifest = JSON.parse(readFileSync(new URL('./fixtures/sql-video-word-review/manifest.json', import.meta.url)));
 const base = fixture.responses.base.body, edited = fixture.responses.edited.body;
@@ -432,4 +440,69 @@ test('accepted final getter token or canonical drift cannot enter trusted compar
     await h.click('read'); h.edit(); await h.click('save');
     assert.equal(compares, 0); assert.equal(memory.size, 1); assert.equal(h.controller.isPending(), true);
   }
+});
+
+test('public session DTO without token_id reads 23 source words and permits explicit editor CAS', async () => {
+  for (const role of ['editor', 'owner']) {
+    const h = harness({s: publicSessionState(role)});
+    assert.equal(h.get('read')[0].disabled, false);
+    await h.click('read'); assert.equal(h.get('text').length, 23);
+    assert.equal(h.get('save')[0].disabled, true);
+    h.edit(); await h.click('save');
+    assert.equal(h.calls.filter(c => c.method === 'POST').length, 1);
+    assert.equal(h.saved.length, 1); assert.equal(h.memory.size, 0);
+    assert.equal(h.calls.find(c => c.method === 'POST').body.expected_timeline_version, 1);
+    assert.equal(Object.hasOwn(h.s.principal, 'token_id'), false);
+  }
+});
+
+test('public viewer can read but cannot revise; expired, unauthorized and tokenless sessions stay closed', async () => {
+  const viewer = harness({s: publicSessionState('viewer')});
+  await viewer.click('read'); assert.equal(viewer.get('text').length, 23);
+  assert.equal(viewer.get('text')[0].disabled, true); await viewer.click('save');
+  assert.equal(viewer.calls.some(c => c.method === 'POST'), false);
+  for (const change of [s => s.principal.expires_at = '2000-01-01T00:00:00Z',
+    s => s.principal.workspace_roles = {}, s => s.principal.subject = '', s => s.busy = true, s => s.dirty = true]) {
+    const s = publicSessionState(); change(s); const h = harness({s});
+    assert.equal(h.get('read')[0].disabled, true); await h.click('read'); assert.equal(h.calls.length, 0);
+  }
+  const h = harness({s: publicSessionState(), getSessionToken: () => ''});
+  await h.click('read'); assert.equal(h.calls.length, 0);
+});
+
+test('public DTO literal token change during GET or hash cannot install or dispatch a new intent', async () => {
+  let h; h = harness({s: publicSessionState(), handler: () => {h.setToken('public-get-token-refresh'); return clone(base);}});
+  await h.click('read'); assert.equal(h.get('text').length, 0); assert.equal(h.calls.length, 1);
+  let hashed; hashed = harness({s: publicSessionState(), crypto: {randomUUID: () => 'public-dto-hash-intent',
+    subtle: {digest: async (...args) => {hashed.setToken('public-hash-token-refresh'); return webcrypto.subtle.digest(...args);}}}});
+  await hashed.click('read'); assert.equal(hashed.get('text').length, 23); hashed.edit(); await hashed.click('save');
+  assert.equal(hashed.calls.some(c => c.method === 'POST'), false); assert.equal(hashed.memory.size, 0);
+});
+
+test('public DTO token change after POST or callback retains exact UNKNOWN without live authority', async () => {
+  let posted; posted = harness({s: publicSessionState(), handler: (c, _s, tools) => {
+    if (c.method === 'POST') {posted.setToken('public-post-token-refresh'); return tools.receipt(c.body);} return clone(base);}});
+  await posted.click('read'); assert.equal(posted.get('text').length, 23); posted.edit(); await posted.click('save');
+  assert.equal(posted.saved.length, 0); assert.equal(posted.memory.size, 1); assert.equal(posted.controller.isPending(), true);
+  let callback; callback = harness({s: publicSessionState(), onSaved: () => callback.setToken('public-callback-token-refresh')});
+  await callback.click('read'); callback.edit(); await callback.click('save');
+  assert.equal(callback.memory.size, 1); assert.equal(callback.get('save')[0].disabled, true);
+});
+
+test('public DTO held intent validates same literal token; a refreshed token keeps original UNKNOWN bytes', async () => {
+  const seed = harness({s: publicSessionState(), handler: c => {if (c.method === 'POST') throw Error('explicit public DTO UNKNOWN'); return clone(base);}});
+  await seed.click('read'); assert.equal(seed.get('text').length, 23); seed.edit(); await seed.click('save');
+  const memory = new Map(seed.memory), raw = [...memory.values()][0], key = [...memory.keys()][0];
+  const storage = {getItem: k => memory.get(k) ?? null, setItem: (k, v) => memory.set(k, v),
+    compareAndRemoveItem: (k, v) => {if (memory.get(k) !== v) return false; memory.delete(k); return true;}};
+  const sameSession = harness({s: publicSessionState(), storage});
+  await sameSession.click('read'); assert.equal(sameSession.get('text').length, 23);
+  await sameSession.click('reconcile'); await sameSession.click('retry');
+  assert.deepEqual(sameSession.calls.find(c => c.method === 'POST').body, seed.calls.find(c => c.method === 'POST').body);
+  assert.equal(memory.size, 0);
+  const foreignMemory = new Map([[key, raw]]);
+  const refreshed = harness({s: publicSessionState(), getSessionToken: () => 'public-restore-refreshed-token',
+    storage: {getItem: k => foreignMemory.get(k) ?? null, setItem() {throw Error('must not overwrite');}}});
+  await refreshed.click('read'); assert.equal(refreshed.calls.length, 0); assert.equal(refreshed.controller.isPending(), true);
+  assert.equal(foreignMemory.get(key), raw);
 });

@@ -1,6 +1,6 @@
 {
-  "head": "eacdc392466d2dc99b01088b8d98df1746bcbb11",
-  "audited_at": "2026-10-14T04:24:33.718930+00:00",
+  "head": "8790d37e6afafbb7e501f05ab8d42bcc3cefc5c0",
+  "audited_at": "2026-10-14T04:37:04.156198+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -609,7 +609,7 @@
     "apps/studio-web/tests/trend-radar.test.mjs": "6c44e69cc74d806f309ed0015a52e15009984614ae376f3ebc17769ee74519e2",
     "apps/studio-web/tests/uploaded-audio-review.test.mjs": "8d73ea4ac22c264924a11ce5d549a7ab08996c724fc5b440e25e8dd48442a1eb",
     "apps/studio-web/tests/video-analysis-jobs.test.mjs": "ee8893e81cfbdfe24270881af6233c54ce43f72cd043385c85b9e6daf20e9f54",
-    "apps/studio-web/tests/video-transcript-word-review.test.mjs": "1edf5d480ef976a7121b64c77c569a162b07262732fd3be11e59f2845d801390",
+    "apps/studio-web/tests/video-transcript-word-review.test.mjs": "6722395b3d876b0edc29634b9b2411b2eabda8a56abd57ebd4520c93305bc14e",
     "apps/studio-web/tests/video-word-studio-shell.test.mjs": "af038a8a48f88945b3862c6b214766117f2520d63ca1393fe258cc6bf033ec49",
     "apps/studio-web/tests/waveform-clock.test.mjs": "7887a94d3a9acd204f787ee2f8a06802d5e12a517ca842d93a853205fc16710d",
     "apps/studio-web/timeline-history.mjs": "ca7855b4666ffd39de6c6aeeca676ed3521cb6ac2d02797ffbab6f658f0f304e",
@@ -621,7 +621,7 @@
     "apps/studio-web/uploaded-audio-review.mjs": "46b39e0e2c7b41d5b26d0f5a551b4e0421772294a15dce61eeb7d6f1e0f81452",
     "apps/studio-web/verified-variant-source.mjs": "9420fa4aafeadd59ebac53a347f281ffdb3116b587bac8249fe76e44d98e5194",
     "apps/studio-web/video-analysis-jobs.mjs": "119ad36d1c59ccac3fbac9de2a2724984ed7255a90ef82105111924ad1ffabdc",
-    "apps/studio-web/video-transcript-word-review.mjs": "1353885097c5760554c10a07e558a36f132544be7d9377d8a8db651aef5062e9",
+    "apps/studio-web/video-transcript-word-review.mjs": "585d8c7440a8b0852febb1f5bc67d3deb6d7b685a11a26d58fb5ec75f829ed4a",
     "apps/studio-web/waveform.mjs": "c34c9fd83d9c797b1afa46cae699044f1c21b64c455a50292836560c067ced1d",
     "deploy/production/docker-compose.production.yml": "2c4374ecd5adb629c60bc41a5901ad429719768dbddd043be43d0eeeec315bd0",
     "deploy/profiles/Dockerfile.python": "72368547edf64e44c640e0767cfb34481b7df804ee0ddd92d35fa46d07b577ea",
