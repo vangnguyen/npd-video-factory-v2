@@ -17,6 +17,7 @@ from app.auto_edit_models import (
     TranscriptRead,
     TranscriptSegmentRead,
 )
+from app.auto_edit_repository import AutoEditRepository
 from app.db import Base, create_engine, create_session_factory
 from app.main import app
 from app.object_storage import LocalObjectStorageProvider
@@ -343,11 +344,7 @@ async def test_versions_conflicts_preview_invalidation_cancel_and_recovery(tmp_p
     preview_service = PreviewService(
         repository=repository,
         platform=stack["platform"],
-        auto_edit_repository=type(
-            "AssetRepository",
-            (),
-            {"get_asset": lambda _self, asset_id: _async_value(stack["asset"] if asset_id == stack["asset"].asset_id else None)},
-        )(),
+        auto_edit_repository=AutoEditRepository(repository.session_factory),
         object_storage=stack["storage"],
         queue=queue,
         renderer=DeterministicProxyRenderer(),

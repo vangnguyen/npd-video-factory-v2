@@ -1,6 +1,6 @@
 {
-  "head": "721c52a7e9222c2496779dabcdb460f7720114e3",
-  "audited_at": "2026-10-14T04:48:40.758261+00:00",
+  "head": "0236e374c831b28b240ed7ca7281e7cdaa750dc8",
+  "audited_at": "2026-10-14T04:52:00.460802+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -259,6 +259,7 @@
     "apps/api/tests/test_audio_subtitle_render_qc.py": "ac0a7cca4e74582b0433ed2a61dc04d90bf609bbedad23a3a28d86311f8dce4d",
     "apps/api/tests/test_auto_edit_jobs.py": "18fd745412c83056e4750ab25665efbc9fa6580a9b0f8331b5838767cc658671",
     "apps/api/tests/test_auto_edit_local_cpu.py": "2fa2609a2defd574e5869640e9b9d088b49417f14a1b83b685773523d4bfac1c",
+    "apps/api/tests/test_auto_edit_studio.py": "a9f5c81b88dce8c54eb5f3b1c7251ef2e092dd06414d12b0653eb6f2d44c8a35",
     "apps/api/tests/test_bounded_artifact_content.py": "a1862c310dc26e067fe2f9fdef8b3ac1151b9f20d68830e5ac8af186d1f2fbc9",
     "apps/api/tests/test_bounded_planner_source.py": "f1e4c4b2f24d75338526a695aef93c657bf9c895339b1f06df53f7e02e739e47",
     "apps/api/tests/test_bounded_service_sources.py": "c62749195838c2a26566d7d3b21b48ddc87ffcaf4200b00ed0c4d45fe380542e",
