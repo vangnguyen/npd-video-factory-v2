@@ -1,7 +1,8 @@
 """Master /v1 service facade over the existing canonical production services.
 
-No service principal is converted into a human. Approved decisions/publication
-submission additionally require the existing scoped human verifier and role.
+No service principal is converted into a human. Private media requires an
+existing scoped human viewer; approved decisions/publication require their
+existing human reviewer/owner roles.
 """
 import re
 from fastapi import APIRouter,Request,Response,HTTPException
@@ -86,6 +87,14 @@ async def command(request,action,ws,pid,payload,call,*,actor=None,status=200):
 async def scoped_command(request,pid,action,payload,call,*,actor=None,status=200):
     _,value=await project(request,pid,action)
     return await command(request,action,value.workspace_id,pid,payload,call,actor=actor,status=status)
+
+async def private_media_viewer(request,project_id):
+    # Direct delegation does not run the human router's dependencies. Verify
+    # the actual credential before admitting private bytes. Reads remain
+    # available when human writes are disabled; service grants stay separate.
+    from .human_auth import authenticate_human_request,authorize_project
+    await authenticate_human_request(request)
+    return await authorize_project(request,project_id,'viewer')
 
 @router.get('/contract')
 async def contract(request:Request):
@@ -217,7 +226,9 @@ async def preview_state(project_id:str,preview_id:str,request:Request):
 
 @router.get('/projects/{project_id}/previews/{preview_id}/content')
 async def preview_content(project_id:str,preview_id:str,request:Request):
-    await project(request,project_id,'project.read');return await editing.preview_content(project_id,preview_id,request)
+    await project(request,project_id,'project.read')
+    await private_media_viewer(request,project_id)
+    return await editing.preview_content(project_id,preview_id,request)
 
 @router.post('/projects/{project_id}/production-package',status_code=201)
 async def package(project_id:str,payload:ProductionPackageCreateRequest,request:Request):
@@ -256,7 +267,9 @@ async def render_state(project_id:str,render_id:str,request:Request):
 
 @router.get('/projects/{project_id}/renders/{render_id}/content')
 async def render_content(project_id:str,render_id:str,request:Request):
-    await project(request,project_id,'render.read');return await production.render_content(project_id,render_id,request)
+    await project(request,project_id,'render.read')
+    await private_media_viewer(request,project_id)
+    return await production.render_content(project_id,render_id,request)
 
 @router.post('/projects/{project_id}/publish',status_code=201)
 async def publish(project_id:str,payload:PublicationCreateRequest,request:Request):
