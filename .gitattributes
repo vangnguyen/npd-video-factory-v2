@@ -21,3 +21,6 @@ evidence/post-mvp-roadmap/phase-10/studio-ux-02/**/*.log -text whitespace=cr-at-
 
 # Retained SQL HTTP fixtures bind exact original bytes, including Windows EOL.
 apps/studio-web/tests/fixtures/sql-variant-import-review/*.json -text whitespace=cr-at-eol
+
+# Saved video word HTTP fixtures retain exact original bytes and Windows EOL.
+apps/studio-web/tests/fixtures/sql-video-word-review/*.json -text whitespace=cr-at-eol
