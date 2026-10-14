@@ -4110,3 +4110,32 @@ WAVE: 3/7/8/16 component; STATUS: local fixture browser/restore verified, broad 
 ## 2026-10-14 — Waves 6/7/8/15 scoped SQL narration activation
 
 WAVE: 6/7/8/15 component; STATUS: safe opt-in implementation integrated, full waves incomplete; HEAD SHA: 5aff8e615f5fb1fda8ea1a12ba4e1bd0e92a6de7; CAPABILITIES COMPLETED: paired API/worker admission, explicit reuse/review/final actor, no unknown replay, all-render terminal observation and disabled-TTS accounting correction; CAPABILITIES PARTIAL: proposal/Studio, actual spoken six-target, running-job/distributed ledger recovery; TESTS: current18 regressions, activation fix8 across two runs, independent6 overlapping; historical50/20 not rerun or summed; REAL PROVIDER TESTS: no new speech/provider calls; MOCK TESTS: actual SQLite/ASGI with synthetic narration/approval and fake DSP/renderer/QC; EVIDENCE: north-star/sql-narration-activation-evidence.json; REGRESSIONS: independentP1 selected and legacy terminal races +phantom disabled-TTS rows repaired, original failed logs retained; EXTERNAL BLOCKERS: credentials/Owner/production remain separate; OWNER ACTION REQUIRED: listening/UAT deferred; NEXT WAVE: actual spoken master/six children, proposal/Studio, isolated deployment and original full acceptance. No accepted artifact deletion/main merge/deployment.
+
+
+## Waves3/6/7/8/15/16 — scoped SQL narration, spoken variants and deployment profiles
+
+WAVE: 3,6,7,8,15,16 (component progress, not wave closure)
+
+STATUS: IMPLEMENTED_AND_SCOPED_VERIFIED; full original acceptance OPEN.
+
+HEAD SHA: source parent3bb7b3fc0a5512f748b136f68cdfd959969c8b00; current doc commit recorded in recovery seal. Spoken media product5aff8e6; browser product2ea52bb; never relabel historical media as current-head execution.
+
+CAPABILITIES COMPLETED: scoped server narration proposal/import/read/review UI; singleflight polling and dirty/current-CAS preservation; current-review approval binding; storyboard canvas/CAS guards; one genuine two-chunk CPU spoken master reused by six children; isolated profile compiler/runtime/schema and closed model/config-pair admission.
+
+CAPABILITIES PARTIAL: full non-developer ModeA/B and A/B/C; words/timing UI, canonical voice/music/sfx production parity, original-footage render chain, UI style/shared locks; full provider/rights/Owner acceptance; Docker stack/soak/production.
+
+TESTS: current fullStudio1008PASS/0FAIL/0SKIP; actualSQLite/main integration3PASS; canvas11PASS; actualprimarySettings4PASS; independent scoped peer races/proofs. Source-specific logs indexed; overlapping batches are not summed. N2 deployment46PASS and N3selected12PASS/40deselected are separate, not full52 rerun.
+
+REAL PROVIDER TESTS: genuine local VieNeu CPU2inferences/2HTTP on source5aff, no child inference and no external paid operation; actualRemotion15outputs/FullQC15PASS and cold viewer/media. No current external/cloud/publishing provider acceptance or Owner listening.
+
+MOCK TESTS: Node transport/DOM, service/ASGI fixture approvals/script/visual/clock, deployment SDK/config argv; zero Docker runtime. Browser uses actual read-only SQL/main/Studio, synthetic authentication and historical automated approvals.
+
+EVIDENCE: SQL_NARRATION_STUDIO_SPOKEN_VARIANTS_REVIEW.md; ISOLATED_DEPLOYMENT_PROFILES_REVIEW.md; north-star/spoken-studio-deployment-evidence.json; metadata/source support ZIP plus existing separate42.8MB genuine media ZIP295entries/285actualfiles. Actual browser final proof is a separate following increment.
+
+REGRESSIONS: fixed polling late result/gain overwrite/server-CAS draft rebase; kept original repro/raw failures. Fixed fixture namespace/hard-profile inputs without guard weakening. Recovered original auxiliary helper by exact hash after filename collision; first overwritten raw log not claimed restored, passingN2/source/media/accepted artifacts unaffected. No accepted artifact replacement or cleanup.
+
+EXTERNAL BLOCKERS: DockerCLI absent; remaining real external credentials/rights/Owner UAT and production deployment approval kept separate. Unrelated safe work continues.
+
+OWNER ACTION REQUIRED: none now; optional listening and Owner UAT deferred. No main merge/live publish/deployment.
+
+NEXT WAVE: safe video-word UI/source-clock playback and canonical audio parity on separate worktrees, then actual uploaded source full flow and remaining original waves.

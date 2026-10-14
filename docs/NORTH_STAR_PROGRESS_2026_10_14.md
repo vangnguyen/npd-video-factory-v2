@@ -1,5 +1,7 @@
 # Tiến độ North Star ngày2026-10-14
 
+2026-10-14 — [SQL narration/Studio/spoken variants](SQL_NARRATION_STUDIO_SPOKEN_VARIANTS_REVIEW.md) và [isolated deployment profiles](ISOLATED_DEPLOYMENT_PROFILES_REVIEW.md): server proposal/import/read/review UI, draft/current-CAS polling guard và canvas engine đã ghép; Studio1008PASS, actualSQLAPI3PASS, canvas11PASS. Local-real source5aff:2VieNeu inference,0child inference,15Remotion/FullQC across6targets/4geometries; manualvisual/script/clock/approval fixtures, không Owner/fullModeA/B acceptance. Read-only actualSQL browser3viewports; host final proof riêng. Deployment11source, exact-model/config-pair guards và actualSettings4PASS; DockerCLI absent, stack/soak/deploy NOT_VERIFIED. Video-word UI và canonical audio P1 đang làm song song. Matrix5REAL/58PARTIAL/1NOT_VERIFIED,59unclosed; no main merge/live publishing/new paid work/cleanup.
+
 5/64 nhóm đã có phân loại IMPLEMENTED_REAL;59 nhóm chưa đóng. Phân loại này không chứng nhận real-provider acceptance hay production deployment.
 
 
