@@ -27,10 +27,14 @@ from .timeline_models import TimelineRead
 from .timeline_repository import TimelineConflictError
 from .scene_intelligence import (SceneIntelligenceRequest,SceneIntelligenceRead,SceneIntelligenceConflict,
     create_assessment,list_assessments,get_assessment)
+from .video_analysis_source import VideoAnalysisSourceRoute, video_analysis_source
 
 
 router = APIRouter(prefix="/api/v1")
 _SHA256 = re.compile(r"^[a-f0-9]{64}$")
+
+router.add_api_route('/projects/{project_id}/analyses/{analysis_id}/source',
+    video_analysis_source, methods=['GET', 'HEAD'], route_class_override=VideoAnalysisSourceRoute)
 
 
 @router.get('/projects/{project_id}/scene-intelligence',response_model=list[SceneIntelligenceRead])

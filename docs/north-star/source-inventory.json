@@ -1,6 +1,6 @@
 {
-  "head": "6ad16584606a822bbf9bfaf5890717e7f2d6cc90",
-  "audited_at": "2026-10-14T03:14:56.454651+00:00",
+  "head": "6c3da6266cac5b4a732413305f2cf2b328be0d59",
+  "audited_at": "2026-10-14T03:28:23.031944+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -41,7 +41,7 @@
     "apps/api/app/auto_edit_models.py": "ab61316121400dd3bfc61379e237e7267ddcaa5271b5bf09ba5931264e82f7f6",
     "apps/api/app/auto_edit_providers.py": "657ad43d398885d25b815628c6d363ad80a00e6a56f718df40cbaa30afac5d20",
     "apps/api/app/auto_edit_repository.py": "f153dfe10142410120e4d117445cad420cb087f4bc922aa30ca1ceadae60f23d",
-    "apps/api/app/auto_edit_routes.py": "5717e39cf72689e7b753512280d3ca72eaed577dbe645cf15696b392b64975dd",
+    "apps/api/app/auto_edit_routes.py": "3ebb3330fa7c4af6858224c891ddd783402f0b709adebb5e6c09a396ea62c8a2",
     "apps/api/app/auto_edit_service.py": "283aebaf02f58375b869a950225539b157cc92813054b82a6f3b11d78e0f741c",
     "apps/api/app/auto_edit_source_custody.py": "e326287ecc2ab78611f08f986230189cd431bfe7192c6ada6c3c782d0070fcad",
     "apps/api/app/auto_edit_transcription_runtime.py": "35d3b2c1eef0141879944519ea5f9cdf80b31d776a9ab74fe2b00b989c81819b",
@@ -212,6 +212,7 @@
     "apps/api/app/uploaded_audio_service.py": "900d587e7cc2669b0fe77edf563f5a76ae59af86708a252097cfbca4c8cd54b7",
     "apps/api/app/uploaded_audio_timeline.py": "0bc0efa09690ca51a0239fccc636e7d7df8523d40465a31eb6e47083fff83c58",
     "apps/api/app/verified_artifact_delivery.py": "9cb8ae2c50927c91e874425e5f8e4d5a867a813ccf8ebc55923312a26bc59dc6",
+    "apps/api/app/video_analysis_source.py": "083441d6f57536abd4390c94e4a59d66932b51c8aa3036f8a28f95dec7de04ab",
     "apps/api/app/vieneu_tts_provider.py": "acb577c6fadd16fcf73f84c9d02be3d28dafc29ea6bf655003d30fad91af319e",
     "apps/api/app/vision_logic.py": "3cc5dc5969ab0a47fdc64f5cc9bf968e7505d6dd3f74e380135f52f54b526357",
     "apps/api/app/vision_models.py": "af40ead91b3ea8df9b66ba46ef4e2b25ab5d9abcef465d61f0f4e1984007076b",
@@ -361,6 +362,7 @@
     "apps/api/tests/test_uploaded_audio.py": "6e81a5e2681cfdfbff311d5569d8f91403bc3986b200bc5f22355d34edffcea5",
     "apps/api/tests/test_uploaded_audio_timeline.py": "7f1144ef6edb0581d9db9f0ce37f737864a729c01ab928279df1ceaa91ab7d4c",
     "apps/api/tests/test_verified_artifact_delivery.py": "85ac0fad3bd69e46e36380f4ca3d3c3c4a0693c140ad950357c6d334683ef8f1",
+    "apps/api/tests/test_video_analysis_source.py": "0f01780960f4e00df99c6aa20c6186390ebdccbaa66240142868363ed8a1c89d",
     "apps/api/tests/test_vieneu_registry_bootstrap.py": "7bfa6b615c4a0ac80d48128e7455be44f0feab852d2225da1ad826f6d03ce2fa",
     "apps/api/tests/test_vieneu_tts.py": "a9a92af1dc3190f6ae552581e5b93d735ae8639a38c4e877aeb6f59495ae6367",
     "apps/api/tests/test_vision_dispatch_admission.py": "e986d94cd0fdf8db69d0ca79ebe6f87ada0bbf11e3a6ec22db558f81d6c4900c",
