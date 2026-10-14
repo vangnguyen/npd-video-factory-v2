@@ -46,6 +46,7 @@ from app.production_audio import AudioMixEngine, create_available_audio_tts_prov
 from app.production_logic import TimelineRenderContractValidator
 from app.production_qc import FullProductionQC
 from app.production_repository import ProductionRepository
+from app.sql_variant_narration_runtime import create_variant_narration_runtime
 from app.publishing_repository import PublishingRepository
 from app.production_service import (
     PRODUCTION_RENDER_PROCESSING_KEY,
@@ -129,6 +130,7 @@ async def recover_production_render_jobs(
     inflight = await redis.lrange(PRODUCTION_RENDER_PROCESSING_KEY, 0, -1)
     pending = await repository.list_incomplete_render_ids()
     identifiers = list(dict.fromkeys([*inflight, *pending]))
+    identifiers = await repository.filter_variant_recovery(identifiers)
     async with redis.pipeline(transaction=True) as pipe:
         pipe.delete(PRODUCTION_RENDER_PROCESSING_KEY)
         for identifier in identifiers:
@@ -392,7 +394,10 @@ async def main() -> None:
     auto_edit_repository = AutoEditRepository(session_factory)
     media_repository = MediaIntelligenceRepository(session_factory)
     timeline_repository = TimelineRepository(session_factory)
-    production_repository = ProductionRepository(session_factory)
+    narration_runtime = create_variant_narration_runtime(session_factory=session_factory,
+        object_storage=object_storage, assets=auto_edit_repository, enabled=settings.sql_variant_narration_reuse_enabled)
+    production_repository = ProductionRepository(session_factory, variant_narration_fence=narration_runtime.fence,
+        variant_narration_admission=narration_runtime.admission)
     publishing_repository = PublishingRepository(session_factory)
     analytics_repository = AnalyticsRepository(session_factory)
     bridge_repository = BridgeRepository(session_factory)
@@ -480,6 +485,7 @@ async def main() -> None:
         ),
         staging_root=settings.production_render_staging_root,
         brand_name=settings.video_factory_brand_name,
+        variant_narration_loader=narration_runtime.loader,
     )
     analytics_providers = AnalyticsProviderRegistry(settings)
     analytics_processor = AnalyticsSyncProcessor(

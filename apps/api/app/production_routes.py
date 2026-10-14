@@ -177,11 +177,21 @@ async def enqueue_final_render(
     payload: FinalRenderCreateRequest,
     request: Request,
 ) -> RenderJobRead:
+    principal = await authorize_project(request, project_id, 'editor')
+    payload = payload.model_copy(update={'actor_ref': principal.subject})
+    from .sql_variant_narration_activation import VariantNarrationQueueUnknownError
     try:
         return await service(request).enqueue_final(project_id, payload)
     except KeyError as exc:
         raise missing(str(exc.args[0])) from exc
-    except (ProductionConflictError, ApprovalBoundaryError) as exc:
+    except VariantNarrationQueueUnknownError:
+        raise HTTPException(503, detail={'code': 'SQL_VARIANT_NARRATION_QUEUE_OUTCOME_UNKNOWN'},
+            headers={'Cache-Control': 'no-store'}) from None
+    except ApprovalBoundaryError as exc:
+        if str(exc) == 'SQL_VARIANT_NARRATION_NOT_CONFIGURED':
+            raise HTTPException(503, detail={'code': str(exc)}, headers={'Cache-Control': 'no-store'}) from None
+        raise conflict(exc) from exc
+    except ProductionConflictError as exc:
         raise conflict(exc) from exc
     except ProductionContractError as exc:
         raise invalid(exc) from exc
