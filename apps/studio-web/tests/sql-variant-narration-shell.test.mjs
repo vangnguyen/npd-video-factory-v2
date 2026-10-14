@@ -36,10 +36,10 @@ test('actual parent state blocks unsaved audio/subtitles and family operations w
   const s={projectLoading:0,activeProductionRender:null,transcriptDrafts:new Map()};
   let draft='saved',pending=false,working=false,familyPending=false;
   const policies=new Function('state','multiInput','audioReview','stockReview','videoReview','multiInputBaseline','audioWorkbenchDraft',
-    'productionBaseline','productionWorkbenchDraft','variantNarration','variantFamilies',
+    'productionBaseline','productionWorkbenchDraft','variantNarration','variantFamilies','videoWordReview',
     segment('function sqlEditorState(){','\nconst variantFamilies =')+'\nreturn {sqlFamilyState,sqlNarrationState};')(
       s,{isBusy:()=>false},{isDirty:()=>false},{isPending:()=>false},{isPending:()=>false},null,()=>'',
-      'saved',()=>draft,{isPending:()=>pending,isWorking:()=>working},{isPending:()=>familyPending,isBusy:()=>false});
+      'saved',()=>draft,{isPending:()=>pending,isWorking:()=>working},{isPending:()=>familyPending,isBusy:()=>false},null);
   assert.equal(policies.sqlNarrationState().dirty,false);
   draft='edited voice or subtitle';assert.equal(policies.sqlNarrationState().dirty,true);assert.equal(policies.sqlFamilyState().dirty,true);
   draft='saved';working=true;pending=true;
@@ -170,10 +170,10 @@ test('actual production view preserves existing subtitle/audio controls and thei
     options:[],hidden:false,removeAttribute(){}});return fields.get(name);};
   const gain=control('#voice-gain');gain.value=-7;
   const render=new Function('state','$','describeApproval','describeProductionRender','qcItems','attachAuthenticatedMedia',
-    'clearAuthenticatedMedia','renderPublishing','variantNarration','productionWorkbenchDraft','escapeHtml','compatibleSubtitleTemplates','updateSubtitleAlignment',
+    'clearAuthenticatedMedia','renderPublishing','variantNarration','videoWordReview','productionWorkbenchDraft','escapeHtml','compatibleSubtitleTemplates','updateSubtitleAlignment',
     'let productionBaseline="saved";\n'+segment('function currentProductionApproval(','\nfunction selectedPublishingPlatform()')+
     '\nreturn {draw:renderProduction,baseline:()=>productionBaseline};')(
-      s,control,()=>({label:'Chưa duyệt',tone:'muted'}),()=>({label:'queued'}),()=>[],()=>{},()=>{},()=>{},null,
+      s,control,()=>({label:'Chưa duyệt',tone:'muted'}),()=>({label:'queued'}),()=>[],()=>{},()=>{},()=>{},null,null,
       ()=> 'edited draft',String,()=>[],()=>{});
   render.draw({preserveDraft:true});assert.equal(gain.value,-7);assert.equal(render.baseline(),'saved');
   assert.equal(control('#approval-status').textContent,'Chưa duyệt');

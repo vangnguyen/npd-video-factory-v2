@@ -33,6 +33,7 @@ import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-st
 import {initializeVideoAnalysisJobs,videoReviewSelection,selectedVideoReviewAnalysis} from '/video-analysis-jobs.mjs?v=sql-video-jobs-1';
 import {initializeSqlVariantFamilies} from '/sql-variant-families.mjs?v=sql-family-1';
 import {initializeSqlVariantNarration} from '/sql-variant-narration.mjs?v=sql-narration-1';
+import {initializeVideoTranscriptWordReview} from '/video-transcript-word-review.mjs?v=sql-video-words-1';
 
 const state = {
   workspaceId: null,
@@ -82,6 +83,9 @@ const state = {
 };
 
 const $ = (selector) => document.querySelector(selector);
+let videoWordReview = null;
+const videoWordAdmission = Symbol('scoped-word-controller');
+function videoWordsHeld(){return videoWordReview?.isWorking()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true;}
 const multiInput = initializeMultiInput({api, getState: () => state, refresh: () => loadProject(),
   refreshProjects: () => loadProjectList(), toast, uploadFetch: authenticatedFetch});
 let multiInputBaseline = null;
@@ -97,12 +101,12 @@ function productionWorkbenchDraft(){return JSON.stringify([...document.querySele
   '#subtitle-list [data-cue-field],#subtitle-position,#subtitle-animation,#subtitle-template,#subtitle-keywords,#subtitle-font-size,#subtitle-safe-margin,#voice-enabled,#voice-speed,#voice-gain,#music-gain,#music-ducking,#music-asset')]
   .map(input=>[input.id,input.dataset.cueField,input.type==='checkbox'?input.checked:input.value]));}
 const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-review'), api,
-  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0,
-    dirty: state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true,
+    dirty: videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onUploaded: () => loadProject(), onCanonicalSaved: () => loadProject()});
 const stockReview = initializeStockPlanningReview({root: $('#stock-planning-review'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0,
-    dirty: audioReview.isDirty() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true,
+    dirty: videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onPlanUpdated: plan => {
     if (plan.project_id !== state.projectId || plan.workspace_id !== state.workspaceId) return;
@@ -110,8 +114,8 @@ const stockReview = initializeStockPlanningReview({root: $('#stock-planning-revi
     if (state.timeline) renderBrowser();
   }});
 const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy(),
-    dirty: audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true,
+    dirty: videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onReview: async value => {
     const selection=videoReviewSelection(state,value);
@@ -128,10 +132,10 @@ function sqlEditorState(){return{...state,busy: state.projectLoading > 0 || mult
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline
       || productionBaseline !== null && productionWorkbenchDraft() !== productionBaseline};}
 function sqlFamilyState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantNarration?.isWorking()===true,
-  dirty:value.dirty||variantNarration?.isPending()===true};}
+  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true,
+  dirty:value.dirty||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
 function sqlNarrationState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantFamilies.isBusy(),dirty:value.dirty||variantFamilies.isPending()};}
+  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true,dirty:value.dirty||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
 const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-families'),api,getState:sqlFamilyState,
   onMessage: toast,onChild: async selection => {
     const principal=state.principal,subject=principal?.subject,tokenId=principal?.token_id;
@@ -147,9 +151,73 @@ const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-fami
     state.projectId=selection.child_project_id;$('#project-select').value=state.projectId;
     window.localStorage.setItem('npd-studio-project',state.projectId);await loadProject();
   }});
-const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();});
 variantNarration = initializeSqlVariantNarration({root:$('#sql-variant-narration'),api,getState:sqlNarrationState,
   onMessage:toast,onImported:refreshNarrationAssets,onReviewQueued:refreshNarrationReview});
+
+function videoWordEditorState(){const value=sqlEditorState();return {...value,analysis:reviewedAnalysis(),
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true,
+  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true};}
+function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();}
+videoWordReview=initializeVideoTranscriptWordReview({root:$('#video-transcript-word-review'),
+  api:(path,options={})=>api(path,{...options,videoWordAdmission}),mediaFetch:authenticatedFetch,
+  getState:videoWordEditorState,getSessionToken:sessionToken,onMessage:toast,
+  onSaved:refreshVideoWordReceipt,onBusyChanged:syncVideoWordPeers});
+function videoWordEditorBoundary(){const value=videoWordEditorState();return JSON.stringify([
+  value.workspaceId,value.projectId,value.principal,sessionToken(),value.analysis,value.assets,value.timeline,
+  value.productionPackage,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
+function assertVideoWordEditorBoundary(boundary){const value=videoWordEditorState();
+  if(value.busy||value.dirty||videoWordEditorBoundary()!==boundary)
+    throw Error('Nguồn, phiên hoặc bản sửa khác đã đổi; giữ lần lưu từ để đối chiếu.');}
+function videoWordHistoryMatches(versions,timeline){
+  if(!Array.isArray(versions)||!versions.length)return false;
+  const ids=new Set(),ordinals=new Set();let head=null;
+  for(const row of versions){
+    if(!row||row.project_id!==timeline.project_id||row.timeline_id!==timeline.timeline_id
+      ||typeof row.timeline_version_id!=='string'||!row.timeline_version_id
+      ||!Number.isInteger(row.version)||row.version<1||row.version>timeline.current_version
+      ||ids.has(row.timeline_version_id)||ordinals.has(row.version)
+      ||!row.snapshot||typeof row.snapshot!=='object'||Array.isArray(row.snapshot))return false;
+    ids.add(row.timeline_version_id);ordinals.add(row.version);
+    if(row.version===timeline.current_version)head=row;
+  }
+  const stable=value=>JSON.stringify(value,(_key,item)=>item&&typeof item==='object'&&!Array.isArray(item)
+    ?Object.fromEntries(Object.keys(item).sort().map(key=>[key,item[key]])):item);
+  return !!head&&head.timeline_version_id===timeline.current_version_id&&stable(head.snapshot)===stable(timeline.snapshot);
+}
+async function refreshVideoWordReceipt(value){
+  const boundary=videoWordEditorBoundary(),current=videoWordEditorState(),receipt=value.receipt;
+  assertVideoWordEditorBoundary(boundary);
+  const source=current.assets.find(asset=>asset.asset_id===value.asset_id);
+  if(value.workspace_id!==current.workspaceId||value.project_id!==current.projectId
+    ||current.analysis?.analysis_id!==value.analysis_id||current.analysis.asset_id!==value.asset_id
+    ||!source||source.workspace_id!==value.workspace_id||source.project_id!==value.project_id||source.checksum_sha256!==value.source_sha256
+    ||receipt.project_id!==value.project_id||receipt.workspace_id!==value.workspace_id||receipt.analysis_id!==value.analysis_id
+    ||receipt.asset_id!==value.asset_id||receipt.transcript.transcript_id!==value.result_transcript_id
+    ||receipt.transcript.provenance.derived_from_transcript_id!==value.base_transcript_id
+    ||(current.timeline?.current_version??null)!==value.expected_timeline_version)
+    throw Error('Biên nhận sửa từ không còn khớp nguồn và timeline đang xem.');
+  const timeline=await api(`/api/v1/projects/${value.project_id}/timeline`).catch(error=>{
+    if(error.status===404&&value.expected_timeline_version===null)return null;throw error;});
+  assertVideoWordEditorBoundary(boundary);
+  if(value.expected_timeline_version===null?timeline!==null:
+    !timeline||timeline.project_id!==value.project_id||timeline.workspace_id!==value.workspace_id
+      ||timeline.source_analysis_id!==value.analysis_id||timeline.current_version!==value.expected_timeline_version+1
+      ||timeline.snapshot?.metadata?.transcript_revision?.transcript_id!==value.result_transcript_id)
+    throw Error('Timeline chưa chứng minh đúng lần lưu từ; không đổi CAS hoặc bỏ yêu cầu chờ.');
+  const versions=timeline?await api(`/api/v1/projects/${value.project_id}/timeline/versions`):[];
+  assertVideoWordEditorBoundary(boundary);
+  if(timeline?!videoWordHistoryMatches(versions,timeline):!Array.isArray(versions)||versions.length)
+    throw Error('Lịch sử timeline không khớp phiên bản vừa đọc; giữ yêu cầu để đối chiếu.');
+  state.analyses=state.analyses.map(analysis=>analysis.analysis_id===value.analysis_id?structuredClone(receipt):analysis);
+  state.timeline=timeline;state.versions=versions;state.videoReviewSelection=null;state.selectedSceneAssessmentId='';
+  state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
+  if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
+  if(state.productionPackage)state.productionPackage={...state.productionPackage,current_for_timeline:false,
+    approval:null,latest_review_render:null,latest_final_render:null};
+  state.activeProductionRender=null;stopPreviewPolling();stopProductionPolling();render();
+}
+
 
 function narrationEditorBoundary(){const current=sqlNarrationState();return JSON.stringify([
   current.workspaceId,current.projectId,current.principal,sessionToken(),
@@ -190,6 +258,7 @@ document.addEventListener('input', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
+  videoWordReview?.sync();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
@@ -197,6 +266,7 @@ document.addEventListener('change', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
+  videoWordReview?.sync();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -233,9 +303,12 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
+  const {videoWordAdmission:admission,...requestOptions}=options;
+  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&videoWordsHeld()&&admission!==videoWordAdmission)
+    throw new ApiError('Lưu/bỏ bản sửa từ hoặc đối chiếu yêu cầu đang giữ trước khi thay đổi dự án.',409,{});
   const response = await authenticatedFetch(path, {
-    ...options,
-    headers: { "Content-Type": "application/json", ...(options.headers ?? {}) },
+    ...requestOptions,
+    headers: { "Content-Type": "application/json", ...(requestOptions.headers ?? {}) },
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
@@ -311,6 +384,7 @@ async function loadProjectList() {
 
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
+  if(videoWordsHeld()){toast('Lưu/bỏ bản sửa từ hoặc đối chiếu lần lưu chưa rõ kết quả trước khi tải lại.',true);return;}
   if (variantNarration?.isWorking() || variantNarration?.isPending()) {
     toast('Chờ nhập/review giọng đọc hoàn tất hoặc đối chiếu yêu cầu cũ trước khi tải lại dự án.', true);return;
   }
@@ -325,6 +399,7 @@ async function loadProject({ quiet = false } = {}) {
   multiInput.setBusy(true);
   variantFamilies.sync();
   variantNarration?.sync();
+  videoWordReview?.sync();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -411,6 +486,7 @@ async function loadProject({ quiet = false } = {}) {
     videoReview.sync();
     variantFamilies.sync();
     variantNarration?.sync();
+  videoWordReview?.sync();
   }
   if (state.projectId === loadedProjectId) {
     await audioReview.reload();
@@ -424,6 +500,7 @@ function renderNoProject(title, description) {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
+  videoWordReview?.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -438,6 +515,7 @@ function render() {
   stockReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
+  videoWordReview?.sync();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -857,6 +935,7 @@ function renderProduction({preserveDraft=false}={}) {
   renderPublishing();
   if(!preserveDraft)productionBaseline=productionWorkbenchDraft();
   variantNarration?.sync();
+  videoWordReview?.sync();
 }
 
 function selectedPublishingPlatform() {
@@ -1503,6 +1582,7 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if(videoWordsHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ bản sửa từ hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
   if(variantNarration?.isWorking()||variantNarration?.isPending()){
     event.target.value=state.projectId??'';
     return toast('Chờ nhập/review giọng đọc hoàn tất hoặc đối chiếu yêu cầu cũ trước khi đổi dự án.',true);
@@ -1861,6 +1941,7 @@ window.addEventListener("beforeunload", () => {
   videoReview.dispose();
   variantFamilies.dispose();
   variantNarration?.dispose();
+  videoWordReview?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();

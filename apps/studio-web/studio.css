@@ -378,3 +378,21 @@
 .analytics-history-scroll table { width: 100%; border-collapse: collapse; }
 .analytics-history-scroll th, .analytics-history-scroll td { padding: 10px; text-align: left; border-bottom: 1px solid #40506c; overflow-wrap: anywhere; }
 #analytics-history-chart svg { width: 100%; min-height: 160px; }
+
+
+#video-transcript-word-workbench { margin: 16px 0; }
+#video-transcript-word-workbench > summary { cursor: pointer; font-size: 18px; font-weight: 700; padding: 14px 16px; }
+#video-transcript-word-review { display: grid; gap: 10px; padding: 0 16px 16px; font-size: 14px; min-width: 0; }
+#video-transcript-word-review h3, #video-transcript-word-review p { margin: 0; }
+#video-transcript-word-review p { line-height: 1.6; overflow-wrap: anywhere; }
+#video-transcript-word-review label { display: grid; gap: 5px; min-width: 0; }
+#video-transcript-word-review label:has(> input[type="checkbox"]) { display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 8px; }
+#video-transcript-word-review input:not([type="checkbox"]), #video-transcript-word-review select, #video-transcript-word-review textarea { min-width: 0; max-width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 7px; font: inherit; }
+#video-transcript-word-review textarea { width: 100%; }
+#video-transcript-word-review button { min-height: 38px; justify-self: start; max-width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #edf5f8; font: inherit; cursor: pointer; }
+#video-transcript-word-review button:disabled { opacity: .5; cursor: not-allowed; }
+#video-transcript-word-review [data-video-word-row] { display: grid; grid-template-columns: minmax(140px,2fr) repeat(2,minmax(90px,1fr)) minmax(140px,1fr) auto; align-items: end; gap: 8px; margin: 8px 0; }
+#video-transcript-word-review [data-video-word-source] { width: 100%; max-height: 65vh; background: #111; object-fit: contain; }
+#video-transcript-word-review [role="status"] { padding: 10px 12px; border-radius: 7px; background: #edf5f8; }
+#video-transcript-word-review [data-video-word-history] { padding: 12px; border: 1px solid var(--line); border-radius: 7px; }
+@media(max-width:900px) { #video-transcript-word-review [data-video-word-row] { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
