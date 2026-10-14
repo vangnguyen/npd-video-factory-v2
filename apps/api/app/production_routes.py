@@ -179,6 +179,19 @@ async def enqueue_final_render(
 ) -> RenderJobRead:
     principal = await authorize_project(request, project_id, 'editor')
     payload = payload.model_copy(update={'actor_ref': principal.subject})
+    return await enqueue_final_render_command(project_id, payload, request)
+
+
+async def enqueue_final_render_command(
+    project_id: str,
+    payload: FinalRenderCreateRequest,
+    request: Request,
+) -> RenderJobRead:
+    """Canonical final command/error mapping for already admitted callers.
+
+    The HTTP human handler and signed service facade each authorize their own
+    principal and set actor_ref before calling. This helper grants no authority.
+    """
     from .sql_variant_narration_activation import VariantNarrationQueueUnknownError
     try:
         return await service(request).enqueue_final(project_id, payload)
