@@ -1,6 +1,6 @@
 {
-  "head": "8790d37e6afafbb7e501f05ab8d42bcc3cefc5c0",
-  "audited_at": "2026-10-14T04:37:04.156198+00:00",
+  "head": "2b4dc41bbc587530bb5b5c2bb202800c2336f26b",
+  "audited_at": "2026-10-14T04:40:43.866114+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -188,6 +188,8 @@
     "apps/api/app/tiktok_upload.py": "a5c59b772af3617a7ccab8a94c4e0c447db293b046972568de0d3c828f4d30b6",
     "apps/api/app/timeline_audio.py": "ce5e2786f43fb69219ca7421296635b904eaf2380c176c8d8d3626627d21376b",
     "apps/api/app/timeline_audio_processing.py": "5acf103c6130ca5a59c49043277235040ad2c9f1984088e238d19c7bd9708fa0",
+    "apps/api/app/timeline_audio_processing_api.py": "6f6b61cb0e11b804a9099314bc03b6aa5f62e5679a369a4c2cd802eca7aac8f4",
+    "apps/api/app/timeline_audio_processing_command.py": "67537f3318dc321a0e112e06180e715d6beb56410e10e252a8022a7b221de4f0",
     "apps/api/app/timeline_logic.py": "e8373cc93a0532796e2caa854b7bd0161596a195a3968ec3696e12177a7fb6dc",
     "apps/api/app/timeline_models.py": "38241a4502e2a7494974a611f89e7d508484d5a1ff79391bd048d33262851a27",
     "apps/api/app/timeline_proxy.py": "f1300418f3ac57163463c807cd5bfd94453cd4a94bec79db5fe25f40b3abb7cd",
@@ -358,6 +360,7 @@
     "apps/api/tests/test_tiktok_credentials.py": "7f93d6e86e74bddede62e091d2812a8deaa0916f31edf1ea53667edb61a88113",
     "apps/api/tests/test_tiktok_upload.py": "e893efe9e2d3564ae995e43c90c67ecd7d8b8b501cedaba329d3a4019949760f",
     "apps/api/tests/test_timeline_audio_preview.py": "4b051876bfdced0aff184551b1be07e47baf35a2b9fc28850504b1f3c16faab3",
+    "apps/api/tests/test_timeline_audio_processing_api.py": "ed8f07dae82af592bb06491fb703ee6009aa3e421ca9b3ba697d0a93483dd37e",
     "apps/api/tests/test_timeline_reframe.py": "2e7e36f02b89dfabc57cb8778b1826f977c15c4356da1ccd99b64beeeacf4345",
     "apps/api/tests/test_transcript_editing.py": "5dc70743433df256b14283801eb6273e258bdf312450fdac6e610fc0b677e41c",
     "apps/api/tests/test_transcript_word_editing.py": "1a8f096403c811dca7925e587f15a3eaebc6afbef204af0c0016b012dcb572db",
