@@ -435,8 +435,7 @@ class ProductionRenderProcessor:
             if observed is not None and render.manifest.get('variant_narration_request') is not None:
                 return observed
             raise KeyError(render_id)
-        if (render.manifest.get('variant_narration_request') is not None
-                and started.status != 'running'):
+        if started.status != 'running':
             return started  # Observe another worker's terminal commit before any IO.
         if started.status in {"cancelled", "stale"}:
             return started
@@ -827,6 +826,11 @@ class ProductionRenderProcessor:
         sources = [unit["provider_evidence"] for unit in narration.get("timing", [])
             if unit.get("provider_evidence") and not unit.get('raw_audio_reuse') and not unit.get('prepared_audio_reused')]
         native_provider = narration.get("provider", "tts-unreported")
+        if (native_provider == 'disabled' and narration.get('timing') == []
+                and narration.get('cue_count') == 0 and not prepared_reuse and not variant_reuse):
+            # Silence preparation is local audio work, not a TTS provider call.
+            await self._record_render_costs(render)
+            return
         # Preserve the historical local accounting channel for explicit fixtures,
         # with the actual fixture identity retained in evidence. Unknown/external
         # implementations must never be classified as zero-cost eSpeak by class name.
@@ -861,6 +865,9 @@ class ProductionRenderProcessor:
                     for u in narration.get('timing',[])) else None,
                 "human_quality_accepted": False},
         )
+        await self._record_render_costs(render)
+
+    async def _record_render_costs(self, render: RenderJobRead) -> None:
         await self.platform.record_provider_operation(
             workspace_id=render.workspace_id,
             project_id=render.project_id,
