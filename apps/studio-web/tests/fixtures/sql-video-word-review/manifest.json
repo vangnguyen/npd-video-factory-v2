@@ -1,0 +1,54 @@
+{
+  "schema_version": "sql-video-word-review-fixture-manifest.v1",
+  "asgi_sha256": "0aac2af765bede2e803e5cfc33be29dc355f4b2f8178db4d309ec9f97cab6bcb",
+  "asgi_bytes": 1181603,
+  "original_cold_db_sha256_before": "ef5ecfed1f7d6e7952c8a3f00a47c43b61e9d21175d1ec26dbf5ee05911cab3e",
+  "original_cold_db_sha256_after": "ef5ecfed1f7d6e7952c8a3f00a47c43b61e9d21175d1ec26dbf5ee05911cab3e",
+  "source_sha256_before": "1a77addb76019e92c960f17441d025927fa37994ed1a981e3ae512c3d2f39392",
+  "source_sha256_after": "1a77addb76019e92c960f17441d025927fa37994ed1a981e3ae512c3d2f39392",
+  "source_bytes": 411042,
+  "actual_sql_api_assertions_passed": true,
+  "provider_usage_rows_unchanged": true,
+  "cost_rows_unchanged": true,
+  "new_word_versions": 1,
+  "post_requests": 5,
+  "successful_word_posts": 1,
+  "dependencies": [
+    {
+      "path": "apps/api/app/auto_edit_routes.py",
+      "sha256": "5717e39cf72689e7b753512280d3ca72eaed577dbe645cf15696b392b64975dd"
+    },
+    {
+      "path": "apps/api/app/transcript_word_editing.py",
+      "sha256": "2a75ab84e853b8d39a428fc023cc00e411335b97a88deda4b23a2944535b38be"
+    },
+    {
+      "path": "apps/api/app/transcript_word_review.py",
+      "sha256": "307c64d07a0d39a75695e305f5e2f7d365f2f90d9d6192ce9da26faae5b398bd"
+    },
+    {
+      "path": "apps/api/app/auto_edit_repository.py",
+      "sha256": "f153dfe10142410120e4d117445cad420cb087f4bc922aa30ca1ceadae60f23d"
+    },
+    {
+      "path": "apps/api/app/main.py",
+      "sha256": "37b960d655508044986b986ed1a9e2d1bbe89844c874f92c53a7e576a2562de8"
+    }
+  ],
+  "helper_sha256": "f57debd893d7d814a3e0ab2da12278b032567706e0414342d795521072c0df6c",
+  "scope": {
+    "automated_fixture_actor": true,
+    "human_listening": false,
+    "owner_uat_accepted": false,
+    "historical_genuine_asr": true,
+    "synthetic_visual": true,
+    "new_model_calls": 0,
+    "new_provider_calls": 0,
+    "new_renderer_calls": 0,
+    "new_network_calls": 0,
+    "new_paid_calls": 0,
+    "source_playback_endpoint_at_capture": "UNAVAILABLE"
+  },
+  "actual_http_requests": 11,
+  "count_correction": "Before freeze: original helper hardcoded post_requests=4; actual immutable captures prove5 POST/11 HTTP. No actual DTO or API run changed."
+}
