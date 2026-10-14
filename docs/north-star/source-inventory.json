@@ -1,6 +1,6 @@
 {
-  "head": "cac99baef814cdf2386b970bd8ba8aff0666156b",
-  "audited_at": "2026-10-14T04:18:57.501528+00:00",
+  "head": "ece5bbee0fde16cbb6c079245fb09501f234bb8b",
+  "audited_at": "2026-10-14T04:22:33.188409+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -1268,6 +1268,7 @@
     "scripts/north_star_sql_variant_browser_host.py": "981ccd5e59bf3cf6389f4f55987dc1ad025534299f24dcfca732e0789ce1ac39",
     "scripts/north_star_sql_variant_source_render.py": "e6a0048cb51915f87e994a38a3caa3af79b20305b281d51d9c8ed5d9e7c7b723",
     "scripts/north_star_sql_variant_source_restore.py": "10a1877a1532813d5786477e4e637b88fe206cc5b7947686a9302785e97cab09",
+    "scripts/north_star_sql_video_words_browser_host.py": "2807a1dbc80230fea21c032af57df9670cdd1f0f5aacfeb98cfefcd619020f4e",
     "scripts/north_star_sql_vieneu_windows_bootstrap.py": "a8f31b726cf25e544d83def574a997291fc52999358703ef28b76ceafd21194a",
     "scripts/north_star_still_timing_evidence.py": "add345b8d625c3a42f4bc633dd86609e57ee70230fc57fbcceb4398de01482c6",
     "scripts/north_star_technology_narrated_master.py": "6506e69e23744f1bd747c591fe4b9c912bdc1e40c3349422885a317013b98a7a",
