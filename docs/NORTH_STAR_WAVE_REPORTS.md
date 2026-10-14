@@ -4102,3 +4102,7 @@ REGRESSIONS: original session/crypto/EOL failures retained and narrowly repaired
 EXTERNAL BLOCKERS: genuine provider credentials/acceptance, actual compatible production stack, Owner UAT/deployment as applicable
 OWNER ACTION REQUIRED: none for current safe implementation; UAT remains deferred and required for Phase10/full acceptance
 NEXT WAVE: paired S5 activation + actual isolated full-shell SQL review, then current voiced original acceptance and remaining safe Master Spec gaps
+
+## 2026-10-14 — Waves 3/7/8/16 scoped SQL browser
+
+WAVE: 3/7/8/16 component; STATUS: local fixture browser/restore verified, broad waves incomplete; HEAD SHA: c4ac6942de1c1a3b35f050bd9407329af3086aa3; CAPABILITIES COMPLETED: actual full-shell authenticated child source/history/word edit and read-only recovery; CAPABILITIES PARTIAL: synthetic saved speech/scenes, missing child production package, complete A/B/C; TESTS: one actual child word POST, five master graphs unchanged, 1366/1920/2560 no overflow, archive/source/SQL independent review; REAL PROVIDER TESTS: none; MOCK TESTS: saved synthetic speech/scenes and fixture identity; EVIDENCE: north-star/sql-variant-browser-evidence.json; REGRESSIONS: no product regression, helper count/format/table assertions corrected with old logs retained; EXTERNAL BLOCKERS: provider/Owner/production gates remain separate; OWNER ACTION REQUIRED: listening/UAT deferred, no new request; NEXT WAVE: narration paired activation, server proposal/UI, spoken six-target and original full acceptance. No cleanup/main merge/deployment.
