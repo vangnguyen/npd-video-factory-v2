@@ -4139,3 +4139,32 @@ EXTERNAL BLOCKERS: DockerCLI absent; remaining real external credentials/rights/
 OWNER ACTION REQUIRED: none now; optional listening and Owner UAT deferred. No main merge/live publish/deployment.
 
 NEXT WAVE: safe video-word UI/source-clock playback and canonical audio parity on separate worktrees, then actual uploaded source full flow and remaining original waves.
+
+
+## Waves3/6/8/14/16 — scoped video-word, audio and main processing integration
+
+WAVE: 3,6,8,14,16 (component progress).
+
+STATUS: PARTIAL; scoped implementation and evidence completed, original wave exit OPEN.
+
+HEAD SHA: source parent 721c52a7e9222c2496779dabcdb460f7720114e3; following docs/recovery commit recorded in fresh seal. Word browser2b4; historical media5aff remains source-bound.
+
+CAPABILITIES COMPLETED: Word UI/source-clock/history/current-CAS, private video GET/HEAD, public auth/session compatibility, shared canonical all-track audio/approved PCM/terminal/limiter guards, private service-viewer admission and common approved service final command, strict SQL processing config/CAS/receipt/main routes.
+
+CAPABILITIES PARTIAL: processing Studio form/peer locks/UNKNOWN review, full ModeA/B, genuine uploaded ArtifactA, original B/C, decoded/provider/Owner/full32audio/PG/cloud/Docker/production acceptance.
+
+TESTS: fullStudio1093PASS/0FAIL/0SKIP; module43 included; source70; canonical selected9 plusroot9 overlapping, historical core28/adjacent5FAIL retained; service auth12/final10/fullflow1; processing30/main5. Independent reviews/selected batches never summed as full reruns.
+
+REAL PROVIDER TESTS: no new inference or external provider this increment; historical genuine ASR evidence/video read via actual readonly SQL browser. Bounded FFmpeg PCM and source bytes are local-real; visual/ASR/QC/final integration fixtures are labeled.
+
+MOCK TESTS: UI DOM/transport, header MP4/typed source, PoisonDSP/TTS/visual/QC/approval/publication/dry-run and graph-only nonplayable contracts; actual SQLite/ASGI authentication/transactions/custody surround them.
+
+EVIDENCE: SQL_VIDEO_WORD_CANONICAL_AUDIO_REVIEW.md; north-star/video-word-canonical-audio-evidence.json; separate browser N1failure/N2PASS support36entries/6screenshots/83HTTP0mutation; source archives/Git bundles/raw logs; full base+incremental recovery pair and15accepted artifact fresh seal.
+
+REGRESSIONS: fixed history/current contradiction, public token_id mismatch, limiter declaration drift and service auth/final integration; all repro/raw failures retained. Old preview stub missing read_source_snapshot remains explicit. Disk-full test reference removed only after verified owned termination; product bounded PCM/accepted data retained. Three clean completed bundled worktrees retired without force,2.14GB freed.
+
+EXTERNAL BLOCKERS: Owner UAT/listening deferred; DockerCLI absent; remaining real credentials/rights/deployment acceptance separate. Continue safe work.
+
+OWNER ACTION REQUIRED: none now. No main merge/live publish/production deployment/new paid budget.
+
+NEXT WAVE: processing Studio and current source-to-QC/full original acceptance, then all remaining safe original waves.
