@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import json
+import math
 import re
 import shutil
 from pathlib import Path
@@ -27,7 +29,7 @@ from .timeline_models import (
     TimelineSnapshot,
     TimelineVersionRead,
 )
-from .timeline_repository import TimelineRepository
+from .timeline_repository import TimelineRepository, TimelineConflictError
 from .timeline_proxy import (
     ProxyRenderResult, ProxyRenderer, DeterministicProxyRenderer,
     FFmpegProxyRenderer, PreviewCancelledError,
@@ -104,12 +106,25 @@ class TimelineService:
             raise KeyError(project_id)
         if payload.source_kind != "video_analysis":
             from .storyboard_timeline import build_storyboard
-            snapshot = await build_storyboard(self, project, payload)
-            self.validator.validate(snapshot)
             existing = await self.repository.get_timeline(project_id)
+            if existing and payload.expected_timeline_version is not None and existing.current_version != payload.expected_timeline_version:
+                raise TimelineConflictError(expected=payload.expected_timeline_version, actual=existing.current_version)
+            context = await self._storyboard_rebuild_context(project, existing)
+            snapshot = await build_storyboard(self, project, payload)
+            if context is not None:
+                snapshot.width, snapshot.height, snapshot.fps, snapshot.aspect_ratio = context['canvas']
+                if context['reframe']:
+                    snapshot.metadata['reframe'] = {'aspect_ratio': snapshot.aspect_ratio,
+                        'fallback': 'center_crop', 'needs_attention': True, 'confidence': None}
+                if context['origin'] is not None:
+                    snapshot.metadata['sql_variant_derivative'] = copy.deepcopy(context['origin'])
+            self.validator.validate(snapshot)
             if existing:
+                current = await self.repository.get_timeline(project_id)
+                if current is None or current.current_version_id != existing.current_version_id or current.current_version != existing.current_version:
+                    raise TimelineConflictError(expected=existing.current_version, actual=current.current_version if current else 0)
                 if existing.snapshot == snapshot:
-                    return existing
+                    return current
                 if payload.expected_timeline_version is None:
                     raise TimelineEditError("expected_timeline_version required to rebuild existing timeline")
                 return await self.repository.commit_mutation(project_id=project_id,
@@ -178,6 +193,95 @@ class TimelineService:
             actor_ref=payload.actor_ref,
         )
         return timeline
+
+    async def _storyboard_rebuild_context(self, project, existing):
+        """Keep this child's canvas and historic allocator references only.
+
+        A rebuild has fresh clips and source windows. Historic origin references
+        locate an immutable import receipt; they attest no current master source,
+        approval, rights, crop path or measured speech alignment.
+        """
+        if existing is None:
+            return None
+        if existing.project_id != project.project_id or existing.workspace_id != project.workspace_id:
+            raise TimelineEditError('STORYBOARD_REBUILD_SCOPE_CHANGED')
+        snapshot = existing.snapshot.model_copy(deep=True)
+        ratios = {'9:16': 9 / 16, '16:9': 16 / 9, '1:1': 1., '4:5': 4 / 5}
+        if (snapshot.aspect_ratio not in ratios or not math.isfinite(snapshot.fps)
+                or not 0 < snapshot.fps <= 120 or abs(snapshot.width / snapshot.height - ratios[snapshot.aspect_ratio]) > 1e-6):
+            raise TimelineEditError('STORYBOARD_REBUILD_CANVAS_INVALID')
+        reframed = snapshot.metadata.get('reframe')
+        if reframed is not None and (not isinstance(reframed, dict) or reframed.get('aspect_ratio') != snapshot.aspect_ratio):
+            raise TimelineEditError('STORYBOARD_REBUILD_CANVAS_INVALID')
+        original = snapshot.metadata.get('sql_variant_derivative')
+        provenance = project.provenance
+        story = provenance.get('source_type') == 'storyboard_variant_derivative'
+        if not story and original is None:
+            return {'canvas': (snapshot.width, snapshot.height, snapshot.fps, snapshot.aspect_ratio),
+                'reframe': reframed is not None or (snapshot.width, snapshot.height, snapshot.aspect_ratio) != (1080, 1920, '9:16'),
+                'origin': None}
+        try:
+            candidate = provenance if story else original
+            master, family, member = candidate['master_project_id'], candidate['family_id'], candidate['member_id']
+            if (not isinstance(master, str) or re.fullmatch(r'prj_[A-Za-z0-9_-]{4,60}', master) is None
+                    or master == project.project_id or re.fullmatch(r'vfa_[a-f0-9]{32}', family) is None
+                    or re.fullmatch(r'vfm_[a-f0-9]{32}', member) is None or candidate.get('approval_inherited') is not False
+                    or candidate.get('publishing_enabled', False) is not False):
+                raise ValueError()
+            if original is not None:
+                if (not isinstance(original, dict) or any(original.get(k) != value for k, value in
+                        [('master_project_id', master), ('family_id', family), ('member_id', member)])
+                        or original.get('approval_inherited') is not False
+                        or original.get('rights_override_inherited', False) is not False
+                        or original.get('publishing_enabled', False) is not False
+                        or original.get('new_inference_calls', 0) != 0):
+                    raise ValueError()
+            if story:
+                if original is not None and original.get('schema_version') != 'sql-variant-storyboard-lineage.v1':
+                    raise ValueError()
+                receipt_id = provenance['receipt_id']
+                kind = 'storyboard_derivation'
+            else:
+                if (not isinstance(original, dict) or original.get('schema_version') != 'sql-variant-evidence-lineage.v1'
+                        or provenance.get('source_type') != 'uploaded_variant_derivative'
+                        or provenance.get('parent_project_id') != master or provenance.get('approval_inherited') is not False
+                        or provenance.get('rights_override_inherited') is not False or provenance.get('publishing_enabled') is not False):
+                    raise ValueError()
+                receipt_id = provenance['derivation_receipt_id']
+                kind = 'uploaded_evidence_derivation'
+            if not isinstance(receipt_id, str) or re.fullmatch(r'vfr_[a-f0-9]{32}', receipt_id) is None:
+                raise ValueError()
+            from sqlalchemy import select
+            from .sql_variant_db import SqlVariantFamilyORM, SqlVariantMemberORM, SqlVariantArtifactReceiptORM
+            from .sql_variant_models import digest
+            # One SQL view binds the allocator relationship. No writer lock,
+            # source-current calculation, byte read or provider call occurs.
+            async with self.repository.session_factory() as session:
+                joined = (await session.execute(select(SqlVariantFamilyORM, SqlVariantMemberORM, SqlVariantArtifactReceiptORM)
+                    .join(SqlVariantMemberORM, SqlVariantMemberORM.family_id == SqlVariantFamilyORM.family_id)
+                    .join(SqlVariantArtifactReceiptORM, SqlVariantArtifactReceiptORM.member_id == SqlVariantMemberORM.member_id)
+                    .where(SqlVariantFamilyORM.family_id == family, SqlVariantFamilyORM.workspace_id == project.workspace_id,
+                        SqlVariantFamilyORM.master_project_id == master, SqlVariantMemberORM.member_id == member,
+                        SqlVariantMemberORM.workspace_id == project.workspace_id, SqlVariantMemberORM.child_project_id == project.project_id,
+                        SqlVariantArtifactReceiptORM.receipt_id == receipt_id, SqlVariantArtifactReceiptORM.family_id == family,
+                        SqlVariantArtifactReceiptORM.workspace_id == project.workspace_id,
+                        SqlVariantArtifactReceiptORM.kind == kind, SqlVariantArtifactReceiptORM.state == 'ready'))).one_or_none()
+                if joined is None:
+                    raise ValueError()
+                family_row, _member, receipt = joined
+                if (digest(receipt.input_json) != receipt.input_sha256 or digest(receipt.result_json) != receipt.result_sha256
+                        or provenance.get('input_sha256') != receipt.input_sha256
+                        or receipt.result_json.get('child_project_id') != project.project_id):
+                    raise ValueError()
+                if not story and (original.get('family_snapshot_sha256') != family_row.snapshot_sha256
+                        or original.get('source_timeline_sha256') != digest(receipt.input_json['source_timeline'])):
+                    raise ValueError()
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise TimelineEditError('STORYBOARD_REBUILD_ORIGIN_INVALID') from None
+        origin = {'schema_version': 'sql-variant-storyboard-lineage.v1', 'source_type': 'storyboard_variant_derivative',
+            'master_project_id': master, 'family_id': family, 'member_id': member,
+            'approval_inherited': False, 'publishing_enabled': False} if story else copy.deepcopy(original)
+        return {'canvas': (snapshot.width, snapshot.height, snapshot.fps, snapshot.aspect_ratio), 'reframe': True, 'origin': origin}
 
     async def get(self, project_id: str) -> TimelineRead | None:
         return await self.repository.get_timeline(project_id)
