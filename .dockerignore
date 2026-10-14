@@ -7,3 +7,23 @@
 e2e-artifacts
 storage/jobs/*
 !storage/jobs/.gitkeep
+
+# Profile builds send no workstation secrets or historical media/evidence to a
+# daemon. This changes build context only; it never deletes retained files.
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+secrets/
+**/secrets/
+recovery/
+evidence/
+e2e-artifacts/
+storage/
+models/
+*.bundle
+*.sqlite
+*.sqlite3
+*.db
