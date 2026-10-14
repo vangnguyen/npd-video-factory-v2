@@ -44,6 +44,31 @@ class ExplicitServiceAudioFixture(DeterministicAudioEngine):
         shutil.copyfile(narration_path,output_path)
         return {'fixture':True,'original_audio_clips':len(clips),'duration_seconds':duration_seconds,'gain_db':gain_db}
 
+    async def mix_canonical_timeline(self, *, snapshot, assets, config, base_audio_path, output_path, is_cancelled):
+        # This orchestration test holds ftyp+filler video, not decoded media.
+        # Explicit protocol PCM/clock fixtures cannot establish real DSP parity.
+        import wave
+        from app.production_audio import (canonical_audio_input, canonical_audio_graph,
+            CanonicalAudioReceipt, audio_digest)
+        assert not await is_cancelled()
+        await self.mix(narration_path=base_audio_path, music_path=None, cues=[], config=config,
+            duration_seconds=snapshot.duration_seconds, output_path=output_path)
+        source = canonical_audio_input(snapshot, assets, config)
+        graph = canonical_audio_graph(snapshot, assets, config, first_input_index=0)
+        with wave.open(str(output_path), 'rb') as wav:
+            count = wav.getnframes()
+        receipt = CanonicalAudioReceipt(input=source, input_sha256=audio_digest(source.model_dump(mode='json')),
+            source_audio_clocks={'fixture':True, 'measured_clock':False, 'assets':{
+                identifier:{'source_sha256':value['checksum_sha256'],'fixture':True}
+                for identifier,value in source.source_custodies.items()}},
+            audio_clip_receipts=graph.clips, audio_processing=graph.processing,
+            output_sha256=hashlib.sha256(output_path.read_bytes()).hexdigest(), output_size_bytes=output_path.stat().st_size,
+            sample_count=count, duration_seconds=count/48000)
+        return {'fixture':True,'engine':'explicit-protocol-PCM-NOT-real-mixing',
+            'canonical_timeline_audio':receipt.model_dump(mode='json'),
+            'sample_rate':48000,'duration_seconds':count/48000,'peak_dbfs':-1,
+            'limiter_peak_db':config.limiter_peak_db,'configured':False,'ducking_applied':False}
+
 @pytest.fixture
 async def flow(tmp_path):
     engine,factory,platform,assets,uploads,analyses,project,version=await setup_services(tmp_path)
@@ -145,7 +170,7 @@ async def test_upload_analysis_canonical_edit_preview_human_approval_render_and_
     assert ready.status=='ready'
     view=await call(flow,'GET',base+'/previews/'+ready.preview_id)
     assert view.json()['playback_url'].startswith('/v1/')
-    proxy=await call(flow,'GET',view.json()['playback_url'])
+    proxy=await call(flow,'GET',view.json()['playback_url'],human=True)
     assert proxy.status_code==200 and proxy.headers['Cache-Control']=='no-store' and proxy.content
     package=await call(flow,'POST',base+'/production-package',{'expected_timeline_version':tv},key='package')
     assert package.status_code==201,package.text
@@ -166,7 +191,7 @@ async def test_upload_analysis_canonical_edit_preview_human_approval_render_and_
     render=await flow.processor.process(final.json()['render_id']);assert render.status=='ready' and render.qc_status=='passed'
     view=await call(flow,'GET',base+'/renders/'+render.render_id)
     assert view.json()['status']=='ready' and view.json()['playback_url'].startswith('/v1/')
-    binary=await call(flow,'GET',view.json()['playback_url'])
+    binary=await call(flow,'GET',view.json()['playback_url'],human=True)
     assert binary.status_code==200 and binary.headers['Cache-Control']=='no-store' and binary.content
     publication={'platform':'youtube','final_render_id':render.render_id,'mode':'dry_run',
         'metadata':{'title':'Explicit AI educational service fixture','description':'Synthetic acceptance only','privacy':'private'},

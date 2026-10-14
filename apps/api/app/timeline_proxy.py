@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Awaitable, Callable, Protocol
 from .platform_models import AssetRead
 from .timeline_models import TimelineSnapshot
-from .timeline_audio_processing import build_processed_audio_graph
+from .timeline_audio_processing import AudioProcessing, build_processed_audio_graph
 from .auto_edit_providers import FFprobeMediaProbe
 from .source_audio_clock import INPUT_TIMESTAMP_OPTIONS,verify_audio_inputs
 
@@ -168,8 +168,10 @@ class FFmpegProxyRenderer:
             previous = output
             rendered_ids.append(clip.clip_id)
         filters.append(f"[{previous}]format=yuv420p[outv]")
+        processing = snapshot.metadata.get('source_audio_processing') if audio_processing is None else audio_processing
+        processing = AudioProcessing.model_validate({} if processing is None else processing).model_dump(mode='json')
         audio = build_processed_audio_graph(snapshot, assets, first_input_index=len(renderable) + 1,
-            processing=audio_processing)
+            processing=processing, packet_alignment=True)
         try:source_audio_clocks=await verify_audio_inputs(snapshot,assets,executable=self.ffmpeg_path,is_cancelled=is_cancelled)
         except ValueError as error:
             if str(error)=='SOURCE_AUDIO_CLOCK_CANCELLED':raise PreviewCancelledError('preview was cancelled') from None

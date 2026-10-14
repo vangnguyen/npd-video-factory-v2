@@ -18,7 +18,8 @@ import httpx
 from .object_storage import ObjectStorageProvider, validate_object_key
 from .frozen_storage_read import frozen_asset_read, asset_custody, completed_read, MAX_SOURCE_BYTES
 from .platform_models import AssetRegister
-from .production_audio import AudioMixEngine, audio_provider_status
+from .production_audio import (AudioMixEngine, audio_provider_status, active_canonical_audio,
+    canonical_audio_input, canonical_audio_custodies, validate_canonical_audio_receipt, AudioProcessing)
 from .production_logic import (
     PROFILE_DIMENSIONS,
     ProductionContractError,
@@ -243,8 +244,16 @@ class ProductionPackageService:
                 raise ProductionContractError("configured music asset was not found in this project")
             validate_music_rights(asset)
         timeline = await self.timeline_repository.get_timeline(project_id)
-        has_original = timeline and any(t.kind == "original_audio" and not t.muted and not t.disabled and t.clips for t in timeline.snapshot.tracks)
-        if not payload.config.voice.enabled and payload.config.music.asset_id is None and not has_original:
+        canonical = active_canonical_audio(timeline.snapshot) if timeline else []
+        for track, clip in canonical:
+            if not clip.asset_id or clip.source_end is None:
+                raise ProductionContractError('CANONICAL_AUDIO_SOURCE_REQUIRED')
+            if track.kind == 'music':
+                asset = await self.asset_repository.get_asset(clip.asset_id)
+                if asset is None or (asset.project_id, asset.workspace_id) != (project_id, timeline.workspace_id):
+                    raise ProductionContractError('CANONICAL_AUDIO_SOURCE_SCOPE_CHANGED')
+                validate_music_rights(asset)
+        if not payload.config.voice.enabled and payload.config.music.asset_id is None and not canonical:
             raise ProductionContractError("audio mix must enable narration or configure a licensed music asset")
         return await self.repository.replace_audio_mix(
             project_id=project_id,
@@ -443,6 +452,7 @@ class ProductionRenderProcessor:
         workdir = (self.staging_root.resolve() / render_id).resolve()
         if self.staging_root.resolve() not in workdir.parents:
             raise RuntimeError("render staging path escaped its configured root")
+        canonical = []
         try:
             selected = render.manifest.get('variant_narration_request')
             inherited_variant = None
@@ -463,6 +473,11 @@ class ProductionRenderProcessor:
                 timeline_version=render.timeline_version_id)
             source_project_version_id = feature_context.project_version_id if feature_context else None
             snapshot = TimelineSnapshot.model_validate(snapshot_json)
+            raw_processing = snapshot.metadata.get('source_audio_processing')
+            AudioProcessing.model_validate({} if raw_processing is None else raw_processing)
+            canonical = active_canonical_audio(snapshot)
+            if len(canonical) > 128 or any(not clip.asset_id or clip.source_end is None for _, clip in canonical):
+                raise ProductionContractError('CANONICAL_AUDIO_SOURCE_REQUIRED')
             project = await self.platform.get_project(render.project_id)
             if project is None or project.workspace_id != render.workspace_id:
                 raise RuntimeError("render project disappeared")
@@ -470,9 +485,9 @@ class ProductionRenderProcessor:
             asset_ids = {
                 clip.asset_id
                 for track in snapshot.tracks
-                if (track.type == "video" or (track.kind == "original_audio" and not track.muted)) and not track.disabled
+                if track.type in {'video', 'audio'} and not track.disabled
                 for clip in track.clips
-                if not clip.disabled and clip.asset_id
+                if not clip.disabled and clip.asset_id and (track.type != 'audio' or (not track.muted and clip.volume > 0))
             }
             if audio_mix.config.music.asset_id:
                 asset_ids.add(audio_mix.config.music.asset_id)
@@ -486,6 +501,13 @@ class ProductionRenderProcessor:
                 path = workdir / f"{asset.asset_id}{suffix}"
                 await self._download_render_asset(render,asset,path)
                 asset_paths[asset.asset_id] = (asset, path)
+            for track, clip in canonical:
+                if track.kind == 'music':
+                    validate_music_rights(asset_paths[clip.asset_id][0])
+                    if audio_mix.config.music.asset_id == clip.asset_id:
+                        raise ProductionContractError('CANONICAL_AUDIO_DUPLICATE_MUSIC_SOURCE')
+            if canonical:
+                canonical_audio_input(snapshot, asset_paths, audio_mix.config)
             timeline_qc = validate_timeline_renderability(
                 snapshot, available_asset_ids=set(asset_paths)
             )
@@ -500,13 +522,22 @@ class ProductionRenderProcessor:
             await self.repository.set_render_progress(render_id, 25)
             narration_path = workdir / "narration.wav"
             from .sql_tts_artifact_reuse import prepared_final_audio,canonical_audio_binding
-            canonical_audio_input=canonical_audio_binding(render,snapshot_json,subtitles,audio_mix.config)
+            canonical_binding=canonical_audio_binding(render,snapshot_json,subtitles,audio_mix.config)
             if render.render_kind=='final':
                 narration_manifest,mix_manifest=await prepared_final_audio(repository=self.repository,
                     assets=self.asset_repository,storage=self.object_storage,render=render,snapshot=snapshot_json,
                     subtitles=subtitles,config=audio_mix.config,workdir=workdir)
                 narration_path=workdir/'narration.wav'
                 mixed_audio_path=workdir/'audio-mix.wav'
+                if canonical:
+                    try:
+                        proof = validate_canonical_audio_receipt(mix_manifest.get('canonical_timeline_audio'),
+                            snapshot, asset_paths, audio_mix.config)
+                    except ValueError:
+                        raise ProductionContractError('CANONICAL_AUDIO_FRESH_REVIEW_REQUIRED') from None
+                    from .object_storage import sha256_file
+                    if proof.output_sha256 != await completed_read(asyncio.to_thread(sha256_file, mixed_audio_path)):
+                        raise ProductionContractError('CANONICAL_AUDIO_APPROVED_PCM_CHANGED')
                 if narration_manifest.get('caption_schedule'):
                     from .production_models import SubtitleCue
                     subtitles=subtitles.model_copy(update={'cues':[SubtitleCue.model_validate(c)
@@ -546,7 +577,7 @@ class ProductionRenderProcessor:
                         content_id=snapshot.metadata.get('content_version_id')
                         content=await self.platform.get_version(content_id) if content_id else None
                         if content is not None and (content.workspace_id,content.project_id)==(render.workspace_id,render.project_id):
-                            target=canonical_audio_input
+                            target=canonical_binding
                             async def reuse_guard():
                                 await self._check_cancelled(render_id)
                                 await self.repository.assert_audio_reuse_current(render_id,target)
@@ -572,25 +603,30 @@ class ProductionRenderProcessor:
                         for c in narration_manifest["caption_schedule"]]})
                     subtitle_qc = validate_subtitles(subtitles.cues, subtitles.style, snapshot.duration_seconds)
                 await self._check_cancelled(render_id)
-                originals = [(clip, asset_paths[clip.asset_id][1])
-                    for track in snapshot.tracks if track.kind == "original_audio" and not track.muted and not track.disabled
-                    for clip in track.clips if not clip.disabled and clip.asset_id in asset_paths]
-                if originals:
-                    combined = workdir / "narration-and-original.wav"
-                    narration_manifest["original_audio"] = await self.audio_engine.mix_original(
-                        narration_path=narration_path, clips=originals, duration_seconds=snapshot.duration_seconds,
-                        gain_db=audio_mix.config.original_audio_gain_db or 0, output_path=combined)
-                    narration_path = combined
                 mixed_audio_path = workdir / "audio-mix.wav"
-                mix_manifest = await self.audio_engine.mix(
-                    narration_path=narration_path,
-                    music_path=music_path,
-                    cues=subtitles.cues,
-                    config=audio_mix.config,
-                    duration_seconds=snapshot.duration_seconds,
-                    output_path=mixed_audio_path,
-                )
-            narration_manifest['canonical_audio_binding']=canonical_audio_input
+                base_audio_path = None
+                if not canonical or audio_mix.config.voice.enabled or music_path is not None:
+                    base_audio_path = workdir / 'legacy-audio-base.wav' if canonical else mixed_audio_path
+                    mix_manifest = await self.audio_engine.mix(narration_path=narration_path,
+                        music_path=music_path, cues=subtitles.cues, config=audio_mix.config,
+                        duration_seconds=snapshot.duration_seconds, output_path=base_audio_path)
+                if canonical:
+                    legacy_mix = copy.deepcopy(mix_manifest) if base_audio_path is not None else None
+                    mix_manifest = await self.audio_engine.mix_canonical_timeline(snapshot=snapshot,
+                        assets=asset_paths, config=audio_mix.config, base_audio_path=base_audio_path,
+                        output_path=mixed_audio_path,
+                        is_cancelled=lambda: self.repository.render_cancel_requested(render_id))
+                    if legacy_mix is not None:
+                        mix_manifest['legacy_base_mix'] = legacy_mix
+                        mix_manifest['ducking_applied'] = bool(mix_manifest.get('ducking_applied')
+                            or legacy_mix.get('ducking_applied'))
+                    originals = [clip for track, clip in canonical if track.kind == 'original_audio']
+                    if originals:
+                        narration_manifest['original_audio'] = {'source': 'canonical_timeline_audio',
+                            'clip_count': len(originals), 'gain_db': audio_mix.config.original_audio_gain_db or 0}
+            if canonical:
+                await self._assert_canonical_sources_current(render, snapshot, asset_paths, audio_mix.config, mix_manifest)
+            narration_manifest['canonical_audio_binding']=canonical_binding
             subtitle_path = workdir / "subtitles.srt"
             _write_srt(subtitle_path, subtitles.cues)
 
@@ -608,6 +644,7 @@ class ProductionRenderProcessor:
                 brand_name=self.brand_name,
             )
             self.manifest_validator.validate(manifest)
+            manifest['audio']['ducking_applied'] = bool(mix_manifest.get('ducking_applied'))
             manifest_path = workdir / "timeline-render-manifest.json"
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
             await self.repository.set_render_progress(render_id, 55)
@@ -694,6 +731,8 @@ class ProductionRenderProcessor:
             evidence_manifest["supporting_audio_proofs"] = supporting_proofs
             evidence_manifest["output_asset_id"] = output_asset.asset_id
             evidence_manifest["output_checksum_sha256"] = output_asset.checksum_sha256
+            if canonical:
+                await self._assert_canonical_sources_current(render, snapshot, asset_paths, audio_mix.config, mix_manifest)
             completed = await self.repository.complete_render(
                 render_id,
                 output_asset_id=output_asset.asset_id,
@@ -702,14 +741,22 @@ class ProductionRenderProcessor:
             )
             if completed is None:
                 raise RuntimeError("render completion record disappeared")
+            if canonical and completed.status not in {'awaiting_review', 'ready'}:
+                return completed
             await self._record_costs(render, narration=narration_manifest)
             return completed
         except RenderCancelledError as exc:
+            observed = await self._observed_canonical_terminal(render_id, canonical)
+            if observed is not None:
+                return observed
             failed = await self.repository.fail_render(render_id, code="RENDER_CANCELLED", reason=str(exc))
             if failed is None:
                 raise
             return failed
         except ProductionQCError as exc:
+            observed = await self._observed_canonical_terminal(render_id, canonical)
+            if observed is not None:
+                return observed
             failed = await self.repository.fail_render(
                 render_id,
                 code="QC_FAILED",
@@ -720,16 +767,25 @@ class ProductionRenderProcessor:
                 raise
             return failed
         except TTSNotConfiguredError as exc:
+            observed = await self._observed_canonical_terminal(render_id, canonical)
+            if observed is not None:
+                return observed
             failed = await self.repository.fail_render(render_id, code="TTS_NOT_CONFIGURED", reason=str(exc))
             if failed is None:
                 raise
             return failed
         except SubtitleLayoutError as exc:
+            observed = await self._observed_canonical_terminal(render_id, canonical)
+            if observed is not None:
+                return observed
             failed = await self.repository.fail_render(render_id, code="SUBTITLE_LAYOUT_OVERFLOW", reason=str(exc))
             if failed is None:
                 raise
             return failed
         except Exception as exc:
+            observed = await self._observed_canonical_terminal(render_id, canonical)
+            if observed is not None:
+                return observed
             failed = await self.repository.fail_render(
                 render_id,
                 code="PRODUCTION_RENDER_FAILED",
@@ -750,6 +806,27 @@ class ProductionRenderProcessor:
     async def _check_cancelled(self, render_id: str) -> None:
         if await self.repository.render_cancel_requested(render_id):
             raise RenderCancelledError("render was cancelled")
+
+    async def _observed_canonical_terminal(self, render_id, canonical):
+        if canonical:
+            observed = await self.repository.get_render(render_id)
+            if observed is not None and observed.status not in {'queued', 'running'}:
+                return observed
+        return None
+
+    async def _assert_canonical_sources_current(self, render, snapshot, assets, config, mix):
+        from .object_storage import sha256_file
+        try:
+            proof = validate_canonical_audio_receipt(mix.get('canonical_timeline_audio'), snapshot, assets, config)
+            for identifier, custody in canonical_audio_custodies(proof.input).items():
+                latest = await self.asset_repository.get_asset(identifier)
+                if latest is None or asset_custody(latest) != custody:
+                    raise ValueError('CANONICAL_AUDIO_SOURCE_CUSTODY_CHANGED')
+                if await completed_read(asyncio.to_thread(sha256_file, assets[identifier][1])) != custody['checksum_sha256']:
+                    raise ValueError('CANONICAL_AUDIO_SOURCE_BYTES_CHANGED')
+            await self._check_cancelled(render.render_id)
+        except ValueError as error:
+            raise ProductionContractError(str(error)) from None
 
     async def _download_render_asset(self, render, asset, path):
         """Read selected footage/music from its registered server byte proof."""
@@ -827,7 +904,7 @@ class ProductionRenderProcessor:
             if unit.get("provider_evidence") and not unit.get('raw_audio_reuse') and not unit.get('prepared_audio_reused')]
         native_provider = narration.get("provider", "tts-unreported")
         if (native_provider == 'disabled' and narration.get('timing') == []
-                and narration.get('cue_count') == 0 and not prepared_reuse and not variant_reuse):
+                and narration.get('cue_count') == 0 and not variant_reuse):
             # Silence preparation is local audio work, not a TTS provider call.
             await self._record_render_costs(render)
             return

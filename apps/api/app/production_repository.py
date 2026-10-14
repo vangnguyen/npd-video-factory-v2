@@ -7,7 +7,7 @@ from typing import Any
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from .db import VideoProjectORM, utc_now
+from .db import AssetORM, VideoProjectORM, utc_now
 from .production_db import (
     AudioMixVersionORM,
     ProductionApprovalORM,
@@ -27,8 +27,8 @@ from .production_models import (
     SubtitleStyle,
     SubtitleVersionRead,
 )
-from .timeline_db import TimelineORM
-from .timeline_models import TimelineRead
+from .timeline_db import TimelineORM, TimelineVersionORM
+from .timeline_models import TimelineRead, TimelineSnapshot
 
 
 class ProductionConflictError(RuntimeError):
@@ -686,6 +686,13 @@ class ProductionRepository:
                 hint = await session.get(ProductionRenderJobORM, render_id)
                 if hint is None:
                     return None
+                canonical_value = copy.deepcopy((manifest.get('mix') or {}).get('canonical_timeline_audio'))
+                frozen_timeline = await session.get(TimelineVersionORM, hint.timeline_version_id)
+                if frozen_timeline is not None:
+                    from .production_audio import active_canonical_audio
+                    required = active_canonical_audio(TimelineSnapshot.model_validate(frozen_timeline.snapshot_json))
+                    if required and canonical_value is None:
+                        raise ApprovalBoundaryError('CANONICAL_AUDIO_COMPLETION_PROOF_REQUIRED')
                 variant=(manifest.get('narration') or {}).get('variant_narration_reuse')
                 selected = hint.manifest_json.get('variant_narration_request')
                 retained_selection = {k: copy.deepcopy(hint.manifest_json[k]) for k in (
@@ -713,9 +720,15 @@ class ProductionRepository:
                     await session.execute(update(ProductionPackageORM).where(
                         ProductionPackageORM.package_id==hint.package_id).values(updated_at=ProductionPackageORM.updated_at))
                     package=await session.get(ProductionPackageORM,hint.package_id,with_for_update=True,populate_existing=True)
+                if canonical_value is not None:
+                    observed = await self._canonical_audio_terminal_fence(session, hint, manifest, lock=True)
+                    if observed is not None:
+                        return _render_read(observed)
                 row = await session.get(ProductionRenderJobORM, render_id, with_for_update=True,populate_existing=True)
                 if row is None:
                     return None
+                if canonical_value is not None and row.status != 'running':
+                    return _render_read(row)
                 if row.cancellation_requested or row.status == "stale":
                     row.status = "stale" if row.status == "stale" else "cancelled"
                     row.updated_at = utc_now()
@@ -766,7 +779,81 @@ class ProductionRepository:
                     await self.variant_narration_fence.guard(session,row,variant_proof,terminal=True)
                     if row.manifest_json.get('variant_narration_request') is not None:
                         await self.variant_narration_admission.recheck(session,row)
+                if canonical_value is not None:
+                    await session.flush()
+                    await self._canonical_audio_terminal_fence(session, row, manifest, terminal=True)
             return _render_read(row)
+
+    async def _canonical_audio_terminal_fence(self, session, row, manifest, *, lock=False, terminal=False):
+        """Fence the new audio receipt in the existing writer transaction."""
+        from pathlib import Path
+        from .production_audio import CanonicalAudioReceipt, canonical_audio_custodies, validate_canonical_audio_receipt
+        from .repositories import _asset_read
+        try:
+            receipt = CanonicalAudioReceipt.model_validate((manifest.get('mix') or {}).get('canonical_timeline_audio'))
+        except ValueError:
+            raise ApprovalBoundaryError('CANONICAL_AUDIO_COMPLETION_PROOF_REQUIRED') from None
+        if lock:
+            # Match the existing project/package writer order; do not acquire a
+            # timeline lock after a render lock (timeline edits invalidate renders).
+            await session.execute(update(VideoProjectORM).where(VideoProjectORM.project_id == row.project_id,
+                VideoProjectORM.workspace_id == row.workspace_id).values(updated_at=VideoProjectORM.updated_at))
+            await session.get(VideoProjectORM, row.project_id, with_for_update=True, populate_existing=True)
+            await session.execute(update(ProductionPackageORM).where(ProductionPackageORM.package_id == row.package_id)
+                .values(updated_at=ProductionPackageORM.updated_at))
+            current = await session.get(ProductionRenderJobORM, row.render_id,
+                with_for_update=True, populate_existing=True)
+            if current is not None and current.status != 'running':
+                return current
+        package = await session.get(ProductionPackageORM, row.package_id, with_for_update=True, populate_existing=True)
+        timeline = await session.get(TimelineORM, row.timeline_id, populate_existing=True)
+        version = await session.get(TimelineVersionORM, row.timeline_version_id, populate_existing=True)
+        audio = await session.get(AudioMixVersionORM, row.audio_version_id, populate_existing=True)
+        if (package is None or timeline is None or version is None or audio is None
+                or (timeline.workspace_id, timeline.project_id, timeline.current_version_id, timeline.current_version) !=
+                    (row.workspace_id, row.project_id, row.timeline_version_id, row.timeline_version)
+                or (package.workspace_id, package.project_id, package.timeline_version_id,
+                    package.current_subtitle_version_id, package.current_audio_version_id) !=
+                    (row.workspace_id, row.project_id, row.timeline_version_id, row.subtitle_version_id, row.audio_version_id)):
+            raise ApprovalBoundaryError('CANONICAL_AUDIO_VERSION_CHANGED')
+        content_id = (version.snapshot_json.get('metadata') or {}).get('content_version_id')
+        if content_id is not None:
+            from .db import ProjectVersionORM
+            latest = await session.scalar(select(ProjectVersionORM).where(
+                ProjectVersionORM.project_id == row.project_id, ProjectVersionORM.workspace_id == row.workspace_id,
+                ProjectVersionORM.label == 'mvp1-content').order_by(ProjectVersionORM.ordinal.desc()).limit(1))
+            if latest is None or latest.project_version_id != content_id:
+                raise ApprovalBoundaryError('CANONICAL_AUDIO_CONTENT_CHANGED')
+        sources = {}
+        for identifier in sorted(canonical_audio_custodies(receipt.input)):
+            if lock:
+                await session.execute(update(AssetORM).where(AssetORM.asset_id == identifier)
+                    .values(version=AssetORM.version, updated_at=AssetORM.updated_at))
+            asset = await session.get(AssetORM, identifier, with_for_update=True, populate_existing=True)
+            if asset is None or (asset.workspace_id, asset.project_id) != (row.workspace_id, row.project_id):
+                raise ApprovalBoundaryError('CANONICAL_AUDIO_SOURCE_CHANGED')
+            sources[identifier] = (_asset_read(asset), Path('canonical-verified-staged-input'))
+        try:
+            validate_canonical_audio_receipt(receipt, TimelineSnapshot.model_validate(version.snapshot_json),
+                sources, MixConfig.model_validate(audio.config_json))
+        except ValueError:
+            raise ApprovalBoundaryError('CANONICAL_AUDIO_SOURCE_CHANGED') from None
+        identifier = manifest.get('supporting_asset_ids', {}).get('audio-mix')
+        if lock and identifier:
+            await session.execute(update(AssetORM).where(AssetORM.asset_id == identifier)
+                .values(version=AssetORM.version, updated_at=AssetORM.updated_at))
+        output = await session.get(AssetORM, identifier, with_for_update=True, populate_existing=True) if identifier else None
+        if (output is None or (output.workspace_id, output.project_id, output.asset_class, output.kind, output.content_type) !=
+                (row.workspace_id, row.project_id, 'render', 'audio-mix', 'audio/wav')
+                or (output.checksum_sha256, output.size_bytes) != (receipt.output_sha256, receipt.output_size_bytes)):
+            raise ApprovalBoundaryError('CANONICAL_AUDIO_OUTPUT_CHANGED')
+        from .sql_tts_artifact_reuse import asset_proof
+        if asset_proof(_asset_read(output)) != manifest.get('supporting_audio_proofs', {}).get('audio-mix'):
+            raise ApprovalBoundaryError('CANONICAL_AUDIO_OUTPUT_CUSTODY_CHANGED')
+        current = await session.get(ProductionRenderJobORM, row.render_id, populate_existing=True)
+        expected = ('awaiting_review' if row.render_kind == 'review' else 'ready') if terminal else 'running'
+        if current is None or current.status != expected or current.cancellation_requested or current.invalidated_at is not None:
+            raise ApprovalBoundaryError('CANONICAL_AUDIO_CANCELLED_OR_TERMINAL')
 
     async def fail_render(
         self,
