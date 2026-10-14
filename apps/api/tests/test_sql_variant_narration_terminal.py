@@ -30,9 +30,13 @@ async def child_review(f):
     built=await f.env.service.create(f.child.project_id,TimelineCreateRequest(source_kind='storyboard_media',
         content_version_id=changed.project_version_id,expected_timeline_version=1))
     package=await f.env.package.create_or_refresh(f.child.project_id,ProductionPackageCreateRequest())
-    render=await f.env.package.enqueue_review(f.child.project_id,RenderCreateRequest(
+    # Typed loader-only probe, never a queued/public review or quality approval.
+    # Its internal full-canvas identity keeps the later actual selected public
+    # review-960x540 intent independent; retain the probe row as fixture evidence.
+    render=await f.env.production.create_render(project_id=f.child.project_id,
         expected_timeline_version=built.current_version,expected_subtitle_version=package.subtitle.version,
-        expected_audio_version=package.audio_mix.version))
+        expected_audio_version=package.audio_mix.version,render_kind='review',profile='landscape-1920x1080',
+        actor_ref='explicit-unrendered-loader-probe-fixture')
     projection=narration_projection(built.snapshot.model_dump(mode='json'),child_cues(built.snapshot.model_dump(mode='json')),package.audio_mix.config.voice)
     request=f.request.model_copy(update={'expected_child_content_version_id':changed.project_version_id,
         'expected_child_timeline_version_id':built.current_version_id,'expected_child_timeline_version':built.current_version,
