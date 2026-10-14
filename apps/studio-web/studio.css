@@ -346,12 +346,18 @@
 #sql-variant-families button { margin: 4px; padding: 8px 14px; min-height: 38px; }
 #sql-variant-families select { max-width: 100%; margin: 8px 10px 8px 0; padding: 8px; }
 #sql-variant-families [data-sql-variant-status] { overflow-wrap: anywhere; }
-#sql-variant-narration-workbench { margin: 16px 0; padding: 20px; }
-#sql-variant-narration-workbench > summary { cursor: pointer; font-weight: 700; }
-#sql-variant-narration button { margin: 4px; padding: 8px 14px; min-height: 38px; }
-#sql-variant-narration label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
-#sql-variant-narration select { max-width: 100%; padding: 8px; }
-#sql-variant-narration p { overflow-wrap: anywhere; }
+#sql-variant-narration-workbench { margin: 16px 0; }
+#sql-variant-narration-workbench > summary { cursor: pointer; font-size: 18px; font-weight: 700; padding: 14px 16px; }
+#sql-variant-narration { display: grid; gap: 10px; padding: 0 16px 16px; font-size: 14px; }
+#sql-variant-narration[hidden] { display: none; }
+#sql-variant-narration h3 { margin: 0; font-size: 17px; }
+#sql-variant-narration button { justify-self: start; max-width: 100%; padding: 8px 12px; min-height: 38px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #edf5f8; font: inherit; cursor: pointer; }
+#sql-variant-narration button:disabled { opacity: .5; cursor: not-allowed; }
+#sql-variant-narration label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+#sql-variant-narration label:has(> input[type="checkbox"]) { flex-direction: row-reverse; justify-content: flex-end; }
+#sql-variant-narration select { min-width: 0; max-width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 7px; font: inherit; }
+#sql-variant-narration p { margin: 0; line-height: 1.6; overflow-wrap: anywhere; }
+#sql-variant-narration [role="status"] { padding: 10px 12px; border-radius: 7px; background: #edf5f8; }
 .mvp-scene { border: 1px solid #40506c; padding: 16px; margin: 12px 0; border-radius: 12px; }
 .production-workbench .compact-note, .production-workbench .render-summary, .production-workbench .hard-boundary { font-size: 12px; line-height: 1.6; }
 .production-workbench .approval-actions button, .production-workbench .final-render-row button { font-size: 13px; min-height: 38px; }

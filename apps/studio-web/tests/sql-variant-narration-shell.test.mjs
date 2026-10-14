@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {reframeProfiles} from '../reframe.mjs';
 
 const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8');
 const captured=JSON.parse(readFileSync(new URL('./fixtures/sql-variant-narration/asgi.json',import.meta.url),'utf8'));
@@ -9,6 +10,16 @@ const segment=(start,end)=>{
   const first=code.indexOf(start),last=code.indexOf(end,first);
   assert.ok(first>=0&&last>first);return code.slice(first,last);
 };
+test('actual Studio selects the saved canvas final profile for storyboard children with no reframe metadata',()=>{
+  for(const [aspect_ratio,final] of [['16:9','landscape-1920x1080'],['9:16','vertical-1080x1920'],
+    ['1:1','square-1080x1080'],['4:5','portrait-1080x1350']]){
+    const state={timeline:{snapshot:{aspect_ratio,metadata:{}}}},profile={value:'vertical-1080x1920'},panel={hidden:false};
+    const run=new Function('state','$','reframeProfiles','activeAnalysis',
+      segment('function renderReframe(){','\nfunction renderAnalysisReview(){')+'\nreturn renderReframe;')(
+        state,selector=>selector==='#final-profile'?profile:panel,reframeProfiles,()=>null);
+    run();assert.equal(profile.value,final);assert.equal(panel.hidden,true);
+  }
+});
 test('actual parent state blocks unsaved audio/subtitles and family operations without locking its own narration callback',()=>{
   const s={projectLoading:0,activeProductionRender:null,transcriptDrafts:new Map()};
   let draft='saved',pending=false,working=false,familyPending=false;

@@ -466,7 +466,7 @@ function render() {
 }
 
 function renderReframe(){
-  if(state.timeline?.snapshot?.metadata?.reframe)$('#final-profile').value=reframeProfiles(state.timeline.snapshot).final;
+  if(state.timeline?.snapshot)$('#final-profile').value=reframeProfiles(state.timeline.snapshot).final;
   const source=activeAnalysis();
   $('#reframe-review').hidden=!state.timeline?.source_analysis_id||!source;
   if($('#reframe-review').hidden)return;

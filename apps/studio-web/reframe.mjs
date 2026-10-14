@@ -5,7 +5,7 @@ const profiles={
   '4:5':{review:'review-432x540',final:'portrait-1080x1350'},
 };
 export function reframeProfiles(snapshot){
-  const ratio=snapshot?.metadata?.reframe?.aspect_ratio;
+  const ratio=snapshot?.aspect_ratio??snapshot?.metadata?.reframe?.aspect_ratio;
   return profiles[ratio]??profiles['9:16'];
 }
 export function matchingVision(analyses,source){
