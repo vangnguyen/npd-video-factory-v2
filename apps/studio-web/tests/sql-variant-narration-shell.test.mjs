@@ -13,12 +13,24 @@ const segment=(start,end)=>{
 test('actual Studio selects the saved canvas final profile for storyboard children with no reframe metadata',()=>{
   for(const [aspect_ratio,final] of [['16:9','landscape-1920x1080'],['9:16','vertical-1080x1920'],
     ['1:1','square-1080x1080'],['4:5','portrait-1080x1350']]){
-    const state={timeline:{snapshot:{aspect_ratio,metadata:{}}}},profile={value:'vertical-1080x1920'},panel={hidden:false};
+    const state={timeline:{snapshot:{aspect_ratio,metadata:{}}}},profile={value:'vertical-1080x1920',dataset:{}},panel={hidden:false};
     const run=new Function('state','$','reframeProfiles','activeAnalysis',
       segment('function renderReframe(){','\nfunction renderAnalysisReview(){')+'\nreturn renderReframe;')(
         state,selector=>selector==='#final-profile'?profile:panel,reframeProfiles,()=>null);
     run();assert.equal(profile.value,final);assert.equal(panel.hidden,true);
   }
+});
+test('actual Studio preserves an explicit final profile on the same canvas and picks a new default only when canvas or project changes',()=>{
+  const s={workspaceId:'wsp_same',projectId:'prj_same',timeline:{current_version:3,
+    snapshot:{aspect_ratio:'16:9',width:1920,height:1080,fps:30,metadata:{}}}},profile={value:'',dataset:{}},panel={hidden:false};
+  const run=new Function('state','$','reframeProfiles','activeAnalysis',
+    segment('function renderReframe(){','\nfunction renderAnalysisReview(){')+'\nreturn renderReframe;')(
+      s,selector=>selector==='#final-profile'?profile:panel,reframeProfiles,()=>null);
+  run();assert.equal(profile.value,'landscape-1920x1080');
+  profile.value='square-1080x1080';run();assert.equal(profile.value,'square-1080x1080');
+  s.timeline.current_version++;run();assert.equal(profile.value,'square-1080x1080');
+  Object.assign(s.timeline.snapshot,{aspect_ratio:'4:5',width:1080,height:1350});run();assert.equal(profile.value,'portrait-1080x1350');
+  profile.value='landscape-1920x1080';s.projectId='prj_changed';run();assert.equal(profile.value,'portrait-1080x1350');
 });
 test('actual parent state blocks unsaved audio/subtitles and family operations without locking its own narration callback',()=>{
   const s={projectLoading:0,activeProductionRender:null,transcriptDrafts:new Map()};

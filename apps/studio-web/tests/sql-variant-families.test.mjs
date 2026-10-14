@@ -125,7 +125,7 @@ test('a new project or principal must acknowledge draft review again',async()=>{
 for(const ratio of['9:16','16:9','1:1','4:5'])test(`actual Studio callback selects ${ratio} final profile even for storyboard without source analysis`,async()=>{
   const {reframeProfiles}=await import('../reframe.mjs');
   const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8');const start=code.indexOf('function renderReframe(){'),end=code.indexOf('\nfunction renderAnalysisReview',start);
-  assert.ok(start>=0&&end>start);const profile={value:'vertical-1080x1920'},review={hidden:false};
+  assert.ok(start>=0&&end>start);const profile={value:'vertical-1080x1920',dataset:{}},review={hidden:false};
   const s={timeline:{source_analysis_id:null,snapshot:{metadata:{reframe:{aspect_ratio:ratio}}}}};
   new Function('state','$','activeAnalysis','reframeProfiles','matchingVision',code.slice(start,end)+'\nrenderReframe();')(
     s,selector=>selector==='#final-profile'?profile:review,()=>null,reframeProfiles,()=>[]);

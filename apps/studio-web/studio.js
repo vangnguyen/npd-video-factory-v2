@@ -466,7 +466,15 @@ function render() {
 }
 
 function renderReframe(){
-  if(state.timeline?.snapshot)$('#final-profile').value=reframeProfiles(state.timeline.snapshot).final;
+  if(state.timeline?.snapshot){
+    const snapshot=state.timeline.snapshot,selector=$('#final-profile');
+    const canvasBinding=JSON.stringify([state.workspaceId,state.projectId,state.timeline.workspace_id,state.timeline.project_id,
+      snapshot.width,snapshot.height,snapshot.fps,snapshot.aspect_ratio??snapshot.metadata?.reframe?.aspect_ratio]);
+    if(selector.dataset.canvasBinding!==canvasBinding){
+      selector.value=reframeProfiles(snapshot).final;
+      selector.dataset.canvasBinding=canvasBinding;
+    }
+  }
   const source=activeAnalysis();
   $('#reframe-review').hidden=!state.timeline?.source_analysis_id||!source;
   if($('#reframe-review').hidden)return;
