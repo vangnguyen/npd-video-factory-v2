@@ -1,6 +1,6 @@
 {
-  "head": "5aff8e615f5fb1fda8ea1a12ba4e1bd0e92a6de7",
-  "audited_at": "2026-10-14T01:15:54.524966+00:00",
+  "head": "68a56f73842131958243548a340d2dd543de4baf",
+  "audited_at": "2026-10-14T01:58:29.662706+00:00",
   "sha256": {
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
     ".gitattributes": "0ecffc5523b4f3e26f9019776a41fc228ac786ef80531fbce2ad27a99e05f8ff",
@@ -75,7 +75,7 @@
     "apps/api/app/local_transcription_provider.py": "eac5f2819a099d2662136abf8ebc530f6eb09d16881ad9d140f34d64e65d0c59",
     "apps/api/app/local_uploaded_audio_provider.py": "95cd0a98acea7e0239e922bf42dd14b36854dfd6ced741b7c7b91aee80cf8b0a",
     "apps/api/app/local_video_transcription_provider.py": "3c7790a94576aa5adfac09670152e39b77121d7a2bc14ddd8d05a06673edca61",
-    "apps/api/app/main.py": "11edd06bda7de5d58d2d9e53b6680275d0fa6a4c0b69bec79af1541d171ee2ea",
+    "apps/api/app/main.py": "37b960d655508044986b986ed1a9e2d1bbe89844c874f92c53a7e576a2562de8",
     "apps/api/app/media_frame_facts.py": "5f61ac19e46c9a50e95d890538399c5ee3fe8601bf42e5f94c3ff5d9501fda65",
     "apps/api/app/media_generation_routes.py": "4245bad5a8d83f0f72b040b12b41456247f2fe96cfdd88addef3e200d17ec07a",
     "apps/api/app/media_generation_scope.py": "2fec0a677340a602b48070ecccb913075740736dc7cfff8e993b670ff34ee8ca",
@@ -448,9 +448,9 @@
     "apps/studio-web/stock-planning-review.mjs": "c0e98bb28e2659ac2a3e98828c3c21ed5b38f1bd47d5a21d9ce665b6fc8d58c6",
     "apps/studio-web/studio-shell.mjs": "762bb9c1e1acc6058b3e4ba0bfc25b0bfdb92e05c68e136dace48ae739907f09",
     "apps/studio-web/studio-utils.mjs": "572dee5e39e10691e58ea371e7ff5da1d88577b69955a7ab3c618b5984df5e8d",
-    "apps/studio-web/studio.css": "0b36c8f7b0cf19511058ad8f7ef2f47e2af0c0151833a897a0a0971de0bc5033",
-    "apps/studio-web/studio.html": "99e6159317bc0f693993c48c9e82d3dd009c9ad6b70da5a6ed52b2e9ede56ac0",
-    "apps/studio-web/studio.js": "2a849b0c47dd463584dd6c5b9703121e7e04d538d2bb3c9e9e4e1c749739b25e",
+    "apps/studio-web/studio.css": "e5459b559a5c0b475875f5d24cb61b3067365da190de98982adfc7a6dfd8da88",
+    "apps/studio-web/studio.html": "61c370f0b84a92211ee205b2f85edb8c608b9aa5e217bdb3a410a118c38669d8",
+    "apps/studio-web/studio.js": "d7ed5da8f514f7570b4d98147c8ab010fb5d7893547faca9a970186a619c5dfc",
     "apps/studio-web/subtitle-editor.mjs": "50f3cb658aeeff09a3f802a4b699484b39f5f108b0bf9af4818288eceff98b28",
     "apps/studio-web/tests/analytics-channels.test.mjs": "33ab5f11c13b6374a4d427abfe4a6d2546222c0c39a383883cdcfff7d0108da3",
     "apps/studio-web/tests/analytics-console.test.mjs": "116b6e8360b0a6bf6cd29126cdaeebe947fca8de2a672eb40c08be29d37a201e",
@@ -1720,6 +1720,15 @@
     "apps/api/app/sql_variant_narration_routes.py": "65ec6aea6e5616ef833a589c8a51bbd7ec01baf7be99f227fe038abd4add65f0",
     "apps/api/tests/test_disabled_tts_render_ledger.py": "1b508b53c87a368cd0493c1a972df575a4ede5580e91adf2041b1ba6ec6725fd",
     "apps/api/app/sql_variant_narration_activation.py": "6ac80ec5a8bb796b1926c6bd463831591966c7f99916f35d830b4607eea6574f",
-    "apps/api/tests/test_sql_variant_narration_activation_main.py": "b56021caced862c39805b884a5a71eb1e0039b10a92d61f2f045cb71e297fc78"
+    "apps/api/tests/test_sql_variant_narration_activation_main.py": "b56021caced862c39805b884a5a71eb1e0039b10a92d61f2f045cb71e297fc78",
+    "apps/api/tests/test_sql_variant_narration_main.py": "1512b023609c3919d52e01a41fef1c8fd45212b86cb1fcd5bf371302fe7ccbde",
+    "apps/studio-web/tests/sql-variant-narration-shell.test.mjs": "01aa374f03268f74be14e38dee0cab1e3b826dc7994351057e4ae1446a967d4f",
+    "apps/api/app/sql_variant_narration_proposal.py": "a23fcc877197411af253f70f79bc640096b720cc3f877cd73dd9f93ebd897316",
+    "apps/api/app/sql_variant_narration_proposal_routes.py": "791d7bee32f683f8db5ada49cf320aa40279ff66b873dc8fd8811f57e192c4ca",
+    "apps/api/tests/test_sql_variant_narration_proposal.py": "b085a529a3a65ece1def82077a60b6ad496ba3e37ff5b2d888e174177fdf577c",
+    "apps/studio-web/sql-variant-narration.mjs": "64b2d26b90fb9424c675d31946f7fb186bbab24b02eae298b95291bb7db72277",
+    "apps/studio-web/tests/sql-variant-narration.test.mjs": "e86b865219b4adaadff371ed421c31a1a3e8414b73ff0f58b6186881352be924",
+    "apps/studio-web/tests/fixtures/sql-variant-narration/asgi.json": "4dc898c44d508400e919c4145e574931f5ed65e6bdf5a19d91eb5ade3874befc",
+    "apps/studio-web/tests/fixtures/sql-variant-narration/manifest.json": "29fad5450505b57f2f49c2040a0f91b06b978f1213212884fe8e957b4af61e1e"
   }
 }

@@ -45,6 +45,7 @@ from .auto_edit_transcription_runtime import provider_from_settings as auto_edit
 from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .sql_variant_api_service import configure_sql_variant_api, register_sql_variant_routes
 from .sql_variant_narration_runtime import create_variant_narration_runtime, register_variant_narration_routes
+from .sql_variant_narration_proposal_routes import register_variant_narration_proposal_routes
 from .artifacts import (
     ArtifactAccessError,
     resolve_recorded_artifact,
@@ -439,6 +440,7 @@ _human_route_dependencies = [Depends(authorize_human_request)]
 # This router authenticates before body parsing and applies its own scoped RBAC.
 register_sql_variant_routes(app)
 register_variant_narration_routes(app)
+register_variant_narration_proposal_routes(app)
 app.include_router(platform_router, dependencies=_human_route_dependencies)
 app.include_router(trend_router, dependencies=_human_route_dependencies)
 app.include_router(auto_edit_router, dependencies=_human_route_dependencies)

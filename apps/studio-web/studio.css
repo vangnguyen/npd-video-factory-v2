@@ -346,6 +346,12 @@
 #sql-variant-families button { margin: 4px; padding: 8px 14px; min-height: 38px; }
 #sql-variant-families select { max-width: 100%; margin: 8px 10px 8px 0; padding: 8px; }
 #sql-variant-families [data-sql-variant-status] { overflow-wrap: anywhere; }
+#sql-variant-narration-workbench { margin: 16px 0; padding: 20px; }
+#sql-variant-narration-workbench > summary { cursor: pointer; font-weight: 700; }
+#sql-variant-narration button { margin: 4px; padding: 8px 14px; min-height: 38px; }
+#sql-variant-narration label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
+#sql-variant-narration select { max-width: 100%; padding: 8px; }
+#sql-variant-narration p { overflow-wrap: anywhere; }
 .mvp-scene { border: 1px solid #40506c; padding: 16px; margin: 12px 0; border-radius: 12px; }
 .production-workbench .compact-note, .production-workbench .render-summary, .production-workbench .hard-boundary { font-size: 12px; line-height: 1.6; }
 .production-workbench .approval-actions button, .production-workbench .final-render-row button { font-size: 13px; min-height: 38px; }

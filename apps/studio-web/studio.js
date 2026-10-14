@@ -14,7 +14,7 @@ import {
   qcItems,
   timelinePositionFromPointer,
 } from "/studio-utils.mjs?v=0.12.0";
-import { authenticatedFetch, ensureAuthenticatedSession } from "/auth.mjs";
+import { authenticatedFetch, ensureAuthenticatedSession, sessionToken } from "/auth.mjs";
 import { initializeMultiInput } from "/multi-input.mjs";
 import { transcriptEditPayload } from "/transcript-editor.mjs";
 import { timelineHistory,timelineTranscriptId } from "/timeline-history.mjs";
@@ -32,6 +32,7 @@ import {initializeUploadedAudioReview} from '/uploaded-audio-review.mjs?v=sql-au
 import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-stock-1';
 import {initializeVideoAnalysisJobs,videoReviewSelection,selectedVideoReviewAnalysis} from '/video-analysis-jobs.mjs?v=sql-video-jobs-1';
 import {initializeSqlVariantFamilies} from '/sql-variant-families.mjs?v=sql-family-1';
+import {initializeSqlVariantNarration} from '/sql-variant-narration.mjs?v=sql-narration-1';
 
 const state = {
   workspaceId: null,
@@ -84,10 +85,17 @@ const $ = (selector) => document.querySelector(selector);
 const multiInput = initializeMultiInput({api, getState: () => state, refresh: () => loadProject(),
   refreshProjects: () => loadProjectList(), toast, uploadFetch: authenticatedFetch});
 let multiInputBaseline = null;
+let productionBaseline = null;
+let variantNarration = null;
+let productionPollGeneration = 0;
+let productionPollInFlight = null;
 function audioWorkbenchDraft() {
   return JSON.stringify([...document.querySelectorAll('#mvp-kind,#mvp-original,#mvp-script,#mvp-facts,#mvp-protected,#mvp-scenes input,#mvp-scenes textarea,#mvp-scenes select')]
     .map(input => [input.id, input.dataset.field, input.type === 'checkbox' ? input.checked : input.value]));
 }
+function productionWorkbenchDraft(){return JSON.stringify([...document.querySelectorAll(
+  '#subtitle-list [data-cue-field],#subtitle-position,#subtitle-animation,#subtitle-template,#subtitle-keywords,#subtitle-font-size,#subtitle-safe-margin,#voice-enabled,#voice-speed,#voice-gain,#music-gain,#music-ducking,#music-asset')]
+  .map(input=>[input.id,input.dataset.cueField,input.type==='checkbox'?input.checked:input.value]));}
 const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-review'), api,
   mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0,
     dirty: state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
@@ -114,9 +122,16 @@ const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs')
     renderAnalysisReview();
     if(!state.timeline)render();
   }});
-function sqlFamilyState(){return{...state,busy: state.projectLoading > 0 || multiInput.isBusy(),
+function sqlEditorState(){return{...state,busy: state.projectLoading > 0 || multiInput.isBusy()
+      || ['queued','running'].includes(state.activeProductionRender?.status),
     dirty: audioReview.isDirty() || stockReview.isPending() || videoReview.isPending() || state.transcriptDrafts.size > 0
-      || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline};}
+      || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline
+      || productionBaseline !== null && productionWorkbenchDraft() !== productionBaseline};}
+function sqlFamilyState(){const value=sqlEditorState();return{...value,
+  busy:value.busy||variantNarration?.isWorking()===true,
+  dirty:value.dirty||variantNarration?.isPending()===true};}
+function sqlNarrationState(){const value=sqlEditorState();return{...value,
+  busy:value.busy||variantFamilies.isBusy(),dirty:value.dirty||variantFamilies.isPending()};}
 const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-families'),api,getState:sqlFamilyState,
   onMessage: toast,onChild: async selection => {
     const principal=state.principal,subject=principal?.subject,tokenId=principal?.token_id;
@@ -132,18 +147,56 @@ const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-fami
     state.projectId=selection.child_project_id;$('#project-select').value=state.projectId;
     window.localStorage.setItem('npd-studio-project',state.projectId);await loadProject();
   }});
-const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();});
+variantNarration = initializeSqlVariantNarration({root:$('#sql-variant-narration'),api,getState:sqlNarrationState,
+  onMessage:toast,onImported:refreshNarrationAssets,onReviewQueued:refreshNarrationReview});
+
+function narrationEditorBoundary(){const current=sqlNarrationState();return JSON.stringify([
+  current.workspaceId,current.projectId,current.principal,sessionToken(),
+  current.timeline?.current_version_id,current.timeline?.current_version,current.timeline?.source_content_version_id,
+  current.productionPackage?.package_id,current.productionPackage?.timeline_version_id,
+  current.productionPackage?.subtitle?.subtitle_version_id,current.productionPackage?.audio_mix?.audio_version_id,
+  current.productionPackage?.audio_mix?.config?.voice]);}
+function assertNarrationEditorBoundary(boundary){const current=sqlNarrationState();
+  if(current.busy||current.dirty||narrationEditorBoundary()!==boundary)
+    throw Error('Nguồn, phiên truy cập hoặc thay đổi đang sửa đã đổi. Đọc lại trạng thái trước khi tiếp tục.');}
+async function refreshNarrationAssets(receipt){
+  const boundary=narrationEditorBoundary(),projectId=state.projectId,workspaceId=state.workspaceId;
+  const assets=await api(`/api/v1/projects/${projectId}/assets`);
+  assertNarrationEditorBoundary(boundary);
+  if(receipt.child_project_id!==projectId||receipt.workspace_id!==workspaceId
+    ||!Array.isArray(assets)||assets.some(asset=>asset.project_id!==projectId||asset.workspace_id!==workspaceId))
+    throw Error('Tư liệu đã nhập không thuộc dự án hiện tại.');
+  state.assets=assets;if(state.timeline)renderBrowser();
+}
+async function refreshNarrationReview(render){
+  const boundary=narrationEditorBoundary(),projectId=state.projectId,workspaceId=state.workspaceId;
+  const packageState=await api(`/api/v1/projects/${projectId}/production-package`);
+  assertNarrationEditorBoundary(boundary);
+  if(render.project_id!==projectId||packageState.project_id!==projectId||packageState.workspace_id!==workspaceId
+    ||packageState.latest_review_render?.render_id!==render.render_id
+    ||packageState.package_id!==state.productionPackage?.package_id
+    ||packageState.timeline_version_id!==state.productionPackage?.timeline_version_id
+    ||packageState.subtitle.subtitle_version_id!==state.productionPackage?.subtitle.subtitle_version_id
+    ||packageState.audio_mix.audio_version_id!==state.productionPackage?.audio_mix.audio_version_id)
+    throw Error('Gói review đã đổi. Đọc lại trạng thái để xem đúng bản hiện tại.');
+  state.productionPackage=packageState;state.activeProductionRender=packageState.latest_review_render;
+  renderSummary();renderProduction();
+  if(['queued','running'].includes(state.activeProductionRender.status))startProductionPolling();
+}
 document.addEventListener('input', event => {
   if (event.target.closest('#multi-input-workbench') || event.target.closest('[data-transcript-text]')) audioReview.sync();
   stockReview.sync();
   videoReview.sync();
   variantFamilies.sync();
+  variantNarration?.sync();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
   stockReview.sync();
   videoReview.sync();
   variantFamilies.sync();
+  variantNarration?.sync();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -258,6 +311,9 @@ async function loadProjectList() {
 
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
+  if (variantNarration?.isWorking() || variantNarration?.isPending()) {
+    toast('Chờ nhập/review giọng đọc hoàn tất hoặc đối chiếu yêu cầu cũ trước khi tải lại dự án.', true);return;
+  }
   if (audioReview.isDirty()) {toast('Lưu/bỏ sửa hoặc đối chiếu yêu cầu audio trước khi tải lại dự án.', true); return;}
   if (stockReview.isPending()) {toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi tải lại dự án.', true); return;}
   const loadedProjectId = state.projectId;
@@ -268,6 +324,7 @@ async function loadProject({ quiet = false } = {}) {
   videoReview.sync();
   multiInput.setBusy(true);
   variantFamilies.sync();
+  variantNarration?.sync();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -353,6 +410,7 @@ async function loadProject({ quiet = false } = {}) {
     stockReview.sync();
     videoReview.sync();
     variantFamilies.sync();
+    variantNarration?.sync();
   }
   if (state.projectId === loadedProjectId) {
     await audioReview.reload();
@@ -365,6 +423,7 @@ function renderNoProject(title, description) {
   stockReview.sync();
   videoReview.sync();
   variantFamilies.sync();
+  variantNarration?.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -378,6 +437,7 @@ function render() {
   audioReview.sync();
   stockReview.sync();
   variantFamilies.sync();
+  variantNarration?.sync();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -463,7 +523,7 @@ function renderSummary() {
   $("#metric-clips").textContent = clips.length;
   $("#metric-scenes").textContent = `${analysis?.scenes?.length ?? 0} cảnh có dữ liệu`;
   $("#metric-preview").textContent = previewState.label.split(" · ")[0];
-  $("#metric-approval").textContent = describeApproval(state.productionPackage?.approval).label;
+  $("#metric-approval").textContent = describeApproval(currentProductionApproval(state.productionPackage)).label;
 }
 
 function renderBrowser() {
@@ -671,6 +731,17 @@ function renderPreview() {
         : 'Âm thanh theo timeline sẽ được ghi rõ sau khi tạo preview.';
 }
 
+function currentProductionApproval(packageState) {
+  const approval=packageState?.approval,review=packageState?.latest_review_render;
+  if(!packageState?.current_for_timeline||!approval||!review
+    ||approval.project_id!==packageState.project_id||approval.package_id!==packageState.package_id
+    ||approval.preview_render_id!==review.render_id||approval.preview_version!==review.version
+    ||approval.timeline_version_id!==packageState.timeline_version_id||approval.timeline_version!==packageState.timeline_version
+    ||approval.subtitle_version_id!==packageState.subtitle.subtitle_version_id||approval.subtitle_version!==packageState.subtitle.version
+    ||approval.audio_version_id!==packageState.audio_mix.audio_version_id||approval.audio_version!==packageState.audio_mix.version)return null;
+  return approval;
+}
+
 function renderProduction() {
   const packageState = state.productionPackage;
   const empty = $("#production-empty");
@@ -678,6 +749,7 @@ function renderProduction() {
   const packagePill = $("#production-package-status");
   const packageButton = $("#production-package-button");
   if (!packageState) {
+    productionBaseline=null;
     empty.hidden = false;
     content.hidden = true;
     packagePill.textContent = "Chưa khởi tạo";
@@ -732,7 +804,8 @@ function renderProduction() {
   `).join("")}`;
   $("#music-asset").value = mix.music.asset_id ?? "";
 
-  const approvalState = describeApproval(packageState.approval);
+  const approval = currentProductionApproval(packageState);
+  const approvalState = describeApproval(approval);
   $("#approval-status").textContent = approvalState.label;
   $("#approval-status").className = `pill ${approvalState.tone}`;
   const render = state.activeProductionRender
@@ -757,8 +830,8 @@ function renderProduction() {
   const busy = ["queued", "running"].includes(render?.status);
   const reviewReady = packageState.latest_review_render?.status === "awaiting_review"
     && packageState.latest_review_render?.qc_status === "passed";
-  const awaitingDecision = packageState.approval?.status === "awaiting_review";
-  const approved = packageState.approval?.status === "approved";
+  const awaitingDecision = approval?.status === "awaiting_review";
+  const approved = approval?.status === "approved";
   $("#review-render-button").disabled = busy || !packageState.current_for_timeline;
   $("#review-render-button").textContent = busy && render?.render_kind === "review"
     ? `Đang render ${render.progress}%`
@@ -772,6 +845,8 @@ function renderProduction() {
     ? `Đang render ${render.progress}%`
     : "Render final đã duyệt";
   renderPublishing();
+  productionBaseline=productionWorkbenchDraft();
+  variantNarration?.sync();
 }
 
 function selectedPublishingPlatform() {
@@ -782,7 +857,7 @@ function selectedPublishingPlatform() {
 function renderPublishing() {
   const packageState = state.productionPackage;
   const finalRender = packageState?.latest_final_render ?? null;
-  const approved = packageState?.approval?.status === "approved";
+  const approved = currentProductionApproval(packageState)?.status === "approved";
   const eligible = Boolean(
     packageState?.current_for_timeline
     && approved
@@ -1124,6 +1199,7 @@ async function createProductionRender(kind) {
   const packageState = state.productionPackage;
   if (!packageState) return;
   const isFinal = kind === "final";
+  if(isFinal&&!currentProductionApproval(packageState))return toast('Cần duyệt đúng review hiện tại trước khi render final.',true);
   const path = isFinal ? "final-render" : "review-render";
   try {
     state.activeProductionRender = await api(`/api/v1/projects/${state.projectId}/${path}`, {
@@ -1148,26 +1224,38 @@ async function createProductionRender(kind) {
 function startProductionPolling() {
   stopProductionPolling();
   if (!state.activeProductionRender) return;
-  state.productionPollTimer = window.setInterval(async () => {
-    try {
-      const renderId = state.activeProductionRender.render_id;
-      state.activeProductionRender = await api(`/api/v1/projects/${state.projectId}/renders/${renderId}`);
-      state.productionPackage = await api(`/api/v1/projects/${state.projectId}/production-package`);
-      renderSummary();
-      renderProduction();
-      const description = describeProductionRender(state.activeProductionRender);
-      if (description.terminal) {
-        stopProductionPolling();
-        toast(description.label, !["awaiting_review", "ready"].includes(state.activeProductionRender.status));
-      }
-    } catch (error) {
-      stopProductionPolling();
-      toast(error.message, true);
-    }
-  }, 1200);
+  state.productionPollTimer = window.setInterval(pollProductionRender,1200);
+}
+
+function productionPollingBoundary(){return JSON.stringify([state.workspaceId,state.projectId,
+  state.principal,sessionToken(),state.activeProductionRender?.render_id]);}
+async function pollProductionRender(){
+  if(!state.activeProductionRender)return;
+  const generation=productionPollGeneration;
+  if(productionPollInFlight?.generation===generation)return;
+  const ticket={generation};productionPollInFlight=ticket;
+  const boundary=productionPollingBoundary(),projectId=state.projectId,renderId=state.activeProductionRender.render_id;
+  try{
+    const render=await api(`/api/v1/projects/${projectId}/renders/${renderId}`);
+    if(productionPollGeneration!==generation||productionPollingBoundary()!==boundary)return;
+    const packageState=await api(`/api/v1/projects/${projectId}/production-package`);
+    if(productionPollGeneration!==generation||productionPollingBoundary()!==boundary)return;
+    if(render.project_id!==projectId||render.render_id!==renderId||packageState.project_id!==projectId
+      ||packageState.workspace_id!==state.workspaceId)throw Error('Kết quả review không thuộc dự án hiện tại.');
+    state.activeProductionRender=render;state.productionPackage=packageState;
+    renderSummary();renderProduction();
+    const description=describeProductionRender(render);
+    if(description.terminal){stopProductionPolling();toast(description.label,!['awaiting_review','ready'].includes(render.status));}
+  }catch(error){
+    if(productionPollGeneration!==generation||productionPollingBoundary()!==boundary)return;
+    stopProductionPolling();toast(error.message,true);
+  }finally{
+    if(productionPollInFlight===ticket)productionPollInFlight=null;
+  }
 }
 
 function stopProductionPolling() {
+  productionPollGeneration++;
   if (state.productionPollTimer) window.clearInterval(state.productionPollTimer);
   state.productionPollTimer = null;
 }
@@ -1194,7 +1282,7 @@ async function requestProductionApproval() {
 }
 
 async function decideProductionApproval(decision) {
-  const approval = state.productionPackage?.approval;
+  const approval = currentProductionApproval(state.productionPackage);
   if (!approval) return;
   try {
     const updated = await api(`/api/v1/projects/${state.projectId}/approvals/${approval.approval_id}/decision`, {
@@ -1393,6 +1481,10 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if(variantNarration?.isWorking()||variantNarration?.isPending()){
+    event.target.value=state.projectId??'';
+    return toast('Chờ nhập/review giọng đọc hoàn tất hoặc đối chiếu yêu cầu cũ trước khi đổi dự án.',true);
+  }
   if(variantFamilies.isBusy()||variantFamilies.isPending()){
     event.target.value=state.projectId??'';
     return toast('Chờ thao tác phiên bản hoàn tất hoặc đối chiếu yêu cầu cũ trước khi đổi dự án.',true);
@@ -1445,7 +1537,7 @@ $("#changes-button").addEventListener("click", () => decideProductionApproval("c
 $("#final-render-button").addEventListener("click", () => createProductionRender("final"));
 $("#download-final-button").addEventListener("click", async () => {
   const render = state.productionPackage?.latest_final_render;
-  if (render?.status !== "ready" || state.productionPackage?.approval?.status !== "approved") return;
+  if (render?.status !== "ready" || currentProductionApproval(state.productionPackage)?.status !== "approved") return;
   try {
     const response = await authenticatedFetch(render.playback_url);
     if (!response.ok) throw new Error("Export không còn hợp lệ.");
@@ -1746,6 +1838,7 @@ window.addEventListener("beforeunload", () => {
   stockReview.dispose();
   videoReview.dispose();
   variantFamilies.dispose();
+  variantNarration?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();
