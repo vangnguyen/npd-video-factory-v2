@@ -742,7 +742,7 @@ function currentProductionApproval(packageState) {
   return approval;
 }
 
-function renderProduction() {
+function renderProduction({preserveDraft=false}={}) {
   const packageState = state.productionPackage;
   const empty = $("#production-empty");
   const content = $("#production-content");
@@ -765,6 +765,7 @@ function renderProduction() {
   packagePill.className = `pill ${packageState.current_for_timeline ? "safe" : "warning"}`;
   packageButton.textContent = packageState.current_for_timeline ? "Làm mới gói dựng" : "Đồng bộ timeline mới";
 
+  if(!preserveDraft){
   $("#subtitle-version").textContent = `v${packageState.subtitle.version}`;
   $("#subtitle-list").innerHTML = packageState.subtitle.cues.map((cue) => `
     <div class="subtitle-row" data-cue-id="${escapeHtml(cue.cue_id)}">
@@ -803,6 +804,7 @@ function renderProduction() {
     <option value="${escapeHtml(asset.asset_id)}">${escapeHtml(asset.filename)} · ${escapeHtml(asset.provenance.rights_status)}</option>
   `).join("")}`;
   $("#music-asset").value = mix.music.asset_id ?? "";
+  }
 
   const approval = currentProductionApproval(packageState);
   const approvalState = describeApproval(approval);
@@ -845,7 +847,7 @@ function renderProduction() {
     ? `Đang render ${render.progress}%`
     : "Render final đã duyệt";
   renderPublishing();
-  productionBaseline=productionWorkbenchDraft();
+  if(!preserveDraft)productionBaseline=productionWorkbenchDraft();
   variantNarration?.sync();
 }
 
@@ -1228,7 +1230,16 @@ function startProductionPolling() {
 }
 
 function productionPollingBoundary(){return JSON.stringify([state.workspaceId,state.projectId,
-  state.principal,sessionToken(),state.activeProductionRender?.render_id]);}
+  state.principal,sessionToken(),state.activeProductionRender?.render_id,
+  state.timeline?.current_version_id,state.timeline?.current_version,state.timeline?.source_content_version_id,
+  state.productionPackage?.package_id,state.productionPackage?.timeline_version_id,
+  state.productionPackage?.subtitle?.subtitle_version_id,state.productionPackage?.audio_mix?.audio_version_id,
+  state.productionPackage?.audio_mix?.config?.voice]);}
+function productionEditableBinding(packageState){return JSON.stringify([
+  packageState?.package_id,packageState?.timeline_version_id,packageState?.timeline_version,
+  packageState?.subtitle?.subtitle_version_id,packageState?.subtitle?.version,
+  packageState?.subtitle?.cues,packageState?.subtitle?.style,
+  packageState?.audio_mix?.audio_version_id,packageState?.audio_mix?.version,packageState?.audio_mix?.config]);}
 async function pollProductionRender(){
   if(!state.activeProductionRender)return;
   const generation=productionPollGeneration;
@@ -1242,8 +1253,11 @@ async function pollProductionRender(){
     if(productionPollGeneration!==generation||productionPollingBoundary()!==boundary)return;
     if(render.project_id!==projectId||render.render_id!==renderId||packageState.project_id!==projectId
       ||packageState.workspace_id!==state.workspaceId)throw Error('Kết quả review không thuộc dự án hiện tại.');
+    const preserveDraft=productionBaseline!==null&&productionWorkbenchDraft()!==productionBaseline;
+    if(preserveDraft&&productionEditableBinding(packageState)!==productionEditableBinding(state.productionPackage))
+      throw Error('Gói dựng đã được cập nhật ở nơi khác. Nội dung đang sửa và phiên bản cũ vẫn được giữ; cần đối chiếu trước khi lưu.');
     state.activeProductionRender=render;state.productionPackage=packageState;
-    renderSummary();renderProduction();
+    renderSummary();renderProduction({preserveDraft});
     const description=describeProductionRender(render);
     if(description.terminal){stopProductionPolling();toast(description.label,!['awaiting_review','ready'].includes(render.status));}
   }catch(error){
