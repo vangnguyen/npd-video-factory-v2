@@ -1,0 +1,1063 @@
+{
+  "schema_version": "actual-sql-variant-narration-ui-fixture.v1",
+  "fixture_notice": "Actual SQLite/ASGI with manually saved synthetic PCM/source review/QC/approval; not genuine TTS, actual renderer, listening or Owner UAT.",
+  "context": {
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "master_project_id": "prj_c46d1a3665874d598890cf41",
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+    "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+    "actor_ref": "usr:test-owner"
+  },
+  "project": {
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "slug": "variant-20d3e8f572d350c39255da207985e69e",
+    "name": "MVP proof · youtube_landscape",
+    "niche": "custom",
+    "status": "draft",
+    "current_version_id": "pver_d1579dc740b54354a62a8d48",
+    "version": 2,
+    "provenance": {
+      "source_type": "storyboard_variant_derivative",
+      "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+      "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+      "master_project_id": "prj_c46d1a3665874d598890cf41",
+      "receipt_id": "vfr_4a733689fa56546787b535f7b6b5728c",
+      "input_sha256": "632cc1e11ee5e9a510282e04ccb3a89050622dfac78b83018a51948b706e042d",
+      "approval_inherited": false,
+      "publishing_enabled": false
+    },
+    "created_at": "2026-10-14T01:05:42.080315",
+    "updated_at": "2026-10-14T01:05:42.193945"
+  },
+  "timeline": {
+    "timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "project_version_id": "pver_f64f57ccb96b509b8727c13a345104fa",
+    "source_analysis_id": null,
+    "source_content_version_id": "pver_d1579dc740b54354a62a8d48",
+    "source_kind": "storyboard_media",
+    "source_media_plan_id": null,
+    "current_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "current_version": 2,
+    "approval_status": "draft",
+    "approved_timeline_version": null,
+    "snapshot": {
+      "schema_version": "1.1",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30.0,
+      "aspect_ratio": "9:16",
+      "duration_seconds": 4.0,
+      "tracks": [
+        {
+          "track_id": "trk_storyboard",
+          "type": "video",
+          "kind": "source",
+          "label": "Storyboard",
+          "order": 0,
+          "locked": false,
+          "muted": false,
+          "disabled": false,
+          "clips": [
+            {
+              "clip_id": "clip_story_0000",
+              "kind": "image",
+              "label": "Scene 1",
+              "asset_id": "ast_f58226838f19560c8ed1a824ba84d09d",
+              "source_start": 0.0,
+              "source_end": null,
+              "timeline_start": 0.0,
+              "duration": 4.0,
+              "speed": 1.0,
+              "crop": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+              },
+              "transform": {
+                "x": 0.0,
+                "y": 0.0,
+                "scale": 1.0,
+                "rotation_degrees": 0.0
+              },
+              "opacity": 1.0,
+              "volume": 1.0,
+              "transition_in": {
+                "kind": "cut",
+                "duration_seconds": 0.0
+              },
+              "transition_out": {
+                "kind": "cut",
+                "duration_seconds": 0.0
+              },
+              "effects": [],
+              "disabled": false,
+              "metadata": {
+                "scene_id": "scene_a08be8c876a051e5bae90b2f7113697a",
+                "content_type": "image/png",
+                "source_checksum_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+                "fit": "contain",
+                "architectural_render": false,
+                "official_render": false,
+                "media_strategy": "user_asset",
+                "rights_status": "owned",
+                "timing_source": "user_scene_display_duration"
+              }
+            }
+          ]
+        },
+        {
+          "track_id": "trk_storytext",
+          "type": "text",
+          "kind": "subtitles",
+          "label": "Narration cues (scene timing)",
+          "order": 1,
+          "locked": false,
+          "muted": false,
+          "disabled": false,
+          "clips": [
+            {
+              "clip_id": "clip_text_0000",
+              "kind": "subtitle",
+              "label": "Lời đọc fixture giữ nguyên tên Hà Nội.",
+              "asset_id": null,
+              "source_start": 0.0,
+              "source_end": 4.0,
+              "timeline_start": 0.0,
+              "duration": 4.0,
+              "speed": 1.0,
+              "crop": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1.0,
+                "height": 1.0
+              },
+              "transform": {
+                "x": 0.0,
+                "y": 0.0,
+                "scale": 1.0,
+                "rotation_degrees": 0.0
+              },
+              "opacity": 1.0,
+              "volume": 1.0,
+              "transition_in": {
+                "kind": "cut",
+                "duration_seconds": 0.0
+              },
+              "transition_out": {
+                "kind": "cut",
+                "duration_seconds": 0.0
+              },
+              "effects": [],
+              "disabled": false,
+              "metadata": {
+                "timing_source": "user_scene_cue",
+                "scene_index": 0,
+                "measured_word_timestamps": false
+              }
+            }
+          ]
+        },
+        {
+          "track_id": "trk_storyaudio",
+          "type": "audio",
+          "kind": "original_audio",
+          "label": "Original audio",
+          "order": 2,
+          "locked": false,
+          "muted": false,
+          "disabled": false,
+          "clips": []
+        }
+      ],
+      "metadata": {
+        "source_kind": "storyboard_media",
+        "content_version_id": "pver_d1579dc740b54354a62a8d48",
+        "content_sha256": "f1f10abb5368f15d99f26756aa85eb8aa402ddd089a13a599fc975075883ac86",
+        "media_plan": [
+          {
+            "scene_id": "scene_a08be8c876a051e5bae90b2f7113697a",
+            "strategy": "user_asset",
+            "asset_id": "ast_f58226838f19560c8ed1a824ba84d09d",
+            "asset_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+            "duration_seconds": 4.0,
+            "status": "resolved",
+            "ai_video": false,
+            "rights_status": "owned"
+          }
+        ],
+        "media_plan_sha256": "9c985ec66864bfc61c0091747a1063e493130e9a1721fc6a364d64cac0b3a1ca",
+        "narration_plan": {
+          "version": 1,
+          "units": [
+            {
+              "unit_id": "narration_0000",
+              "text": "Lời đọc fixture giữ nguyên tên Hà Nội.",
+              "text_sha256": "c1725928fb0c71c5b9883e6f5311099e7b95776906ad14ec97dce40fa259c3d8",
+              "scene_indices": [
+                0
+              ],
+              "script_start": null,
+              "script_end": null
+            }
+          ],
+          "scenes": [
+            {
+              "scene_id": "scene_a08be8c876a051e5bae90b2f7113697a",
+              "duration_mode": "auto",
+              "pause_after_seconds": 0.18
+            }
+          ],
+          "cue_timing_source": "estimated_editorial_segment_schedule_NOT_word_alignment"
+        },
+        "narration_timing": "scene_cue_schedule_not_measured_word_alignment",
+        "ai_generated": false
+      },
+      "source_media_mutated": false,
+      "publish_requested": false
+    },
+    "latest_preview_id": null,
+    "latest_preview_valid": false,
+    "source_media_mutated": false,
+    "publish_requested": false,
+    "created_at": "2026-10-14T01:05:42.083821",
+    "updated_at": "2026-10-14T01:05:42.221174Z"
+  },
+  "package_before": {
+    "package_id": "pkg_ceae543d061d46c0abec",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+    "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "timeline_version": 2,
+    "subtitle": {
+      "subtitle_version_id": "stv_bbfdaefa9dd64838b18e",
+      "package_id": "pkg_ceae543d061d46c0abec",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+      "timeline_version": 2,
+      "version": 1,
+      "cues": [
+        {
+          "cue_id": "sub_071964dca0324c64bdee",
+          "start_seconds": 0.0,
+          "end_seconds": 4.0,
+          "text": "Lời đọc fixture giữ nguyên tên Hà Nội.",
+          "words": []
+        }
+      ],
+      "style": {
+        "font_family": "Noto Sans",
+        "font_size": 48,
+        "font_weight": 800,
+        "text_color": "#FFFFFF",
+        "highlight_color": "#F5C451",
+        "background_color": "#000000",
+        "background_opacity": 0.58,
+        "position": "bottom",
+        "animation": "none",
+        "template_ref": null,
+        "keywords": [],
+        "max_lines": 3,
+        "safe_margin_percent": 7.0
+      },
+      "actor_ref": "studio-user",
+      "created_at": "2026-10-14T01:05:42.245366"
+    },
+    "audio_mix": {
+      "audio_version_id": "amv_5c53f2bb5a494bba883a",
+      "package_id": "pkg_ceae543d061d46c0abec",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+      "timeline_version": 2,
+      "version": 1,
+      "config": {
+        "voice": {
+          "enabled": true,
+          "language": "vi",
+          "voice": "vi",
+          "speed": 1.0,
+          "instructions": "",
+          "gain_db": 0.0,
+          "max_timing_adjustment": 1.35
+        },
+        "music": {
+          "asset_id": null,
+          "gain_db": -22.0,
+          "ducking_db": -12.0,
+          "fade_in_seconds": 0.8,
+          "fade_out_seconds": 1.2,
+          "loop": true
+        },
+        "sample_rate": 48000,
+        "limiter_peak_db": -1.0,
+        "target_lufs": -16.0,
+        "original_audio_gain_db": null
+      },
+      "provider_status": "configured",
+      "actor_ref": "studio-user",
+      "created_at": "2026-10-14T01:05:42.245366"
+    },
+    "approval": null,
+    "latest_review_render": null,
+    "latest_final_render": null,
+    "current_for_timeline": true,
+    "publishing_allowed": false,
+    "created_at": "2026-10-14T01:05:42.245366Z",
+    "updated_at": "2026-10-14T01:05:42.248368Z"
+  },
+  "package_after": {
+    "package_id": "pkg_ceae543d061d46c0abec",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+    "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "timeline_version": 2,
+    "subtitle": {
+      "subtitle_version_id": "stv_bbfdaefa9dd64838b18e",
+      "package_id": "pkg_ceae543d061d46c0abec",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+      "timeline_version": 2,
+      "version": 1,
+      "cues": [
+        {
+          "cue_id": "sub_071964dca0324c64bdee",
+          "start_seconds": 0.0,
+          "end_seconds": 4.0,
+          "text": "Lời đọc fixture giữ nguyên tên Hà Nội.",
+          "words": []
+        }
+      ],
+      "style": {
+        "font_family": "Noto Sans",
+        "font_size": 48,
+        "font_weight": 800,
+        "text_color": "#FFFFFF",
+        "highlight_color": "#F5C451",
+        "background_color": "#000000",
+        "background_opacity": 0.58,
+        "position": "bottom",
+        "animation": "none",
+        "template_ref": null,
+        "keywords": [],
+        "max_lines": 3,
+        "safe_margin_percent": 7.0
+      },
+      "actor_ref": "studio-user",
+      "created_at": "2026-10-14T01:05:42.245366"
+    },
+    "audio_mix": {
+      "audio_version_id": "amv_5c53f2bb5a494bba883a",
+      "package_id": "pkg_ceae543d061d46c0abec",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+      "timeline_version": 2,
+      "version": 1,
+      "config": {
+        "voice": {
+          "enabled": true,
+          "language": "vi",
+          "voice": "vi",
+          "speed": 1.0,
+          "instructions": "",
+          "gain_db": 0.0,
+          "max_timing_adjustment": 1.35
+        },
+        "music": {
+          "asset_id": null,
+          "gain_db": -22.0,
+          "ducking_db": -12.0,
+          "fade_in_seconds": 0.8,
+          "fade_out_seconds": 1.2,
+          "loop": true
+        },
+        "sample_rate": 48000,
+        "limiter_peak_db": -1.0,
+        "target_lufs": -16.0,
+        "original_audio_gain_db": null
+      },
+      "provider_status": "configured",
+      "actor_ref": "studio-user",
+      "created_at": "2026-10-14T01:05:42.245366"
+    },
+    "approval": null,
+    "latest_review_render": {
+      "render_id": "rnd_14c521e99af14dfe8a63",
+      "version": 1,
+      "package_id": "pkg_ceae543d061d46c0abec",
+      "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+      "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+      "timeline_version": 2,
+      "subtitle_version_id": "stv_bbfdaefa9dd64838b18e",
+      "subtitle_version": 1,
+      "audio_version_id": "amv_5c53f2bb5a494bba883a",
+      "audio_version": 1,
+      "approval_id": null,
+      "render_kind": "review",
+      "profile": "review-540x960",
+      "status": "queued",
+      "progress": 0,
+      "output_asset_id": null,
+      "playback_url": null,
+      "qc_status": "pending",
+      "qc_report": {},
+      "manifest": {
+        "renderer": "remotion-timeline-v1",
+        "audio_mix": "ffmpeg-v2-08",
+        "publishing_allowed": false,
+        "requested_by": "usr:test-owner",
+        "feature_context": {
+          "schema_version": "render-feature-context-v1",
+          "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+          "project_id": "prj_02517e790408559c852b24970fc27bc5",
+          "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+          "project_version_id": "pver_d1579dc740b54354a62a8d48",
+          "source_content_version_id": "pver_d1579dc740b54354a62a8d48",
+          "idea_id": null,
+          "trend_cluster_id": null,
+          "idea_version": null,
+          "hook_type": null,
+          "visual_strategy": null,
+          "niche": "custom",
+          "topic": null,
+          "cta": null,
+          "idea_source": "unavailable",
+          "captured_at": "2026-10-14T01:05:45.229869Z",
+          "capture_boundary": "render_request"
+        },
+        "feature_context_sha256": "87c804b33ec2707ab0170dabde4ce93026859f1279b5e92265859a619baa8c13",
+        "variant_narration_request": {
+          "enabled": true,
+          "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+          "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+          "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+          "master_project_id": "prj_c46d1a3665874d598890cf41",
+          "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+          "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+        },
+        "variant_narration_admission": {
+          "schema_version": "sql-variant-narration-admission.v1",
+          "selection": {
+            "enabled": true,
+            "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+            "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+            "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+            "master_project_id": "prj_c46d1a3665874d598890cf41",
+            "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+            "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+          },
+          "actor_ref": "usr:test-owner",
+          "receipt_actor_ref": "usr:test-owner",
+          "child_content_version_id": "pver_d1579dc740b54354a62a8d48",
+          "canonical_audio_binding_sha256": "4955a95fd5fe401db5a8bda5d6df0e8e4171e9198f2646e144dc87cac6480854",
+          "admission_sha256": "37250650fe7299a0122d4a05dd0cb52685b26ccebd1c0284c3e4b315cbcceee0"
+        },
+        "variant_narration_handoff": {
+          "state": "sent",
+          "human_review_required": false
+        }
+      },
+      "cancellation_requested": false,
+      "error_code": null,
+      "failure_reason": null,
+      "publishing_allowed": false,
+      "external_publish_requested": false,
+      "created_at": "2026-10-14T01:05:45.232015",
+      "updated_at": "2026-10-14T01:05:45.490657"
+    },
+    "latest_final_render": null,
+    "current_for_timeline": true,
+    "publishing_allowed": false,
+    "created_at": "2026-10-14T01:05:42.245366",
+    "updated_at": "2026-10-14T01:05:45.229869"
+  },
+  "availability": {
+    "state": "CONFIGURED",
+    "reason_code": null,
+    "source_current": true,
+    "source_current_reason": null,
+    "family_version": 3,
+    "family_snapshot_sha256": "d9db133f3d8335ac8110c2a7b9e2d29f483e1369631863f26f24a10abd18a36a",
+    "new_inferences": 0,
+    "human_review_required": true,
+    "production_accepted": false
+  },
+  "proposal": {
+    "schema_version": "sql-variant-narration-proposal.v1",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "master_project_id": "prj_c46d1a3665874d598890cf41",
+    "child_project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+    "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+    "actor_ref": "usr:test-owner",
+    "family_version": 3,
+    "family_snapshot_sha256": "d9db133f3d8335ac8110c2a7b9e2d29f483e1369631863f26f24a10abd18a36a",
+    "child_timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+    "child_timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "child_timeline_version": 2,
+    "child_content_version_id": "pver_d1579dc740b54354a62a8d48",
+    "source_current": true,
+    "child_script_approved": true,
+    "source_record_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+    "request_template": {
+      "expected_version": 3,
+      "expected_snapshot_sha256": "d9db133f3d8335ac8110c2a7b9e2d29f483e1369631863f26f24a10abd18a36a",
+      "schema_version": "sql-variant-narration-request.v1",
+      "enabled": true,
+      "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+      "child_project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "expected_child_content_version_id": "pver_d1579dc740b54354a62a8d48",
+      "expected_child_timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+      "expected_child_timeline_version": 2,
+      "source_review_render_id": "rnd_5582d34fb64b4927a619",
+      "source_approval_id": "apr_a087aff05de94468b266",
+      "expected_source_manifest_sha256": "ecb1e6534e0cc25216c832506bdccf61578701d8f0bb30497fdd4a2d37a60630",
+      "expected_semantic_sha256": "1e1dd2ab7a0aa12f31026dc5781b2390431266d95e3973afa6a5598db3fa0851",
+      "expected_profile_sha256s": [
+        "035da5691367f27707e05157e852b24cbcc78c3fe0ce68c1ef3aaac6deb15d68"
+      ],
+      "expected_normalization_sha256s": [
+        "2222222222222222222222222222222222222222222222222222222222222222"
+      ],
+      "voice_config": {
+        "enabled": true,
+        "language": "vi",
+        "voice": "vi",
+        "speed": 1.0,
+        "instructions": "",
+        "gain_db": 0.0,
+        "max_timing_adjustment": 1.35
+      },
+      "acknowledge_fresh_child_review": true
+    },
+    "proposal_sha256": "3aad64d8e45e28941412069907035e1399b031d5f77543244ebf873f09f86aec",
+    "unit_count": 1,
+    "duration_seconds": 4.0,
+    "downloads": 0,
+    "copies": 0,
+    "queue_calls": 0,
+    "provider_calls": 0,
+    "new_inferences": 0,
+    "cost_writes": 0,
+    "automatic_execution": false,
+    "human_review_required": true,
+    "approval_transferred": false,
+    "rights_authority_transferred": false,
+    "publishing_enabled": false,
+    "owner_uat_accepted": false
+  },
+  "import_request": {
+    "expected_version": 3,
+    "expected_snapshot_sha256": "d9db133f3d8335ac8110c2a7b9e2d29f483e1369631863f26f24a10abd18a36a",
+    "schema_version": "sql-variant-narration-request.v1",
+    "enabled": true,
+    "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+    "child_project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "expected_child_content_version_id": "pver_d1579dc740b54354a62a8d48",
+    "expected_child_timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "expected_child_timeline_version": 2,
+    "source_review_render_id": "rnd_5582d34fb64b4927a619",
+    "source_approval_id": "apr_a087aff05de94468b266",
+    "expected_source_manifest_sha256": "ecb1e6534e0cc25216c832506bdccf61578701d8f0bb30497fdd4a2d37a60630",
+    "expected_semantic_sha256": "1e1dd2ab7a0aa12f31026dc5781b2390431266d95e3973afa6a5598db3fa0851",
+    "expected_profile_sha256s": [
+      "035da5691367f27707e05157e852b24cbcc78c3fe0ce68c1ef3aaac6deb15d68"
+    ],
+    "expected_normalization_sha256s": [
+      "2222222222222222222222222222222222222222222222222222222222222222"
+    ],
+    "voice_config": {
+      "enabled": true,
+      "language": "vi",
+      "voice": "vi",
+      "speed": 1.0,
+      "instructions": "",
+      "gain_db": 0.0,
+      "max_timing_adjustment": 1.35
+    },
+    "acknowledge_fresh_child_review": true,
+    "request_key": "actual-ui-narration-import-01"
+  },
+  "import_response": {
+    "receipt": {
+      "schema_version": "sql-variant-narration-receipt.v1",
+      "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+      "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+      "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+      "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+      "child_project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "state": "ready",
+      "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+      "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87",
+      "result": {
+        "schema_version": "sql-variant-narration-result.v1",
+        "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+        "copies": {
+          "ast_8c65c3095c7049ff838307cf": {
+            "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_8c65c3095c7049ff838307cf.wav",
+            "sha256": "c850e344940c0f42d6bad26cc5ffa3f58f9d3c34b3f44c0fe45bd3173d76a224",
+            "size_bytes": 48044,
+            "content_type": "audio/wav",
+            "storage_provider": "local",
+            "dimensions": null,
+            "asset_id": "ast_b9a125ade1735b34a8a49c7d2ceba9d4",
+            "asset_proof": {
+              "asset_id": "ast_b9a125ade1735b34a8a49c7d2ceba9d4",
+              "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+              "project_id": "prj_02517e790408559c852b24970fc27bc5",
+              "asset_class": "generated",
+              "project_version_id": "pver_d1579dc740b54354a62a8d48",
+              "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_8c65c3095c7049ff838307cf.wav",
+              "storage_provider": "local",
+              "kind": "variant-tts-source",
+              "content_type": "audio/wav",
+              "size_bytes": 48044,
+              "checksum_sha256": "c850e344940c0f42d6bad26cc5ffa3f58f9d3c34b3f44c0fe45bd3173d76a224",
+              "asset_version": 1,
+              "provenance_sha256": "4d3c9caeba10d17679206cfcc21ba5ec62b2fcf36423779849bbddf662eac6ac"
+            }
+          },
+          "ast_d8716d43274f4267b497881c": {
+            "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_d8716d43274f4267b497881c.wav",
+            "sha256": "6cd5b8e60bf0b08733a1558828637e96fb3ea59efce59031a2fd9aee8d60464c",
+            "size_bytes": 384044,
+            "content_type": "audio/wav",
+            "storage_provider": "local",
+            "dimensions": null,
+            "asset_id": "ast_2ddd99e77d765df5a5e9dd1f82f5d29a",
+            "asset_proof": {
+              "asset_id": "ast_2ddd99e77d765df5a5e9dd1f82f5d29a",
+              "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+              "project_id": "prj_02517e790408559c852b24970fc27bc5",
+              "asset_class": "generated",
+              "project_version_id": "pver_d1579dc740b54354a62a8d48",
+              "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_d8716d43274f4267b497881c.wav",
+              "storage_provider": "local",
+              "kind": "variant-narration-source",
+              "content_type": "audio/wav",
+              "size_bytes": 384044,
+              "checksum_sha256": "6cd5b8e60bf0b08733a1558828637e96fb3ea59efce59031a2fd9aee8d60464c",
+              "asset_version": 1,
+              "provenance_sha256": "71507e2de1959ea9146ea030314de90ae8da11bda6919d5f5801da6568186802"
+            }
+          }
+        },
+        "source_review_render_id": "rnd_5582d34fb64b4927a619",
+        "source_approval_id": "apr_a087aff05de94468b266",
+        "source_manifest_sha256": "ecb1e6534e0cc25216c832506bdccf61578701d8f0bb30497fdd4a2d37a60630",
+        "human_review_required": true,
+        "approval_transferred": false,
+        "rights_authority_transferred": false,
+        "new_inferences": 0,
+        "provider_calls": 0,
+        "operating_cost_vnd": null,
+        "publishing_enabled": false
+      },
+      "error_code": null,
+      "actor_ref": "usr:test-owner",
+      "human_review_required": true,
+      "approval_transferred": false,
+      "rights_authority_transferred": false,
+      "publishing_enabled": false,
+      "owner_uat_accepted": false,
+      "new_inferences": 0,
+      "provider_calls": 0
+    },
+    "replayed": false
+  },
+  "receipt_read": {
+    "schema_version": "sql-variant-narration-receipt.v1",
+    "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+    "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+    "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "child_project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "state": "ready",
+    "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+    "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87",
+    "result": {
+      "schema_version": "sql-variant-narration-result.v1",
+      "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+      "copies": {
+        "ast_8c65c3095c7049ff838307cf": {
+          "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_8c65c3095c7049ff838307cf.wav",
+          "sha256": "c850e344940c0f42d6bad26cc5ffa3f58f9d3c34b3f44c0fe45bd3173d76a224",
+          "size_bytes": 48044,
+          "content_type": "audio/wav",
+          "storage_provider": "local",
+          "dimensions": null,
+          "asset_id": "ast_b9a125ade1735b34a8a49c7d2ceba9d4",
+          "asset_proof": {
+            "asset_id": "ast_b9a125ade1735b34a8a49c7d2ceba9d4",
+            "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+            "project_id": "prj_02517e790408559c852b24970fc27bc5",
+            "asset_class": "generated",
+            "project_version_id": "pver_d1579dc740b54354a62a8d48",
+            "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_8c65c3095c7049ff838307cf.wav",
+            "storage_provider": "local",
+            "kind": "variant-tts-source",
+            "content_type": "audio/wav",
+            "size_bytes": 48044,
+            "checksum_sha256": "c850e344940c0f42d6bad26cc5ffa3f58f9d3c34b3f44c0fe45bd3173d76a224",
+            "asset_version": 1,
+            "provenance_sha256": "4d3c9caeba10d17679206cfcc21ba5ec62b2fcf36423779849bbddf662eac6ac"
+          }
+        },
+        "ast_d8716d43274f4267b497881c": {
+          "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_d8716d43274f4267b497881c.wav",
+          "sha256": "6cd5b8e60bf0b08733a1558828637e96fb3ea59efce59031a2fd9aee8d60464c",
+          "size_bytes": 384044,
+          "content_type": "audio/wav",
+          "storage_provider": "local",
+          "dimensions": null,
+          "asset_id": "ast_2ddd99e77d765df5a5e9dd1f82f5d29a",
+          "asset_proof": {
+            "asset_id": "ast_2ddd99e77d765df5a5e9dd1f82f5d29a",
+            "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+            "project_id": "prj_02517e790408559c852b24970fc27bc5",
+            "asset_class": "generated",
+            "project_version_id": "pver_d1579dc740b54354a62a8d48",
+            "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_d8716d43274f4267b497881c.wav",
+            "storage_provider": "local",
+            "kind": "variant-narration-source",
+            "content_type": "audio/wav",
+            "size_bytes": 384044,
+            "checksum_sha256": "6cd5b8e60bf0b08733a1558828637e96fb3ea59efce59031a2fd9aee8d60464c",
+            "asset_version": 1,
+            "provenance_sha256": "71507e2de1959ea9146ea030314de90ae8da11bda6919d5f5801da6568186802"
+          }
+        }
+      },
+      "source_review_render_id": "rnd_5582d34fb64b4927a619",
+      "source_approval_id": "apr_a087aff05de94468b266",
+      "source_manifest_sha256": "ecb1e6534e0cc25216c832506bdccf61578701d8f0bb30497fdd4a2d37a60630",
+      "human_review_required": true,
+      "approval_transferred": false,
+      "rights_authority_transferred": false,
+      "new_inferences": 0,
+      "provider_calls": 0,
+      "operating_cost_vnd": null,
+      "publishing_enabled": false
+    },
+    "error_code": null,
+    "actor_ref": "usr:test-owner",
+    "human_review_required": true,
+    "approval_transferred": false,
+    "rights_authority_transferred": false,
+    "publishing_enabled": false,
+    "owner_uat_accepted": false,
+    "new_inferences": 0,
+    "provider_calls": 0
+  },
+  "review_request": {
+    "expected_timeline_version": 2,
+    "expected_subtitle_version": 1,
+    "expected_audio_version": 1,
+    "profile": "review-540x960",
+    "selection": {
+      "enabled": true,
+      "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+      "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+      "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+      "master_project_id": "prj_c46d1a3665874d598890cf41",
+      "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+      "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+    }
+  },
+  "review_response": {
+    "render_id": "rnd_14c521e99af14dfe8a63",
+    "version": 1,
+    "package_id": "pkg_ceae543d061d46c0abec",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+    "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "timeline_version": 2,
+    "subtitle_version_id": "stv_bbfdaefa9dd64838b18e",
+    "subtitle_version": 1,
+    "audio_version_id": "amv_5c53f2bb5a494bba883a",
+    "audio_version": 1,
+    "approval_id": null,
+    "render_kind": "review",
+    "profile": "review-540x960",
+    "status": "queued",
+    "progress": 0,
+    "output_asset_id": null,
+    "playback_url": null,
+    "qc_status": "pending",
+    "qc_report": {},
+    "manifest": {
+      "renderer": "remotion-timeline-v1",
+      "audio_mix": "ffmpeg-v2-08",
+      "publishing_allowed": false,
+      "requested_by": "usr:test-owner",
+      "feature_context": {
+        "schema_version": "render-feature-context-v1",
+        "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+        "project_id": "prj_02517e790408559c852b24970fc27bc5",
+        "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+        "project_version_id": "pver_d1579dc740b54354a62a8d48",
+        "source_content_version_id": "pver_d1579dc740b54354a62a8d48",
+        "idea_id": null,
+        "trend_cluster_id": null,
+        "idea_version": null,
+        "hook_type": null,
+        "visual_strategy": null,
+        "niche": "custom",
+        "topic": null,
+        "cta": null,
+        "idea_source": "unavailable",
+        "captured_at": "2026-10-14T01:05:45.229869Z",
+        "capture_boundary": "render_request"
+      },
+      "feature_context_sha256": "87c804b33ec2707ab0170dabde4ce93026859f1279b5e92265859a619baa8c13",
+      "variant_narration_request": {
+        "enabled": true,
+        "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+        "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+        "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+        "master_project_id": "prj_c46d1a3665874d598890cf41",
+        "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+        "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+      },
+      "variant_narration_admission": {
+        "schema_version": "sql-variant-narration-admission.v1",
+        "selection": {
+          "enabled": true,
+          "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+          "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+          "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+          "master_project_id": "prj_c46d1a3665874d598890cf41",
+          "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+          "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+        },
+        "actor_ref": "usr:test-owner",
+        "receipt_actor_ref": "usr:test-owner",
+        "child_content_version_id": "pver_d1579dc740b54354a62a8d48",
+        "canonical_audio_binding_sha256": "4955a95fd5fe401db5a8bda5d6df0e8e4171e9198f2646e144dc87cac6480854",
+        "admission_sha256": "37250650fe7299a0122d4a05dd0cb52685b26ccebd1c0284c3e4b315cbcceee0"
+      },
+      "variant_narration_handoff": {
+        "state": "sent",
+        "human_review_required": false
+      }
+    },
+    "cancellation_requested": false,
+    "error_code": null,
+    "failure_reason": null,
+    "publishing_allowed": false,
+    "external_publish_requested": false,
+    "created_at": "2026-10-14T01:05:45.232015",
+    "updated_at": "2026-10-14T01:05:45.490657"
+  },
+  "review_replayed": {
+    "render_id": "rnd_14c521e99af14dfe8a63",
+    "version": 1,
+    "package_id": "pkg_ceae543d061d46c0abec",
+    "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+    "project_id": "prj_02517e790408559c852b24970fc27bc5",
+    "timeline_id": "tln_7f8115b856135d8eb24071f9d74cc15f",
+    "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+    "timeline_version": 2,
+    "subtitle_version_id": "stv_bbfdaefa9dd64838b18e",
+    "subtitle_version": 1,
+    "audio_version_id": "amv_5c53f2bb5a494bba883a",
+    "audio_version": 1,
+    "approval_id": null,
+    "render_kind": "review",
+    "profile": "review-540x960",
+    "status": "queued",
+    "progress": 0,
+    "output_asset_id": null,
+    "playback_url": null,
+    "qc_status": "pending",
+    "qc_report": {},
+    "manifest": {
+      "renderer": "remotion-timeline-v1",
+      "audio_mix": "ffmpeg-v2-08",
+      "publishing_allowed": false,
+      "requested_by": "usr:test-owner",
+      "feature_context": {
+        "schema_version": "render-feature-context-v1",
+        "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+        "project_id": "prj_02517e790408559c852b24970fc27bc5",
+        "timeline_version_id": "tlv_d8d6c1cab3924d8a82da",
+        "project_version_id": "pver_d1579dc740b54354a62a8d48",
+        "source_content_version_id": "pver_d1579dc740b54354a62a8d48",
+        "idea_id": null,
+        "trend_cluster_id": null,
+        "idea_version": null,
+        "hook_type": null,
+        "visual_strategy": null,
+        "niche": "custom",
+        "topic": null,
+        "cta": null,
+        "idea_source": "unavailable",
+        "captured_at": "2026-10-14T01:05:45.229869Z",
+        "capture_boundary": "render_request"
+      },
+      "feature_context_sha256": "87c804b33ec2707ab0170dabde4ce93026859f1279b5e92265859a619baa8c13",
+      "variant_narration_request": {
+        "enabled": true,
+        "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+        "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+        "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+        "master_project_id": "prj_c46d1a3665874d598890cf41",
+        "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+        "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+      },
+      "variant_narration_admission": {
+        "schema_version": "sql-variant-narration-admission.v1",
+        "selection": {
+          "enabled": true,
+          "receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+          "family_id": "vfa_dcf0b42764035908a1a1fe9364499e8e",
+          "member_id": "vfm_20d3e8f572d350c39255da207985e69e",
+          "master_project_id": "prj_c46d1a3665874d598890cf41",
+          "input_sha256": "99d84bf3a81c0f3c003717456e80138976005d606ad1d768082db45153001e6d",
+          "result_sha256": "573d443ae44048857e70793902e218d41a905b38157421f927f9365a3e951c87"
+        },
+        "actor_ref": "usr:test-owner",
+        "receipt_actor_ref": "usr:test-owner",
+        "child_content_version_id": "pver_d1579dc740b54354a62a8d48",
+        "canonical_audio_binding_sha256": "4955a95fd5fe401db5a8bda5d6df0e8e4171e9198f2646e144dc87cac6480854",
+        "admission_sha256": "37250650fe7299a0122d4a05dd0cb52685b26ccebd1c0284c3e4b315cbcceee0"
+      },
+      "variant_narration_handoff": {
+        "state": "sent",
+        "human_review_required": false
+      }
+    },
+    "cancellation_requested": false,
+    "error_code": null,
+    "failure_reason": null,
+    "publishing_allowed": false,
+    "external_publish_requested": false,
+    "created_at": "2026-10-14T01:05:45.232015",
+    "updated_at": "2026-10-14T01:05:45.490657"
+  },
+  "new_model_inferences": 0,
+  "provider_calls": 0,
+  "real_renderer_calls": 0,
+  "explicit_review_queue_intents": 1,
+  "publishing_enabled": false,
+  "owner_uat_accepted": false,
+  "assets_after_import": [
+    {
+      "asset_id": "ast_f58226838f19560c8ed1a824ba84d09d",
+      "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "project_version_id": "pver_f64f57ccb96b509b8727c13a345104fa",
+      "job_id": null,
+      "asset_class": "source",
+      "kind": "image",
+      "filename": "ast_d99772280e7844a3b8ca95c6.png",
+      "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-imports/vfm_20d3e8f572d350c39255da207985e69e/ast_d99772280e7844a3b8ca95c6.png",
+      "content_type": "image/png",
+      "size_bytes": 1729,
+      "checksum_sha256": "fccd90e40b57305304a612657ab4022a6d0aa0e9aaec729597d2223a5d94baa7",
+      "storage_provider": "local",
+      "version": 2,
+      "provenance": {
+        "source_type": "verified_storyboard_derivative",
+        "rights_status": "owned",
+        "license": null,
+        "production_eligible": true,
+        "derivation_receipt_id": "vfr_4a733689fa56546787b535f7b6b5728c",
+        "parent_project_id": "prj_c46d1a3665874d598890cf41",
+        "parent_asset_id": "ast_d99772280e7844a3b8ca95c6",
+        "parent_record_sha256": "79ccd37aeb15fd1771f1304598abe170fc146949e2fcd8ccf99593cd91b4f941",
+        "source_bytes_verified": true,
+        "source_rights_evidence_sha256": "f50f5433e7bd92b81f15869c5a182f69906cc8379730fe49ed1363a9f66b5234",
+        "external_call": false,
+        "new_inference_calls": 0,
+        "approval_inherited": false,
+        "rights_override_inherited": false,
+        "media_metadata": {
+          "width": 270,
+          "height": 480
+        },
+        "fixture_child_rights_decision": true
+      },
+      "created_at": "2026-10-14T01:05:42.082317",
+      "updated_at": "2026-10-14T01:05:42.175749"
+    },
+    {
+      "asset_id": "ast_b9a125ade1735b34a8a49c7d2ceba9d4",
+      "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "project_version_id": "pver_d1579dc740b54354a62a8d48",
+      "job_id": null,
+      "asset_class": "generated",
+      "kind": "variant-tts-source",
+      "filename": "ast_8c65c3095c7049ff838307cf.wav",
+      "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_8c65c3095c7049ff838307cf.wav",
+      "content_type": "audio/wav",
+      "size_bytes": 48044,
+      "checksum_sha256": "c850e344940c0f42d6bad26cc5ffa3f58f9d3c34b3f44c0fe45bd3173d76a224",
+      "storage_provider": "local",
+      "version": 1,
+      "provenance": {
+        "schema_version": "sql-variant-narration-custody.v1",
+        "narration_receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+        "parent_project_id": "prj_c46d1a3665874d598890cf41",
+        "parent_asset_id": "ast_8c65c3095c7049ff838307cf",
+        "parent_record_sha256": "def6a6ac36938ced7514c8f6e5bb60a7a191f633de9f45a5748e5db2220da8e9",
+        "source_bytes_verified": true,
+        "source_type": "variant_narration_copy",
+        "rights_status": "unknown",
+        "human_accepted": false,
+        "production_eligible": false,
+        "approval_transferred": false
+      },
+      "created_at": "2026-10-14T01:05:45.040216",
+      "updated_at": "2026-10-14T01:05:45.040216"
+    },
+    {
+      "asset_id": "ast_2ddd99e77d765df5a5e9dd1f82f5d29a",
+      "workspace_id": "wsp_602d4850f2574a719d8d9d18",
+      "project_id": "prj_02517e790408559c852b24970fc27bc5",
+      "project_version_id": "pver_d1579dc740b54354a62a8d48",
+      "job_id": null,
+      "asset_class": "generated",
+      "kind": "variant-narration-source",
+      "filename": "ast_d8716d43274f4267b497881c.wav",
+      "object_key": "workspaces/wsp_602d4850f2574a719d8d9d18/projects/prj_02517e790408559c852b24970fc27bc5/variant-narration/vfr_188f37f0ce3a595db877db5e9864a9b4/ast_d8716d43274f4267b497881c.wav",
+      "content_type": "audio/wav",
+      "size_bytes": 384044,
+      "checksum_sha256": "6cd5b8e60bf0b08733a1558828637e96fb3ea59efce59031a2fd9aee8d60464c",
+      "storage_provider": "local",
+      "version": 1,
+      "provenance": {
+        "schema_version": "sql-variant-narration-custody.v1",
+        "narration_receipt_id": "vfr_188f37f0ce3a595db877db5e9864a9b4",
+        "parent_project_id": "prj_c46d1a3665874d598890cf41",
+        "parent_asset_id": "ast_d8716d43274f4267b497881c",
+        "parent_record_sha256": "978231e3a903b53caf34141a6e8666c2eb5fb81e4e95aa21ee0666b06c7812e7",
+        "source_bytes_verified": true,
+        "source_type": "variant_narration_copy",
+        "rights_status": "unknown",
+        "human_accepted": false,
+        "production_eligible": false,
+        "approval_transferred": false
+      },
+      "created_at": "2026-10-14T01:05:45.042742",
+      "updated_at": "2026-10-14T01:05:45.042742"
+    }
+  ],
+  "supplemental_assets_read": {
+    "status": 200,
+    "path": "/api/v1/projects/prj_02517e790408559c852b24970fc27bc5/assets",
+    "database_uri_mode": "ro",
+    "source_database_sha256": "becbbc4ba55f7371fb7254e3e95bb025fc291c5ea0bf2bc76f15e38d99f3de74",
+    "response_sha256": "16eff20c5406cc6d1043c4adbd5bc2569d35ac12db9b950d27d39e4035d6b92b",
+    "new_provider_model_queue_copy_render_calls": 0
+  }
+}

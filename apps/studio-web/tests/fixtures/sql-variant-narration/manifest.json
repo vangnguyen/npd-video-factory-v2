@@ -1,0 +1,17 @@
+{
+  "schema_version": "sql-variant-narration-ui-fixture-manifest.v1",
+  "files": [
+    {
+      "name": "asgi.json",
+      "bytes": 44132,
+      "sha256": "4dc898c44d508400e919c4145e574931f5ed65e6bdf5a19d91eb5ade3874befc"
+    }
+  ],
+  "new_model_inferences": 0,
+  "provider_calls": 0,
+  "real_renderer_calls": 0,
+  "external_network_calls": 0,
+  "paid_operations": 0,
+  "owner_uat_accepted": false,
+  "supplemental_read_only_ASGI_assets_GET": true
+}
