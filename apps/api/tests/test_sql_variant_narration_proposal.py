@@ -204,8 +204,11 @@ async def test_actual_proposal_import_and_review_intent_fixture(prepared):
         assert imported.status_code == 201, imported.text
         receipt = imported.json()['receipt']
         fetched = await c.get(base(a.f) + '/narration-receipts/' + receipt['receipt_id'])
-        # Explicit current-shell default when this rebuilt timeline has no reframe.
-        profile = 'review-540x960'
+        # Rebuilding this signed landscape child retains its canonical canvas.
+        assert a.built.snapshot.aspect_ratio == '16:9'
+        assert (a.built.snapshot.width, a.built.snapshot.height) == (1920, 1080)
+        assert a.built.snapshot.metadata['reframe']['aspect_ratio'] == '16:9'
+        profile = 'review-960x540'
         review_request = dict(expected_timeline_version=a.built.current_version,
             expected_subtitle_version=a.package.subtitle.version, expected_audio_version=a.package.audio_mix.version,
             profile=profile, selection=dict(enabled=True, receipt_id=receipt['receipt_id'], family_id=receipt['family_id'],

@@ -240,7 +240,7 @@ async def test_real_no_audio_branch_does_not_create_synthetic_transcript_or_rese
     from unittest.mock import AsyncMock
     # Structural synthetic media metadata ONLY. Real ffprobe/FFmpeg proof is separate UI evidence.
     path=env.tmp/"silent.mp4";path.write_bytes(b"explicit-no-audio-structural-fixture")
-    stored=await env.storage.put_file(object_key=f"projects/{env.project.project_id}/silent.mp4",path=path,content_type="video/mp4")
+    stored=await env.storage.put_file(object_key=f"workspaces/{env.project.workspace_id}/projects/{env.project.project_id}/silent.mp4",path=path,content_type="video/mp4")
     asset=await env.platform.register_asset(env.project.project_id,AssetRegister(asset_class="source",kind="video",
         filename="silent.mp4",object_key=stored.object_key,content_type="video/mp4",size_bytes=stored.size_bytes,
         checksum_sha256=stored.checksum_sha256,storage_provider="local",provenance={"rights_status":"owned",

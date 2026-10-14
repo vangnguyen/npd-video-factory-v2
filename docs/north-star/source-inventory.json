@@ -1,6 +1,6 @@
 {
-  "head": "dd223b962935484f1ddba764f26f8c432c342a8e",
-  "audited_at": "2026-10-14T02:11:28.438661+00:00",
+  "head": "f7a5fdc4cff010cd9cc30418fdc7bf5e0f09aaee",
+  "audited_at": "2026-10-14T02:13:06.190664+00:00",
   "sha256": {
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
     ".gitattributes": "0ecffc5523b4f3e26f9019776a41fc228ac786ef80531fbce2ad27a99e05f8ff",
@@ -1725,7 +1725,7 @@
     "apps/studio-web/tests/sql-variant-narration-shell.test.mjs": "5a9d559c923ee92c1392ee31d5b3dfa6b1ebb261555c04c15d79fbd77c4a4fd2",
     "apps/api/app/sql_variant_narration_proposal.py": "a23fcc877197411af253f70f79bc640096b720cc3f877cd73dd9f93ebd897316",
     "apps/api/app/sql_variant_narration_proposal_routes.py": "791d7bee32f683f8db5ada49cf320aa40279ff66b873dc8fd8811f57e192c4ca",
-    "apps/api/tests/test_sql_variant_narration_proposal.py": "b085a529a3a65ece1def82077a60b6ad496ba3e37ff5b2d888e174177fdf577c",
+    "apps/api/tests/test_sql_variant_narration_proposal.py": "485ef83d029cacc4ee9ae1940d7c89d18bca453f26121ed5a68a092636bd885d",
     "apps/studio-web/sql-variant-narration.mjs": "64b2d26b90fb9424c675d31946f7fb186bbab24b02eae298b95291bb7db72277",
     "apps/studio-web/tests/sql-variant-narration.test.mjs": "e86b865219b4adaadff371ed421c31a1a3e8414b73ff0f58b6186881352be924",
     "apps/studio-web/tests/fixtures/sql-variant-narration/asgi.json": "4dc898c44d508400e919c4145e574931f5ed65e6bdf5a19d91eb5ade3874befc",
@@ -1733,6 +1733,7 @@
     "scripts/north_star_sql_spoken_variants.py": "f98784b920c78cedf3372950ada32dcb56fe7c296320576078177266ad2c5b1a",
     "scripts/north_star_sql_vieneu_windows_bootstrap.py": "a8f31b726cf25e544d83def574a997291fc52999358703ef28b76ceafd21194a",
     "scripts/north_star_sql_spoken_restore.py": "35dd31d3cf17886359d4ad847e4bd38dbd43defde67da486a9de1fd82eaeb19c",
-    "apps/api/tests/test_storyboard_rebuild_context.py": "624359b6cadd7ec716fe8f8842618a31ba09a854330d056b7a6ac9b09266b9ea"
+    "apps/api/tests/test_storyboard_rebuild_context.py": "624359b6cadd7ec716fe8f8842618a31ba09a854330d056b7a6ac9b09266b9ea",
+    "apps/api/tests/test_mvp1_multi_input.py": "b495e9694b5642ffeff06acd3942a12ef6f9b6c3ded41fe86dd7de26c140d8ab"
   }
 }
