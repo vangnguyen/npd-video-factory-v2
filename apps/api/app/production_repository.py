@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+import copy
 from typing import Any
 
 from sqlalchemy import func, select, update
@@ -47,13 +48,22 @@ def _new_id(prefix: str) -> str:
 
 
 class ProductionRepository:
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession], *, variant_narration_fence=None):
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession], *, variant_narration_fence=None,
+                 variant_narration_admission=None):
         self.session_factory = session_factory
         if variant_narration_fence is not None:
             from .sql_variant_narration_render import VariantNarrationTerminalFence
             if type(variant_narration_fence) is not VariantNarrationTerminalFence:
                 raise TypeError('SQL_VARIANT_NARRATION_TYPED_FENCE_REQUIRED')
         self.variant_narration_fence = variant_narration_fence
+        if variant_narration_admission is not None:
+            from .sql_variant_narration_activation import VariantNarrationAdmission
+            if (type(variant_narration_admission) is not VariantNarrationAdmission
+                    or variant_narration_admission.fence is not variant_narration_fence
+                    or variant_narration_admission.repository.session_factory is not session_factory):
+                raise TypeError('SQL_VARIANT_NARRATION_PAIRED_RUNTIME_REQUIRED')
+            variant_narration_admission.configured()
+        self.variant_narration_admission = variant_narration_admission
 
     async def create_or_refresh_package(
         self,
@@ -303,9 +313,36 @@ class ProductionRepository:
         profile: str,
         actor_ref: str,
         approval_id: str | None = None,
+        variant_narration_request: dict | None = None,
     ) -> RenderJobRead:
         async with self.session_factory() as session:
             async with session.begin():
+                selected_receipt = None
+                admission = None
+                if render_kind == 'final' and variant_narration_request is None:
+                    approval_hint = await session.get(ProductionApprovalORM, approval_id)
+                    review_hint = await session.get(ProductionRenderJobORM, approval_hint.preview_render_id) if approval_hint else None
+                    proof_hint = (review_hint.manifest_json.get('narration') or {}).get('variant_narration_reuse') if review_hint else None
+                    if proof_hint is not None:
+                        if self.variant_narration_admission is None:
+                            raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+                        from .sql_variant_narration_models import VariantNarrationRenderProof
+                        proof_hint = VariantNarrationRenderProof.model_validate(proof_hint)
+                        from .sql_variant_narration_render import VariantNarrationRenderRequest
+                        variant_narration_request = VariantNarrationRenderRequest(enabled=True,
+                            **{key: getattr(proof_hint, key) for key in ('receipt_id', 'family_id', 'member_id',
+                                'master_project_id', 'input_sha256', 'result_sha256')}).model_dump(mode='json')
+                        selected_receipt = await self.variant_narration_admission.lock_selection(
+                            session, project_id, variant_narration_request, actor_ref)
+                if variant_narration_request is not None:
+                    if (render_kind != 'review' and selected_receipt is None) or self.variant_narration_admission is None:
+                        raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+                    from .sql_variant_narration_render import VariantNarrationRenderRequest
+                    variant_narration_request = VariantNarrationRenderRequest.model_validate(
+                        variant_narration_request).model_dump(mode='json')
+                    if selected_receipt is None:
+                        selected_receipt = await self.variant_narration_admission.lock_selection(
+                            session, project_id, variant_narration_request, actor_ref)
                 # Feature capture writes the project row. Take that writer lock
                 # before the package, matching final completion/version writes.
                 await session.execute(update(VideoProjectORM).where(VideoProjectORM.project_id==project_id)
@@ -314,6 +351,9 @@ class ProductionRepository:
                 package = await self._locked_package(session, project_id)
                 await self._assert_current_timeline(session, package, expected_timeline_version)
                 self._assert_package_versions(package, expected_subtitle_version, expected_audio_version)
+                if selected_receipt is not None:
+                    admission = await self.variant_narration_admission.capture(session, package,
+                        selected_receipt, variant_narration_request, actor_ref)
                 existing = await session.scalar(select(ProductionRenderJobORM).where(
                     ProductionRenderJobORM.package_id == package.package_id,
                     ProductionRenderJobORM.timeline_version == expected_timeline_version,
@@ -322,9 +362,16 @@ class ProductionRepository:
                     ProductionRenderJobORM.render_kind == render_kind,
                     ProductionRenderJobORM.profile == profile,
                     ProductionRenderJobORM.approval_id == approval_id,
-                    ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"]),
+                    ProductionRenderJobORM.status.in_(["queued", "running", "awaiting_review", "ready"] +
+                        (["failed", "cancelled", "stale"] if variant_narration_request is not None else [])),
                 ).order_by(ProductionRenderJobORM.version.desc()).limit(1))
                 if existing:
+                    if (existing.manifest_json.get('variant_narration_request') != variant_narration_request
+                            or variant_narration_request is not None and
+                            existing.manifest_json.get('variant_narration_admission') != admission):
+                        raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_REVIEW_INTENT_CONFLICT')
+                    if admission is not None:
+                        await self.variant_narration_admission.recheck(session, existing)
                     from .service_outcome_context import capture
                     await capture('render.queue',session,_render_read(existing))
                     return _render_read(existing)
@@ -373,6 +420,9 @@ class ProductionRepository:
                         "publishing_allowed": False,
                         "requested_by": actor_ref,
                         **feature_context,
+                        **({'variant_narration_request': variant_narration_request,
+                            'variant_narration_admission': admission,
+                            'variant_narration_handoff': {'state': 'pending'}} if admission is not None else {}),
                     },
                     cancellation_requested=False,
                     invalidated_at=None,
@@ -395,9 +445,67 @@ class ProductionRepository:
                     payload={"version": next_version, "profile": profile, "approval_id": approval_id},
                 )
                 await session.flush()
+                if admission is not None:
+                    await self.variant_narration_admission.recheck(session, render)
                 from .service_outcome_context import capture
                 await capture('render.queue',session,_render_read(render))
             return _render_read(render)
+
+    async def claim_variant_handoff(self, render_id):
+        """One enqueue attempt; an ambiguous reply is held, never auto-replayed."""
+        async with self.session_factory() as session, session.begin():
+            hint = await session.get(ProductionRenderJobORM, render_id)
+            if hint is None or not hint.manifest_json.get('variant_narration_request'):
+                raise KeyError(render_id)
+            if self.variant_narration_admission is None:
+                raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+            await self.variant_narration_admission.recheck(session, hint)
+            await session.execute(update(ProductionRenderJobORM).where(ProductionRenderJobORM.render_id == render_id)
+                .values(updated_at=ProductionRenderJobORM.updated_at))
+            row = await session.get(ProductionRenderJobORM, render_id, with_for_update=True, populate_existing=True)
+            if row is None or not row.manifest_json.get('variant_narration_request'):
+                raise KeyError(render_id)
+            if row.status != 'queued' or row.cancellation_requested or row.invalidated_at is not None:
+                return None
+            if row.manifest_json.get('variant_narration_handoff', {}).get('state') != 'pending':
+                return None
+            if self.variant_narration_admission is None:
+                raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+            await self.variant_narration_admission.recheck(session, row)
+            token = uuid.uuid4().hex
+            row.manifest_json = {**row.manifest_json, 'variant_narration_handoff': {'state': 'dispatching', 'token': token}}
+            return token
+
+    async def finish_variant_handoff(self, render_id, token, *, sent):
+        async with self.session_factory() as session, session.begin():
+            await session.execute(update(ProductionRenderJobORM).where(ProductionRenderJobORM.render_id == render_id)
+                .values(updated_at=ProductionRenderJobORM.updated_at))
+            row = await session.get(ProductionRenderJobORM, render_id, with_for_update=True, populate_existing=True)
+            if row and row.manifest_json.get('variant_narration_handoff') == {'state': 'dispatching', 'token': token}:
+                row.manifest_json = {**row.manifest_json, 'variant_narration_handoff': {'state': 'sent' if sent else 'unknown',
+                    'human_review_required': not sent}}
+
+    async def filter_variant_recovery(self, identifiers):
+        """Keep legacy recovery; ambiguous S5 enqueue/render outcomes are held."""
+        result = []
+        async with self.session_factory() as session:
+            for identifier in identifiers:
+                row = await session.get(ProductionRenderJobORM, identifier)
+                if row and row.manifest_json.get('variant_narration_request') is not None:
+                    if (row.status != 'queued' or row.cancellation_requested or row.invalidated_at is not None
+                            or row.manifest_json.get('variant_narration_handoff', {}).get('state') != 'sent'):
+                        continue
+                result.append(identifier)
+        return result
+
+    async def assert_variant_admission(self, render_id):
+        if self.variant_narration_admission is None:
+            raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+        async with self.session_factory() as session, session.begin():
+            row = await session.get(ProductionRenderJobORM, render_id)
+            if row is None:
+                raise KeyError(render_id)
+            await self.variant_narration_admission.recheck(session, row)
 
     async def get_render(self, render_id: str) -> RenderJobRead | None:
         async with self.session_factory() as session:
@@ -428,11 +536,16 @@ class ProductionRepository:
     async def start_render(self, render_id: str) -> RenderJobRead | None:
         async with self.session_factory() as session:
             async with session.begin():
+                await session.execute(update(ProductionRenderJobORM).where(ProductionRenderJobORM.render_id == render_id)
+                    .values(updated_at=ProductionRenderJobORM.updated_at))
                 row = await session.get(ProductionRenderJobORM, render_id, with_for_update=True)
                 if row is None:
                     return None
                 if row.status not in {"queued", "running"}:
                     return _render_read(row)
+                if row.manifest_json.get('variant_narration_request') is not None:
+                    if row.status == 'running' or row.manifest_json.get('variant_narration_handoff', {}).get('state') == 'unknown':
+                        return None
                 if row.cancellation_requested:
                     row.status = "cancelled"
                 else:
@@ -574,6 +687,14 @@ class ProductionRepository:
                 if hint is None:
                     return None
                 variant=(manifest.get('narration') or {}).get('variant_narration_reuse')
+                selected = hint.manifest_json.get('variant_narration_request')
+                retained_selection = {k: copy.deepcopy(hint.manifest_json[k]) for k in (
+                    'variant_narration_request', 'variant_narration_admission', 'variant_narration_handoff', 'requested_by')
+                    if k in hint.manifest_json} if selected is not None else {}
+                if selected is not None:
+                    if variant is None or any(variant.get(k) != selected.get(k) for k in (
+                            'receipt_id', 'family_id', 'member_id', 'master_project_id', 'input_sha256', 'result_sha256')):
+                        raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_COMPLETION_PROOF_REQUIRED')
                 variant_proof=None
                 if variant is not None:
                     if self.variant_narration_fence is None:
@@ -601,8 +722,11 @@ class ProductionRepository:
                     return _render_read(row)
                 if variant_proof is not None:
                     await self.variant_narration_fence.guard(session,row,variant_proof)
+                if row.manifest_json.get('variant_narration_request') is not None:
+                    if self.variant_narration_admission is None:
+                        raise ApprovalBoundaryError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+                    await self.variant_narration_admission.recheck(session,row)
                 if row.render_kind=='final' and prepared is not None:
-                    import copy
                     target=copy.deepcopy((manifest.get('narration') or {}).get('canonical_audio_binding'))
                     if not isinstance(target,dict) or prepared.get('schema_version')!='sql-approved-prepared-audio-reuse.v1':
                         raise ApprovalBoundaryError('TTS_REUSE_COMPLETION_PROOF_REQUIRED')
@@ -616,7 +740,7 @@ class ProductionRepository:
                 from .production_features import retain, read as read_feature_context
                 read_feature_context(row.manifest_json or {}, workspace=row.workspace_id,
                     project=row.project_id, timeline_version=row.timeline_version_id)
-                row.manifest_json = retain(manifest, row.manifest_json or {})
+                row.manifest_json = {**retain(manifest, row.manifest_json or {}), **retained_selection}
                 row.error_code = None
                 row.failure_reason = None
                 row.updated_at = utc_now()
@@ -640,6 +764,8 @@ class ProductionRepository:
                     # same-transaction source fence; stale results roll back all.
                     await session.flush()
                     await self.variant_narration_fence.guard(session,row,variant_proof,terminal=True)
+                    if row.manifest_json.get('variant_narration_request') is not None:
+                        await self.variant_narration_admission.recheck(session,row)
             return _render_read(row)
 
     async def fail_render(

@@ -123,6 +123,17 @@ class Settings(BaseSettings):
     preview_download_root: Path = Path("/workspace/storage/preview-downloads")
     production_render_staging_root: Path = Path("/workspace/storage/production-renders")
     production_render_download_root: Path = Path("/workspace/storage/production-downloads")
+    sql_variant_narration_reuse_enabled: bool = False
+
+    @field_validator('sql_variant_narration_reuse_enabled', mode='before')
+    @classmethod
+    def strict_variant_narration_flag(cls, value):
+        if type(value) is bool:
+            return value
+        if type(value) is str and value.lower() in {'true', 'false'}:
+            return value.lower() == 'true'
+        raise ValueError('SQL variant narration flag must be true or false')
+
     media_external_execution_enabled: bool = False
     media_paid_execution_enabled: bool = False
     comfyui_bridge_url: str = "http://comfyui-bridge:8011"

@@ -44,6 +44,7 @@ from .auto_edit_job_routes import router as auto_edit_job_router
 from .auto_edit_transcription_runtime import provider_from_settings as auto_edit_transcription_provider
 from .auto_edit_service import AutoEditAnalysisService, UploadService
 from .sql_variant_api_service import configure_sql_variant_api, register_sql_variant_routes
+from .sql_variant_narration_runtime import create_variant_narration_runtime, register_variant_narration_routes
 from .artifacts import (
     ArtifactAccessError,
     resolve_recorded_artifact,
@@ -150,7 +151,11 @@ async def lifespan(app: FastAPI):
     vision_repository = VisionRepository(session_factory)
     media_intelligence_repository = MediaIntelligenceRepository(session_factory)
     timeline_repository = TimelineRepository(session_factory)
-    production_repository = ProductionRepository(session_factory)
+    narration_runtime = create_variant_narration_runtime(session_factory=session_factory,
+        object_storage=object_storage, assets=auto_edit_repository, enabled=settings.sql_variant_narration_reuse_enabled)
+    production_repository = ProductionRepository(session_factory, variant_narration_fence=narration_runtime.fence,
+        variant_narration_admission=narration_runtime.admission)
+    app.state.sql_variant_narration_runtime = narration_runtime
     publishing_repository = PublishingRepository(session_factory)
     analytics_repository = AnalyticsRepository(session_factory)
     provider_safety_repository = ProviderSafetyRepository(session_factory)
@@ -433,6 +438,7 @@ app = FastAPI(
 _human_route_dependencies = [Depends(authorize_human_request)]
 # This router authenticates before body parsing and applies its own scoped RBAC.
 register_sql_variant_routes(app)
+register_variant_narration_routes(app)
 app.include_router(platform_router, dependencies=_human_route_dependencies)
 app.include_router(trend_router, dependencies=_human_route_dependencies)
 app.include_router(auto_edit_router, dependencies=_human_route_dependencies)

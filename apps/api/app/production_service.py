@@ -272,6 +272,8 @@ class ProductionPackageService:
             profile=payload.profile,
             actor_ref=payload.actor_ref,
         )
+        if render.manifest.get('variant_narration_request') is not None:
+            return await self._handoff_variant_render(render)
         await self.queue.rpush(PRODUCTION_RENDER_QUEUE_KEY, render.render_id)
         return render
 
@@ -292,8 +294,41 @@ class ProductionPackageService:
             actor_ref=payload.actor_ref,
             approval_id=payload.approval_id,
         )
+        if render.manifest.get('variant_narration_request') is not None:
+            return await self._handoff_variant_render(render)
         await self.queue.rpush(PRODUCTION_RENDER_QUEUE_KEY, render.render_id)
         return render
+
+    async def enqueue_variant_review(self, project_id, payload, *, actor_ref):
+        from .sql_variant_narration_activation import NarrationReviewCreateRequest
+        payload = NarrationReviewCreateRequest.model_validate(payload.model_dump())
+        from .production_logic import validate_reframe_render_profile
+        timeline = await self.timeline_repository.get_timeline(project_id)
+        await self._require_current_content(timeline)
+        if not payload.profile.startswith('review-'):
+            raise ProductionContractError('review render must use a review profile')
+        if timeline:
+            validate_reframe_render_profile(timeline.snapshot, payload.profile)
+        render = await self.repository.create_render(project_id=project_id,
+            expected_timeline_version=payload.expected_timeline_version,
+            expected_subtitle_version=payload.expected_subtitle_version, expected_audio_version=payload.expected_audio_version,
+            render_kind='review', profile=payload.profile, actor_ref=actor_ref,
+            variant_narration_request=payload.selection.model_dump(mode='json'))
+        return await self._handoff_variant_render(render)
+
+    async def _handoff_variant_render(self, render):
+        from .sql_variant_narration_activation import VariantNarrationQueueUnknownError
+        token = await self.repository.claim_variant_handoff(render.render_id)
+        if token is not None:
+            try:
+                await self.queue.rpush(PRODUCTION_RENDER_QUEUE_KEY, render.render_id)
+                await self.repository.finish_variant_handoff(render.render_id, token, sent=True)
+            except BaseException as error:
+                await completed_read(self.repository.finish_variant_handoff(render.render_id, token, sent=False))
+                if not isinstance(error, Exception):
+                    raise
+                raise VariantNarrationQueueUnknownError(render.render_id) from None
+        return await self.repository.get_render(render.render_id)
 
     async def get_render(self, project_id: str, render_id: str) -> RenderJobRead | None:
         render = await self.repository.get_render(render_id)
@@ -386,9 +421,23 @@ class ProductionRenderProcessor:
         render, subtitles, audio_mix, snapshot_json = context
         if render.status not in {"queued", "running"}:
             return render
+        if render.manifest.get('variant_narration_request') is not None:
+            admission = self.repository.variant_narration_admission
+            if (admission is None or self.variant_narration_loader is not admission.loader
+                    or self.repository.variant_narration_fence is not admission.fence):
+                return await self.repository.fail_render(render_id, code='VARIANT_NARRATION_NOT_CONFIGURED',
+                    reason='SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+        if render.manifest.get('variant_narration_request') is not None and render.status == 'running':
+            return render  # A duplicate/recovered delivery cannot repeat an in-flight render.
         started = await self.repository.start_render(render_id)
         if started is None:
+            observed = await self.repository.get_render(render_id)
+            if observed is not None and render.manifest.get('variant_narration_request') is not None:
+                return observed
             raise KeyError(render_id)
+        if (render.manifest.get('variant_narration_request') is not None
+                and started.status != 'running'):
+            return started  # Observe another worker's terminal commit before any IO.
         if started.status in {"cancelled", "stale"}:
             return started
 
@@ -396,6 +445,19 @@ class ProductionRenderProcessor:
         if self.staging_root.resolve() not in workdir.parents:
             raise RuntimeError("render staging path escaped its configured root")
         try:
+            selected = render.manifest.get('variant_narration_request')
+            inherited_variant = None
+            if render.render_kind == 'final':
+                source = await self.repository.approved_audio_reuse_source(render_id)
+                inherited_variant = source['manifest'].get('narration', {}).get('variant_narration_reuse')
+            if selected is not None or inherited_variant is not None:
+                admission = self.repository.variant_narration_admission
+                if (admission is None or self.variant_narration_loader is not admission.loader
+                        or self.repository.variant_narration_fence is not admission.fence):
+                    raise ProductionContractError('SQL_VARIANT_NARRATION_NOT_CONFIGURED')
+                admission.configured()
+                if selected is not None:
+                    await self.repository.assert_variant_admission(render_id)
             workdir.mkdir(parents=True, exist_ok=True)
             from .production_features import read as read_feature_context
             feature_context = read_feature_context(render.manifest, workspace=render.workspace_id, project=render.project_id,
