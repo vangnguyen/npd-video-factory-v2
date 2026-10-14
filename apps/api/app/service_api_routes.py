@@ -259,7 +259,7 @@ async def approve(project_id:str,payload:ApproveInput,request:Request):
 async def render(project_id:str,payload:FinalRenderCreateRequest,request:Request):
     actor,_=await project(request,project_id,'render.create');core=payload.model_copy(update={'actor_ref':actor.subject})
     return await scoped_command(request,project_id,'render.create',payload,
-        lambda:production.enqueue_final_render(project_id,core,request),status=202)
+        lambda:production.enqueue_final_render_command(project_id,core,request),status=202)
 
 @router.get('/projects/{project_id}/renders/{render_id}')
 async def render_state(project_id:str,render_id:str,request:Request):
