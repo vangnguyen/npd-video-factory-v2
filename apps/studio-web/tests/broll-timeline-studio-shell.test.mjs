@@ -184,7 +184,7 @@ test('private API admits only exact owned review route/body and keeps public gen
  class ApiError extends Error{}
  const make=new Function('brollPlanHeld','manualReframeHeld','sourceLinkedHeld','audioProcessingHeld','videoWordsHeld',
   'brollPlanAdmission','manualReframeAdmission','sourceLinkedAdmission','audioProcessingAdmission','videoWordAdmission','brollTimelineAdmission',
-  'authenticatedFetch','ApiError','const brollInternalAdmission=Symbol("idle-internal-fixture");\n'+source+'\nreturn api;');
+  'authenticatedFetch','ApiError','const brollInternalAdmission=Symbol("idle-internal-fixture");const brollTerminalAdmission=Symbol("idle-terminal-fixture");\n'+source+'\nreturn api;');
  const api=make(h.brollPlanHeld,()=>false,()=>false,()=>false,()=>false,...symbols,h.admission,
   async(path,options)=>{fetches.push({path,options});return{ok:true,status:200,json:async()=>({ok:true})};},ApiError);
  await assert.rejects(api('/api/v1/projects/other',{method:'POST'}));
@@ -200,11 +200,11 @@ test('actual project/search/plan event guards preserve current view while placem
  new Function('$','state','brollPlanHeld','toast',projectCode)(dollar,h.s,h.brollPlanHeld,(...v)=>notices.push(v));
  project.value='prj_foreign_target';await project.fire('change');assert.equal(project.value,h.s.projectId);
  const searchCode=segment('$("#browser-search").addEventListener("input",','\n$(\'#browser-content\').addEventListener(\'change\'');
- new Function('$','state','brollTimelineHeld','toast','renderBrowser','const brollInternalHeld=()=>false;\n'+searchCode)(dollar,h.s,h.brollTimelineHeld,(...v)=>notices.push(v),()=>rendered++);
+ new Function('$','state','brollTimelineHeld','toast','renderBrowser','const brollInternalHeld=()=>false;const brollTerminalHeld=()=>false;\n'+searchCode)(dollar,h.s,h.brollTimelineHeld,(...v)=>notices.push(v),()=>rendered++);
  search.value='changed query';await search.fire('input');assert.equal(search.value,'kept search');assert.equal(h.s.query,'kept search');
  const start=code.indexOf("  if(event.target.matches('[data-broll-plan]'))"),end=code.indexOf('\n});',start);
  const plan={value:'mpl_wrong-plan',matches:()=>true};
- new Function('event','state','brollTimelineHeld','toast','clearBrollTimelineForm','renderBrowser','const brollInternalHeld=()=>false;\n'+code.slice(start,end))(
+ new Function('event','state','brollTimelineHeld','toast','clearBrollTimelineForm','renderBrowser','const brollInternalHeld=()=>false;const brollTerminalHeld=()=>false;\n'+code.slice(start,end))(
   {target:plan},h.s,h.brollTimelineHeld,(...v)=>notices.push(v),()=>assert.fail('must preserve form'),()=>rendered++);
  assert.equal(plan.value,before.selectedBrollPlanId);assert.equal(h.s.selectedBrollPlanId,before.selectedBrollPlanId);
  assert.equal(rendered,0);assert.equal(h.calls.filter(c=>c.method==='PUT').length,0);assert.equal(notices.length,3);

@@ -441,3 +441,5 @@
 .broll-plan-workbench .broll-plan-recovery{display:grid;gap:10px;margin-top:16px;min-width:0}.broll-plan-workbench .broll-plan-recovery button{min-height:38px;font-size:14px;white-space:normal}.broll-plan-workbench .broll-plan-recovery p{overflow-wrap:anywhere}
 
 .broll-internal-workbench>label,.broll-internal-workbench form>label,.broll-internal-workbench fieldset label{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.broll-internal-workbench select{max-width:100%;min-width:0}.broll-internal-actions{display:flex;flex-wrap:wrap;gap:.5rem}.broll-internal-workbench input[type=checkbox]{width:20px;height:20px;flex:none}.broll-internal-workbench button{min-height:38px}.broll-internal-pending{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+
+.broll-terminal-workbench form>label{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.broll-terminal-workbench input[type=checkbox]{width:20px;height:20px;flex:none}.broll-terminal-actions{display:flex;gap:.5rem;flex-wrap:wrap}.broll-terminal-workbench button{min-height:38px}.broll-terminal-receipt{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}

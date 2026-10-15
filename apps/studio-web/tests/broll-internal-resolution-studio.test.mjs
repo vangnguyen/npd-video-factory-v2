@@ -39,7 +39,7 @@ function harness({s=stateFixture(),memory=new Map(),handler,badGuard,replaceGuar
   'productionWorkbenchDraft','audioWorkbenchDraft','audioRole','audioByteHash','sqlAudioStable','compatibleBrollPlans','validateBrollInternalContext',
   'initializeSqlBrollInternalResolution','api','toast','syncBrollPlanPeers','clearBrollTimelineForm','renderBrowser','Date'];
  const body=segment('let brollInternalController=null','\nlet manualReframeEditor')+'\n'
-  +segment('// Reviewed internal B-roll resolution Root integration.','\nensureAuthenticatedSession()')
+  +segment('// Reviewed internal B-roll resolution Root integration.','// Reviewed terminal INTERNAL intent release.')
   +'\nreturn {controller:brollInternalController,brollInternalHeld,brollInternalDirty,brollInternalEditorState,brollInternalSourceContext,brollInternalDraft,'
   +'brollInternalApi,brollInternalStorage,brollInternalBucket,syncBrollInternalForm,runBrollInternalAction,refreshBrollInternal,admission:brollInternalAdmission};';
  const sync=()=>{root?.controller.sync();root?.syncBrollInternalForm();};
@@ -138,7 +138,7 @@ test('cold malformed or foreign held record never clears bytes or sends request'
 test('actual generic API blocks unrelated writers and strips only owned private admission',async()=>{
  const h=harness();await h.read();await h.fill();const start=code.indexOf('async function api('),source=code.slice(start,code.indexOf('\n}\n',start)+3),calls=[];
  const api=new Function('brollPlanHeld','manualReframeHeld','sourceLinkedHeld','audioProcessingHeld','videoWordsHeld','brollInternalAdmission','authenticatedFetch','ApiError',
-  'const brollPlanAdmission=Symbol(),brollTimelineAdmission=Symbol(),manualReframeAdmission=Symbol(),sourceLinkedAdmission=Symbol(),audioProcessingAdmission=Symbol(),videoWordAdmission=Symbol();\n'+source+'\nreturn api;')(
+  'const brollPlanAdmission=Symbol(),brollTimelineAdmission=Symbol(),manualReframeAdmission=Symbol(),sourceLinkedAdmission=Symbol(),audioProcessingAdmission=Symbol(),videoWordAdmission=Symbol();const brollTerminalAdmission=Symbol();\n'+source+'\nreturn api;')(
   h.brollInternalHeld,()=>false,()=>false,()=>false,()=>false,h.admission,async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},class extends Error{});
  await assert.rejects(api('/unrelated',{method:'POST'}));await assert.rejects(api('/unrelated',{method:'POST',brollInternalAdmission:Symbol('foreign')}));assert.equal(calls.length,0);
  await api('/api/v1/projects/owned/review',{method:'POST',brollInternalAdmission:h.admission});assert.equal(calls.length,1);
@@ -155,7 +155,7 @@ test('persistent plan/item handlers reject selection changes while own draft is 
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
 test('no timer, latest job, generic resolution polling or timeline mutation in reviewed Root module',()=>{
- const internal=segment('// Reviewed internal B-roll resolution Root integration.','\nensureAuthenticatedSession()');
+ const internal=segment('// Reviewed internal B-roll resolution Root integration.','// Reviewed terminal INTERNAL intent release.');
  assert.doesNotMatch(internal,/setTimeout|setInterval|media-resolution-jobs|state\.timeline\s*=|state\.preview\s*=|state\.productionPackage\s*=/);
  assert.match(internal,/requests\/.*request_key.*jobs\/.*resolution_job_id/);
 });

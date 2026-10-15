@@ -126,6 +126,14 @@
           <p id="broll-plan-status" role="status" aria-live="polite">Chưa đọc. Chỉ chuẩn bị sau thao tác và xác nhận rõ ràng.</p>
           <pre id="broll-plan-pending" class="broll-plan-pending"></pre>
         </details>
+        <details id="broll-terminal-workbench" class="timeline-panel broll-terminal-workbench">
+          <summary>Đóng yêu cầu B-roll nội bộ đã kết thúc</summary>
+          <p>Chỉ đóng đúng bản ghi đang giữ khi máy chủ chứng minh job đã kết thúc. Không nhận media, đổi timeline, hủy job đang chạy hoặc cấp quyền đăng bài. Phiên mới cùng người có thể kiểm tra lại bằng bằng chứng gốc trên máy chủ.</p>
+          <button id="broll-terminal-inspect" type="button" disabled>Kiểm tra yêu cầu gốc đang giữ</button><p id="broll-terminal-context" role="status" aria-live="polite">Chưa kiểm tra.</p>
+          <form id="broll-terminal-form"><label><input id="broll-terminal-acknowledge" type="checkbox" disabled> Tôi chỉ đóng đúng yêu cầu đã kết thúc; không nhận media hoặc thay đổi bản dựng.</label>
+            <div class="broll-terminal-actions"><button id="broll-terminal-settle" type="button" disabled>Ghi nhận đóng yêu cầu đã kiểm tra</button><button id="broll-terminal-read" type="button" disabled>Xác minh biên nhận và đóng bản đang giữ</button><button id="broll-terminal-reset-ack" type="button" disabled>Bỏ xác nhận chưa gửi</button></div>
+          </form><p id="broll-terminal-status" role="status" aria-live="polite">Không tự đóng hoặc gửi lại. Nếu mất phản hồi, kiểm tra lại đúng yêu cầu trước.</p><pre id="broll-terminal-receipt" class="broll-terminal-receipt"></pre>
+        </details>
         <details id="broll-internal-workbench" class="timeline-panel broll-internal-workbench">
           <summary>Chọn tư liệu nội bộ cho B-roll</summary>
           <p>Chỉ tái sử dụng ảnh/video đã tải lên và đã có trong đề xuất. Không gọi stock, AI hoặc đăng bài; timeline và bản duyệt giữ nguyên cho đến bước áp dụng riêng.</p>

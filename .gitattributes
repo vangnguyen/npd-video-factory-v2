@@ -38,3 +38,4 @@ apps/studio-web/tests/fixtures/broll-internal-resolution-studio.json -text white
 
 # Keep the exact signed-witness SQL/ASGI fixture, including Windows EOL.
 apps/studio-web/tests/fixtures/sql-broll-witness-review.json -text whitespace=cr-at-eol
+apps/studio-web/tests/fixtures/broll-internal-settlement-studio.json -text whitespace=cr-at-eol
