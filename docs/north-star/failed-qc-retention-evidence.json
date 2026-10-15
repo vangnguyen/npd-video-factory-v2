@@ -1,0 +1,595 @@
+{
+  "schema_version": "north-star-failed-qc-retention-evidence.v1",
+  "product_head": "aa54cff55c5b422b622d9d0246196419556e4a1f",
+  "recorded_at": "2026-10-15T08:31:29.294436+00:00",
+  "archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-primary-support-n1.zip",
+    "bytes": 751715,
+    "sha256": "d37989b9555b0ec25c877784fad5abc45bb9e99276397b57c7df7f05b516c342"
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-delivery-summary-n1.json",
+      "bytes": 6063,
+      "sha256": "d23a8ac355330c2c7d9174d9b4a72eada53effc8d60fc57366dd1ffd27a802e1",
+      "archive_name": "recovery/failed-qc-retention-delivery-summary-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-evidence-archive-n1.zip",
+      "bytes": 403141,
+      "sha256": "44d15dcd84b531e92d77c688b956793db7f0eec27a3e418b76913fa7e179be54",
+      "archive_name": "recovery/failed-qc-retention-evidence-archive-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-evidence-index-n1.json",
+      "bytes": 25764,
+      "sha256": "befb67b4823ab9ec0d86d67ec968d14075aad0b814fb4f159d1fbedc02acbb67",
+      "archive_name": "recovery/failed-qc-retention-evidence-index-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-feature-n1.bundle",
+      "bytes": 20952,
+      "sha256": "ce30136efd1cfccde31cf80e0bbe2b94c41424b3bfd8a8549d47a8e580be72a3",
+      "archive_name": "recovery/failed-qc-retention-feature-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n1.log",
+      "bytes": 102,
+      "sha256": "6bbf0717bd40765fcbde2fa11acc444ccc3952486567a6b83c48dff394f114ad",
+      "archive_name": "recovery/failed-qc-retention-focused-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n2-before.json",
+      "bytes": 695,
+      "sha256": "f108900c6d0c5476eef0c74dbc84b38ce7dac311db4c6919774d2c41ae4eef51",
+      "archive_name": "recovery/failed-qc-retention-focused-n2-before.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n2.json",
+      "bytes": 782,
+      "sha256": "bf3f46649c7aa1801176202ab56b1c347970101b594dbb6a5f55c4c2148bc224",
+      "archive_name": "recovery/failed-qc-retention-focused-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n2.log",
+      "bytes": 112,
+      "sha256": "9cf0a5936f1b6f1d82b136427dad52bd40753e8b192fc40553b95d1c620627af",
+      "archive_name": "recovery/failed-qc-retention-focused-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n3-before.json",
+      "bytes": 798,
+      "sha256": "d1632ebf0e9799957898a180973e75d2e432b7db03560665233ad69793045050",
+      "archive_name": "recovery/failed-qc-retention-focused-n3-before.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n3.json",
+      "bytes": 886,
+      "sha256": "85d621997246ba5296e4892e583c6913ecafd7db0da3f3e1e5900b6ac396e08c",
+      "archive_name": "recovery/failed-qc-retention-focused-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n3.log",
+      "bytes": 142,
+      "sha256": "fda2a11b7060ff8c36779ec9b46bcc125561211f3b98b154788862aeb586cd13",
+      "archive_name": "recovery/failed-qc-retention-focused-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n4-before.json",
+      "bytes": 798,
+      "sha256": "f15ace1bd49989a4ef71c04a0b47383566c69852e368581e816c9611bcc43303",
+      "archive_name": "recovery/failed-qc-retention-focused-n4-before.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n4.json",
+      "bytes": 765,
+      "sha256": "98749866f15e45fc14618f055a6f75afc44cb8d229ee586da782aa6d500030d4",
+      "archive_name": "recovery/failed-qc-retention-focused-n4.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-focused-n4.log",
+      "bytes": 112,
+      "sha256": "ab0e0c182c3be6a608053ab7e22f3fbde53cb5b6fc06d6f3d6f6886e407231e0",
+      "archive_name": "recovery/failed-qc-retention-focused-n4.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-gap-audit-n1.json",
+      "bytes": 14634,
+      "sha256": "73067268dbf078e32674dda5bcda4a902281e0cda8121d8cdda1ec0ffa32b0b2",
+      "archive_name": "recovery/failed-qc-retention-gap-audit-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-handoff-build-n1.py",
+      "bytes": 11877,
+      "sha256": "5c339e9ae2b225cea7943538507fd6c9e98ae0d4f6254869c046b75a9d58fd72",
+      "archive_name": "recovery/failed-qc-retention-handoff-build-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-handoff-n1.json",
+      "bytes": 1778,
+      "sha256": "a9cdbeaadd0ca4a4c7ab8c8748f34c8ed9d8f6d08f5bbb6b4c201c7f4bf93e79",
+      "archive_name": "recovery/failed-qc-retention-handoff-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-independent-design-review-n1.json",
+      "bytes": 9722,
+      "sha256": "5cb8e4c4f4604b428eda5ceb501d4b5d206f4e38e9fd49272fb137495146f9f0",
+      "archive_name": "recovery/failed-qc-retention-independent-design-review-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-primary-bundle-verify-n1.log",
+      "bytes": 350,
+      "sha256": "6744aa9176f0909bc4a0a2236124df46fa44518eaa5c6f5b9cb9b68e771fe8df",
+      "archive_name": "recovery/failed-qc-retention-primary-bundle-verify-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-primary-import-n3.json",
+      "bytes": 1062,
+      "sha256": "129cb04c0b4a9939c864c450770b0d83247d7dfeb2423993521366c9e236bb02",
+      "archive_name": "recovery/failed-qc-retention-primary-import-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-primary-incremental-n1.bundle",
+      "bytes": 21702,
+      "sha256": "65e987c9b8e969485aec523ce47ba3d4ce1b42c8a101e3d8da4eb755a60d28ff",
+      "archive_name": "recovery/failed-qc-retention-primary-incremental-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-primary-integration-n1.log",
+      "bytes": 116,
+      "sha256": "f761ca09412716b1e8709a6fb1e53cbc6bca8d1a8b8ec126472b89f02fb193b3",
+      "archive_name": "recovery/failed-qc-retention-primary-integration-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-primary-preservation-n1.json",
+      "bytes": 1947,
+      "sha256": "e47517515a17454185d0a17b57be1b5345c0b88ae50c1fec9a73ad295d0aea12",
+      "archive_name": "recovery/failed-qc-retention-primary-preservation-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n1.json",
+      "bytes": 887,
+      "sha256": "f040cdcb83619ae7c4a6ef4b862b18ed38a873fd870c06fb49a56de9449c6394",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n1.log",
+      "bytes": 19258,
+      "sha256": "b062b2f47ef3738f237b05be59602144d05c9a959a511ee7c00205dde6fe3bbb",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n1.py",
+      "bytes": 8787,
+      "sha256": "51e50e6bedf1bafc44b22dba0b47e7312748f3a603e7538256e8aa7c5ab2299d",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n2.json",
+      "bytes": 887,
+      "sha256": "37025f7fe78f03ac1a21d6b95040048d05ba2cbe53fa418ae366e9393314e94e",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n2.log",
+      "bytes": 12588,
+      "sha256": "aac5b037dd0913954d46591edc8f8f94a9dafec03b4c243913859543f07d0fef",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n2.py",
+      "bytes": 8979,
+      "sha256": "5475cf536bedb250e6a099e0c56fc2faa0c2b3fa8d4efdd8c0d723fa16c405bb",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n3.json",
+      "bytes": 887,
+      "sha256": "c78c503eabd45d832846d3cfefe010e12e1eb40994fccca425ca56839e034b90",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n3.log",
+      "bytes": 129,
+      "sha256": "84e27a9ec69fa1d17f7527b9a799d8c9aba9b7901f33ca464f1fe8f0cb8d6464",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-real-smoke-n3.py",
+      "bytes": 9442,
+      "sha256": "e5458bc7bd9c8dee97dcceb425b4831758c5f5c31704d949e5ff52c3c4043991",
+      "archive_name": "recovery/failed-qc-retention-real-smoke-n3.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-regression-n1.json",
+      "bytes": 786,
+      "sha256": "a1494c23bc956098587b175dc4f4f7db0e083acb8b2fcf94e9c76ad743c1a474",
+      "archive_name": "recovery/failed-qc-retention-regression-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-regression-n1.log",
+      "bytes": 142,
+      "sha256": "3ba6124276e8e16166433ac101f0f3c2bf940348203c883fdbdcac1d04ee6db8",
+      "archive_name": "recovery/failed-qc-retention-regression-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-regression-n2.json",
+      "bytes": 899,
+      "sha256": "030ba16560b7aea1de71b63961138ade6803561e66132959f95175a3109fc1d3",
+      "archive_name": "recovery/failed-qc-retention-regression-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-regression-n2.log",
+      "bytes": 101,
+      "sha256": "f4e126d4ed507c254f7e55aee3352c9cddc9539f0a73fbe9e749ffae7d9cd8d7",
+      "archive_name": "recovery/failed-qc-retention-regression-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-reserve-repro-n1.json",
+      "bytes": 606,
+      "sha256": "797c5dc23c2769daf76d41329decc73e0a2f025544124403edec5eeec9ef8a87",
+      "archive_name": "recovery/failed-qc-retention-reserve-repro-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-reserve-repro-n1.log",
+      "bytes": 101,
+      "sha256": "cba9b790ce80f75a0f018fb3913d8f83d96ab3fe000db46cca761f6f38342544",
+      "archive_name": "recovery/failed-qc-retention-reserve-repro-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-reserve-repro-n1.py",
+      "bytes": 1650,
+      "sha256": "5e8d44f4641355fb0c0a066eeee9986df1792033e06b1d435cf0154802b9e9ae",
+      "archive_name": "recovery/failed-qc-retention-reserve-repro-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-source-n2.zip",
+      "bytes": 40077,
+      "sha256": "c1fd65fdac57e6319ba8d8b03976b2867f4d8da45c8f3f3bb5c5291cabe93a1a",
+      "archive_name": "recovery/failed-qc-retention-source-n2.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-source-n3.zip",
+      "bytes": 44053,
+      "sha256": "904f793abd69b576de276df45f065ea5960f326458635a995541d41c6e030f09",
+      "archive_name": "recovery/failed-qc-retention-source-n3.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-source-n4.zip",
+      "bytes": 44168,
+      "sha256": "6672d54ca23a1a5d1e4acf26948a9cbe19037cbc4513d2d1dc28d5e8de13277c",
+      "archive_name": "recovery/failed-qc-retention-source-n4.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-failed-qc-retention-n1.log",
+      "bytes": 341,
+      "sha256": "c899ec7326cd2afee50defbf7810b82851a0b23edfb08b853f398dde12f60bf2",
+      "archive_name": "recovery/import-failed-qc-retention-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-failed-qc-retention-n1.py",
+      "bytes": 3251,
+      "sha256": "5c5e05f9bd437731166fc55362554a7c939eb101c3e657b8d87d4cd6cac9e185",
+      "archive_name": "recovery/import-failed-qc-retention-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-failed-qc-retention-n2.log",
+      "bytes": 348,
+      "sha256": "f3cac9fe022e9613c6de34c1191fe9968b11eb1f415c5302758b0735c8df67ea",
+      "archive_name": "recovery/import-failed-qc-retention-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-failed-qc-retention-n2.py",
+      "bytes": 553,
+      "sha256": "d951b87b35591310898cd5c28e81226c41477eb751dc5b2a381d8cacec1cf564",
+      "archive_name": "recovery/import-failed-qc-retention-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-failed-qc-retention-n3.log",
+      "bytes": 991,
+      "sha256": "2f149dbc862bdd1ea983e8556870cc2e8f937ffdfadea3e66ff259672a39a740",
+      "archive_name": "recovery/import-failed-qc-retention-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-failed-qc-retention-n3.py",
+      "bytes": 711,
+      "sha256": "44e18cbd0f802d7f5fa7225b59cb83bfd2cda10ea122669aaaea6520479b515b",
+      "archive_name": "recovery/import-failed-qc-retention-n3.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\preserve-failed-qc-retention-primary-n1.log",
+      "bytes": 2250,
+      "sha256": "0dd6da074ca42894f591fedc6a3cc776b1edd3f98c4a4896e594209d9d9d4dc4",
+      "archive_name": "recovery/preserve-failed-qc-retention-primary-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\preserve-failed-qc-retention-primary-n1.py",
+      "bytes": 2595,
+      "sha256": "daec4d1ddd29b3627e684031078e0516e1f73025f18a67044f73f27150dca622",
+      "archive_name": "recovery/preserve-failed-qc-retention-primary-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-before-n1.json",
+      "bytes": 1759,
+      "sha256": "dd9769e700d9da57f7cb228cd760d70bbf88b59b135a54c30c1b08b62d24bc00",
+      "archive_name": "recovery/processing-failed-qc-retention-before-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-before-n2.json",
+      "bytes": 1437,
+      "sha256": "4e5977d39840cbe70197cbfc8d61572f95b3a0d8023d9775e9c38901ac6e8884",
+      "archive_name": "recovery/processing-failed-qc-retention-before-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-before-n3.json",
+      "bytes": 2329,
+      "sha256": "f2fd88edd6eaf50ce63ef3599e10d9958f418befac2dc3db46fd163cd3320d4d",
+      "archive_name": "recovery/processing-failed-qc-retention-before-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-final-probes-n1.json",
+      "bytes": 1472,
+      "sha256": "61f7c330ca012e54c11bcd72ae1c8e49c8e8a9b7ad4b89b0ae27366cbe95e800",
+      "archive_name": "recovery/processing-failed-qc-retention-final-probes-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-final-probes-n1.log",
+      "bytes": 18767,
+      "sha256": "e704dc3a784b4570089b263d770e2285838869a03e7df3e785da3838c7885368",
+      "archive_name": "recovery/processing-failed-qc-retention-final-probes-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-final-probes-n1.py",
+      "bytes": 10384,
+      "sha256": "e293cd5f363a487fb7681bdc8e565c888d31924fa61ccb7a4ece4f15213aae38",
+      "archive_name": "recovery/processing-failed-qc-retention-final-probes-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-final-probes-n2.json",
+      "bytes": 416,
+      "sha256": "4f5e76ff6474c812d9c2445ee2be02f63e86d2af6bd6d6858c760de33f214d9b",
+      "archive_name": "recovery/processing-failed-qc-retention-final-probes-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-final-probes-n2.log",
+      "bytes": 114,
+      "sha256": "1ffeb2cee111bc5adb3f2a50ea361afa21e88e01c5012ef9240728a4430988fa",
+      "archive_name": "recovery/processing-failed-qc-retention-final-probes-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-final-probes-n2.py",
+      "bytes": 10385,
+      "sha256": "ed3686e0790a4ac1195414b1ca620ea70bcd4ce760a77c2e73b32bc0cfd58c4e",
+      "archive_name": "recovery/processing-failed-qc-retention-final-probes-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-junction-repro-n1.log",
+      "bytes": 1185,
+      "sha256": "5091cb8f40f1a8fe39f5970128d84bee4daadd86015dde40918c5924d771d127",
+      "archive_name": "recovery/processing-failed-qc-retention-junction-repro-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-junction-repro-n1.py",
+      "bytes": 1962,
+      "sha256": "9648700ac090a93af008d0ed43bca256efe5d546db0fceded98e933728b55ede",
+      "archive_name": "recovery/processing-failed-qc-retention-junction-repro-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-junction-repro-n2.json",
+      "bytes": 1397,
+      "sha256": "6a7db48ce15679d570131fae6f9593e993ab74c0735055fcd95475f634b39ca4",
+      "archive_name": "recovery/processing-failed-qc-retention-junction-repro-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-junction-repro-n2.log",
+      "bytes": 1399,
+      "sha256": "489a786c9e9e3bf6604da817d6a64bd94a838762a7e739eabd86fa6e7773bd51",
+      "archive_name": "recovery/processing-failed-qc-retention-junction-repro-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-junction-repro-n2.py",
+      "bytes": 2011,
+      "sha256": "ac3cdcfeeb9eadbf6fb55c885707569691bfe3aac5e991bac82d4f5269f89ce1",
+      "archive_name": "recovery/processing-failed-qc-retention-junction-repro-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-repro-n1.json",
+      "bytes": 1073,
+      "sha256": "93b93d0a25165de65f628e5b1e09a3d10f8b992f19a34b8ecc02ad53b7048133",
+      "archive_name": "recovery/processing-failed-qc-retention-repro-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-repro-n1.log",
+      "bytes": 1137,
+      "sha256": "67324195c57c74dbcb07b1345d6a46f9b70207cf98da879ffaa59f646fa22c11",
+      "archive_name": "recovery/processing-failed-qc-retention-repro-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-repro-n1.py",
+      "bytes": 5772,
+      "sha256": "f6ce4e70291714ca0fc5a3abefa552641cd1bf99335e49b72bc851eae79428e5",
+      "archive_name": "recovery/processing-failed-qc-retention-repro-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-repro-n2.log",
+      "bytes": 375,
+      "sha256": "861ba185d674990b8e7970b413f65ebcccfdce07b84ec44fc7b8b81670041bae",
+      "archive_name": "recovery/processing-failed-qc-retention-repro-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-review-n1.json",
+      "bytes": 10105,
+      "sha256": "55d5b7379d6377cbca77d2ec8ba04e853505fb5f61b17e0e317bd61b0a67b263",
+      "archive_name": "recovery/processing-failed-qc-retention-review-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-review-n2.json",
+      "bytes": 9317,
+      "sha256": "995e2cbcca271d9b6016d5c897ec2440a517fb04c02c53ae53faedaa4fcd8f78",
+      "archive_name": "recovery/processing-failed-qc-retention-review-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-review-n3.json",
+      "bytes": 6619,
+      "sha256": "fcb90ff4fb82daa935f5d58b7012c4942c2d8688b382a08d2061ba36c00adfde",
+      "archive_name": "recovery/processing-failed-qc-retention-review-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-source-n3.zip",
+      "bytes": 44053,
+      "sha256": "654b83e1529e15d744e21618643c0c57edb1368ab4f4a8544077786eabb8075e",
+      "archive_name": "recovery/processing-failed-qc-retention-source-n3.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-source-n4.zip",
+      "bytes": 44168,
+      "sha256": "7e8dee819ddd247182831b20160bb0ddadfe0d9da727b9820de40d0790295aa5",
+      "archive_name": "recovery/processing-failed-qc-retention-source-n4.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-tuple-final-n1.json",
+      "bytes": 388,
+      "sha256": "8eb1596566462dec7fde7ee630755d3787dad4f07f548a8fc6171d5f9cab4e22",
+      "archive_name": "recovery/processing-failed-qc-retention-tuple-final-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-tuple-final-n1.log",
+      "bytes": 100,
+      "sha256": "7d5999643f146bb70f991e3b771053c90f6f8be46ec1cece6f63dc1090a38afa",
+      "archive_name": "recovery/processing-failed-qc-retention-tuple-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-failed-qc-retention-tuple-final-n1.py",
+      "bytes": 2712,
+      "sha256": "b565051cfdaf637b3bf52e5b671499da21cdc077d352130ff53590448bffc1fe",
+      "archive_name": "recovery/processing-failed-qc-retention-tuple-final-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-retention-diagnostic-probes-n1.log",
+      "bytes": 26065,
+      "sha256": "9b792fa5072177d39345382578934837dbab8e6b54315330710132fbe109b105",
+      "archive_name": "recovery/root-retention-diagnostic-probes-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-retention-diagnostic-probes-n1.py",
+      "bytes": 4969,
+      "sha256": "b458d9d5785d3514d6fe1d473cbd28c97d43ca6f299389656dc157f1833824b6",
+      "archive_name": "recovery/root-retention-diagnostic-probes-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-retention-diagnostic-probes-n2.log",
+      "bytes": 1135,
+      "sha256": "dcf70c6efa8f15c4c880ab0bbb1ec820800f6c272ea44b3bb81ebe2569fbad0c",
+      "archive_name": "recovery/root-retention-diagnostic-probes-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-retention-diagnostic-probes-n3.log",
+      "bytes": 101,
+      "sha256": "8f1235147df3ec6af01ded21603bbb2457e8d3c71e1aa17043632263f03ec2a0",
+      "archive_name": "recovery/root-retention-diagnostic-probes-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-retention-diagnostic-review-n1.json",
+      "bytes": 2265,
+      "sha256": "8fd2c69b7e0f048a7fedebf262ae136d501a00d0695bd391367685ee5c9fb5d2",
+      "archive_name": "recovery/root-retention-diagnostic-review-n1.json"
+    }
+  ],
+  "delivery_summary": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\failed-qc-retention-delivery-summary-n1.json",
+    "bytes": 6063,
+    "sha256": "d23a8ac355330c2c7d9174d9b4a72eada53effc8d60fc57366dd1ffd27a802e1"
+  },
+  "local_real": {
+    "media": "C:\\vfct\\fqe-real-smoke-n3-evidence\\failed-review.mp4",
+    "bytes": 22317,
+    "sha256": "5afcffb7155434df4b550f8d585bb4d93050f1bf947e7fa15849d60d772f75b8",
+    "duration_seconds": 2,
+    "width": 540,
+    "height": 960,
+    "fps": 30,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "sample_rate": 48000,
+    "qc_status": "failed",
+    "render_status": "failed_qc",
+    "only_failure": "freeze-frame ratio exceeds 15 percent",
+    "publishing_blocked": true,
+    "source_is_synthetic_color_and_sine": true,
+    "source_copy_renderer_fixture": true,
+    "caption_pixels_rendered": false,
+    "actual_FullQC": true,
+    "physical_media_retained_after_staging_cleanup": true,
+    "authenticated_byte_exact_GET": true,
+    "new_encodes_in_final_smoke": 0,
+    "historical_fixture_encodes_across_failed_setup_runs": 2,
+    "actual_magic_sniff_and_FFprobe": true,
+    "actual_Remotion_calls": 0,
+    "new_models": 0,
+    "TTS_calls": 0,
+    "external_provider_calls": 0
+  },
+  "tests": [
+    {
+      "scope": "Final N4 focused",
+      "passed": 46,
+      "skipped": 0,
+      "seconds": 77.38,
+      "basis": "35 SQL/HTTP behavior cases,2 local-custody cases,4 SDK-stub cases,5 strict-policy cases; no real external provider."
+    },
+    {
+      "scope": "Final N4 real FFmpeg/FullQC/private delivery",
+      "passed": 1,
+      "skipped": 0,
+      "seconds": 6.3,
+      "external_network_attempts": 0,
+      "record": "failed-qc-retention-real-smoke-n3.json"
+    },
+    {
+      "scope": "Independent N4 nested tuple/SQL/retained QC bytes",
+      "passed": 1,
+      "seconds": 6.16,
+      "record": "processing-failed-qc-retention-review-n3.json"
+    },
+    {
+      "scope": "N3 independent remediation probes; unchanged components except N4 canonical report comparison",
+      "passed": 8,
+      "not_added_to_final_focused_count": true
+    },
+    {
+      "scope": "N2 independent human diagnostic routes; route code unchanged through N4",
+      "passed": 6,
+      "seconds": 43.33
+    },
+    {
+      "scope": "N3 targeted existing success/approval/canonical/terminal regression; N4 only canonical QC-report equality changed",
+      "passed": 7,
+      "seconds": 17.44
+    },
+    {
+      "scope": "Earlier N2 full affected regression baseline; NOT a claim these64 reran on final N4",
+      "passed": 64,
+      "skipped": 0,
+      "seconds": 335.02,
+      "external_network_attempts": 0
+    }
+  ],
+  "primary_integration": {
+    "actual_SQL_ASGI_pass": 7,
+    "seconds": 24.27,
+    "new_model_provider_calls": 0
+  },
+  "DDL": 0,
+  "old_failed_media_recovered": false,
+  "browser_UI": "NOT_VERIFIED",
+  "Owner_UAT": false,
+  "capability_counts": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "IMPLEMENTATION_COMPLETE": false,
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": false,
+  "PRODUCTION_DEPLOYED": false
+}

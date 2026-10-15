@@ -4219,3 +4219,20 @@ REGRESSIONS: prior Studio suite passes; source/track/render/provider implementat
 EXTERNAL BLOCKERS: browser three-viewports and genuine full original A/B/C/Owner/provider/Docker/production acceptance remain separate.
 OWNER ACTION REQUIRED: none for next safe implementation; optional listening/UAT deferred. Two completed duplicate checkouts retired under existing cleanup authorization; all branches/recovery/evidence/models and15accepted hashes retained.
 NEXT WAVE: close bounded failed-QC retention then manual-reframe UI/API, remaining safe Mode B/B-roll and original North Star waves.
+
+
+## Waves6/8/16 — Private failed-QC evidence retention,2026-10-15
+
+WAVE: 6/8/16
+STATUS: Scoped capability implemented and locally tested; full waves remain open.
+HEAD SHA: `aa54cff55c5b422b622d9d0246196419556e4a1f` product; docs separately committed.
+CAPABILITIES COMPLETED: bounded sealed diagnostics, SQL one-owner quota, original-QC fallback, terminal/currentness protection, authenticated private GET/HEAD/range, real failed media survives staging cleanup.
+CAPABILITIES PARTIAL: no live S3, abandoned reservation recovery/purge, genuine full A/B/C/browser/Owner/media-quality/provider/production acceptance; old lost video is not recovered.
+TESTS: final46PASS77.38s0skip; actualFullQC1PASS6.30s; primarySQL/ASGI7PASS24.27s; peerN4tuple1PASS6.16s. Earlier N2regression64/N3targeted7 and peer/Root batches are source-bound historical tests; overlap is not summed.
+REAL PROVIDER TESTS: none; actual local FFmpeg/FullQC/SQLite/private storage only;0 network/model/provider/TTS/Remotion in final smoke.
+MOCK TESTS: focused renderer/QC fixtures and S3 SDK stubs. Real smoke renderer copies a synthetic color+sine fixture; caption pixels not rendered.
+EVIDENCE: SQL_FAILED_QC_RETENTION_REVIEW.md; north-star/failed-qc-retention-evidence.json; physical22,317B MP4,QC,SQLite,6objects/restore mapping in75indexed+embedded-index archive. Raw failures and independent findings retained.
+REGRESSIONS: focused and primary integration pass; ordinary success paths unchanged. Earlier64 regression pass explicitly belongs to N2. No source/accepted-video replacement, DDL, approval/publishing enablement or infrastructure change.
+EXTERNAL BLOCKERS: real S3/provider/browser/Owner/full genuine-source acceptance and production approval remain separate; they do not block next safe implementation.
+OWNER ACTION REQUIRED: none for safe continuation; Owner listening/UAT remains deferred.
+NEXT WAVE: manual reframe canonical API/Studio form and reviewed B-roll planner controls, then remaining original North Star gaps.
