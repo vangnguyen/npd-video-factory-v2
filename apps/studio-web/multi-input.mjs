@@ -193,7 +193,7 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
       if (!["image/jpeg","image/png","video/mp4","audio/wav","audio/mpeg"].includes(file.type)) throw new Error("Chỉ JPEG/PNG/MP4 và audio được allowlist.");
       const rights = $("mvp-rights").checked;
       if (!rights) throw new Error("Xác nhận quyền dùng media trước khi upload.");
-      const upload = await api("/api/v1/uploads/init",{method:"POST",body:JSON.stringify({project_id:getState().projectId,filename:file.name,media_kind:file.type.startsWith("image/")?"image":file.type.startsWith("audio/")?"music":"video",content_type:file.type,size_bytes:file.size,rights_status:"owned"})});
+      const upload = await api("/api/v1/uploads/init",{method:"POST",body:JSON.stringify({project_id:getState().projectId,filename:file.name,media_kind:file.type.startsWith("image/")?"image":file.type.startsWith("audio/")?"music":"video",content_type:file.type,size_bytes:file.size,rights_status:"unknown"})});
       for (let part=1;part<=upload.total_parts;part++) {
         const body=file.slice((part-1)*upload.part_size_bytes,part*upload.part_size_bytes);
         const result = await uploadFetch(`/api/v1/uploads/${upload.upload_id}/parts/${part}`,{method:"PUT",body});
@@ -203,7 +203,7 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     }
     $("mvp-upload").value="";
     await refresh();
-    toast("Đã lưu media qua quarantine/validation hiện có.");
+    toast("Đã lưu media qua kiểm tra an toàn. Quyền phát hành cần được kiểm tra riêng.");
   }));
   $("mvp-draft").addEventListener("click",guarded(async () => {scenes=[];$("mvp-scenes").innerHTML=""; await save(false);}));
   $("mvp-generate").addEventListener("click",guarded(async () => {

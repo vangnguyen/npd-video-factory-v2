@@ -395,7 +395,7 @@ async def test_resumable_upload_hash_metadata_and_duplicate_detection(tmp_path: 
     asset = await repository.get_asset(first.asset_id)
     assert asset is not None
     assert asset.provenance["source_type"] == "user_upload"
-    assert asset.provenance["rights_status"] == "owned"
+    assert asset.provenance["rights_status"] == "unknown"
     assert asset.provenance["media_metadata"]["width"] == 1080
 
     second = await upload_fixture(upload_service, project, version, payload)

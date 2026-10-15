@@ -202,6 +202,8 @@ async def setup_media_stack(tmp_path: Path, providers: MediaProviderBundle | Non
             project_version_id=version.project_version_id,
             filename="media-source.mp4",
             media_kind="video",
+            rights_status="owned",
+            license="explicit-owned-media-fixture",
             content_type="video/mp4",
             size_bytes=len(payload),
             checksum_sha256=checksum,

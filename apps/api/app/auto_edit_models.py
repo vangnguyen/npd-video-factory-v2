@@ -34,7 +34,7 @@ class UploadInitRequest(StrictModel):
     size_bytes: int = Field(gt=0)
     checksum_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     part_size_bytes: int | None = Field(default=None, ge=64 * 1024, le=32 * 1024 * 1024)
-    rights_status: Literal["owned", "licensed", "unknown"] = "owned"
+    rights_status: Literal["owned", "licensed", "unknown"] = "unknown"
     license: str = Field(default="user-provided", min_length=1, max_length=160)
 
 
