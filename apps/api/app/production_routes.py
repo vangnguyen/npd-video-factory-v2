@@ -265,6 +265,34 @@ async def render_content(project_id: str, render_id: str, request: Request) -> F
         raise HTTPException(error.status, detail={'code':error.code}) from None
 
 
+@router.api_route('/projects/{project_id}/renders/{render_id}/diagnostics/{name}',
+    methods=['GET','HEAD'], response_class=FileResponse)
+async def failed_render_diagnostic(project_id: str, render_id: str, name: str, request: Request) -> FileResponse:
+    """Private rejected bytes; this route never becomes a playback/output URL."""
+    await authorize_project(request, project_id, 'viewer')
+    from .failed_render_evidence import ARTIFACTS, artifact_read
+    if name not in ARTIFACTS:
+        raise missing('render diagnostic')
+    repository = service(request).repository
+    recorded = await repository.failed_evidence_snapshot(project_id, render_id)
+    if recorded is None:
+        raise missing('render diagnostic')
+    try:
+        proof, filename, media_type = artifact_read(recorded['render'], recorded['ledger'], name)
+        async def current():
+            latest = await repository.failed_evidence_snapshot(project_id, render_id)
+            if latest is None or latest['snapshot'] != recorded['snapshot']:
+                raise ArtifactDeliveryRejected('FAILED_EVIDENCE_CHANGED')
+            artifact_read(latest['render'], latest['ledger'], name)
+        return await deliver_verified_artifact(proof=proof, storage=request.app.state.object_storage,
+            staging_root=Path(request.app.state.production_render_download_root), basename='artifact.bin',
+            filename='failed-qc-'+filename, media_type=media_type, current=current)
+    except FileNotFoundError:
+        raise missing('render diagnostic object') from None
+    except ArtifactDeliveryRejected as error:
+        raise HTTPException(error.status, detail={'code':error.code}) from None
+
+
 @router.post(
     "/projects/{project_id}/approvals",
     response_model=ApprovalRead,
