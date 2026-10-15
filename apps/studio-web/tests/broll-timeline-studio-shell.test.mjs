@@ -5,7 +5,7 @@ import {webcrypto} from 'node:crypto';
 import {audioRole} from '../uploaded-audio-review.mjs';
 import {initializeSqlBrollTimelineReview,brollTimelineRead,brollTimelineSelection} from '../sql-broll-timeline-review.mjs';
 
-const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8'),html=readFileSync(new URL('../studio.html',import.meta.url),'utf8');
+const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8').replaceAll('\r\n','\n'),html=readFileSync(new URL('../studio.html',import.meta.url),'utf8');
 const capture=JSON.parse(readFileSync(new URL('./fixtures/sql-broll-timeline-review.json',import.meta.url),'utf8'));
 const r=Object.fromEntries(capture.records.map(v=>[v.name,v])),clone=structuredClone;
 function segment(a,b){const start=code.indexOf(a),end=code.indexOf(b,start);assert.ok(start>=0&&end>start);return code.slice(start,end);}
@@ -49,7 +49,7 @@ function harness({s=fixtureState(),memory=new Map(),handler,guardValues=null}={}
   'audioWorkbenchDraft','audioRole','sqlAudioStable','brollTimelineRead','brollTimelineSelection','initializeSqlBrollTimelineReview','videoWordHistoryMatches',
   'api','toast','syncBrollPlanPeers','stopPreviewPolling','stopProductionPolling','render','renderBrowser','Date'];
  const body=segment('let brollPlanController=null','\nlet manualReframeEditor')+'\n'
-  +segment('// Reviewed B-roll placement Root integration.','\nensureAuthenticatedSession()')
+  +segment('// Reviewed B-roll placement Root integration.','// Reviewed internal B-roll resolution Root integration.')
   +'\nreturn {controller:brollTimelineController,brollPlanHeld,brollTimelineHeld,brollTimelineDirty,brollTimelineDraft,brollTimelineEditorState,brollTimelineSourceContext,'
   +'brollTimelineCanonicalContext,assertBrollTimelineOperation,brollTimelineApi,brollTimelineStorage,syncBrollTimelineForm,refreshBrollTimeline,runBrollTimelineAction,'
   +'admission:brollTimelineAdmission,formRead:()=>brollTimelineFormRead,setPreparation:v=>{brollPlanBusy=v;}};';
@@ -184,7 +184,7 @@ test('private API admits only exact owned review route/body and keeps public gen
  class ApiError extends Error{}
  const make=new Function('brollPlanHeld','manualReframeHeld','sourceLinkedHeld','audioProcessingHeld','videoWordsHeld',
   'brollPlanAdmission','manualReframeAdmission','sourceLinkedAdmission','audioProcessingAdmission','videoWordAdmission','brollTimelineAdmission',
-  'authenticatedFetch','ApiError',source+'\nreturn api;');
+  'authenticatedFetch','ApiError','const brollInternalAdmission=Symbol("idle-internal-fixture");\n'+source+'\nreturn api;');
  const api=make(h.brollPlanHeld,()=>false,()=>false,()=>false,()=>false,...symbols,h.admission,
   async(path,options)=>{fetches.push({path,options});return{ok:true,status:200,json:async()=>({ok:true})};},ApiError);
  await assert.rejects(api('/api/v1/projects/other',{method:'POST'}));
@@ -200,11 +200,11 @@ test('actual project/search/plan event guards preserve current view while placem
  new Function('$','state','brollPlanHeld','toast',projectCode)(dollar,h.s,h.brollPlanHeld,(...v)=>notices.push(v));
  project.value='prj_foreign_target';await project.fire('change');assert.equal(project.value,h.s.projectId);
  const searchCode=segment('$("#browser-search").addEventListener("input",','\n$(\'#browser-content\').addEventListener(\'change\'');
- new Function('$','state','brollTimelineHeld','toast','renderBrowser',searchCode)(dollar,h.s,h.brollTimelineHeld,(...v)=>notices.push(v),()=>rendered++);
+ new Function('$','state','brollTimelineHeld','toast','renderBrowser','const brollInternalHeld=()=>false;\n'+searchCode)(dollar,h.s,h.brollTimelineHeld,(...v)=>notices.push(v),()=>rendered++);
  search.value='changed query';await search.fire('input');assert.equal(search.value,'kept search');assert.equal(h.s.query,'kept search');
  const start=code.indexOf("  if(event.target.matches('[data-broll-plan]'))"),end=code.indexOf('\n});',start);
  const plan={value:'mpl_wrong-plan',matches:()=>true};
- new Function('event','state','brollTimelineHeld','toast','clearBrollTimelineForm','renderBrowser',code.slice(start,end))(
+ new Function('event','state','brollTimelineHeld','toast','clearBrollTimelineForm','renderBrowser','const brollInternalHeld=()=>false;\n'+code.slice(start,end))(
   {target:plan},h.s,h.brollTimelineHeld,(...v)=>notices.push(v),()=>assert.fail('must preserve form'),()=>rendered++);
  assert.equal(plan.value,before.selectedBrollPlanId);assert.equal(h.s.selectedBrollPlanId,before.selectedBrollPlanId);
  assert.equal(rendered,0);assert.equal(h.calls.filter(c=>c.method==='PUT').length,0);assert.equal(notices.length,3);

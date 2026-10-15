@@ -28,7 +28,7 @@ import {initializeAnalyticsConsole} from '/analytics-console.mjs';
 import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
 import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
 import {initializeChannelLearning} from '/channel-learning.mjs';
-import {initializeUploadedAudioReview,audioRole} from '/uploaded-audio-review.mjs?v=sql-audio-1';
+import {initializeUploadedAudioReview,audioRole,audioByteHash} from '/uploaded-audio-review.mjs?v=sql-audio-1';
 import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-stock-1';
 import {initializeVideoAnalysisJobs,videoReviewSelection,selectedVideoReviewAnalysis} from '/video-analysis-jobs.mjs?v=sql-video-jobs-1';
 import {initializeSqlVariantFamilies} from '/sql-variant-families.mjs?v=sql-family-1';
@@ -40,6 +40,7 @@ import {initializeSqlManualReframe,manualReframeRead,manualReframeSettings} from
 import {initializeBrollPlanReview,defaultBrollPlanSettings,brollPlanSettings,validateBrollPlanContext} from '/broll-plan-review.mjs?v=broll-plan-review-1';
 import {videoWordSessionStorage} from '/video-transcript-word-review.mjs?v=sql-video-words-1';
 import {initializeSqlBrollTimelineReview,brollTimelineRead,brollTimelineSelection} from '/sql-broll-timeline-review.mjs?v=sql-broll-timeline-1';
+import {initializeSqlBrollInternalResolution,validateBrollInternalContext} from '/sql-broll-internal-resolution.mjs?v=sql-broll-internal-1';
 
 const state = {
   workspaceId: null,
@@ -105,7 +106,7 @@ function brollPlanStored(){
     return value!==null&&value!==undefined;}catch{return true;}
 }
 function brollPreparationHeld(){return brollPlanBusy||brollPlanDirty()||brollPlanStored()||brollPlanController?.state().pending!==null&&brollPlanController?.state().pending!==undefined;}
-function brollPlanHeld(){return brollPreparationHeld()||brollTimelineHeld();}
+function brollPlanHeld(){return brollPreparationHeld()||brollTimelineHeld()||brollInternalHeld();}
 let brollTimelineController=null,brollTimelineBusy=false,brollTimelineFormRead=null,brollTimelineBaseline=null,brollTimelineOperation=null;
 const brollTimelineAdmission=Symbol('scoped-broll-timeline-controller');
 const brollTimelineStore=videoWordSessionStorage();
@@ -119,6 +120,19 @@ function brollTimelineStored(){
   try{if(!brollTimelineStore)return true;const raw=brollTimelineStore.getItem(key);return scope()!==before||raw!==null&&raw!==undefined;}catch{return true;}
 }
 function brollTimelineHeld(){return brollTimelineBusy||brollTimelineDirty()||brollTimelineStored()||brollTimelineController?.isPending()===true;}
+let brollInternalController=null,brollInternalBusy=false,brollInternalOperation=null,brollInternalFormRead=null,brollInternalBaseline=null,brollInternalItemId='';
+let brollInternalStatus='Chưa đọc. Chỉ dùng tư liệu đã lưu sau lựa chọn và xác nhận rõ ràng.';
+const brollInternalAdmission=Symbol('scoped-internal-broll-resolution'),brollInternalStore=videoWordSessionStorage();
+function brollInternalDraft(){return JSON.stringify([...document.querySelectorAll('#broll-internal-form [data-broll-internal-setting]')]
+  .map(e=>[e.id,e.type==='checkbox'?e.checked:e.value]));}
+function brollInternalDirty(){return brollInternalFormRead!==null&&brollInternalBaseline!==brollInternalDraft();}
+function brollInternalBareScope(){return sqlAudioStable([state.workspaceId,state.projectId,state.principal,sessionToken()]);}
+function brollInternalBucket(){return 'vf-sql-broll-internal-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal?.subject]);}
+function brollInternalStored(){if(!state.workspaceId||!state.projectId||!state.principal?.subject)return false;
+  const before=brollInternalBareScope();try{if(!brollInternalStore)return true;const raw=brollInternalStore.getItem(brollInternalBucket());
+    return before!==brollInternalBareScope()||raw!==null&&raw!==undefined;}catch{return true;}}
+function brollInternalHeld(){return brollInternalBusy||brollInternalDirty()||brollInternalStored()||brollInternalController?.isPending()===true;}
+
 let manualReframeEditor = null;
 let manualReframeFormRead = null;
 let manualReframeFormBaseline = null;
@@ -415,8 +429,8 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
-  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,brollPlanAdmission:brollAdmission,brollTimelineAdmission:placementAdmission,...requestOptions}=options;
-  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&brollPlanHeld()&&brollAdmission!==brollPlanAdmission&&placementAdmission!==brollTimelineAdmission)
+  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,brollPlanAdmission:brollAdmission,brollTimelineAdmission:placementAdmission,brollInternalAdmission:internalAdmission,...requestOptions}=options;
+  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&brollPlanHeld()&&brollAdmission!==brollPlanAdmission&&placementAdmission!==brollTimelineAdmission&&internalAdmission!==brollInternalAdmission)
     throw Error('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&manualReframeHeld()&&manualAdmission!==manualReframeAdmission)
     throw Error('Lưu/bỏ đường crop hoặc đối chiếu yêu cầu đang giữ trước khi sửa phần khác.');
@@ -724,7 +738,7 @@ function brollPlanEditorState(){const v=sqlEditorState();return {...v,analysis:a
   busy:v.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
     ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
   dirty:v.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true
-    ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()||manualReframeHeld()||brollTimelineHeld()};}
+    ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()||manualReframeHeld()||brollTimelineHeld()||brollInternalHeld()};}
 function brollPlanContext(){const v=brollPlanEditorState();return sqlAudioStable([v.workspaceId,v.workspaceSlug,v.projectId,v.principal,sessionToken(),
   v.timeline,v.analysis,v.assets,v.analyses,v.versions,v.preview,v.productionPackage,v.videoReviewSelection,v.learning_snapshot_id,
   productionWorkbenchDraft(),audioWorkbenchDraft()]);}
@@ -778,7 +792,8 @@ function syncBrollPlanForm(){
 }
 function syncBrollPlanPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();
   videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
-  if(brollTimelineController){brollTimelineController.sync();syncBrollTimelineForm();}}
+  if(brollTimelineController){brollTimelineController.sync();syncBrollTimelineForm();}
+  if(brollInternalController){brollInternalController.sync();syncBrollInternalForm();}}
 async function brollPlanApi(path,options={}){
   const op=brollPlanOperation;if(!op)throw Error('B-roll chỉ đọc/gửi sau thao tác rõ ràng.');assertBrollPlanOperation(op);
   const route=`/api/v1/projects/${state.projectId}/broll-plan-review`,method=(options.method??'GET').toUpperCase();
@@ -955,7 +970,7 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
     &&state.assets.length===0&&state.analyses.length===0&&state.versions.length===0&&state.transcriptDrafts.size===0
     &&!brollPlanBusy&&!brollPlanDirty()&&brollPlanOperation===null
     &&manualReframeEditor?.isWorking()!==true&&!manualReframeDirty()&&manualReframeApplying===null
-    &&sourceLinkedEditor?.isWorking()!==true&&!brollTimelineBusy&&!brollTimelineDirty()&&brollTimelineOperation===null&&sqlAudioProcessing?.isWorking()!==true
+    &&sourceLinkedEditor?.isWorking()!==true&&!brollInternalBusy&&!brollInternalDirty()&&brollInternalOperation===null&&!brollTimelineBusy&&!brollTimelineDirty()&&brollTimelineOperation===null&&sqlAudioProcessing?.isWorking()!==true
     &&videoWordReview?.isWorking()!==true&&variantNarration?.isWorking()!==true;
   if(!initialCanonicalRead&&brollPlanHeld()){toast('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&manualReframeHeld()){toast('Lưu/bỏ crop hoặc đối chiếu lần lưu đang giữ trước khi tải lại.',true);return;}
@@ -969,10 +984,10 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   if (!initialCanonicalRead&&stockReview.isPending()) {toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi tải lại dự án.', true); return;}
   // A clean form from the previous project is invalidated before capturing the
   // read boundary. Dirty forms and UNKNOWN requests have already been fenced.
-  syncManualReframeForm();syncBrollPlanForm();if(brollTimelineController)syncBrollTimelineForm();
+  syncManualReframeForm();syncBrollPlanForm();if(brollTimelineController)syncBrollTimelineForm();if(brollInternalController)syncBrollInternalForm();
   const loadedProjectId = state.projectId;
   const readBoundary=()=>JSON.stringify([state.workspaceId,state.projectId,state.principal,sessionToken(),
-    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft(),brollPlanDraft(),brollTimelineDraft()]);
+    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft(),brollPlanDraft(),brollTimelineDraft(),brollInternalDraft()]);
   const expectedReadBoundary=readBoundary();
   const readCurrent=()=>readBoundary()===expectedReadBoundary
     &&(!state.principal?.expires_at||Date.parse(state.principal.expires_at)>Date.now());
@@ -1234,7 +1249,7 @@ function selectedBrollPlan(){
 
 function renderBrollBrowser(panel,analysis,matches){
   const plans=compatibleBrollPlans(state.mediaPlans,analysis),plan=selectedBrollPlan();
-  if(!brollTimelineHeld())state.selectedBrollPlanId=plan?.media_plan_id??'';
+  if(!brollTimelineHeld()&&!brollInternalHeld())state.selectedBrollPlanId=plan?.media_plan_id??'';
   else if(plan?.media_plan_id!==state.selectedBrollPlanId){panel.innerHTML='<p>Đối chiếu lựa chọn B-roll đang giữ trước khi đổi đề xuất.</p>';return;}
   panel.innerHTML=`<div class="broll-tools"><button type="button" data-broll-create ${analysis?'':'disabled'}>Tạo đề xuất B-roll</button>
     <p>Chọn tư liệu bổ trợ cho cảnh. Giữ lời nói và tệp gốc; xem preview và duyệt lại sau khi áp dụng.</p>
@@ -2279,7 +2294,7 @@ document.querySelector(".panel-tabs").addEventListener("click", (event) => {
   renderBrowser();
 });
 $("#browser-search").addEventListener("input", (event) => {
-  if(brollTimelineHeld()){event.target.value=state.query;return toast('Giữ lựa chọn hoặc đối chiếu lần áp dụng B-roll trước khi tìm lại.',true);}
+  if(brollTimelineHeld()||brollInternalHeld()){event.target.value=state.query;return toast('Giữ lựa chọn hoặc đối chiếu lần áp dụng B-roll trước khi tìm lại.',true);}
   state.query = event.target.value; renderBrowser(); });
 $("#browser-content").addEventListener("click", (event) => {
   const seek = event.target.closest("[data-seek]");
@@ -2287,8 +2302,8 @@ $("#browser-content").addEventListener("click", (event) => {
 });
 $('#browser-content').addEventListener('change',event=>{
   if(event.target.matches('[data-broll-plan]')){
-    if(brollTimelineHeld()){event.target.value=state.selectedBrollPlanId;return toast('Lưu/bỏ lựa chọn hoặc đối chiếu B-roll trước khi đổi đề xuất.',true);}
-    state.selectedBrollPlanId=event.target.value;clearBrollTimelineForm();renderBrowser();}
+    if(brollTimelineHeld()||brollInternalHeld()){event.target.value=state.selectedBrollPlanId;return toast('Lưu/bỏ lựa chọn hoặc đối chiếu B-roll trước khi đổi đề xuất.',true);}
+    state.selectedBrollPlanId=event.target.value;clearBrollTimelineForm();clearBrollInternalForm();brollInternalItemId='';renderBrowser();syncBrollPlanPeers();}
 });
 $('#browser-content').addEventListener('click',async event=>{
   const button=event.target.closest('[data-broll-create],[data-broll-apply]');if(!button)return;
@@ -2305,6 +2320,14 @@ $('#browser-content').addEventListener('click',async event=>{
 });
 $('#browser-content').addEventListener('submit',async event=>{
   const form=event.target.closest('[data-broll-select],[data-broll-stock]');if(!form)return;event.preventDefault();
+  if(form.dataset.brollSelect){
+    try{const v=brollInternalEditorState();if(brollInternalHeld()||brollTimelineHeld()||brollPreparationHeld()||v.busy||v.dirty)throw Error('Đối chiếu yêu cầu hoặc lưu/bỏ lựa chọn trước khi đổi cảnh.');
+      const plan=selectedBrollPlan(),item=plan?.items.find(i=>i.media_plan_item_id===form.dataset.brollSelect);
+      if(!item)throw Error('Cảnh B-roll không còn trong đề xuất.');clearBrollInternalForm();brollInternalItemId=item.media_plan_item_id;
+      brollInternalSelectors();$('#broll-internal-workbench').open=true;syncBrollPlanPeers();$('#broll-internal-read').focus();
+      toast('Đọc nguồn và chọn tư liệu nội bộ trước khi gửi phân giải.');
+    }catch(error){toast(error.message,true);}return;
+  }
   const button=form.querySelector('button[type="submit"]');button.disabled=true;
   const projectId=state.projectId;
   try{
@@ -2544,7 +2567,7 @@ window.addEventListener("beforeunload", () => {
   videoReview.dispose();
   variantFamilies.dispose();
   variantNarration?.dispose();
-  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();brollPlanController?.dispose();brollTimelineController?.dispose();
+  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();brollPlanController?.dispose();brollTimelineController?.dispose();brollInternalController?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();
@@ -2554,7 +2577,7 @@ window.addEventListener("beforeunload", () => {
 function brollTimelineEditorState(){const v=sqlEditorState();return {...v,analysis:activeAnalysis(),mediaPlanId:state.selectedBrollPlanId,
   brollDraft:brollTimelineDraft(),busy:v.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
     ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-  dirty:v.dirty||brollPreparationHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()
+  dirty:v.dirty||brollInternalHeld()||brollPreparationHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()
     ||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true
     ||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 function brollTimelineSourceContext(){const v=brollTimelineEditorState();return sqlAudioStable([v.workspaceId,v.workspaceSlug,v.projectId,v.principal,
@@ -2686,7 +2709,7 @@ async function refreshBrollTimeline(value,requestGuard){
 }
 brollTimelineController=initializeSqlBrollTimelineReview({api:brollTimelineApi,getState:brollTimelineEditorState,getSessionToken:sessionToken,
   storage:brollTimelineStorage,onSaved:refreshBrollTimeline,onRead:value=>{assertBrollTimelineOperation(brollTimelineOperation);brollTimelineRead(value,brollTimelineEditorState());},
-  onMessage:(text,error)=>toast(text,error),onBusyChanged:()=>{if(brollTimelineController)syncBrollTimelineForm();}});
+  onMessage:(text,error)=>toast(text,error),onBusyChanged:()=>{if(brollTimelineController)syncBrollTimelineForm();if(brollInternalController)syncBrollInternalForm();}});
 async function runBrollTimelineAction(kind){
   if(brollTimelineBusy)return;
   try{syncBrollTimelineForm();
@@ -2741,6 +2764,153 @@ $('#broll-timeline-open-held').addEventListener('click',()=>{
   }catch(error){toast(error.message,true);}
 });
 syncBrollTimelineForm();
+
+// Reviewed internal B-roll resolution Root integration. No timer or timeline write.
+function brollInternalEditorState(){const v=sqlEditorState();return {...v,analysis:activeAnalysis(),mediaPlanId:state.selectedBrollPlanId,
+  mediaPlanItemId:brollInternalItemId,internalResolutionDraft:brollInternalDraft(),
+  busy:v.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
+    ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+  dirty:v.dirty||brollPreparationHeld()||brollTimelineHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()
+    ||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true
+    ||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function brollInternalSourceContext(){const v=brollInternalEditorState();return sqlAudioStable([v.workspaceId,v.workspaceSlug,v.projectId,v.principal,
+  sessionToken(),v.timeline,v.assets,v.analyses,v.analysis,v.mediaPlanId,v.mediaPlanItemId,v.videoReviewSelection,
+  state.versions,state.preview,state.productionPackage,state.activeProductionRender,state.selectedClipId,state.playhead,state.undoStack,state.redoStack,
+  productionWorkbenchDraft(),audioWorkbenchDraft()]);}
+let brollInternalInstalled=null;
+function assertBrollInternalOperation(op,allowInstalled=true){const v=brollInternalEditorState(),plans=sqlAudioStable(state.mediaPlans);
+  if(!op||brollInternalOperation!==op||brollInternalSourceContext()!==op.source||brollInternalDraft()!==op.draft||v.busy||v.dirty
+    ||plans!==op.plans&&!(allowInstalled&&brollInternalInstalled?.op===op&&plans===brollInternalInstalled.plans)
+    ||!Number.isFinite(Date.parse(v.principal?.expires_at))||Date.parse(v.principal.expires_at)<=Date.now()
+    ||!['viewer','editor','reviewer','owner'].includes(audioRole(v))
+    ||op.write&&(v.principal.human_write_enabled!==true||!['editor','reviewer','owner'].includes(audioRole(v))))
+    throw Error('Nguồn, phiên, đề xuất hoặc lựa chọn đã đổi; giữ đúng yêu cầu phân giải để đối chiếu.');}
+function brollInternalRoute(){return '/api/v1/projects/'+state.projectId+'/media-plans/'+state.selectedBrollPlanId+'/items/'+brollInternalItemId+'/internal-resolution-review';}
+function clearBrollInternalForm(){brollInternalFormRead=null;brollInternalBaseline=null;$('#broll-internal-asset').replaceChildren();
+  $('#broll-internal-acknowledge').checked=false;}
+function brollInternalSelectors(){const planSelect=$('#broll-internal-plan'),itemSelect=$('#broll-internal-item');
+  planSelect.replaceChildren();for(const p of compatibleBrollPlans(state.mediaPlans,activeAnalysis())){const e=document.createElement('option');
+    e.value=p.media_plan_id;e.textContent=p.media_plan_id;planSelect.append(e);}planSelect.value=state.selectedBrollPlanId;
+  const plan=state.mediaPlans.find(p=>p.media_plan_id===state.selectedBrollPlanId);itemSelect.replaceChildren();
+  if(!plan?.items.some(i=>i.media_plan_item_id===brollInternalItemId))brollInternalItemId=plan?.items[0]?.media_plan_item_id??'';
+  for(const i of plan?.items??[]){const e=document.createElement('option');e.value=i.media_plan_item_id;
+    e.textContent='Cảnh '+(i.ordinal+1)+' · '+(i.broll?.broll_intent??i.media_plan_item_id);itemSelect.append(e);}itemSelect.value=brollInternalItemId;}
+function readBrollInternalForm(data){validateBrollInternalContext(data,brollInternalEditorState());const select=$('#broll-internal-asset');select.replaceChildren();
+  const empty=document.createElement('option');empty.value='';empty.textContent='Chọn tư liệu đã lưu';select.append(empty);
+  for(const c of data.candidates){const e=document.createElement('option');e.value=c.asset_id;e.disabled=!c.available;
+    e.textContent=(c.candidate.filename??c.asset_id)+' · '+(c.candidate.rights_status??'unknown')+' · '+(c.available?'Sẵn sàng':'Không dùng được: '+c.unavailable_code);select.append(e);}
+  select.value=brollInternalController.state().pending?.body.asset_id??'';$('#broll-internal-acknowledge').checked=false;
+  brollInternalFormRead={data:structuredClone(data),source:brollInternalSourceContext(),plans:sqlAudioStable(state.mediaPlans)};brollInternalBaseline=brollInternalDraft();}
+function syncBrollInternalForm(){if(!brollInternalController)return;
+  if(!brollInternalBusy&&!brollInternalDirty()&&!brollInternalStored()&&!brollInternalController.isPending()){
+    if(brollInternalFormRead&&(brollInternalFormRead.source!==brollInternalSourceContext()||brollInternalFormRead.plans!==sqlAudioStable(state.mediaPlans)))clearBrollInternalForm();
+    brollInternalSelectors();}
+  const v=brollInternalEditorState(),c=brollInternalController.state(),held=brollInternalStored()||c.pending!==null;
+  const readable=!v.busy&&!v.dirty&&Number.isFinite(Date.parse(v.principal?.expires_at))&&Date.parse(v.principal.expires_at)>Date.now()
+    &&['viewer','editor','reviewer','owner'].includes(audioRole(v)),writable=readable&&v.principal?.human_write_enabled===true
+    &&['editor','reviewer','owner'].includes(audioRole(v)),valid=brollInternalFormRead?.source===brollInternalSourceContext()
+      &&brollInternalFormRead?.plans===sqlAudioStable(state.mediaPlans);
+  for(const id of ['plan','item'])$('#broll-internal-'+id).disabled=brollInternalBusy||held||brollInternalDirty()||!readable;
+  $('#broll-internal-read').disabled=brollInternalBusy||brollInternalDirty()&&!held||!readable||!v.mediaPlanId||!v.mediaPlanItemId;
+  $('#broll-internal-open-held').disabled=brollInternalBusy||brollInternalDirty()||!held||!readable;
+  $('#broll-internal-fields').disabled=brollInternalBusy||held||!valid||!writable;
+  $('#broll-internal-acknowledge').disabled=brollInternalBusy||!writable;
+  $('#broll-internal-admit').disabled=brollInternalBusy||held||!valid||!writable;
+  $('#broll-internal-observe').disabled=brollInternalBusy||!c.pending?.receipt||!readable;
+  $('#broll-internal-retry').disabled=brollInternalBusy||!c.pending||!writable;
+  $('#broll-internal-discard').disabled=brollInternalBusy||held||!brollInternalDirty();
+  $('#broll-internal-context').textContent=valid?'Đề xuất '+v.mediaPlanId+' · Cảnh '+v.mediaPlanItemId+' · chỉ tái sử dụng tư liệu nội bộ.':'Chọn đề xuất và cảnh rồi đọc nguồn đã lưu.';
+  const o=c.observation;$('#broll-internal-status').textContent=brollInternalStatus+(o?' · '+o.state+(o.job?' · Job '+o.job.resolution_job_id:''):'');
+  $('#broll-internal-pending').textContent=c.pending?JSON.stringify({request_key:c.pending.body.request_key,asset_id:c.pending.body.asset_id,
+    media_plan_id:c.pending.context.plan.media_plan_id,media_plan_item_id:c.pending.context.item.media_plan_item_id,
+    resolution_job_id:c.pending.receipt?.resolution_job_id??null},null,2):held?'Có bản ghi đang giữ. Không tạo yêu cầu mới hoặc tự xóa bản ghi.':'';
+  $('#broll-internal-result').textContent=o?.can_adopt?'Tư liệu '+o.output.asset_id+' · '+o.output.rights_status+' · '+(o.output.publishing_allowed?'quyền đã ghi nhận':'chưa được phép đăng')+'; chưa áp dụng vào timeline.':'';
+}
+async function brollInternalApi(path,options={}){const op=brollInternalOperation;assertBrollInternalOperation(op);
+  const method=(options.method??'GET').toUpperCase(),base=brollInternalRoute(),p=brollInternalController.state().pending;
+  const exactJob=p?.receipt?base+'/requests/'+p.body.request_key+'/jobs/'+p.receipt.resolution_job_id:null;
+  if(method==='GET'&&![base,'/api/v1/auth/session',exactJob].includes(path)||method==='POST'&&(path!==base||!['admit','retry'].includes(op.kind))
+    ||!['GET','POST'].includes(method))throw Error('Chỉ đọc hoặc gửi đúng phân giải nội bộ đã kiểm tra.');
+  if(method==='POST'){if(!op.write||!p||sqlAudioStable(JSON.parse(options.body))!==sqlAudioStable(p.body)||$('#broll-internal-acknowledge').checked!==true)
+      throw Error('Cần xác nhận đúng yêu cầu nội bộ đang giữ.');
+    const raw=brollInternalStore.getItem(brollInternalBucket());assertBrollInternalOperation(op);
+    if(raw!==sqlAudioStable(p))throw Error('Yêu cầu đang giữ đã đổi trước khi gửi.');}
+  const result=await api(path,{...options,brollInternalAdmission});assertBrollInternalOperation(op);return result;}
+const brollInternalStorage={getItem(key){const op=brollInternalOperation;
+    if(!op){const before=brollInternalBareScope();if(key!==brollInternalBucket())throw Error('Chỉ đọc ô chờ nội bộ hiện tại.');
+      const raw=brollInternalStore?.getItem(key);if(before!==brollInternalBareScope())throw Error('Phiên đã đổi trong ô chờ.');return raw;}
+    assertBrollInternalOperation(op);const raw=brollInternalStore?.getItem(key);assertBrollInternalOperation(op);return raw;},
+  setItem(key,raw){const op=brollInternalOperation;assertBrollInternalOperation(op);if(key!==brollInternalBucket())throw Error('Sai ô chờ phân giải.');
+    brollInternalStore.setItem(key,raw);assertBrollInternalOperation(op);},
+  compareAndRemoveItem(key,raw){const op=brollInternalOperation;assertBrollInternalOperation(op);if(key!==brollInternalBucket()||typeof raw!=='string'
+      ||typeof brollInternalStore?.compareAndRemoveItem!=='function')return false;
+    const result=brollInternalStore.compareAndRemoveItem(key,raw);assertBrollInternalOperation(op);return result===true;}};
+async function refreshBrollInternal(value,requestGuard){const op=brollInternalOperation,guard=()=>{assertBrollInternalOperation(op,false);
+    if(typeof requestGuard!=='function'||requestGuard()!==true)throw Error('Thiếu ràng buộc đồng bộ với yêu cầu nội bộ đang giữ.');assertBrollInternalOperation(op,false);
+    const v=brollInternalEditorState();if(v.principal.human_write_enabled!==true||!['editor','reviewer','owner'].includes(audioRole(v)))
+      throw Error('Phiên này chưa được phép nhận tư liệu phân giải.');};guard();
+  const r=value.receipt,original=value.context,base=brollInternalRoute(),path=base+'/requests/'+r.request_key+'/jobs/'+r.resolution_job_id;
+  if(r.workspace_id!==state.workspaceId||r.project_id!==state.projectId||r.actor_ref!==state.principal.subject||r.media_plan_id!==state.selectedBrollPlanId
+    ||r.media_plan_item_id!==brollInternalItemId||r.context_sha256!==original.context_sha256||value.request.context_sha256!==original.context_sha256
+    ||value.request.request_key!==r.request_key||value.request.asset_id!==r.asset_id||value.request.acknowledged!==true
+    ||value.observation.can_adopt!==true||value.observation.source_current!==true||value.observation.state!=='resolved'
+    ||sqlAudioStable(value.observation.receipt)!==sqlAudioStable(r)||sqlAudioStable(value.observation.job)!==sqlAudioStable(value.job)
+    ||sqlAudioStable(value.observation.output)!==sqlAudioStable(value.output))throw Error('Kết quả chưa đúng nguồn, cảnh, tư liệu hoặc job ban đầu.');
+  const proof=await api(path,{cache:'no-store'});guard();if(sqlAudioStable(proof)!==sqlAudioStable(value.observation))throw Error('Job hiện tại chưa khớp đúng kết quả đã giữ.');
+  const fresh=await api(base,{cache:'no-store'});guard();validateBrollInternalContext(fresh,brollInternalEditorState());
+  const hash=await audioByteHash(new TextEncoder().encode(fresh.context_json));guard();const {context_json,context_sha256,...projected}=fresh;
+  if(hash!==context_sha256||sqlAudioStable(JSON.parse(context_json))!==sqlAudioStable(projected))throw Error('JSON ngữ cảnh nội bộ chưa khớp đúng hash đã lưu.');
+  const old=structuredClone(original),normalized=structuredClone(fresh),fields=['status','updated_at','selected_media_asset_id','needs_attention'];
+  for(const k of fields)normalized.item[k]=old.item[k];delete old.context_json;delete old.context_sha256;delete normalized.context_json;delete normalized.context_sha256;
+  if(sqlAudioStable(old)!==sqlAudioStable(normalized)||fresh.item.status!=='resolved'||fresh.item.selected_media_asset_id!==value.output.media_asset_id
+    ||fresh.item.selected_media_asset_id!==value.job.output_media_asset_id||typeof fresh.item.needs_attention!=='boolean'||typeof fresh.item.updated_at!=='string')
+    throw Error('Đề xuất, nguồn hoặc cảnh hiện tại chưa chứng minh đúng tư liệu đã phân giải.');
+  const last=await api(path,{cache:'no-store'});guard();if(sqlAudioStable(last)!==sqlAudioStable(proof))throw Error('Job đã đổi sau khi đọc cảnh hiện tại.');
+  const next=structuredClone(state.mediaPlans),plan=next.find(p=>p.media_plan_id===r.media_plan_id),item=plan?.items.find(i=>i.media_plan_item_id===r.media_plan_item_id);
+  if(!item)throw Error('Cảnh đang giữ không còn trong đề xuất hiện tại.');for(const k of fields)item[k]=fresh.item[k];
+  guard();state.mediaPlans=next;brollInternalInstalled={op,plans:sqlAudioStable(next)};renderBrowser();return true;
+}
+brollInternalController=initializeSqlBrollInternalResolution({api:brollInternalApi,getState:brollInternalEditorState,getSessionToken:sessionToken,storage:brollInternalStorage,
+  onRead:(value,requestGuard)=>{const op=brollInternalOperation;assertBrollInternalOperation(op);if(typeof requestGuard!=='function'||requestGuard()!==true)
+      throw Error('Thiếu ràng buộc bản đọc nội bộ.');assertBrollInternalOperation(op);validateBrollInternalContext(value,brollInternalEditorState());},
+  onResolved:refreshBrollInternal,onStatus:text=>{brollInternalStatus=text;},onBusyChanged:()=>{if(brollInternalController)syncBrollInternalForm();}});
+async function runBrollInternalAction(kind){if(brollInternalBusy)return;
+  try{syncBrollInternalForm();if(kind==='read'&&brollInternalDirty()&&!brollInternalStored()&&!brollInternalController.isPending())throw Error('Bỏ lựa chọn chưa gửi trước khi đọc lại.');
+    if(['admit','retry'].includes(kind)&&$('#broll-internal-acknowledge').checked!==true)throw Error('Xác nhận rõ đúng tư liệu hoặc yêu cầu đang giữ.');
+    const asset=$('#broll-internal-asset').value,op=Object.freeze({kind,write:['admit','retry'].includes(kind),source:brollInternalSourceContext(),
+      draft:brollInternalDraft(),plans:sqlAudioStable(state.mediaPlans)});brollInternalOperation=op;brollInternalInstalled=null;assertBrollInternalOperation(op);brollInternalBusy=true;syncBrollPlanPeers();
+    if(kind==='read'){const data=await brollInternalController.reload();assertBrollInternalOperation(op);readBrollInternalForm(data);}
+    else{const result=await(kind==='admit'?brollInternalController.admit(asset,true):kind==='retry'?brollInternalController.retry(true):brollInternalController.observe());
+      if(result?.can_adopt&&!brollInternalController.isPending())clearBrollInternalForm();}
+  }catch(error){brollInternalStatus=error.message;toast(error.message,true);}
+  finally{brollInternalBusy=false;brollInternalOperation=null;brollInternalInstalled=null;syncBrollPlanPeers();}}
+for(const [id,kind]of [['read','read'],['admit','admit'],['observe','observe'],['retry','retry']])$('#broll-internal-'+id).addEventListener('click',()=>runBrollInternalAction(kind));
+$('#broll-internal-form').addEventListener('submit',e=>e.preventDefault());$('#broll-internal-form').addEventListener('change',syncBrollPlanPeers);
+for(const id of ['plan','item'])$('#broll-internal-'+id).addEventListener('change',event=>{
+  const old=id==='plan'?state.selectedBrollPlanId:brollInternalItemId;
+  try{const v=brollInternalEditorState();if(brollInternalHeld()||v.busy||v.dirty)throw Error('Lưu/bỏ lựa chọn hoặc đối chiếu yêu cầu đang giữ trước khi đổi cảnh.');
+    const next=event.target.value,plan=state.mediaPlans.find(p=>p.media_plan_id===(id==='plan'?next:state.selectedBrollPlanId));
+    if(!plan||!compatibleBrollPlans(state.mediaPlans,activeAnalysis()).includes(plan)||id==='item'&&!plan.items.some(i=>i.media_plan_item_id===next))throw Error('Cảnh hoặc đề xuất không thuộc nguồn hiện tại.');
+    clearBrollInternalForm();if(id==='plan'){state.selectedBrollPlanId=next;brollInternalItemId='';clearBrollTimelineForm();}else brollInternalItemId=next;
+    brollInternalSelectors();renderBrowser();syncBrollPlanPeers();
+  }catch(error){event.target.value=old;toast(error.message,true);}});
+$('#broll-internal-discard').addEventListener('click',()=>{if(brollInternalBusy||brollInternalStored()||brollInternalController.isPending())return toast('Giữ nguyên yêu cầu chưa rõ kết quả.',true);
+  const data=brollInternalFormRead?.source===brollInternalSourceContext()&&brollInternalFormRead?.plans===sqlAudioStable(state.mediaPlans)?structuredClone(brollInternalFormRead.data):null;
+  clearBrollInternalForm();if(data)readBrollInternalForm(data);syncBrollPlanPeers();});
+$('#broll-internal-open-held').addEventListener('click',()=>{try{const v=brollInternalEditorState();if(brollInternalBusy||brollInternalDirty()||v.busy||v.dirty)throw Error('Chờ hoặc bỏ lựa chọn chưa gửi trước khi mở bản đang giữ.');
+    const before=brollInternalSourceContext(),plans=sqlAudioStable(state.mediaPlans),draft=brollInternalDraft(),key=brollInternalBucket(),raw=brollInternalStore.getItem(key);
+    const unchanged=()=>{const s=brollInternalEditorState();if(before!==brollInternalSourceContext()||plans!==sqlAudioStable(state.mediaPlans)||draft!==brollInternalDraft()
+        ||s.busy||s.dirty||!Number.isFinite(Date.parse(s.principal?.expires_at))||Date.parse(s.principal.expires_at)<=Date.now())throw Error('Nguồn hoặc phiên đã đổi khi mở bản đang giữ.');};
+    unchanged();if(typeof raw!=='string'||new TextEncoder().encode(raw).length>5*1024*1024)throw Error('Không có đúng bản ghi có thể đọc.');
+    const p=JSON.parse(raw),c=p.context,plan=compatibleBrollPlans(state.mediaPlans,activeAnalysis()).find(p=>p.media_plan_id===c?.plan?.media_plan_id);
+    if(p.schema_version!=='sql-broll-internal-pending.v1'||c.workspace_id!==state.workspaceId||c.project_id!==state.projectId||c.actor_ref!==state.principal.subject
+      ||!plan||!plan.items.some(i=>i.media_plan_item_id===c.item?.media_plan_item_id)||c.timeline_id!==state.timeline.timeline_id
+      ||c.timeline_version_id!==state.timeline.current_version_id||c.timeline_version!==state.timeline.current_version)throw Error('Bản ghi không thuộc nguồn và cảnh của dự án.');
+    const last=brollInternalStore.getItem(key);unchanged();if(last!==raw)throw Error('Bản ghi đã đổi; giữ nguyên.');
+    clearBrollInternalForm();state.selectedBrollPlanId=plan.media_plan_id;brollInternalItemId=c.item.media_plan_item_id;state.query='';state.panelTab='broll';
+    if($('#browser-search'))$('#browser-search').value='';brollInternalSelectors();renderBrowser();syncBrollPlanPeers();$('#broll-internal-read').focus();
+  }catch(error){toast(error.message,true);}});
+syncBrollInternalForm();
 
 ensureAuthenticatedSession()
   .then(principal => { state.principal = principal; return loadProjectList(); })

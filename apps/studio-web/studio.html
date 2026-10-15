@@ -126,6 +126,20 @@
           <p id="broll-plan-status" role="status" aria-live="polite">Chưa đọc. Chỉ chuẩn bị sau thao tác và xác nhận rõ ràng.</p>
           <pre id="broll-plan-pending" class="broll-plan-pending"></pre>
         </details>
+        <details id="broll-internal-workbench" class="timeline-panel broll-internal-workbench">
+          <summary>Chọn tư liệu nội bộ cho B-roll</summary>
+          <p>Chỉ tái sử dụng ảnh/video đã tải lên và đã có trong đề xuất. Không gọi stock, AI hoặc đăng bài; timeline và bản duyệt giữ nguyên cho đến bước áp dụng riêng.</p>
+          <label>Đề xuất đã lưu<select id="broll-internal-plan" disabled></select></label>
+          <label>Cảnh trong đề xuất<select id="broll-internal-item" disabled></select></label>
+          <button id="broll-internal-read" type="button" disabled>Đọc cảnh và tư liệu đã lưu</button><button id="broll-internal-open-held" type="button" disabled>Mở cảnh của yêu cầu đang giữ</button>
+          <p id="broll-internal-context" role="status" aria-live="polite">Chưa đọc.</p>
+          <form id="broll-internal-form">
+            <fieldset id="broll-internal-fields" disabled><legend>Tư liệu đã có trong đề xuất</legend><label>Tư liệu nội bộ<select id="broll-internal-asset" data-broll-internal-setting></select></label></fieldset>
+            <label><input id="broll-internal-acknowledge" data-broll-internal-setting type="checkbox" disabled> Tôi xác nhận đúng cảnh và tư liệu này. Khi gửi lại, giữ nguyên yêu cầu và job đang chờ.</label>
+            <div class="broll-internal-actions"><button id="broll-internal-admit" type="button" disabled>Gửi lựa chọn đã kiểm tra</button><button id="broll-internal-observe" type="button" disabled>Đọc đúng job đang giữ</button><button id="broll-internal-retry" type="button" disabled>Gửi lại đúng yêu cầu gốc</button><button id="broll-internal-discard" type="button" disabled>Bỏ lựa chọn chưa gửi</button></div>
+          </form>
+          <p id="broll-internal-status" role="status" aria-live="polite">Chưa phân giải.</p><p id="broll-internal-result"></p><pre id="broll-internal-pending" class="broll-internal-pending"></pre>
+        </details>
         <details id="broll-timeline-workbench" class="timeline-panel broll-timeline-workbench">
           <summary>Áp dụng B-roll vào bản dựng</summary>
           <p>Chỉ dùng cảnh đã có tư liệu trong đề xuất đang chọn. Bước này giữ video, âm thanh và phụ đề nguồn; không tìm stock hoặc tạo media. Tư liệu chưa rõ quyền vẫn bị chặn đăng bài.</p>
