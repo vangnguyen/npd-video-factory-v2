@@ -423,3 +423,13 @@
 #sql-manual-reframe [data-manual-reframe-status] { flex-basis: 100%; }
 .manual-reframe-workbench button:disabled { cursor: not-allowed; }
 @media (max-width: 1366px) { .manual-reframe-workbench fieldset { padding: .5rem; } .manual-reframe-table th, .manual-reframe-table td { padding: .25rem; } }
+
+/* Reviewed B-roll preparation keeps its form outside the transient browser panel. */
+.broll-plan-workbench { font-size: 14px; min-width: 0; }
+.broll-plan-workbench fieldset { min-width: 0; border: 1px solid var(--border, #d7dde5); border-radius: 8px; padding: .75rem; }
+.broll-plan-sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: .75rem; }
+.broll-plan-sources label { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.broll-plan-workbench button, .broll-plan-workbench select, .broll-plan-workbench input { min-height: 38px; font-size: 14px; }
+.broll-plan-workbench input[type=checkbox] { width: 20px; flex-shrink: 0; }
+.broll-plan-actions, .broll-plan-acknowledge { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+.broll-plan-pending { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }

@@ -5,6 +5,7 @@ import {createHash, webcrypto} from 'node:crypto';
 import {audioRole} from '../uploaded-audio-review.mjs';
 import {initializeSqlManualReframe, manualReframeRead, manualReframeSettings} from '../sql-manual-reframe.mjs';
 import {timelineTranscriptId} from '../timeline-history.mjs';
+import {withIdleBrollPlan} from './root-manual-reframe-idle-context.mjs';
 
 const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8');
 const bytes=readFileSync(new URL('./fixtures/manual-reframe/asgi.json',import.meta.url));
@@ -59,9 +60,9 @@ function harness({handler,memory=new Map(),s=fixtureState()}={}){
  const args=['state','document','$','sqlEditorState','activeAnalysis','variantFamilies','variantNarration','videoWordReview','sqlAudioProcessing','sourceLinkedEditor','sourceLinkedHeld',
   'audioRole','sessionToken','productionWorkbenchDraft','audioWorkbenchDraft','api','sqlAudioStable','videoWordHistoryMatches','manualReframeRead','manualReframeSettings',
   'initializeSqlManualReframe','audioReview','stockReview','videoReview','stopPreviewPolling','stopProductionPolling','render','setSaveStatus','toast','Date'];
- const body=segment('let manualReframeEditor = null;','\nconst initialProjectRead')+'\n'+segment('function manualReframeEditorState(){','\nasync function loadProjectList()')+
+ const body=segment('let manualReframeEditor = null;','\nconst initialProjectRead')+'\n'+segment('function manualReframeEditorState(){','\nfunction brollPlanEditorState()')+
   '\nreturn {controller:manualReframeEditor,manualReframeHeld,manualReframeDirty,manualReframeEditorState,manualReframeDraft,manualReframeBoundary,manualReframeContext,manualReframeApi,refreshManualReframe,readManualReframeForm,syncManualReframeForm,manualReframeSettingsFromForm,formRead:()=>manualReframeFormRead,applyBinding:v=>{manualReframeApplying=v;}};';
- outer=new Function(...args,body)(s,dom,selector=>ids[selector.slice(1)],()=>({...s}),()=>s.analysis,peer('family'),peer('narration'),peer('words'),peer('audio'),peer('linked'),()=>peers.linked,
+ outer=withIdleBrollPlan(...args,body)(s,dom,selector=>ids[selector.slice(1)],()=>({...s}),()=>s.analysis,peer('family'),peer('narration'),peer('words'),peer('audio'),peer('linked'),()=>peers.linked,
   audioRole,()=>token,()=> 'saved-production',()=> 'saved-audio',api,stable,history,manualReframeRead,manualReframeSettings,
   options=>initializeSqlManualReframe({...options,dom,storage,cryptoImpl:webcrypto,newRequestKey:()=>r.manual_put.request.request_key}),noop,noop,noop,
   ()=>effects.push('stop-preview'),()=>effects.push('stop-production'),()=>{effects.push('render');outer?.syncManualReframeForm();},(...v)=>effects.push({status:v}),(...v)=>messages.push(v),{parse:Date.parse,now:()=>clock});
@@ -147,7 +148,7 @@ for(const contradiction of ['parent-id','parent-snapshot','actor','type','receip
 }
 test('manual private admission only bypasses its own hold, is stripped, and cannot bypass peers',async()=>{
  let held=true,linked=false,audio=false,words=false;const calls=[],m=Symbol('manual'),l=Symbol('linked'),a=Symbol('audio'),w=Symbol('words');
- const api=new Function('authenticatedFetch','manualReframeHeld','manualReframeAdmission','sourceLinkedHeld','sourceLinkedAdmission','audioProcessingHeld','audioProcessingAdmission','videoWordsHeld','videoWordAdmission',
+ const api=withIdleBrollPlan('authenticatedFetch','manualReframeHeld','manualReframeAdmission','sourceLinkedHeld','sourceLinkedAdmission','audioProcessingHeld','audioProcessingAdmission','videoWordsHeld','videoWordAdmission',
   segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
    async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},()=>held,m,()=>linked,l,()=>audio,a,()=>words,w);
  for(const method of ['PUT','POST','DELETE','PATCH'])await assert.rejects(api('/api/v1/projects/current/timeline',{method}),/đường crop/);
@@ -179,7 +180,7 @@ function rootLoad(h,{gate=null}={}){
   'sourceLinkedHeld','audioProcessingHeld','videoWordsHeld','sourceLinkedEditor','sqlAudioProcessing','videoWordReview','variantNarration','audioReview','stockReview','toast',
   'sessionToken','productionWorkbenchDraft','audioWorkbenchDraft','$','videoReview','multiInput','variantFamilies','stopPreviewPolling','stopProductionPolling','stopAnalyticsPolling',
   'setSaveStatus','api','timelineTranscriptId','render','startPreviewPolling','startProductionPolling','startAnalyticsPolling','window'];
- const made=new Function(...args,'let multiInputBaseline="before-load";\n'+segment('async function loadProject(','\nfunction renderNoProject(')+'\n'+
+ const made=withIdleBrollPlan(...args,'let multiInputBaseline="before-load";\n'+segment('async function loadProject(','\nfunction renderNoProject(')+'\n'+
   segment('$("#project-select").addEventListener("change",','\n$("#reload-button")')+'\nreturn {run:loadProject,baseline:()=>multiInputBaseline};')(
   h.s,permit,h.controller,h.manualReframeHeld,h.manualReframeDirty,null,h.manualReframeDraft,h.syncManualReframeForm,
   ()=>false,()=>false,()=>false,peer,peer,peer,peer,peer,peer,(...v)=>h.messages.push(v),()=> 'EXPLICIT_ROOT_MANUAL_FIXTURE_TOKEN',

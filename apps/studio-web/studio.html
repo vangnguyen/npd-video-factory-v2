@@ -97,6 +97,27 @@
           <summary>Lịch tìm tư liệu đã lưu</summary>
           <p>Đang chuẩn bị danh sách và lịch sử tìm tư liệu.</p>
         </details>
+        <details id="broll-plan-workbench" class="timeline-panel broll-plan-workbench">
+          <summary>Chuẩn bị đề xuất B-roll</summary>
+          <p>Đọc nguồn đang xem, chọn tư liệu và thứ tự tìm trước khi chuẩn bị. Bước này chỉ lưu đề xuất; lịch stock cần thao tác tìm kiếm riêng tại “Lịch tìm tư liệu đã lưu”. Chưa áp dụng vào timeline hoặc tạo media AI.</p>
+          <button id="broll-plan-read" type="button">Đọc nguồn và khả năng hiện tại</button>
+          <p id="broll-plan-availability" aria-live="polite">Chưa đọc nguồn. Stock mặc định tắt; AI tắt, ngân sách AI 0 VND.</p>
+          <form id="broll-plan-form">
+            <fieldset id="broll-plan-fields" disabled><legend>Nguồn và thứ tự ưu tiên</legend>
+              <div class="broll-plan-sources">
+                <label><input id="broll-plan-user" data-broll-setting type="checkbox" checked> Tư liệu đã tải lên<select id="broll-plan-user-order" data-broll-setting aria-label="Thứ tự tư liệu tải lên"><option selected>1</option><option>2</option><option>3</option></select></label>
+                <label><input id="broll-plan-library" data-broll-setting type="checkbox" checked> Thư viện nội bộ<select id="broll-plan-library-order" data-broll-setting aria-label="Thứ tự thư viện nội bộ"><option>1</option><option selected>2</option><option>3</option></select></label>
+                <label><input id="broll-plan-stock" data-broll-setting type="checkbox"> Stock chính thức miễn phí<select id="broll-plan-stock-order" data-broll-setting aria-label="Thứ tự stock"><option>1</option><option>2</option><option selected>3</option></select></label>
+              </div>
+              <p>Quyền sử dụng từng asset vẫn cần kiểm tra. Tư liệu không rõ quyền không được phép publish. Nguồn AI cần quy trình phê duyệt ngân sách riêng.</p>
+              <button id="broll-plan-prepare" type="button" disabled>Chuẩn bị đề xuất đã review</button>
+            </fieldset>
+            <label class="broll-plan-acknowledge"><input id="broll-plan-acknowledge" data-broll-setting type="checkbox" disabled> Tôi xác nhận lựa chọn trên; khi gửi lại, giữ nguyên đúng yêu cầu đang chờ.</label>
+            <div class="broll-plan-actions"><button id="broll-plan-reconcile" type="button" disabled>Đối chiếu lần chuẩn bị đang giữ</button><button id="broll-plan-resend" type="button" disabled>Gửi lại đúng yêu cầu sau đối chiếu</button><button id="broll-plan-discard" type="button" disabled>Bỏ lựa chọn chưa gửi</button></div>
+          </form>
+          <p id="broll-plan-status" role="status" aria-live="polite">Chưa đọc. Chỉ chuẩn bị sau thao tác và xác nhận rõ ràng.</p>
+          <pre id="broll-plan-pending" class="broll-plan-pending"></pre>
+        </details>
         <details id="video-transcript-word-workbench" class="timeline-panel">
           <summary>Kiểm tra từ và thời gian trong video nguồn</summary>
           <div id="video-transcript-word-review" aria-label="Đọc từ đã lưu, đối chiếu video gốc và lưu phiên bản sửa"></div>
