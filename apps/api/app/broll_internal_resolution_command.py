@@ -61,6 +61,8 @@ async def admit(service, project_id, plan_id, item_id, authority, payload):
                 op, saved = await admission(session, prior.operation_id)
                 require(saved['receipt']['media_plan_id'] == plan_id
                         and saved['receipt']['media_plan_item_id'] == item_id, 'BROLL_INTERNAL_IDEMPOTENCY_CONFLICT')
+                from .broll_internal_settlement_command import require_unsettled
+                await require_unsettled(session, op, saved)
                 operation_id = op.operation_id
             else:
                 value, item, assets = await context(session, project_id, plan_id, item_id, authority, lock=True)

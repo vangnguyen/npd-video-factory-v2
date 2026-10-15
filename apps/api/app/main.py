@@ -114,6 +114,7 @@ from .broll_request_recovery_api import router as broll_request_recovery_router
 from .broll_request_witness_api import router as broll_request_witness_router
 from .broll_timeline_review_api import router as broll_timeline_review_router
 from .broll_internal_resolution_api import router as broll_internal_resolution_router
+from .broll_internal_settlement_api import router as broll_internal_settlement_router
 from .timeline_service import (
     FFmpegProxyRenderer,
     PreviewService,
@@ -465,6 +466,7 @@ app.include_router(broll_request_recovery_router, dependencies=_human_route_depe
 app.include_router(broll_request_witness_router, dependencies=_human_route_dependencies)
 app.include_router(broll_timeline_review_router, dependencies=_human_route_dependencies)
 app.include_router(broll_internal_resolution_router, dependencies=_human_route_dependencies)
+app.include_router(broll_internal_settlement_router, dependencies=_human_route_dependencies)
 app.include_router(content_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
