@@ -4338,3 +4338,10 @@ REGRESSIONS: four existing pending callback guards/controller3 preserved; newer 
 EXTERNAL BLOCKERS: Owner UAT/listening deferred; browser and providers/production acceptance separate. Missing provider is not a reason to stop safe work.
 OWNER ACTION REQUIRED: none for current safe implementation. Automatic approval review rejected cache deletion with no detailed reason; cache retained/no deletion retry.
 NEXT WAVE: Root placement UI, internal resolution controller/UI, signed witness renewal, color conversion and subsequent safe MasterSpec gaps in parallel.
+
+
+## Waves3/8 — Witness, placement Root UI and internal controller,2026-10-15
+
+Full requested report fields and scope/test limits: [SQL_BROLL_WITNESS_PLACEMENT_CONTROLLER_REVIEW.md](SQL_BROLL_WITNESS_PLACEMENT_CONTROLLER_REVIEW.md).
+
+2026-10-15 — [Witness, placement UI và controller internal job](SQL_BROLL_WITNESS_PLACEMENT_CONTROLLER_REVIEW.md), product `9b9f3ed9292f34d86b34458e8d837c0acb4e8398`: form chọn/đọc/xác nhận B-roll đã nối canonical timeline; GETcurrent-history-current và privateguard chặn late/foreign request trước ghi state, giữ4callback cũ. Internal exactjob controller đã ghép, Root UI đang làm. Witness issuer/readonlyverify dùng dedicated stablekeyring defaultNOT_CONFIGURED;47own+2independent/primarymain10 PASS, settlement wrapper/UI riêng. FullprimaryStudio1.843PASS0fail/skip16.725ms; các tập overlap không cộng. Browser URL policy từ chối quyền đọc; colorfidelity/Owner/provider/production/fullModeA-B chưa đạt;59 nhóm lớn vẫn mở.
