@@ -114,6 +114,14 @@
             </fieldset>
             <label class="broll-plan-acknowledge"><input id="broll-plan-acknowledge" data-broll-setting type="checkbox" disabled> Tôi xác nhận lựa chọn trên; khi gửi lại, giữ nguyên đúng yêu cầu đang chờ.</label>
             <div class="broll-plan-actions"><button id="broll-plan-reconcile" type="button" disabled>Đối chiếu lần chuẩn bị đang giữ</button><button id="broll-plan-resend" type="button" disabled>Gửi lại đúng yêu cầu sau đối chiếu</button><button id="broll-plan-discard" type="button" disabled>Bỏ lựa chọn chưa gửi</button></div>
+            <fieldset class="broll-plan-recovery"><legend>Khôi phục yêu cầu mất phản hồi</legend>
+              <p>Nếu phiên đăng nhập đã đổi hoặc yêu cầu không thể đối chiếu bình thường, đọc xác minh trên server trước. Dừng chỉ khóa yêu cầu cũ và gỡ đúng bản ghi đang giữ sau xác minh; kế hoạch, kết quả đến muộn và lịch sử vẫn được giữ. Không áp dụng timeline, không tìm stock và không gọi AI.</p>
+              <p>Đổi phiên chỉ khôi phục được yêu cầu đã có bằng chứng xác minh trên server. Yêu cầu chưa tới server cần đúng phiên gốc còn hiệu lực; nếu không còn phiên gốc, bản ghi tiếp tục được giữ để kiểm tra.</p>
+              <button id="broll-plan-recovery-read" type="button" disabled>Đối chiếu khôi phục trên server</button>
+              <p id="broll-plan-recovery" role="status" aria-live="polite"></p>
+              <label class="broll-plan-acknowledge"><input id="broll-plan-abandon-acknowledge" data-broll-setting type="checkbox" disabled> Tôi xác nhận dừng đúng yêu cầu cũ; giữ nguyên kế hoạch và lịch sử.</label>
+              <button id="broll-plan-abandon" type="button" disabled>Dừng đúng yêu cầu cũ đã đối chiếu</button>
+            </fieldset>
           </form>
           <p id="broll-plan-status" role="status" aria-live="polite">Chưa đọc. Chỉ chuẩn bị sau thao tác và xác nhận rõ ràng.</p>
           <pre id="broll-plan-pending" class="broll-plan-pending"></pre>
