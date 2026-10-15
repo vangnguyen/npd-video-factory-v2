@@ -196,7 +196,7 @@ def _sealed_public(row):
     return {k: v for k, v in value.items() if not k.startswith('_')}
 
 
-async def _observe(service, session, project, authority, registry, payload):
+async def _observe(service, session, project, authority, registry, payload, *, witness_scope=None):
     intent = _intent(payload.intent_json, payload.intent_sha256)
     if intent['context']['project_id'] != project or intent['context']['actor_ref'] != authority['subject']:
         _fail('BROLL_RECOVERY_SCOPE_CHANGED', 403)
@@ -208,15 +208,26 @@ async def _observe(service, session, project, authority, registry, payload):
     original = await _original(session, project, authority['subject'], intent)
     sealed = await find_settlement(session, project, authority['subject'],
         intent['context']['authority_sha256'], intent['body']['request_key'])
-    identity = _verify_identity(authority, intent, registry, original, sealed)
-    current = await _current(service, session, project, authority, intent)
+    if witness_scope is None:
+        identity = _verify_identity(authority, intent, registry, original, sealed)
+        current = await _current(service, session, project, authority, intent)
+    else:
+        from .broll_witnessed_recovery_command import WitnessRecoveryScope
+        if not isinstance(witness_scope, WitnessRecoveryScope):
+            _fail()
+        # Verification is inside the same project transaction/lock, after all
+        # original-operation and settlement reads. No client trust flag exists.
+        identity, current = await witness_scope.verify(service, session, project, authority, intent, original)
     if sealed:
         public = _sealed_public(sealed)
         if public['intent_sha256'] != intent['intent_sha256']:
             _fail('BROLL_RECOVERY_INTENT_CHANGED')
-    observation = digest({'original': _snapshot(original), 'settlement': _snapshot(sealed),
+    observed = {'original': _snapshot(original), 'settlement': _snapshot(sealed),
         'current_context_sha256': current['context_sha256'], 'authority_sha256': digest(authority),
-        'intent_sha256': intent['intent_sha256']})
+        'intent_sha256': intent['intent_sha256']}
+    if witness_scope is not None:
+        observed['authorization_witness_sha256'] = identity['authorization_witness']['witness_sha256']
+    observation = digest(observed)
     public_original = _public(original, replayed=True) if original else None
     return intent, identity, original, sealed, current, observation, public_original
 
@@ -238,22 +249,22 @@ def _read(intent, current, observation, original, settlement=None):
         'publish_requested': False, 'owner_approval_inferred': False}
 
 
-async def inspect_request(service, project, authority, registry, payload):
+async def inspect_request(service, project, authority, registry, payload, *, witness_scope=None):
     async with service.repository.session_factory() as session:
         async with session.begin():
             await _begin(session)
             intent, _, original, sealed, current, observation, public = await _observe(
-                service, session, project, authority, registry, payload)
+                service, session, project, authority, registry, payload, witness_scope=witness_scope)
             return _read(intent, current, observation, public,
                 _sealed_public(sealed)['settlement'] if sealed else None)
 
 
-async def abandon_request(service, project, authority, registry, payload):
+async def abandon_request(service, project, authority, registry, payload, *, witness_scope=None):
     async with service.repository.session_factory() as session:
         async with session.begin():
             await _begin(session, write=True)
             intent, identity, original, sealed, current, observation, public = await _observe(
-                service, session, project, authority, registry, payload)
+                service, session, project, authority, registry, payload, witness_scope=witness_scope)
             if sealed:
                 return {**_sealed_public(sealed), 'current_authority_sha256': current['authority_sha256'],
                     'current_context_sha256': current['context_sha256']}
