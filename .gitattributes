@@ -35,3 +35,4 @@ apps/studio-web/tests/fixtures/sql-broll-plan-review.json -text whitespace=cr-at
 # Keep the exact internal B-roll SQL/ASGI capture, including Windows EOL.
 apps/studio-web/tests/fixtures/sql-broll-internal-resolution.json -text whitespace=cr-at-eol
 apps/studio-web/tests/fixtures/broll-internal-resolution-studio.json -text whitespace=cr-at-eol
+apps/studio-web/tests/fixtures/broll-internal-settlement-studio.json -text whitespace=cr-at-eol

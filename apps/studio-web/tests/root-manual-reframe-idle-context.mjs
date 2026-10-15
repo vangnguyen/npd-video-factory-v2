@@ -16,5 +16,7 @@ export function withIdleBrollPlan(...args){const body=args.pop();return new Func
  const brollTimelineHeld=()=>false,brollTimelineDirty=()=>false,brollTimelineDraft=()=>'idle-broll-timeline-fixture',syncBrollTimelineForm=()=>{};
  const brollInternalController=null,brollInternalBusy=false,brollInternalOperation=null,brollInternalAdmission=Symbol('idle-broll-internal-fixture');
  const brollInternalHeld=()=>false,brollInternalDirty=()=>false,brollInternalDraft=()=>'idle-broll-internal-fixture',syncBrollInternalForm=()=>{};
+ const brollTerminalController=null,brollTerminalBusy=false,brollTerminalOperation=null,brollTerminalAdmission=Symbol('idle-terminal-fixture');
+ const brollTerminalHeld=()=>false,brollTerminalDirty=()=>false,brollTerminalDraft=()=>'idle-terminal-fixture',syncBrollTerminalForm=()=>{};
  const brollPlanHeld=()=>false,brollPlanDirty=()=>false,brollPlanDraft=()=>"idle-broll-fixture",syncBrollPlanForm=()=>{};
  ${body}`);}
