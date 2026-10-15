@@ -111,6 +111,7 @@ from .source_linked_edit_api import router as source_linked_edit_router
 from .manual_reframe_api import router as manual_reframe_router
 from .broll_plan_review_api import router as broll_plan_review_router
 from .broll_timeline_review_api import router as broll_timeline_review_router
+from .broll_internal_resolution_api import router as broll_internal_resolution_router
 from .timeline_service import (
     FFmpegProxyRenderer,
     PreviewService,
@@ -459,6 +460,7 @@ app.include_router(source_linked_edit_router, dependencies=_human_route_dependen
 app.include_router(manual_reframe_router, dependencies=_human_route_dependencies)
 app.include_router(broll_plan_review_router, dependencies=_human_route_dependencies)
 app.include_router(broll_timeline_review_router, dependencies=_human_route_dependencies)
+app.include_router(broll_internal_resolution_router, dependencies=_human_route_dependencies)
 app.include_router(content_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
