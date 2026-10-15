@@ -8,8 +8,23 @@ const labels={queued:'Đang chờ phân tích',running:'Đang phân tích video'
 const stable=v=>JSON.stringify(v,(_k,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
 const demand=(ok,message)=>{if(!ok)throw Error(message);};
 const scope=s=>stable([s.workspaceId,s.projectId,s.principal?.subject,s.principal?.token_id,s.principal?.expires_at,audioRole(s)]);
-const configuration=(assetId,top)=>({asset_id:assetId,acceptance_operation_id:null,top_highlights:top,silence_threshold_db:-35,
-  minimum_silence_duration:.5,padding_before:.08,padding_after:.08,word_timing_policy:'strict_provider_intervals'});
+const silenceFields={silence_threshold_db:{label:'Ngưỡng im lặng (dBFS)',name:'silence-threshold',minimum:-80,maximum:-5,value:-35},
+  minimum_silence_duration:{label:'Khoảng lặng tối thiểu (giây)',name:'silence-duration',minimum:.1,maximum:10,value:.5},
+  padding_before:{label:'Giữ thêm trước lời nói (giây)',name:'padding-before',minimum:0,maximum:2,value:.08},
+  padding_after:{label:'Giữ thêm sau lời nói (giây)',name:'padding-after',minimum:0,maximum:2,value:.08}};
+export function videoSilenceSettings(value={}){
+  demand(value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(k=>Object.hasOwn(silenceFields,k)),
+    'Cấu hình khoảng lặng có trường chưa hỗ trợ.');
+  return Object.fromEntries(Object.entries(silenceFields).map(([key,field])=>{
+    const number=Object.hasOwn(value,key)?value[key]:field.value;
+    demand(typeof number==='number'&&Number.isFinite(number)&&number>=field.minimum&&number<=field.maximum,
+      `${field.label}: cần từ ${field.minimum} đến ${field.maximum}.`);
+    return[key,number];
+  }));
+}
+const settingsFromConfiguration=value=>Object.fromEntries(Object.keys(silenceFields).map(key=>[key,value?.[key]]));
+const configuration=(assetId,top,settings)=>({asset_id:assetId,acceptance_operation_id:null,top_highlights:top,
+  ...videoSilenceSettings(settings),word_timing_policy:'strict_provider_intervals'});
 export function videoAnalysisAssets(s){return(s.assets??[]).filter(a=>a.project_id===s.projectId&&a.workspace_id===s.workspaceId
   &&id.asset.test(a.asset_id)&&a.asset_class==='source'&&a.kind==='video'&&a.content_type==='video/mp4'
   &&sha.test(a.checksum_sha256)&&Number.isSafeInteger(a.size_bytes)&&a.size_bytes>0&&a.size_bytes<=2*1024**3
@@ -18,11 +33,11 @@ export function videoAnalysisAssets(s){return(s.assets??[]).filter(a=>a.project_
   &&a.provenance.media_metadata.duration_seconds<=1800);}
 function guard(s){demand(s.projectId&&s.workspaceId&&['editor','reviewer','owner'].includes(audioRole(s)),
   'Cần quyền biên tập để gửi hoặc hủy phân tích.');demand(!s.busy&&!s.dirty,'Lưu thay đổi đang sửa và chờ dự án tải xong trước khi thao tác.');}
-export function videoAnalysisPayload(s,assetId,top,key){guard(s);
+export function videoAnalysisPayload(s,assetId,top,key,settings={}){guard(s);
   const a=videoAnalysisAssets(s).find(a=>a.asset_id===assetId);
   demand(a&&[3,5].includes(top)&&typeof key==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{7,159}$/.test(key),'Chọn video còn hợp lệ và số đoạn nổi bật.');
   if(a.provenance.source_type==='verified_variant_derivative')verifiedVariantReceipt(s,a);
-  return{configuration:configuration(assetId,top),source_sha256:a.checksum_sha256,idempotency_key:key};}
+  return{configuration:configuration(assetId,top,settings),source_sha256:a.checksum_sha256,idempotency_key:key};}
 export function validateVideoAnalysisJob(v,s){const j=v?.job,a=v?.analysis,asset=videoAnalysisAssets(s).find(x=>x.asset_id===a?.asset_id);
   demand(v?.schema_version==='auto-edit-analysis-job.v1'&&v.human_review_required===true&&v.source_media_mutated===false
     &&v.timeline_mutated===false&&v.publishing_enabled===false&&j&&a&&asset&&id.job.test(j.job_id)&&id.analysis.test(a.analysis_id)
@@ -48,22 +63,36 @@ export function initializeVideoAnalysisJobs({root,api,getState,onMessage=()=>{},
   cryptoImpl=globalThis.crypto}){
   const liveState=getState;let variantReceipts=[];
   getState=()=>({...liveState(),verifiedVariantReceipts:variantReceipts});
-  let context=scope(getState()),records=[],selected='',working=false,pending=null,timer=null,disposed=false,epoch=0;
+  let context=scope(getState()),records=[],selected='',working=false,pending=null,pendingRaw=null,timer=null,disposed=false,epoch=0;
   const make=(tag,name,text)=>{const e=dom.createElement(tag);e.setAttribute('data-video-job-'+name,'');if(text)e.textContent=text;return e;};
   const title=make('h3','title','Phân tích video'),source=make('select','source'),top=make('select','top'),saved=make('select','saved');
+  const silence=make('details','silence-settings'),silenceSummary=make('summary','silence-summary','Tùy chỉnh khoảng lặng'),
+    silenceGrid=make('div','silence-fields'),silenceInputs={};
+  const savedConfiguration=make('p','saved-configuration','Chọn tác vụ đã lưu để xem cấu hình phân tích.');
   const text=make('p','status','Chọn video để gửi phân tích. Kết quả cần kiểm tra trước khi đưa vào timeline.');text.setAttribute('role','status');
   const buttons={};for(const[name,label]of[['start','Gửi phân tích'],['read','Xem tác vụ đã lưu'],['cancel','Hủy tác vụ'],
     ['retry','Gửi lại yêu cầu cũ'],['review','Xem kết quả để kiểm tra']]){buttons[name]=make('button',name,label);buttons[name].type='button';}
   const wrap=(label,element)=>{const e=dom.createElement('label');e.textContent=label;e.append(element);return e;};
+  for(const[key,field]of Object.entries(silenceFields)){
+    const input=make('input',field.name);input.type='number';input.min=String(field.minimum);input.max=String(field.maximum);
+    input.step='.01';input.value=String(field.value);input.required=true;silenceInputs[key]=input;
+    silenceGrid.append(wrap(field.label,input));
+  }
+  silence.append(silenceSummary,make('p','silence-help','Chỉ dùng khi gửi phân tích mới. Các tác vụ đã lưu giữ cấu hình cũ; cần kiểm tra từng khoảng cắt.'),silenceGrid);
+  const readSettings=()=>videoSilenceSettings(Object.fromEntries(Object.entries(silenceInputs).map(([key,input])=>{
+    const value=input.value.trim();
+    demand(/^-?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(value),'Điền số hợp lệ cho các tùy chỉnh khoảng lặng.');
+    return[key,Number(value)];
+  })));
   for(const value of[3,5]){const e=dom.createElement('option');e.value=String(value);e.textContent=`${value} đoạn nổi bật`;top.append(e);}top.value='3';
-  root.append(title,wrap('Video nguồn',source),wrap('Đoạn nổi bật',top),buttons.start,buttons.read,wrap('Tác vụ đã gửi',saved),
-    text,buttons.cancel,buttons.retry,buttons.review);
+  root.append(title,wrap('Video nguồn',source),wrap('Đoạn nổi bật',top),silence,buttons.start,buttons.read,wrap('Tác vụ đã gửi',saved),
+    savedConfiguration,text,buttons.cancel,buttons.retry,buttons.review);
   const endpoint=s=>`/api/v1/projects/${encodeURIComponent(s.projectId)}/analysis-jobs`;
   const key=s=>'npd-sql-video-pending:'+scope(s);
   const blockedSource=assetId=>records.some(v=>v.analysis.asset_id===assetId
     &&(active.has(v.job.status)||v.job.status==='needs_attention'));
   function stop(){if(timer!==null)clearTimer(timer);timer=null;}
-  function sync(){const s=getState(),next=scope(s);if(next!==context){stop();epoch++;context=next;records=[];selected='';pending=null;
+  function sync(){const s=getState(),next=scope(s);if(next!==context){stop();epoch++;context=next;records=[];selected='';pending=null;pendingRaw=null;
       variantReceipts=[];
       text.textContent='Dự án hoặc phiên truy cập đã đổi. Xem lại tác vụ đã lưu.';}
     const assets=videoAnalysisAssets(s),previous=source.value;
@@ -74,6 +103,11 @@ export function initializeVideoAnalysisJobs({root,api,getState,onMessage=()=>{},
       e.textContent=`${name} · ${labels[v.job.status]} · ${v.job.progress}%`;return e;}));saved.value=selected;
     const value=records.find(v=>v.job.job_id===selected);let writable=true;try{guard(s);}catch{writable=false;}
     source.disabled=top.disabled=working||!writable||!!pending; saved.disabled=working||!!pending;
+    for(const input of Object.values(silenceInputs))input.disabled=working||!writable||!!pending;
+    if(value){try{const c=videoSilenceSettings(settingsFromConfiguration(value.analysis.configuration));
+      savedConfiguration.textContent=`Tác vụ đã lưu: ngưỡng ${c.silence_threshold_db} dBFS; khoảng lặng tối thiểu ${c.minimum_silence_duration} giây; giữ trước ${c.padding_before} giây, sau ${c.padding_after} giây.`;
+    }catch{savedConfiguration.textContent='Tác vụ chưa có cấu hình khoảng lặng hợp lệ để hiển thị.';}}
+    else savedConfiguration.textContent='Chọn tác vụ đã lưu để xem cấu hình phân tích.';
     buttons.start.disabled=working||!writable||!!pending||!assets.length||blockedSource(source.value);
     buttons.start.textContent=assets.find(a=>a.asset_id===source.value)?.provenance.source_type==='verified_variant_derivative'
       ?'Gửi phân tích mới cho bản sao đã chọn':'Gửi phân tích';
@@ -87,14 +121,28 @@ export function initializeVideoAnalysisJobs({root,api,getState,onMessage=()=>{},
   }
   function restore(s){const raw=storage?.getItem(key(s));if(!raw)return;let p;
     try{p=JSON.parse(raw);demand(p.schema_version==='sql-video-pending.v1'&&p.scope===scope(s)&&['create','cancel'].includes(p.kind),'');
-      if(p.kind==='create')demand(stable(videoAnalysisPayload(s,p.body.configuration.asset_id,p.body.configuration.top_highlights,p.body.idempotency_key))===stable(p.body),'');
+      if(p.kind==='create')demand(stable(videoAnalysisPayload(s,p.body.configuration.asset_id,p.body.configuration.top_highlights,p.body.idempotency_key,
+        settingsFromConfiguration(p.body.configuration)))===stable(p.body),'');
       else demand(id.job.test(p.job_id)&&stable(p.body)==='{}','');
-    }catch{throw Error('Yêu cầu cũ chưa đối chiếu được. Giữ dữ liệu phiên và xem tác vụ đã lưu.');}pending=p;
+    }catch{throw Error('Yêu cầu cũ chưa đối chiếu được. Giữ dữ liệu phiên và xem tác vụ đã lưu.');}pending=p;pendingRaw=raw;
   }
   function persist(p){demand(storage,'Trình duyệt cần lưu khóa yêu cầu trước khi gửi.');
     try{storage.setItem(key(getState()),JSON.stringify(p));demand(storage.getItem(key(getState()))===JSON.stringify(p),'');}
-    catch{throw Error('Chưa lưu được khóa yêu cầu. Chưa gửi phân tích.');}pending=p;}
-  function forget(s){storage?.removeItem(key(s));pending=null;}
+    catch{throw Error('Chưa lưu được khóa yêu cầu. Chưa gửi phân tích.');}pending=p;pendingRaw=JSON.stringify(p);}
+  function assertPending(s,p,raw){
+    const bucket=key(s),bound=scope(s);
+    demand(pending===p&&pendingRaw===raw&&p.scope===bound&&typeof raw==='string',
+      'Yêu cầu đang giữ đã đổi. Giữ nguyên dữ liệu phiên để đối chiếu.');
+    const stored=storage?.getItem(bucket);
+    demand(stored===raw&&pending===p&&pendingRaw===raw&&scope(getState())===bound,
+      'Yêu cầu đang giữ đã đổi. Giữ nguyên dữ liệu phiên để đối chiếu.');
+    return bucket;
+  }
+  function forget(s,p=pending,raw=pendingRaw,current=()=>{}){
+    const bucket=assertPending(s,p,raw);current();
+    // Web Storage compare/remove is synchronous: never remove a replacement intent.
+    storage.removeItem(bucket);pending=null;pendingRaw=null;
+  }
   function adopt(v,s,expectedId=null){validateVideoAnalysisJob(v,s);demand(!expectedId||v.job.job_id===expectedId,'Tác vụ trả về không đúng yêu cầu.');
     records=[v,...records.filter(x=>x.job.job_id!==v.job.job_id)];selected=v.job.job_id;
     text.textContent=`${labels[v.job.status]} · ${v.job.progress}%${v.analysis.provenance?.fixture?' · Dữ liệu mô phỏng':''}`;
@@ -127,8 +175,9 @@ export function initializeVideoAnalysisJobs({root,api,getState,onMessage=()=>{},
     }
     variantReceipts=assetId?[...variantReceipts.filter(v=>!next.some(n=>n.fingerprint===v.fingerprint)),...next]:next;
   }
-  async function send(p){const s=getState(),bound=scope(s),ticket=++epoch;guard(s);
-    if(p.kind==='create')demand(stable(videoAnalysisPayload(s,p.body.configuration.asset_id,p.body.configuration.top_highlights,p.body.idempotency_key))===stable(p.body),
+  async function send(p){const s=getState(),bound=scope(s),raw=pendingRaw,ticket=++epoch;guard(s);assertPending(s,p,raw);
+    if(p.kind==='create')demand(stable(videoAnalysisPayload(s,p.body.configuration.asset_id,p.body.configuration.top_highlights,p.body.idempotency_key,
+      settingsFromConfiguration(p.body.configuration)))===stable(p.body),
       'Video hoặc cấu hình đã đổi; giữ yêu cầu cũ để đối chiếu.');
     const v=await api(p.kind==='create'?endpoint(s):`${endpoint(s)}/${encodeURIComponent(p.job_id)}/cancel`,{method:'POST',body:JSON.stringify(p.body)});
     if(disposed||ticket!==epoch||scope(getState())!==bound)return;
@@ -136,18 +185,19 @@ export function initializeVideoAnalysisJobs({root,api,getState,onMessage=()=>{},
     if(p.kind==='create')demand(v.source_sha256===p.body.source_sha256&&stable(v.analysis.configuration)===stable(p.body.configuration),
       'Kết quả chưa khớp yêu cầu phân tích đang giữ.');
     else demand(v.job.job_id===p.job_id,'Kết quả hủy chưa khớp tác vụ.');
-    adopt(v,s);forget(s);
+    assertPending(getState(),p,raw);
+    forget(getState(),p,raw,()=>{guard(getState());validateVideoAnalysisJob(v,getState());});adopt(v,s);
   }
   async function run(fn){if(working||disposed)return;working=true;stop();sync();
     try{await fn();}catch(e){text.textContent=pending?'Chưa rõ kết quả yêu cầu. Khóa yêu cầu vẫn được giữ; xem lại trước khi tiếp tục.':'Chưa thực hiện được thao tác.';
       onMessage(e.message,true);}finally{working=false;sync();}}
   buttons.start.addEventListener('click',()=>run(async()=>{const s=getState(),bound=scope(s),startEpoch=epoch;guard(s);restore(s);demand(!pending,'Đối chiếu yêu cầu đang giữ trước khi gửi mới.');
     demand(!blockedSource(source.value),'Video đang phân tích hoặc có tác vụ cần đối chiếu. Kiểm tra tác vụ đã lưu trước khi gửi mới.');
-    const assetId=source.value,topCount=Number(top.value),assetBinding=stable(videoAnalysisAssets(s).find(a=>a.asset_id===assetId));
+    const assetId=source.value,topCount=Number(top.value),silenceSettings=readSettings(),assetBinding=stable(videoAnalysisAssets(s).find(a=>a.asset_id===assetId));
     await loadSourceReceipts(s,assetId);demand(!disposed&&epoch===startEpoch&&scope(getState())===bound,'Ngữ cảnh đã đổi trước khi gửi phân tích.');
-    demand(source.value===assetId&&Number(top.value)===topCount
+    demand(source.value===assetId&&Number(top.value)===topCount&&stable(readSettings())===stable(silenceSettings)
       &&stable(videoAnalysisAssets(getState()).find(a=>a.asset_id===assetId))===assetBinding,'Video hoặc lựa chọn đã đổi trong lúc đọc biên nhận.');
-    const body=videoAnalysisPayload(getState(),assetId,topCount,newKey());persist({schema_version:'sql-video-pending.v1',scope:bound,kind:'create',body});await send(pending);}));
+    const body=videoAnalysisPayload(getState(),assetId,topCount,newKey(),silenceSettings);persist({schema_version:'sql-video-pending.v1',scope:bound,kind:'create',body});await send(pending);}));
   buttons.retry.addEventListener('click',()=>run(async()=>{const s=getState();guard(s);if(!pending)restore(s);demand(pending,'Chưa có yêu cầu cũ để gửi lại.');await send(pending);}));
   buttons.cancel.addEventListener('click',()=>run(async()=>{const s=getState();guard(s);restore(s);demand(!pending,'Đối chiếu yêu cầu cũ trước khi hủy.');
     const v=records.find(v=>v.job.job_id===selected);validateVideoAnalysisJob(v,s);demand(active.has(v.job.status),'Tác vụ đã kết thúc.');

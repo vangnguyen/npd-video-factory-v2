@@ -410,3 +410,6 @@
 #sql-source-linked-edit{min-width:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #sql-source-linked-edit p{flex-basis:100%;overflow-wrap:anywhere}
 #sql-source-linked-edit button{min-height:38px;font-size:14px;border-radius:7px}
+#video-analysis-jobs [data-video-job-silence-settings]{min-width:0;flex-basis:100%}
+#video-analysis-jobs [data-video-job-silence-fields]{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px}
+#video-analysis-jobs [data-video-job-silence-fields] input{width:100%;min-width:0;min-height:38px;font-size:14px;border-radius:7px}
