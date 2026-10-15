@@ -4270,3 +4270,20 @@ REGRESSIONS: current fullStudio and actualmain5 pass; default planner callers un
 EXTERNAL BLOCKERS: actual browser/semantic/genuine original full media/Owner/provider/Docker/production acceptance remains separate; does not block next safe work.
 OWNER ACTION REQUIRED: none for next safe work; Owner listening/UAT deferred.
 NEXT WAVE: private pending-ownership guard across Word/Audio/Linked/Manual and explicit server-backed B-roll UNKNOWN recovery in parallel, then remaining original North Star gaps.
+
+
+## Waves3/8/16 — Four callback pending ownership,2026-10-15
+
+WAVE: 3/8/16
+STATUS: Scoped race fixed, independently reviewed and integrated; full waves remain open.
+HEAD SHA: `35999c1bbcc542cdebcae70f362465060e6e004a` product; docs separately committed.
+CAPABILITIES COMPLETED: Word/Audio/Linked/Manual controller-owned synchronous guard; exact native raw/scope/source/authority checks, post-await/pre-install fences, final revocation, no DTO/persistence change.
+CAPABILITIES PARTIAL: B-roll UNKNOWN recovery/apply/resolve/polling; genuine full ModeA/B/browser/Owner/A-B-C/provider/production;59 broad groups remain unclosed.
+TESTS: primary fullStudio1675PASS0FAIL0SKIP9226.065ms; author438 affected and1585 own-base full overlap. Independent8 new and16 selected guards PASS; no arithmetic sum.
+REAL PROVIDER TESTS: none;0new model/provider/paid/media/render/SQL/browser actions in this increment.
+MOCK TESTS: Node DOM/transport/storage/clock and retained actualSQL DTOs;5 exact before-to-after repros, source13 frozen and independent8 guard cases.
+EVIDENCE: SQL_PENDING_CALLBACK_OWNERSHIP_REVIEW.md; north-star/pending-callback-evidence.json; author/source/Git/Root merge/primary logs and raw helper failures retained.
+REGRESSIONS: fullStudio preserves current B-roll UI and Silence/manual adaptations. No DDL, accepted artifact replacement, approval/publishing enablement, merge or deployment.
+EXTERNAL BLOCKERS: browser/genuine original media/providers/Owner/Docker/production acceptance separate; no blocker for next safe work.
+OWNER ACTION REQUIRED: none for safe continuation; listening/UAT remains deferred.
+NEXT WAVE: server-backed B-roll UNKNOWN settlement and reviewed canonical B-roll placement/controller in parallel, then remaining North Star gaps.
