@@ -624,3 +624,10 @@ Next: server-proven terminal settlement and explicit UI release preserving origi
 2026-10-15 — [Giải phóng yêu cầu B-roll đã kết thúc](BROLL_INTERNAL_TERMINAL_SETTLEMENT.md), product `a4dd1416bf4218d921619b5bf3191087a8fa61fd`: API inspect/settle/read dùng original private admission và CAS, chỉ thêm một biên nhận; giữ job, tài sản, chi phí, timeline và approvals gốc. Final31/resolver31/independent3/primary10 PASS là các tập có overlap, không cộng. Capture actual-main7 request dùng synthetic metadata, không provider. Studio release đang triển khai; unknown/receipt-null vẫn giữ nguyên. Browser bị policy từ chối; PostgreSQL/Owner/production/full Mode A-B còn mở. 59 nhóm lớn chưa đóng.
 
 Full requested report fields: [BROLL_INTERNAL_TERMINAL_SETTLEMENT.md](BROLL_INTERNAL_TERMINAL_SETTLEMENT.md).
+
+
+## Waves 3/5 — Upload rights defaults
+
+2026-10-15 — [Mặc định quyền tải lên SQL](SQL_UPLOAD_RIGHTS_DEFAULTS_REVIEW.md), product `8840e44ebd66c12517d7084d9b7e788ab9aeda8c`: omitted rights và generic right-to-use upload giữ unknown, không suy ra sở hữu. Explicit audio ownership giữ nguyên; dedupe không nâng/hạ provenance cũ. 23 SQL/API và69 Node PASS; independent2 actual-main +1 full fake-DOM PASS, các tập overlap. Không sửa dữ liệu/artifact cũ hoặc tự xác minh quyền. Real rights/browser/Owner/provider/production/full Mode A-B còn mở;59 nhóm lớn chưa đóng.
+
+Full requested report fields: [SQL_UPLOAD_RIGHTS_DEFAULTS_REVIEW.md](SQL_UPLOAD_RIGHTS_DEFAULTS_REVIEW.md).

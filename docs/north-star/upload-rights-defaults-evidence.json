@@ -1,0 +1,191 @@
+{
+  "product_head": "8840e44ebd66c12517d7084d9b7e788ab9aeda8c",
+  "archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-primary-support-n1.zip",
+    "bytes": 88581,
+    "sha256": "dc720d06c75070740d528239fafc20b8db10d2e9375604ab76298797e53f1834"
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\commit-upload-rights-defaults-primary-n1.log",
+      "bytes": 498,
+      "sha256": "a4ac7a4223d898d0bd95cd1792c148d9e72b8f8614db3110b4e90921ffa50784",
+      "archive_name": "commit-upload-rights-defaults-primary-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\commit-upload-rights-defaults-primary-n1.py",
+      "bytes": 3086,
+      "sha256": "71c82df7dd33c5e0f8838ca7ef3220803bb2aa6bd01244f80c4cc4f6ef3c7f13",
+      "archive_name": "commit-upload-rights-defaults-primary-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\finish-upload-rights-defaults-primary-n2.log",
+      "bytes": 2763,
+      "sha256": "ace9fe4b8828b728edd9c559b8eecb5d28b32bf0914729cc1a1db1df6f923b4d",
+      "archive_name": "finish-upload-rights-defaults-primary-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\finish-upload-rights-defaults-primary-n2.py",
+      "bytes": 1214,
+      "sha256": "f7a792f0ecfe025cbaca340254bdadd356b334967a124f63e8d8456f08b70eae",
+      "archive_name": "finish-upload-rights-defaults-primary-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-upload-rights-defaults-before-n1.log",
+      "bytes": 1717,
+      "sha256": "5cbea54d382770583a5ab57326328b95730d0817fffeeb77b6281091ab83d7e8",
+      "archive_name": "freeze-upload-rights-defaults-before-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-upload-rights-defaults-final-n1.log",
+      "bytes": 1715,
+      "sha256": "868d3f7e331238c48c622d500c9ac70f176d1b1f03d6829264960627cc4199ad",
+      "archive_name": "freeze-upload-rights-defaults-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-upload-rights-defaults-n1.py",
+      "bytes": 1941,
+      "sha256": "cf05167263f0692a97758fac857b7f066961d3b37bf0c5fa13a37470052a4c85",
+      "archive_name": "freeze-upload-rights-defaults-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-actual-main-owned-n1.json",
+      "bytes": 12207,
+      "sha256": "3ff8e002a5a702d2d860c64cfb7f0d42aae827841bafcbdb1bc5e7e211637d3d",
+      "archive_name": "processing-upload-rights-actual-main-owned-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-actual-main-unknown-n1.json",
+      "bytes": 12140,
+      "sha256": "db49bc3d8f4af790a6f90c50fc9d553cf8ee5f5a8d05f96d6b63f9b083e6139e",
+      "archive_name": "processing-upload-rights-actual-main-unknown-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-main-n1.log",
+      "bytes": 101,
+      "sha256": "5a22d01dc523c3591e1fa142f7fe35245c18a663511b13a64884ebf8b8be2cbd",
+      "archive_name": "processing-upload-rights-main-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-node-n1.log",
+      "bytes": 242,
+      "sha256": "fa1f4f1ea3dfff3247ca939a5d4c6a7fcc6f24bc98f2c529df6222669d57e470",
+      "archive_name": "processing-upload-rights-node-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-node-n1.mjs",
+      "bytes": 2242,
+      "sha256": "034d52e30d68c88559fcbb03eb3cb7ca10b49a382f672252e1a6c75b09eb4fa0",
+      "archive_name": "processing-upload-rights-node-n1.mjs"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-pins-n1.py",
+      "bytes": 1284,
+      "sha256": "cf362a8b9b73493309f1dbde5bee759100bd26c8c69b5c71d0771a3656fef246",
+      "archive_name": "processing-upload-rights-pins-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-probes-n1.py",
+      "bytes": 4407,
+      "sha256": "715d478a109137a124f6cba5657cd2ba4ccf34c531a8481117c168ba9916eb6d",
+      "archive_name": "processing-upload-rights-probes-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-report-helper-n1.py",
+      "bytes": 5270,
+      "sha256": "96a24ab170fee876d9db8fbd2fa3bc1353130215ef1df1954abd173cc8bf3227",
+      "archive_name": "processing-upload-rights-report-helper-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-review-n1.json",
+      "bytes": 10640,
+      "sha256": "13adc759eb95d24ccbadfaf377b3ec90b50a1d31365ebd1de1554df3498503a6",
+      "archive_name": "processing-upload-rights-review-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-source-after-final-n1.json",
+      "bytes": 1767,
+      "sha256": "85eba6e40ce7098dcc141ec34f5a21997644edd607df4cc8697bc8ef2904a1ef",
+      "archive_name": "processing-upload-rights-source-after-final-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-source-after-n1.json",
+      "bytes": 1767,
+      "sha256": "85eba6e40ce7098dcc141ec34f5a21997644edd607df4cc8697bc8ef2904a1ef",
+      "archive_name": "processing-upload-rights-source-after-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-upload-rights-source-before-n1.json",
+      "bytes": 1767,
+      "sha256": "85eba6e40ce7098dcc141ec34f5a21997644edd607df4cc8697bc8ef2904a1ef",
+      "archive_name": "processing-upload-rights-source-before-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-final-Node-n1.log",
+      "bytes": 7400,
+      "sha256": "4005c0122a9cb49ce1708925fceb6d61609bc84a5b890a4e8b9deb77a68f5e0a",
+      "archive_name": "upload-rights-defaults-final-Node-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-final-SQL-n1.log",
+      "bytes": 102,
+      "sha256": "433961acb1ab8dda22eaa8517c2448f58197583dea3c7a4d2e85ddc9f0ee0490",
+      "archive_name": "upload-rights-defaults-final-SQL-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-freeze-before-n1.json",
+      "bytes": 1962,
+      "sha256": "56a7593fb3deb34d0669e3fc729c88cf9017c2004e88692b298e69eb9a7a81c9",
+      "archive_name": "upload-rights-defaults-freeze-before-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-freeze-final-n1.json",
+      "bytes": 1960,
+      "sha256": "f0a3fb600a0019cf98d2c03b12ea2a3ab5bbfe88a8feac51ca685dbfaf784840",
+      "archive_name": "upload-rights-defaults-freeze-final-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-primary-incremental-n1.bundle",
+      "bytes": 4653,
+      "sha256": "1d8619866dd540267cab5eee9137b771e7435ca2878ee11783bd591d202bb03f",
+      "archive_name": "upload-rights-defaults-primary-incremental-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-primary-preservation-n1.json",
+      "bytes": 2105,
+      "sha256": "7c796f0f0eb2b707b5bf2b5b8e380a89b74e03e7df2b7dcda9f0a42b915b8825",
+      "archive_name": "upload-rights-defaults-primary-preservation-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-red-Node-n1.log",
+      "bytes": 4040,
+      "sha256": "16736412a87762f7e3c2a41fc933b7659a203c0c1120960b6c8652f3923a1bae",
+      "archive_name": "upload-rights-defaults-red-Node-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-red-SQL-n1.log",
+      "bytes": 9629,
+      "sha256": "0a310ac5057d34a13084601e68c5f5c02a6cfc917ff81aa6c614d4593539bb4a",
+      "archive_name": "upload-rights-defaults-red-SQL-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-red-SQL-n2.log",
+      "bytes": 4973,
+      "sha256": "258625e86f836f11354506ba5d5608f332caa2b5884075d456ca1decb7f7543e",
+      "archive_name": "upload-rights-defaults-red-SQL-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-source-before-n1.zip",
+      "bytes": 24512,
+      "sha256": "1e69dd75668368a4e99800cbd994a5e68bc44bf51e4839d1e0855efc73ae8448",
+      "archive_name": "upload-rights-defaults-source-before-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\upload-rights-defaults-source-final-n1.zip",
+      "bytes": 24553,
+      "sha256": "d34adad885ceda5b2bf706085b573bc6c7808c98601dabc490c50a7fcf5bebd0",
+      "archive_name": "upload-rights-defaults-source-final-n1.zip"
+    }
+  ],
+  "scope": "Omitted upload rights default unknown; generic right-to-use checkbox does not assert ownership. Existing explicit ownership and historical provenance preserved. No legal/Owner/provider/browser/production acceptance."
+}
