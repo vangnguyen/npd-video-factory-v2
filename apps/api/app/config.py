@@ -213,6 +213,9 @@ class Settings(BaseSettings):
     human_auth_max_token_ttl_seconds: int = 86_400
     human_rate_limit_per_minute: int = 300
     human_approval_required: bool = True
+    broll_request_witness_enabled: bool = False
+    broll_request_witness_keyring_json: SecretStr = Field(default=SecretStr(''), exclude=True, repr=False)
+    broll_request_witness_ttl_seconds: int = Field(default=7 * 86400, ge=300, le=30 * 86400)
     provider_external_execution_enabled: bool = False
     provider_paid_execution_enabled: bool = False
     provider_global_kill_switch_engaged: bool = True
