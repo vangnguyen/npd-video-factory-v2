@@ -37,6 +37,8 @@ import {initializeVideoTranscriptWordReview} from '/video-transcript-word-review
 import {initializeSqlTimelineAudioProcessing,audioProcessingRead} from '/sql-timeline-audio-processing.mjs?v=sql-audio-processing-1';
 import {initializeSqlSourceLinkedEdit,sourceLinkedRead} from '/sql-source-linked-edit.mjs?v=sql-source-linked-1';
 import {initializeSqlManualReframe,manualReframeRead,manualReframeSettings} from '/sql-manual-reframe.mjs?v=sql-manual-reframe-1';
+import {initializeBrollPlanReview,defaultBrollPlanSettings,brollPlanSettings,validateBrollPlanContext} from '/broll-plan-review.mjs?v=broll-plan-review-1';
+import {videoWordSessionStorage} from '/video-transcript-word-review.mjs?v=sql-video-words-1';
 
 const state = {
   workspaceId: null,
@@ -89,6 +91,19 @@ const $ = (selector) => document.querySelector(selector);
 let videoWordReview = null;
 let sqlAudioProcessing = null;
 let sourceLinkedEditor = null;
+let brollPlanController=null,brollPlanFormRead=null,brollPlanFormBaseline=null,brollPlanOperation=null;
+let brollPlanBusy=false;
+const brollPlanAdmission=Symbol('scoped-broll-preparation');
+const brollPlanStore=videoWordSessionStorage();
+function brollPlanDraft(){return JSON.stringify([...document.querySelectorAll('#broll-plan-form [data-broll-setting]')]
+  .map(e=>[e.id,e.type==='checkbox'?e.checked:e.value]));}
+function brollPlanDirty(){return brollPlanFormRead!==null&&brollPlanFormBaseline!==brollPlanDraft();}
+function brollPlanStored(){
+  if(!state.workspaceId||!state.projectId||!state.principal?.subject)return false;
+  try{if(!brollPlanStore)return true;const value=brollPlanStore.getItem('vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]));
+    return value!==null&&value!==undefined;}catch{return true;}
+}
+function brollPlanHeld(){return brollPlanBusy||brollPlanDirty()||brollPlanStored()||brollPlanController?.state().pending!==null&&brollPlanController?.state().pending!==undefined;}
 let manualReframeEditor = null;
 let manualReframeFormRead = null;
 let manualReframeFormBaseline = null;
@@ -120,12 +135,12 @@ function productionWorkbenchDraft(){return JSON.stringify([...document.querySele
   '#subtitle-list [data-cue-field],#subtitle-position,#subtitle-animation,#subtitle-template,#subtitle-keywords,#subtitle-font-size,#subtitle-safe-margin,#voice-enabled,#voice-speed,#voice-gain,#music-gain,#music-ducking,#music-asset')]
   .map(input=>[input.id,input.dataset.cueField,input.type==='checkbox'?input.checked:input.value]));}
 const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-review'), api,
-  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-    dirty: manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,
+    dirty: brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onUploaded: () => loadProject(), onCanonicalSaved: () => loadProject()});
 const stockReview = initializeStockPlanningReview({root: $('#stock-planning-review'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-    dirty: manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,
+    dirty: brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onPlanUpdated: plan => {
     if (plan.project_id !== state.projectId || plan.workspace_id !== state.workspaceId) return;
@@ -133,8 +148,8 @@ const stockReview = initializeStockPlanningReview({root: $('#stock-planning-revi
     if (state.timeline) renderBrowser();
   }});
 const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-    dirty: manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,
+    dirty: brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onReview: async value => {
     const selection=videoReviewSelection(state,value);
@@ -151,10 +166,10 @@ function sqlEditorState(){return{...state,busy: state.projectLoading > 0 || mult
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline
       || productionBaseline !== null && productionWorkbenchDraft() !== productionBaseline};}
 function sqlFamilyState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-  dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,
+  dirty:value.dirty||brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 function sqlNarrationState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,dirty:value.dirty||brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-families'),api,getState:sqlFamilyState,
   onMessage: toast,onChild: async selection => {
     const principal=state.principal,subject=principal?.subject,tokenId=principal?.token_id;
@@ -170,14 +185,14 @@ const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-fami
     state.projectId=selection.child_project_id;$('#project-select').value=state.projectId;
     window.localStorage.setItem('npd-studio-project',state.projectId);await loadProject();
   }});
-const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();});
 variantNarration = initializeSqlVariantNarration({root:$('#sql-variant-narration'),api,getState:sqlNarrationState,
   onMessage:toast,onImported:refreshNarrationAssets,onReviewQueued:refreshNarrationReview});
 
 function videoWordEditorState(){const value=sqlEditorState();return {...value,analysis:reviewedAnalysis(),
-  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-  dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
-function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();}
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,
+  dirty:value.dirty||brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();}
 videoWordReview=initializeVideoTranscriptWordReview({root:$('#video-transcript-word-review'),
   api:(path,options={})=>api(path,{...options,videoWordAdmission}),mediaFetch:authenticatedFetch,
   getState:videoWordEditorState,getSessionToken:sessionToken,onMessage:toast,
@@ -185,7 +200,7 @@ videoWordReview=initializeVideoTranscriptWordReview({root:$('#video-transcript-w
 
 function sqlAudioEditorState(){const value=sqlEditorState();return {...value,
   busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true,
-  dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
+  dirty:value.dirty||brollPlanHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
 function syncSqlAudioPeers(){syncVideoWordPeers();videoWordReview?.sync();}
 sqlAudioProcessing=initializeSqlTimelineAudioProcessing({root:$('#sql-timeline-audio-processing'),
   api:(path,options={})=>api(path,{...options,audioProcessingAdmission}),getState:sqlAudioEditorState,
@@ -336,7 +351,7 @@ document.addEventListener('input', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
@@ -344,7 +359,7 @@ document.addEventListener('change', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -381,7 +396,9 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
-  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,...requestOptions}=options;
+  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,brollPlanAdmission:brollAdmission,...requestOptions}=options;
+  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&brollPlanHeld()&&brollAdmission!==brollPlanAdmission)
+    throw Error('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&manualReframeHeld()&&manualAdmission!==manualReframeAdmission)
     throw Error('Lưu/bỏ đường crop hoặc đối chiếu yêu cầu đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&sourceLinkedHeld()&&linkedAdmission!==sourceLinkedAdmission)
@@ -418,9 +435,9 @@ function setSaveStatus(label, tone = "safe") {
 }
 
 function sourceLinkedEditorState(){const value=sqlEditorState();return {...value,analysis:reviewedAnalysis(),
-  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||manualReframeEditor?.isWorking()===true,
-  dirty:value.dirty||manualReframeHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
-function syncSourceLinkedPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();manualReframeEditor?.sync();syncManualReframeForm();}
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||manualReframeEditor?.isWorking()===true||brollPlanBusy,
+  dirty:value.dirty||brollPlanHeld()||manualReframeHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function syncSourceLinkedPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();}
 function sourceLinkedEditorBoundary(){const v=sourceLinkedEditorState();return JSON.stringify([
   v.workspaceId,v.projectId,v.principal,sessionToken(),v.timeline,v.analysis,v.assets,v.analyses,v.mediaPlans,
   v.productionPackage,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
@@ -525,7 +542,7 @@ function selectedClip() {
 function manualReframeEditorState(){const value=sqlEditorState();return {...value,analysis:activeAnalysis(),
   busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
     ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
-  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true
+  dirty:value.dirty||brollPlanHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true
     ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()};}
 function manualReframeContext(){const v=manualReframeEditorState();return sqlAudioStable([
   v.workspaceId,v.projectId,v.principal,sessionToken(),v.timeline,v.analysis,v.assets,v.analyses,v.mediaPlans,
@@ -570,7 +587,7 @@ function syncManualReframeForm(){
     `Timeline v${value.timeline.current_version} · ${manualReframeFormRead.data.source.duration_seconds} giây nguồn · ${manualReframeFormRead.data.source.width}×${manualReframeFormRead.data.source.height}. ${manualReframeFormRead.data.settings===null?'Chưa có đường crop thủ công được lưu; điểm giữa là gợi ý để bắt đầu.':'Đã đọc đường crop thủ công đã lưu.'} Cần kiểm tra preview trước khi duyệt.`;
 }
 function syncManualReframePeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();
-  variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();syncManualReframeForm();}
+  variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();syncManualReframeForm();syncBrollPlanForm();}
 function readManualReframeForm(data){
   if(manualReframeDirty())throw Error('Lưu hoặc bỏ bản sửa crop trước khi đọc và điền lại biểu mẫu.');
   const v=manualReframeEditorState();
@@ -679,6 +696,153 @@ $('#manual-reframe-discard').addEventListener('click',()=>{
   clearManualReframeForm();if(read)readManualReframeForm(read);syncManualReframePeers();
 });
 
+function brollPlanEditorState(){const v=sqlEditorState();return {...v,analysis:activeAnalysis(),
+  learning_snapshot_id:channelLearning.advice().learning_snapshot_id??null,
+  busy:v.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
+    ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+  dirty:v.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true
+    ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()||manualReframeHeld()};}
+function brollPlanContext(){const v=brollPlanEditorState();return sqlAudioStable([v.workspaceId,v.workspaceSlug,v.projectId,v.principal,sessionToken(),
+  v.timeline,v.analysis,v.assets,v.analyses,v.versions,v.preview,v.productionPackage,v.videoReviewSelection,v.learning_snapshot_id,
+  productionWorkbenchDraft(),audioWorkbenchDraft()]);}
+function assertBrollPlanOperation(op){const v=brollPlanEditorState();
+  if(brollPlanOperation!==op||brollPlanContext()!==op.context||brollPlanDraft()!==op.draft||v.busy||v.dirty
+    ||!Number.isFinite(Date.parse(v.principal?.expires_at))||Date.parse(v.principal.expires_at)<=Date.now()
+    ||!['viewer','editor','reviewer','owner'].includes(audioRole(v))
+    ||op.write&&(v.principal.human_write_enabled!==true||!['editor','reviewer','owner'].includes(audioRole(v))))
+    throw Error('Nguồn, phiên hoặc lựa chọn B-roll đã đổi; giữ đúng yêu cầu để đối chiếu.');
+}
+function brollPlanSettingsFromForm(){
+  const choices=[['user_asset','user'],['internal_library','library'],['licensed_stock','stock']]
+    .filter(([,name])=>$('#broll-plan-'+name).checked).map(([tier,name])=>({tier,order:$('#broll-plan-'+name+'-order').value}));
+  if(choices.some(v=>!['1','2','3'].includes(v.order))||new Set(choices.map(v=>v.order)).size!==choices.length)
+    throw Error('Mỗi nguồn đã chọn cần thứ tự khác nhau từ 1 đến 3.');
+  return brollPlanSettings({allow_stock:choices.some(v=>v.tier==='licensed_stock'),allow_ai_image:false,allow_ai_video:false,max_ai_cost_vnd:'0',
+    resolver_priority:choices.sort((a,b)=>Number(a.order)-Number(b.order)).map(v=>v.tier)});
+}
+function renderBrollPlanSettings(value){
+  const settings=brollPlanSettings(value);
+  for(const [tier,name,index] of [['user_asset','user',1],['internal_library','library',2],['licensed_stock','stock',3]]){
+    $('#broll-plan-'+name).checked=settings.resolver_priority.includes(tier);
+    $('#broll-plan-'+name+'-order').value=String(settings.resolver_priority.includes(tier)?settings.resolver_priority.indexOf(tier)+1:index);
+  }
+  $('#broll-plan-acknowledge').checked=false;
+}
+function clearBrollPlanForm(){brollPlanFormRead=null;brollPlanFormBaseline=null;renderBrollPlanSettings(defaultBrollPlanSettings());}
+function syncBrollPlanForm(){
+  if(brollPlanFormRead&&brollPlanFormRead.binding!==brollPlanContext()&&!brollPlanDirty()&&!brollPlanBusy)clearBrollPlanForm();
+  const v=brollPlanEditorState(),c=brollPlanController?.state(),held=brollPlanStored()||c?.pending!==null&&c?.pending!==undefined;
+  const valid=brollPlanFormRead?.binding===brollPlanContext(),readable=!v.busy&&!v.dirty&&Number.isFinite(Date.parse(v.principal?.expires_at))
+    &&Date.parse(v.principal.expires_at)>Date.now()&&['viewer','editor','reviewer','owner'].includes(audioRole(v));
+  const writable=readable&&v.principal?.human_write_enabled===true&&['editor','reviewer','owner'].includes(audioRole(v));
+  $('#broll-plan-fields').disabled=!valid||brollPlanBusy||held||!writable;
+  $('#broll-plan-read').disabled=brollPlanBusy||held||brollPlanDirty()||!readable;
+  $('#broll-plan-prepare').disabled=brollPlanBusy||held||!valid||!writable||!brollPlanFormRead?.context.can_prepare;
+  $('#broll-plan-reconcile').disabled=brollPlanBusy||!held||!readable;
+  $('#broll-plan-resend').disabled=brollPlanBusy||!held||c?.mayResend!==true||!writable;
+  $('#broll-plan-discard').disabled=brollPlanBusy||held||!brollPlanDirty();
+  $('#broll-plan-acknowledge').disabled=brollPlanBusy||!writable;
+  $('#broll-plan-stock').disabled=!valid||held||brollPlanBusy||!writable||brollPlanFormRead.context.licensed_stock_enabled!==true;
+  $('#broll-plan-availability').textContent=!valid?'Đọc nguồn để xem khả năng stock hiện tại. AI tắt · ngân sách AI 0 VND.':
+    `Tư liệu tải lên / thư viện: có thể chọn. Stock chính thức miễn phí: ${brollPlanFormRead.context.licensed_stock_enabled?'đã cấu hình; cần chọn rõ':'chưa khả dụng'}. AI tắt · ngân sách AI 0 VND. Gợi ý học: ${v.learning_snapshot_id??'không dùng'}.`;
+  $('#broll-plan-pending').textContent=c?.pending?JSON.stringify({request_key:c.pending.body?.request_key,settings:c.pending.body?.settings,
+    learning_snapshot_id:c.pending.body?.learning_snapshot_id},null,2):held?'Có bản ghi đang giữ trong phiên; chỉ đối chiếu, không tạo lần mới.':'';
+}
+function syncBrollPlanPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();}
+async function brollPlanApi(path,options={}){
+  const op=brollPlanOperation;if(!op)throw Error('B-roll chỉ đọc/gửi sau thao tác rõ ràng.');assertBrollPlanOperation(op);
+  const route=`/api/v1/projects/${state.projectId}/broll-plan-review`,method=(options.method??'GET').toUpperCase();
+  const requestRead=path.startsWith(route+'/requests/')&&/^[A-Za-z0-9_-]{8,128}$/.test(path.slice((route+'/requests/').length));
+  if(!(method==='GET'&&(path==='/api/v1/auth/session'||path===route||requestRead)||method==='POST'&&path===route))
+    throw Error('Lệnh chuẩn bị B-roll không được áp dụng, resolve hoặc chạy provider.');
+  if(method==='POST'){
+    const body=JSON.parse(options.body),pending=brollPlanController.state().pending;
+    if(!op.write||!pending||sqlAudioStable(body)!==sqlAudioStable(pending.body)
+      ||op.kind==='prepare'&&(body.context_sha256!==brollPlanFormRead?.context.context_sha256
+        ||sqlAudioStable(body.settings)!==sqlAudioStable(brollPlanSettingsFromForm())))
+      throw Error('Yêu cầu B-roll phải giữ nguyên lựa chọn và mã lần chuẩn bị.');
+    const key='vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+    if(brollPlanStore.getItem(key)!==sqlAudioStable(pending))throw Error('Bản ghi đang giữ đã đổi; không gửi lại hoặc ghi đè yêu cầu khác.');
+    assertBrollPlanOperation(op);
+  }
+  const value=await api(path,{...options,brollPlanAdmission});assertBrollPlanOperation(op);return value;
+}
+const brollPlanObservedStorage=new Map();
+const brollPlanStorage={
+  getItem(key){const op=brollPlanOperation;if(!op||!brollPlanStore)throw Error('Chưa có nơi giữ yêu cầu B-roll an toàn.');assertBrollPlanOperation(op);
+    const value=brollPlanStore.getItem(key);assertBrollPlanOperation(op);brollPlanObservedStorage.set(key,value);return value;},
+  setItem(key,value){const op=brollPlanOperation;assertBrollPlanOperation(op);brollPlanStore.setItem(key,value);assertBrollPlanOperation(op);},
+  removeItem(key){const op=brollPlanOperation;assertBrollPlanOperation(op);const raw=brollPlanObservedStorage.get(key);
+    if(typeof raw!=='string'||typeof brollPlanStore?.compareAndRemoveItem!=='function'||!brollPlanStore.compareAndRemoveItem(key,raw))
+      throw Error('Bản ghi B-roll đã đổi; giữ nguyên để kiểm tra.');
+    assertBrollPlanOperation(op);brollPlanObservedStorage.delete(key);}
+};
+async function adoptPreparedBrollPlan(plan,receipt){
+  const op=brollPlanOperation;assertBrollPlanOperation(op);const pending=brollPlanController.state().pending;
+  if(!pending||receipt.request_key!==pending.body.request_key||receipt.context_sha256!==pending.context.context_sha256
+    ||receipt.actor_ref!==state.principal.subject||receipt.workspace_id!==state.workspaceId||receipt.project_id!==state.projectId
+    ||receipt.authority_sha256!==pending.context.authority_sha256||receipt.timeline_id!==state.timeline.timeline_id
+    ||receipt.timeline_version!==state.timeline.current_version||receipt.timeline_version_id!==state.timeline.current_version_id
+    ||sqlAudioStable(receipt.settings)!==sqlAudioStable(pending.body.settings)||sqlAudioStable(receipt.source)!==sqlAudioStable(pending.context.source)
+    ||receipt.learning_snapshot_id!==pending.body.learning_snapshot_id||plan.workspace_id!==state.workspaceId||plan.project_id!==state.projectId
+    ||plan.analysis_id!==activeAnalysis()?.analysis_id||plan.configuration?.purpose!=='supporting_broll')
+    throw Error('Biên nhận chuẩn bị B-roll chưa khớp dự án, lựa chọn hoặc nguồn đang xem.');
+  const plans=sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId]);
+  const pendingKey='vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+  const expectedRaw=sqlAudioStable(pending);
+  const guard=()=>{assertBrollPlanOperation(op);if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)
+    throw Error('Danh sách đề xuất đã đổi trong lúc đối chiếu.');
+    const raw=brollPlanStore.getItem(pendingKey);assertBrollPlanOperation(op);
+    if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)throw Error('Danh sách đề xuất đã đổi khi đọc bản ghi đang giữ.');
+    if(raw!==expectedRaw)throw Error('Bản ghi B-roll đang giữ đã đổi; chưa nhận đề xuất vào dự án.');};
+  guard();
+  const base=`/api/v1/projects/${state.projectId}`;
+  const proof=await api(`${base}/broll-plan-review/requests/${receipt.request_key}`,{cache:'no-store'});guard();
+  if(proof?.schema_version!=='broll-plan-review-result.v1'||proof.state!=='prepared'||proof.preparation_provider_calls!==0
+    ||proof.publishing_enabled!==false||proof.owner_approval_inferred!==false||proof.error_code!==null
+    ||sqlAudioStable(proof.receipt)!==sqlAudioStable(receipt)||sqlAudioStable(proof.plan)!==sqlAudioStable(plan))
+    throw Error('Bản đọc biên nhận B-roll chưa xác nhận đúng kết quả đã chuẩn bị.');
+  const saved=await api(`${base}/media-plans/${plan.media_plan_id}`,{cache:'no-store'});guard();
+  if(sqlAudioStable(saved)!==sqlAudioStable(plan))throw Error('Media Plan hiện tại chưa khớp biên nhận B-roll.');
+  const context=await api(`${base}/broll-plan-review`,{cache:'no-store'});guard();validateBrollPlanContext(context,brollPlanEditorState());
+  if(sqlAudioStable(context)!==sqlAudioStable(pending.context))throw Error('Nguồn hoặc cấu hình B-roll đã đổi; giữ yêu cầu để đối chiếu.');
+  guard();
+  state.mediaPlans=[structuredClone(saved),...state.mediaPlans.filter(v=>v.media_plan_id!==saved.media_plan_id)];state.selectedBrollPlanId=saved.media_plan_id;
+  renderBrowser();stockReview.sync();
+}
+brollPlanController=initializeBrollPlanReview({api:brollPlanApi,getState:brollPlanEditorState,getSessionToken:sessionToken,storage:brollPlanStorage,
+  onPrepared:adoptPreparedBrollPlan,onStatus:text=>{$('#broll-plan-status').textContent=text;}});
+async function runBrollPlanAction(kind){
+  if(brollPlanBusy)return;
+  try{
+    syncBrollPlanForm();if(kind==='read'&&brollPlanDirty())throw Error('Bỏ lựa chọn chưa gửi trước khi đọc lại.');
+    if(kind==='prepare'&&(brollPlanFormRead?.binding!==brollPlanContext()||brollPlanStored()))throw Error('Đọc đúng nguồn hiện tại và đối chiếu lần đang giữ trước khi chuẩn bị.');
+    const op=Object.freeze({kind,write:['prepare','resend'].includes(kind),context:brollPlanContext(),draft:brollPlanDraft()});
+    brollPlanOperation=op;assertBrollPlanOperation(op);
+    const settings=kind==='prepare'?brollPlanSettingsFromForm():null;
+    if(['prepare','resend'].includes(kind)&&$('#broll-plan-acknowledge').checked!==true)throw Error('Xác nhận rõ lựa chọn hoặc đúng yêu cầu đang giữ trước khi gửi.');
+    brollPlanBusy=true;syncBrollPlanPeers();
+    if(kind==='read'){
+      const context=await brollPlanController.reload();assertBrollPlanOperation(op);
+      brollPlanFormRead={context:structuredClone(context),binding:brollPlanContext()};renderBrollPlanSettings(defaultBrollPlanSettings());brollPlanFormBaseline=brollPlanDraft();
+    }else{
+      const result=await (kind==='prepare'?brollPlanController.prepare(settings,true):kind==='resend'?brollPlanController.resend(true):brollPlanController.reconcile());
+      assertBrollPlanOperation(op);if(result&&['prepared','rejected'].includes(result.state))clearBrollPlanForm();
+    }
+  }catch(error){toast(error.message,true);}finally{brollPlanBusy=false;brollPlanOperation=null;syncBrollPlanPeers();}
+}
+for(const [id,kind] of [['broll-plan-read','read'],['broll-plan-prepare','prepare'],['broll-plan-reconcile','reconcile'],['broll-plan-resend','resend']])
+  $('#'+id).addEventListener('click',()=>runBrollPlanAction(kind));
+$('#broll-plan-form').addEventListener('submit',event=>{event.preventDefault();});
+$('#broll-plan-form').addEventListener('change',syncBrollPlanPeers);
+$('#broll-plan-discard').addEventListener('click',()=>{
+  if(brollPlanBusy||brollPlanStored()||brollPlanController.state().pending)return toast('Giữ lần chuẩn bị chưa rõ kết quả; đối chiếu trước khi bỏ lựa chọn.',true);
+  const read=brollPlanFormRead?.binding===brollPlanContext()?brollPlanFormRead:null;
+  clearBrollPlanForm();if(read){brollPlanFormRead=read;brollPlanFormBaseline=brollPlanDraft();}syncBrollPlanPeers();
+});
+
+
 async function loadProjectList() {
   multiInput.setBusy(true);
   try {
@@ -711,9 +875,11 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   if (!state.projectId) return;
   const initialCanonicalRead=initialRead===initialProjectRead&&state.timeline===null&&state.projectLoading===0
     &&state.assets.length===0&&state.analyses.length===0&&state.versions.length===0&&state.transcriptDrafts.size===0
+    &&!brollPlanBusy&&!brollPlanDirty()&&brollPlanOperation===null
     &&manualReframeEditor?.isWorking()!==true&&!manualReframeDirty()&&manualReframeApplying===null
     &&sourceLinkedEditor?.isWorking()!==true&&sqlAudioProcessing?.isWorking()!==true
     &&videoWordReview?.isWorking()!==true&&variantNarration?.isWorking()!==true;
+  if(!initialCanonicalRead&&brollPlanHeld()){toast('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&manualReframeHeld()){toast('Lưu/bỏ crop hoặc đối chiếu lần lưu đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&sourceLinkedHeld()){toast('Đối chiếu lần chỉnh shot đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&audioProcessingHeld()){toast('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi tải lại.',true);return;}
@@ -725,10 +891,10 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   if (!initialCanonicalRead&&stockReview.isPending()) {toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi tải lại dự án.', true); return;}
   // A clean form from the previous project is invalidated before capturing the
   // read boundary. Dirty forms and UNKNOWN requests have already been fenced.
-  syncManualReframeForm();
+  syncManualReframeForm();syncBrollPlanForm();
   const loadedProjectId = state.projectId;
   const readBoundary=()=>JSON.stringify([state.workspaceId,state.projectId,state.principal,sessionToken(),
-    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft()]);
+    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft(),brollPlanDraft()]);
   const expectedReadBoundary=readBoundary();
   const readCurrent=()=>readBoundary()===expectedReadBoundary
     &&(!state.principal?.expires_at||Date.parse(state.principal.expires_at)>Date.now());
@@ -745,7 +911,7 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   multiInput.setBusy(true);
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -829,7 +995,7 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
     videoReview.sync();
     variantFamilies.sync();
     variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
   }
   if (installedBoundary!==null&&readBoundary()===installedBoundary) {
     await audioReview.reload();
@@ -843,7 +1009,7 @@ function renderNoProject(title, description) {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -858,7 +1024,7 @@ function render() {
   stockReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -1283,7 +1449,7 @@ function renderProduction({preserveDraft=false}={}) {
   renderPublishing();
   if(!preserveDraft)productionBaseline=productionWorkbenchDraft();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
 }
 
 function selectedPublishingPlatform() {
@@ -1940,6 +2106,7 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if(brollPlanHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi đổi dự án.',true);}
   if(manualReframeHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ crop hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
   if(sourceLinkedHeld()){event.target.value=state.projectId??'';return toast('Đối chiếu lần chỉnh shot đang giữ trước khi đổi dự án.',true);}
   if(audioProcessingHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
@@ -2046,13 +2213,8 @@ $('#browser-content').addEventListener('click',async event=>{
   button.disabled=true;
   try{
     if(button.hasAttribute('data-broll-create')){
-      const analysis=activeAnalysis();if(!analysis)throw new Error('Chờ phân tích video hoàn tất.');
-      const plan=await api(`/api/v1/projects/${state.projectId}/media-plans`,{method:'POST',body:JSON.stringify({
-        purpose:'supporting_broll',analysis_id:analysis.analysis_id,transcript_id:analysis.transcript?.transcript_id??null,
-        ...channelLearning.advice(),
-        allow_stock:false,allow_ai_image:false,allow_ai_video:false})});
-      state.selectedBrollPlanId=plan.media_plan_id;state.mediaPlans=await api(`/api/v1/projects/${state.projectId}/media-plans`);
-      renderBrowser();toast('Đã lưu đề xuất. Chọn tư liệu bổ trợ cho từng cảnh.');
+      $('#broll-plan-workbench').open=true;$('#broll-plan-read').focus();
+      toast('Đọc nguồn và review lựa chọn trước khi chuẩn bị B-roll.');
     }else{
       const ids=[...$('#browser-content').querySelectorAll('[data-broll-apply-item]:checked')].map(input=>input.dataset.brollApplyItem);
       const plan=selectedBrollPlan(),body=brollApplyPayload(state.timeline,plan,ids,$('[data-broll-replace]').checked);
@@ -2302,7 +2464,7 @@ window.addEventListener("beforeunload", () => {
   videoReview.dispose();
   variantFamilies.dispose();
   variantNarration?.dispose();
-  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();
+  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();brollPlanController?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();
