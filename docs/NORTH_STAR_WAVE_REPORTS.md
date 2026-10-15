@@ -4185,3 +4185,20 @@ REGRESSIONS: UTC POST-vs-GET and contradictory history fixed with retained befor
 EXTERNAL BLOCKERS: browser capability unavailable for this UI proof; provider credentials/Docker/production remain separately unaccepted.
 OWNER ACTION REQUIRED: none for next safe implementation; optional listening/Owner UAT deferred as requested. No merge/deploy/publish performed.
 NEXT WAVE: continue3/6 SQL linked-source command→default shot UI, then current full A/B/C and remaining safe waves.
+
+
+## Waves3/6/8/16 — SQL linked-source edit and Studio scoped load,2026-10-15
+
+WAVE: 3/6/8/16
+STATUS: COMPONENT IMPLEMENTED, SQL/Node/local-real tested; full wave acceptance remains open.
+HEAD SHA: `73942d47d9e92eb3d3e1641b470a2c3b6244b6fb` product; documentation committed separately.
+CAPABILITIES COMPLETED: source-linked timeline command/main route/default shot dispatch; exact saved word/source identity; speech-safe trim/split, packed moves/duplicate; preserved independent tracks; UNKNOWN/exact history handoff; staged canonical/content cold read; bounded local-real audio edit and failed-QC gate evidence.
+CAPABILITIES PARTIAL: physical failed-QC artifact retention; full source→UI→approval→final/QC; original A/B/C;59 broad groups remain unclosed. Processing/linked UI three viewports remain NOT_VERIFIED.
+TESTS: backend51PASS142.73s (50SQL/ASGI+1RAM); actualmain5PASS12.17s; fullStudio1435PASS0FAIL0SKIP7062.9638ms. Independent SQL7/controller10/Root14/crossmodule2/selected25 overlap; do not sum.
+REAL PROVIDER TESTS: none;0newTTS/ASR/model/externalpaid operations. LOCAL-REAL: actual isolated main/SQLite8edit requests,4mutationsv2→v6; shared FFmpeg PCM48kHz/stereo6.368s; one actual worker/Remotion review failed_qc because static-source freeze100%.
+MOCK TESTS: frontend DOM/timers/transports, deterministic ASR/probe in backend51/captures; no browser or Owner acceptance inferred.
+EVIDENCE: SQL_SOURCE_LINKED_EDIT_INTEGRATION_REVIEW.md; north-star/source-linked-edit-evidence.json;86-member separate local-real archive,85 indexed files+embedded index; exact historical before failures retained.
+REGRESSIONS: source-linked identity/final-digest/controller/history gaps and Root late-context adoption fixed; all previous Studio tests pass. New failed-media retention gap is open; QC hash is an observation, physical rejected MP4 is not retained/recovered. Review remains failed_qc/publishblocked, no approval or final.
+EXTERNAL BLOCKERS: callable browser UI unavailable; genuine moving footage/Owner UAT, configured real providers, Docker and deployment acceptance remain separate.
+OWNER ACTION REQUIRED: none for next safe implementation; listening/UAT deferred. No main merge/deploy/publish/paid call.
+NEXT WAVE: bounded private failed-QC evidence preservation and next audited Mode B UI/canonical gap, then remaining original safe waves/full A/B/C.
