@@ -1,6 +1,6 @@
 {
-  "head": "ed6d01118b8635d924190746c633de987ae9a685",
-  "audited_at": "2026-10-15T07:14:35.353055+00:00",
+  "head": "f8506f47565fccccc662dfc5ea03d594f348d656",
+  "audited_at": "2026-10-15T07:16:31.215852+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -473,6 +473,7 @@
     "apps/studio-web/reframe.mjs": "e8261557ba9ff7458780ae48df8dd5fa28f0069cb186c8f667c9623e820b6a2b",
     "apps/studio-web/shot-studio.mjs": "c8d9f4a0908fc027154878bb43fd759c135f94b662d1367e7fb67515a0eeb7e1",
     "apps/studio-web/source-video-placeholder.svg": "ee1ded0c5475a9962fba6fb6df7eda6a264c52843744e0f0d156426943a18de1",
+    "apps/studio-web/sql-source-linked-edit.mjs": "d2691fb82dabd0496a5d76fbafc2e386a9c86db1b72fc0880570da41d986fa5b",
     "apps/studio-web/sql-timeline-audio-processing.mjs": "e9f23e86ab6027e096a0007c7b939488101d9bc7efb49b70ae5d9d382af1c90c",
     "apps/studio-web/sql-variant-families.mjs": "931d61c1887b1ecd4337bc5fdf9452638056ee9da3132e31e00396b2accdccd4",
     "apps/studio-web/sql-variant-narration.mjs": "64b2d26b90fb9424c675d31946f7fb186bbab24b02eae298b95291bb7db72277",
@@ -614,6 +615,7 @@
     "apps/studio-web/tests/shot-studio.test.mjs": "40d55059e2c85acf64166e2b0eaba3c27a8fd169f5fb4ec9821c5c32788da2d0",
     "apps/studio-web/tests/sql-audio-packaging.test.mjs": "74c9e3f85a2bdc2c5946524cde91add430e08e8183b22709d2b7b10f936b0b62",
     "apps/studio-web/tests/sql-audio-processing-studio-shell.test.mjs": "3115773ed1ab64e69e0d2ce1aa4d0e750a27b5114ce6358950e8ef9111133ddd",
+    "apps/studio-web/tests/sql-source-linked-edit.test.mjs": "2cd5f6f7dcafa5a13cfc79293216ed6e06c42c81269319288f6c3e7a28e802a2",
     "apps/studio-web/tests/sql-timeline-audio-processing.test.mjs": "433aab191292ca23c874018845fb56e4095315eaa9281f0bb03dc9f71d491c40",
     "apps/studio-web/tests/sql-variant-families.test.mjs": "6887226fc303186eb390168014f187fa93b6f6b75ccbb7a15f7ca5b8f9670efb",
     "apps/studio-web/tests/sql-variant-narration-shell.test.mjs": "595317c146933ce02df815bdce9bdd8e9e79ba1f211b1526e431a13ec5a26ac7",
