@@ -28,7 +28,9 @@ def witness_authority_guard(request):
     def current():
         verifier = getattr(request.app.state, 'human_auth_verifier', None)
         try:
-            if not isinstance(verifier, HumanAuthVerifier) or getattr(request.app.state, 'human_write_enabled', False) is not True:
+            if (not isinstance(verifier, HumanAuthVerifier)
+                    or getattr(request.app.state, 'human_api_enabled', False) is not True
+                    or getattr(request.app.state, 'human_write_enabled', False) is not True):
                 raise ValueError()
             return _authority(request, verifier.verify(request.headers.get('Authorization')))
         except Exception:
@@ -46,6 +48,40 @@ async def _invoke(request, project, response, function, *args):
         raise HTTPException(exc.status, detail={'error': {'code': exc.code}}) from None
     except KeyError:
         raise HTTPException(404, detail={'error': {'code': 'NOT_FOUND'}}) from None
+
+
+@router.get('/status')
+async def status(project_id: str, request: Request, response: Response):
+    """Explicit capability read. It never signs, reserves or changes a plan."""
+    import time
+    from .broll_request_witness_secrets import load_witness_keyring
+    async def perform(service, project, authority, provider):
+        scoped = await request.app.state.platform_repository.get_project(project)
+        if scoped is None:
+            raise KeyError(project)
+        if witness_authority_guard(request)() != authority:
+            raise WitnessError('BROLL_WITNESS_AUTHORITY_CHANGED', 403)
+        _, settings = witness_runtime(request)
+        ttl = getattr(request.app.state, 'broll_witness_ttl_seconds', settings.broll_request_witness_ttl_seconds)
+        state = 'UNAVAILABLE'
+        try:
+            ring = load_witness_keyring(provider)
+            now = int(time.time())
+            key = ring.keys[ring.active_key_id]
+            if (type(ttl) is int and 300 <= ttl <= 30 * 86400
+                    and key.not_before <= now < key.sign_until and now + ttl <= key.verify_until):
+                state = 'READY'
+        except WitnessError as exc:
+            if exc.code == 'BROLL_WITNESS_NOT_CONFIGURED':
+                state = 'NOT_CONFIGURED'
+        return {'schema_version': 'vf-broll-request-witness-capability.v1',
+            'workspace_id': scoped.workspace_id,
+            'project_id': project, 'actor_ref': authority['subject'],
+            'status': state, 'issuance_available': state == 'READY', 'optional': True,
+            'witness_schema_version': 'vf-broll-request-witness.v1', 'algorithm': 'HMAC-SHA256',
+            'execution_status': 'NOT_ASSERTED', 'provider_calls': 0,
+            'source_media_mutated': False, 'publish_requested': False, 'owner_approval_inferred': False}
+    return await _invoke(request, project_id, response, perform)
 
 
 @router.post('')
