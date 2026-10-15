@@ -126,6 +126,21 @@
           <p id="broll-plan-status" role="status" aria-live="polite">Chưa đọc. Chỉ chuẩn bị sau thao tác và xác nhận rõ ràng.</p>
           <pre id="broll-plan-pending" class="broll-plan-pending"></pre>
         </details>
+        <details id="broll-timeline-workbench" class="timeline-panel broll-timeline-workbench">
+          <summary>Áp dụng B-roll vào bản dựng</summary>
+          <p>Chỉ dùng cảnh đã có tư liệu trong đề xuất đang chọn. Bước này giữ video, âm thanh và phụ đề nguồn; không tìm stock hoặc tạo media. Tư liệu chưa rõ quyền vẫn bị chặn đăng bài.</p>
+          <button id="broll-timeline-read" type="button" disabled>Đọc đề xuất đang chọn và timeline</button>
+          <button id="broll-timeline-open-held" type="button" disabled>Mở đề xuất của yêu cầu đang giữ</button>
+          <p id="broll-timeline-context" role="status" aria-live="polite">Chưa đọc đề xuất.</p>
+          <form id="broll-timeline-form">
+            <fieldset id="broll-timeline-fields" disabled><legend>Cảnh đã có tư liệu</legend><div id="broll-timeline-items"></div>
+              <label><input id="broll-timeline-replace" data-broll-timeline-setting type="checkbox"> Thay các clip đã áp dụng từ đúng những cảnh được chọn</label>
+            </fieldset>
+            <label><input id="broll-timeline-acknowledge" data-broll-timeline-setting type="checkbox" disabled> Tôi xác nhận lựa chọn này; bản preview và duyệt cũ sẽ hết hiệu lực. Khi gửi lại, giữ nguyên đúng yêu cầu đang chờ.</label>
+            <div class="broll-timeline-actions"><button id="broll-timeline-apply" type="button" disabled>Áp dụng lựa chọn đã kiểm tra</button><button id="broll-timeline-reconcile" type="button" disabled>Đối chiếu lần áp dụng đang giữ</button><button id="broll-timeline-retry" type="button" disabled>Gửi lại đúng lựa chọn sau đối chiếu</button><button id="broll-timeline-discard" type="button" disabled>Bỏ lựa chọn chưa gửi</button></div>
+          </form>
+          <p id="broll-timeline-status" role="status" aria-live="polite">Chưa áp dụng. Cần đọc nguồn và xác nhận rõ ràng.</p><pre id="broll-timeline-pending" class="broll-timeline-pending"></pre>
+        </details>
         <details id="video-transcript-word-workbench" class="timeline-panel">
           <summary>Kiểm tra từ và thời gian trong video nguồn</summary>
           <div id="video-transcript-word-review" aria-label="Đọc từ đã lưu, đối chiếu video gốc và lưu phiên bản sửa"></div>
