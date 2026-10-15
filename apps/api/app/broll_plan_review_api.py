@@ -76,8 +76,13 @@ async def read_context(project_id: str, request: Request, response: Response):
 @router.post('', status_code=201)
 async def prepare_plan(project_id: str, payload: BrollPlanPrepare, request: Request, response: Response):
     from .broll_plan_review_command import prepare_plan
+    from .broll_request_recovery_command import private_identity
+    async def prepare_with_identity(service, project, authority, body):
+        identity = private_identity(authority, request.headers.get('Authorization', ''),
+            getattr(request.app.state, 'human_write_enabled', False))
+        return await prepare_plan(service, project, authority, body, recovery_identity=identity)
     response.headers['Cache-Control'] = 'no-store'
-    value = await _invoke(request, project_id, 'editor', prepare_plan, payload)
+    value = await _invoke(request, project_id, 'editor', prepare_with_identity, payload)
     if value['state'] == 'unknown':
         response.status_code = 202
     elif value['state'] == 'rejected':
