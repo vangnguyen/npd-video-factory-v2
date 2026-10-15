@@ -1,11 +1,11 @@
 {
-  "schema_version": "north-star-processing-integration-evidence.v1",
+  "schema_version": "north-star-processing-integration-evidence.v2",
   "source_parent": "6b39993c2003802ceffcfbc46475cda16268c748",
-  "recorded_at": "2026-10-15T06:45:31.791560+00:00",
+  "recorded_at": "2026-10-15T06:49:16.816087+00:00",
   "archive": {
-    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-processing-integration-evidence-n1.zip",
-    "bytes": 1857886,
-    "sha256": "103761a070b7830a9a0032bffd08e747f369662e341d6fa4a1d2240cfe137e2e"
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-processing-integration-evidence-n2.zip",
+    "bytes": 1858414,
+    "sha256": "f45ccb6901b49bdf20a161bc08cfb43de6c7358a134b6b873e638161a162afa1"
   },
   "files": [
     {
@@ -238,8 +238,8 @@
     },
     {
       "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-processing-integration-docs-n2.log",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 823,
+      "sha256": "e9f74b86a6080a0f27f7ae6012e105ff7345166cf5d58309e3dc41fdb4f95239",
       "archive_name": "recovery/root-processing-integration-docs-n2.log"
     },
     {
@@ -686,5 +686,16 @@
   "Owner_UAT": false,
   "IMPLEMENTATION_COMPLETE": false,
   "REAL_PROVIDER_ACCEPTANCE_COMPLETE": false,
-  "PRODUCTION_DEPLOYED": false
+  "PRODUCTION_DEPLOYED": false,
+  "supersedes_evidence_index": {
+    "path": "C:\\vfns01\\docs\\north-star\\processing-studio-evidence.json",
+    "bytes": 37132,
+    "sha256": "a86d015b1e0a2ccac0b6084aa09d6360c3d84520812f0a7dc11c07dfd6311888"
+  },
+  "prior_archive_retained": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\root-processing-integration-evidence-n1.zip",
+    "bytes": 1857886,
+    "sha256": "103761a070b7830a9a0032bffd08e747f369662e341d6fa4a1d2240cfe137e2e"
+  },
+  "correction": "N1 captured the in-progress docs writer log at0bytes; N2 freezes its completed823bytes. Prior ZIP/raw failed verifier retained. No test/product/browser result changed."
 }
