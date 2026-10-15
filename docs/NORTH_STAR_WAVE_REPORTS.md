@@ -4168,3 +4168,20 @@ EXTERNAL BLOCKERS: Owner UAT/listening deferred; DockerCLI absent; remaining rea
 OWNER ACTION REQUIRED: none now. No main merge/live publish/production deployment/new paid budget.
 
 NEXT WAVE: processing Studio and current source-to-QC/full original acceptance, then all remaining safe original waves.
+
+
+## Waves 3/6/8/16 — SQL Studio audio processing integration,2026-10-15
+
+WAVE: 3/6/8/16
+STATUS: COMPONENT IMPLEMENTED/MOCK+LOCAL-SQL TESTED; full wave acceptance remains open.
+HEAD SHA: `6b39993c2003802ceffcfbc46475cda16268c748` (product); docs committed separately.
+CAPABILITIES COMPLETED: nine-field canonical processing UI; peer locks/UNKNOWN/exact receipt/history; UTC DTO roundtrip; stale old review; fixture custody repair; bounded audio full-suite verification.
+CAPABILITIES PARTIAL: browser processing UI/three viewports; source-linked shot SQL edit; original full A/B/C;59 broad groups remain unclosed.
+TESTS: fullStudio1181PASS0FAIL0SKIP; processing API30PASS76.44s; UTC/main+legacy9PASS24.18s; canonical full32PASS96.77s at4196b31. Independent58 overlap/explicit Node transport; do not sum batches.
+REAL PROVIDER TESTS: none; no new model/media render/provider/paid dispatch. LOCAL-REAL: isolated SQLite/ASGI and bounded canonical PCM, each source-bound in review.
+MOCK TESTS: Studio races/controller transports; guard/media planning fixtures; no Owner acceptance.
+EVIDENCE: SQL_PROCESSING_STUDIO_INTEGRATION_REVIEW.md; north-star/processing-studio-evidence.json; raw N1 failures and raw N2 capture unchanged.
+REGRESSIONS: UTC POST-vs-GET and contradictory history fixed with retained before proof; original preview fixture repaired without product guard changes. Newly found source-shot SQL A/V/caption gap is open, not waived.
+EXTERNAL BLOCKERS: browser capability unavailable for this UI proof; provider credentials/Docker/production remain separately unaccepted.
+OWNER ACTION REQUIRED: none for next safe implementation; optional listening/Owner UAT deferred as requested. No merge/deploy/publish performed.
+NEXT WAVE: continue3/6 SQL linked-source command→default shot UI, then current full A/B/C and remaining safe waves.

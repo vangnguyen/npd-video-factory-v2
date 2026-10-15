@@ -1,5 +1,7 @@
 # North Star gap closure plan
 
+2026-10-15 — [Studio audio processing / UTC / linked-source gap](SQL_PROCESSING_STUDIO_INTEGRATION_REVIEW.md): đã ghép form9fields vào canonical SQL timeline, khóa peer và giữ UNKNOWN theo receipt/history chính xác. FullStudio1181PASS; independent58PASS có overlap; actual processingAPI30PASS, main+legacy9PASS; bounded canonicalaudio full32PASS tại source4196. Hai lỗi timestamp và historyreceipt đã sửa, rawfail được giữ. Host28GET/HEAD/0mutation đóng sạch; Chrome không callable nên Processing UI3viewports NOT_VERIFIED. Gap mới xác nhận: SQL source-shot trim/speed/split/delete chưa liên kết A/V/caption; đang triển khai riêng. 5REAL/58PARTIAL/1NOT_VERIFIED,59 nhóm chưa đóng; OwnerUAT deferred, fullModeA/B/provider/productionNO.
+
 The full Master Spec remains the objective. Existing certified Native components and PostgreSQL services are retained. The capability matrix records 64 requirements and cross-references every section 0–89. Interface-only official adapters require working implementation even when credentials are absent. Missing credentials/GPU only block their real acceptance, not unrelated safe implementation.
 
 ## Execution order and acceptance
