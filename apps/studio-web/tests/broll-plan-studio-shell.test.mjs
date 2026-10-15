@@ -149,7 +149,7 @@ test('foreign pending bytes inserted during the resend context read cannot be po
 test('Root private preparation admission strips only its own marker and cannot bypass manual/word/audio/linked holds',async()=>{
  let held=true,manual=false,word=false,audio=false,linked=false;const b=Symbol('broll'),m=Symbol('manual'),w=Symbol('word'),a=Symbol('audio'),l=Symbol('linked'),calls=[];
  const api=new Function('authenticatedFetch','brollPlanHeld','brollPlanAdmission','manualReframeHeld','manualReframeAdmission','videoWordsHeld','videoWordAdmission',
-  'audioProcessingHeld','audioProcessingAdmission','sourceLinkedHeld','sourceLinkedAdmission','const brollTimelineAdmission=Symbol("idle-placement-fixture");\n'+segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
+  'audioProcessingHeld','audioProcessingAdmission','sourceLinkedHeld','sourceLinkedAdmission','const brollTimelineAdmission=Symbol("idle-placement-fixture");const brollInternalAdmission=Symbol("idle-internal-fixture");\n'+segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
    async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},()=>held,b,()=>manual,m,()=>word,w,()=>audio,a,()=>linked,l);
  for(const method of ['POST','PUT','PATCH','DELETE'])await assert.rejects(api('/api/v1/projects/current/timeline',{method}),/B-roll/);
  await api('/api/v1/projects/current/timeline');await api('/api/v1/projects/current/broll-plan-review',{method:'POST',brollPlanAdmission:b});
@@ -176,7 +176,7 @@ function rootLoad(h,{gate=null}={}){
   '$','videoReview','multiInput','variantFamilies','stopPreviewPolling','stopProductionPolling','stopAnalyticsPolling','setSaveStatus','api','timelineTranscriptId','render',
   'startPreviewPolling','startProductionPolling','startAnalyticsPolling','window','Date'];
  const workbench={setBusy(){},async prepareReload({isCurrent}){assert.equal(isCurrent(),true);return()=>{assert.equal(isCurrent(),true);effects.push('hydrate');};}};
- const made=new Function(...args,'const brollTimelineController=null,brollTimelineBusy=false,brollTimelineOperation=null;const brollTimelineDirty=()=>false,brollTimelineDraft=()=>"idle-placement-fixture";\nlet multiInputBaseline="before-load";\n'+segment('async function loadProject(','\nfunction renderNoProject(')+'\n'+
+ const made=new Function(...args,'const brollInternalController=null,brollInternalBusy=false,brollInternalOperation=null;const brollInternalDirty=()=>false,brollInternalDraft=()=>"idle-internal-fixture";const brollTimelineController=null,brollTimelineBusy=false,brollTimelineOperation=null;const brollTimelineDirty=()=>false,brollTimelineDraft=()=>"idle-placement-fixture";\nlet multiInputBaseline="before-load";\n'+segment('async function loadProject(','\nfunction renderNoProject(')+'\n'+
   segment('$("#project-select").addEventListener("change",','\n$("#reload-button")')+'\nreturn loadProject;')(
   h.s,initial,h.brollPlanHeld,false,h.brollPlanDirty,null,h.brollPlanDraft,h.syncBrollPlanForm,()=>false,peer,()=>false,null,()=> 'manual-baseline',()=>{},
   ()=>false,()=>false,()=>false,peer,peer,peer,peer,peer,peer,(...v)=>h.messages.push(v),()=> 'vf1.fixture-local-not-provider',()=> 'production-baseline',()=> 'audio-baseline',
