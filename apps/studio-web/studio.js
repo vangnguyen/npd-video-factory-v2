@@ -39,6 +39,7 @@ import {initializeSqlSourceLinkedEdit,sourceLinkedRead} from '/sql-source-linked
 import {initializeSqlManualReframe,manualReframeRead,manualReframeSettings} from '/sql-manual-reframe.mjs?v=sql-manual-reframe-1';
 import {initializeBrollPlanReview,defaultBrollPlanSettings,brollPlanSettings,validateBrollPlanContext} from '/broll-plan-review.mjs?v=broll-plan-review-1';
 import {videoWordSessionStorage} from '/video-transcript-word-review.mjs?v=sql-video-words-1';
+import {initializeSqlBrollTimelineReview,brollTimelineRead,brollTimelineSelection} from '/sql-broll-timeline-review.mjs?v=sql-broll-timeline-1';
 
 const state = {
   workspaceId: null,
@@ -103,7 +104,21 @@ function brollPlanStored(){
   try{if(!brollPlanStore)return true;const value=brollPlanStore.getItem('vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]));
     return value!==null&&value!==undefined;}catch{return true;}
 }
-function brollPlanHeld(){return brollPlanBusy||brollPlanDirty()||brollPlanStored()||brollPlanController?.state().pending!==null&&brollPlanController?.state().pending!==undefined;}
+function brollPreparationHeld(){return brollPlanBusy||brollPlanDirty()||brollPlanStored()||brollPlanController?.state().pending!==null&&brollPlanController?.state().pending!==undefined;}
+function brollPlanHeld(){return brollPreparationHeld()||brollTimelineHeld();}
+let brollTimelineController=null,brollTimelineBusy=false,brollTimelineFormRead=null,brollTimelineBaseline=null,brollTimelineOperation=null;
+const brollTimelineAdmission=Symbol('scoped-broll-timeline-controller');
+const brollTimelineStore=videoWordSessionStorage();
+function brollTimelineDraft(){return JSON.stringify([...document.querySelectorAll('#broll-timeline-form [data-broll-timeline-setting]')]
+  .map(e=>[e.id,e.type==='checkbox'?e.checked:e.value]));}
+function brollTimelineDirty(){return brollTimelineFormRead!==null&&brollTimelineBaseline!==brollTimelineDraft();}
+function brollTimelineStored(){
+  if(!state.workspaceId||!state.projectId||!state.principal?.subject)return false;
+  const scope=()=>JSON.stringify([state.workspaceId,state.projectId,state.principal,sessionToken()]),before=scope();
+  const key='vf-sql-broll-timeline-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+  try{if(!brollTimelineStore)return true;const raw=brollTimelineStore.getItem(key);return scope()!==before||raw!==null&&raw!==undefined;}catch{return true;}
+}
+function brollTimelineHeld(){return brollTimelineBusy||brollTimelineDirty()||brollTimelineStored()||brollTimelineController?.isPending()===true;}
 let manualReframeEditor = null;
 let manualReframeFormRead = null;
 let manualReframeFormBaseline = null;
@@ -400,8 +415,8 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
-  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,brollPlanAdmission:brollAdmission,...requestOptions}=options;
-  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&brollPlanHeld()&&brollAdmission!==brollPlanAdmission)
+  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,brollPlanAdmission:brollAdmission,brollTimelineAdmission:placementAdmission,...requestOptions}=options;
+  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&brollPlanHeld()&&brollAdmission!==brollPlanAdmission&&placementAdmission!==brollTimelineAdmission)
     throw Error('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&manualReframeHeld()&&manualAdmission!==manualReframeAdmission)
     throw Error('Lưu/bỏ đường crop hoặc đối chiếu yêu cầu đang giữ trước khi sửa phần khác.');
@@ -709,7 +724,7 @@ function brollPlanEditorState(){const v=sqlEditorState();return {...v,analysis:a
   busy:v.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
     ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
   dirty:v.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true
-    ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()||manualReframeHeld()};}
+    ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()||manualReframeHeld()||brollTimelineHeld()};}
 function brollPlanContext(){const v=brollPlanEditorState();return sqlAudioStable([v.workspaceId,v.workspaceSlug,v.projectId,v.principal,sessionToken(),
   v.timeline,v.analysis,v.assets,v.analyses,v.versions,v.preview,v.productionPackage,v.videoReviewSelection,v.learning_snapshot_id,
   productionWorkbenchDraft(),audioWorkbenchDraft()]);}
@@ -762,7 +777,8 @@ function syncBrollPlanForm(){
     learning_snapshot_id:c.pending.body?.learning_snapshot_id},null,2):held?'Có bản ghi đang giữ trong phiên; chỉ đối chiếu, không tạo lần mới.':'';
 }
 function syncBrollPlanPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();}
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();syncBrollPlanForm();
+  if(brollTimelineController){brollTimelineController.sync();syncBrollTimelineForm();}}
 async function brollPlanApi(path,options={}){
   const op=brollPlanOperation;if(!op)throw Error('B-roll chỉ đọc/gửi sau thao tác rõ ràng.');assertBrollPlanOperation(op);
   const route=`/api/v1/projects/${state.projectId}/broll-plan-review`,method=(options.method??'GET').toUpperCase();
@@ -939,7 +955,7 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
     &&state.assets.length===0&&state.analyses.length===0&&state.versions.length===0&&state.transcriptDrafts.size===0
     &&!brollPlanBusy&&!brollPlanDirty()&&brollPlanOperation===null
     &&manualReframeEditor?.isWorking()!==true&&!manualReframeDirty()&&manualReframeApplying===null
-    &&sourceLinkedEditor?.isWorking()!==true&&sqlAudioProcessing?.isWorking()!==true
+    &&sourceLinkedEditor?.isWorking()!==true&&!brollTimelineBusy&&!brollTimelineDirty()&&brollTimelineOperation===null&&sqlAudioProcessing?.isWorking()!==true
     &&videoWordReview?.isWorking()!==true&&variantNarration?.isWorking()!==true;
   if(!initialCanonicalRead&&brollPlanHeld()){toast('Lưu/bỏ lựa chọn B-roll hoặc đối chiếu lần chuẩn bị đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&manualReframeHeld()){toast('Lưu/bỏ crop hoặc đối chiếu lần lưu đang giữ trước khi tải lại.',true);return;}
@@ -953,10 +969,10 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   if (!initialCanonicalRead&&stockReview.isPending()) {toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi tải lại dự án.', true); return;}
   // A clean form from the previous project is invalidated before capturing the
   // read boundary. Dirty forms and UNKNOWN requests have already been fenced.
-  syncManualReframeForm();syncBrollPlanForm();
+  syncManualReframeForm();syncBrollPlanForm();if(brollTimelineController)syncBrollTimelineForm();
   const loadedProjectId = state.projectId;
   const readBoundary=()=>JSON.stringify([state.workspaceId,state.projectId,state.principal,sessionToken(),
-    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft(),brollPlanDraft()]);
+    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft(),brollPlanDraft(),brollTimelineDraft()]);
   const expectedReadBoundary=readBoundary();
   const readCurrent=()=>readBoundary()===expectedReadBoundary
     &&(!state.principal?.expires_at||Date.parse(state.principal.expires_at)>Date.now());
@@ -1218,7 +1234,8 @@ function selectedBrollPlan(){
 
 function renderBrollBrowser(panel,analysis,matches){
   const plans=compatibleBrollPlans(state.mediaPlans,analysis),plan=selectedBrollPlan();
-  state.selectedBrollPlanId=plan?.media_plan_id??'';
+  if(!brollTimelineHeld())state.selectedBrollPlanId=plan?.media_plan_id??'';
+  else if(plan?.media_plan_id!==state.selectedBrollPlanId){panel.innerHTML='<p>Đối chiếu lựa chọn B-roll đang giữ trước khi đổi đề xuất.</p>';return;}
   panel.innerHTML=`<div class="broll-tools"><button type="button" data-broll-create ${analysis?'':'disabled'}>Tạo đề xuất B-roll</button>
     <p>Chọn tư liệu bổ trợ cho cảnh. Giữ lời nói và tệp gốc; xem preview và duyệt lại sau khi áp dụng.</p>
     ${plans.length?`<label>Bản đề xuất<select data-broll-plan>${plans.map(item=>`<option value="${escapeHtml(item.media_plan_id)}" ${item===plan?'selected':''}>${escapeHtml(new Date(item.created_at).toLocaleString('vi-VN'))} · ${item.items.length} cảnh</option>`).join('')}</select></label>`:''}</div>`;
@@ -1236,10 +1253,9 @@ function renderBrollBrowser(panel,analysis,matches){
       <small>${item.broll.provenance?.vision_analysis_id?'Có bằng chứng hình ảnh đã lưu':'Chưa có hiểu hình ảnh; điểm liên quan dựa trên tên, mô tả và nhãn đã lưu.'}</small>
       ${candidates.length?`<form data-broll-select="${escapeHtml(item.media_plan_item_id)}"><label>Tư liệu bổ trợ<select data-broll-asset>${candidates.map(candidate=>`<option value="${escapeHtml(candidate.asset_id)}" ${candidate.asset_id===selectedAssetId?'selected':''}>${escapeHtml(candidate.filename)} · ${escapeHtml(candidate.rights_status)} · ${(candidate.relevance_score*100).toFixed(0)}% khớp từ khóa</option>`).join('')}</select></label><button type="submit">Chọn tư liệu</button></form>`:'<p>Chưa có tư liệu tải lên phù hợp. Thêm ảnh/video tại mục Media.</p>'}
       ${stock.length?`<form data-broll-stock="${escapeHtml(item.media_plan_item_id)}"><label>Stock đã tìm được<select data-broll-candidate>${stock.map(candidate=>`<option value="${escapeHtml(candidate.candidate_id)}">${escapeHtml(candidate.provider)} · ${escapeHtml(candidate.creator)} · ${escapeHtml(candidate.rights_status)}</option>`).join('')}</select></label><button type="submit">Đưa stock vào hàng đợi</button></form>`:''}
-      ${ready?`<label><input type="checkbox" data-broll-apply-item="${escapeHtml(item.media_plan_item_id)}"> Áp dụng cảnh này vào timeline</label>`:''}
     </article>`;
   }).join('');
-  panel.innerHTML+=`<div class="broll-tools"><label><input type="checkbox" data-broll-replace> Thay các clip đã áp dụng từ cùng đề xuất</label><button type="button" data-broll-apply ${state.timeline?'':'disabled'}>Áp dụng lựa chọn</button><p>Tư liệu chưa rõ quyền có thể xem trong bản dựng; đăng bài vẫn bị chặn.</p></div>`;
+  panel.innerHTML+='<div class="broll-tools"><button type="button" data-broll-apply '+(state.timeline?'':'disabled')+'>Kiểm tra và áp dụng B-roll</button><p>Đọc đề xuất và chọn cảnh tại form áp dụng. Tư liệu chưa rõ quyền vẫn bị chặn đăng bài.</p></div>';
 }
 
 function browserEmpty(message) {
@@ -2262,13 +2278,17 @@ document.querySelector(".panel-tabs").addEventListener("click", (event) => {
   state.panelTab = button.dataset.panelTab;
   renderBrowser();
 });
-$("#browser-search").addEventListener("input", (event) => { state.query = event.target.value; renderBrowser(); });
+$("#browser-search").addEventListener("input", (event) => {
+  if(brollTimelineHeld()){event.target.value=state.query;return toast('Giữ lựa chọn hoặc đối chiếu lần áp dụng B-roll trước khi tìm lại.',true);}
+  state.query = event.target.value; renderBrowser(); });
 $("#browser-content").addEventListener("click", (event) => {
   const seek = event.target.closest("[data-seek]");
   if (seek) setPlayhead(Number(seek.dataset.seek));
 });
 $('#browser-content').addEventListener('change',event=>{
-  if(event.target.matches('[data-broll-plan]')){state.selectedBrollPlanId=event.target.value;renderBrowser();}
+  if(event.target.matches('[data-broll-plan]')){
+    if(brollTimelineHeld()){event.target.value=state.selectedBrollPlanId;return toast('Lưu/bỏ lựa chọn hoặc đối chiếu B-roll trước khi đổi đề xuất.',true);}
+    state.selectedBrollPlanId=event.target.value;clearBrollTimelineForm();renderBrowser();}
 });
 $('#browser-content').addEventListener('click',async event=>{
   const button=event.target.closest('[data-broll-create],[data-broll-apply]');if(!button)return;
@@ -2278,10 +2298,8 @@ $('#browser-content').addEventListener('click',async event=>{
       $('#broll-plan-workbench').open=true;$('#broll-plan-read').focus();
       toast('Đọc nguồn và review lựa chọn trước khi chuẩn bị B-roll.');
     }else{
-      const ids=[...$('#browser-content').querySelectorAll('[data-broll-apply-item]:checked')].map(input=>input.dataset.brollApplyItem);
-      const plan=selectedBrollPlan(),body=brollApplyPayload(state.timeline,plan,ids,$('[data-broll-replace]').checked);
-      await api(`/api/v1/projects/${state.projectId}/media-plans/${plan.media_plan_id}/apply-broll`,{method:'POST',body:JSON.stringify(body)});
-      await loadProject();toast('B-roll đã lưu vào timeline. Xem preview và duyệt lại.');
+      $('#broll-timeline-workbench').open=true;$('#broll-timeline-read').focus();
+      toast('Đọc đúng đề xuất, chọn cảnh và xác nhận trước khi áp dụng vào timeline.');
     }
   }catch(error){toast(error.message,true);}finally{button.disabled=false;}
 });
@@ -2526,12 +2544,204 @@ window.addEventListener("beforeunload", () => {
   videoReview.dispose();
   variantFamilies.dispose();
   variantNarration?.dispose();
-  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();brollPlanController?.dispose();
+  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();brollPlanController?.dispose();brollTimelineController?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
 });
+// Reviewed B-roll placement Root integration.
+function brollTimelineEditorState(){const v=sqlEditorState();return {...v,analysis:activeAnalysis(),mediaPlanId:state.selectedBrollPlanId,
+  brollDraft:brollTimelineDraft(),busy:v.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
+    ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+  dirty:v.dirty||brollPreparationHeld()||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()
+    ||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true
+    ||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function brollTimelineSourceContext(){const v=brollTimelineEditorState();return sqlAudioStable([v.workspaceId,v.workspaceSlug,v.projectId,v.principal,
+  sessionToken(),v.assets,v.analyses,v.analysis,v.mediaPlans,v.mediaPlanId,v.videoReviewSelection,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
+function brollTimelineCanonicalContext(){return sqlAudioStable([state.timeline,state.versions,state.preview,state.productionPackage,
+  state.activeProductionRender,state.selectedClipId,state.playhead,state.undoStack,state.redoStack]);}
+let brollTimelineInstalled=null;
+function assertBrollTimelineOperation(op,allowInstalled=true){const v=brollTimelineEditorState(),canonical=brollTimelineCanonicalContext();
+  if(!op||brollTimelineOperation!==op||brollTimelineSourceContext()!==op.source||brollTimelineDraft()!==op.draft||v.busy||v.dirty
+    ||canonical!==op.canonical&&!(allowInstalled&&brollTimelineInstalled?.op===op&&canonical===brollTimelineInstalled.canonical)
+    ||!Number.isFinite(Date.parse(v.principal?.expires_at))||Date.parse(v.principal.expires_at)<=Date.now()
+    ||!['viewer','editor','reviewer','owner'].includes(audioRole(v))
+    ||op.write&&(v.principal.human_write_enabled!==true||!['editor','reviewer','owner'].includes(audioRole(v))))
+    throw Error('Nguồn, phiên, timeline hoặc lựa chọn B-roll đã đổi; giữ đúng yêu cầu để đối chiếu.');}
+function brollTimelineChoice(){return brollTimelineSelection({
+  item_ids:[...document.querySelectorAll('#broll-timeline-items [data-broll-timeline-item]')].filter(e=>e.checked).map(e=>e.dataset.brollTimelineItem),
+  replace_plan_clips:$('#broll-timeline-replace').checked});}
+function clearBrollTimelineForm(){brollTimelineFormRead=null;brollTimelineBaseline=null;$('#broll-timeline-items').replaceChildren();
+  $('#broll-timeline-replace').checked=false;$('#broll-timeline-acknowledge').checked=false;}
+function readBrollTimelineForm(data){brollTimelineRead(data,brollTimelineEditorState());const target=$('#broll-timeline-items');target.replaceChildren();
+  const pending=brollTimelineController.state().pending;
+  for(const [index,item] of data.items.entries()){const label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span');
+    input.type='checkbox';input.id='broll-timeline-item-'+index;input.setAttribute('data-broll-timeline-setting','');
+    input.setAttribute('data-broll-timeline-item',item.media_plan_item_id);input.checked=pending?.body.item_ids.includes(item.media_plan_item_id)===true;
+    input.disabled=!data.ready_item_ids.includes(item.media_plan_item_id);text.textContent=(item.broll?.broll_intent??item.media_plan_item_id)
+      +' · '+(data.ready_item_ids.includes(item.media_plan_item_id)?'Đã có tư liệu':'Chưa có tư liệu đã phân giải');
+    label.append(input,text);target.append(label);}
+  $('#broll-timeline-replace').checked=pending?.body.replace_plan_clips===true;$('#broll-timeline-acknowledge').checked=false;
+  brollTimelineFormRead={data:structuredClone(data),source:brollTimelineSourceContext(),timeline:sqlAudioStable(state.timeline)};
+  brollTimelineBaseline=brollTimelineDraft();}
+function syncBrollTimelineForm(){if(!brollTimelineController)return;
+  if(brollTimelineFormRead&&(brollTimelineFormRead.source!==brollTimelineSourceContext()||brollTimelineFormRead.timeline!==sqlAudioStable(state.timeline))&&!brollTimelineDirty()&&!brollTimelineBusy)
+    clearBrollTimelineForm();
+  const v=brollTimelineEditorState(),c=brollTimelineController.state(),held=brollTimelineStored()||c.held||c.pending!==null;
+  const valid=brollTimelineFormRead?.source===brollTimelineSourceContext()&&brollTimelineFormRead?.timeline===sqlAudioStable(state.timeline),readable=!v.busy&&!v.dirty
+    &&Number.isFinite(Date.parse(v.principal?.expires_at))&&Date.parse(v.principal.expires_at)>Date.now()
+    &&['viewer','editor','reviewer','owner'].includes(audioRole(v)),writable=readable&&v.principal?.human_write_enabled===true
+    &&['editor','reviewer','owner'].includes(audioRole(v));
+  $('#broll-timeline-read').disabled=brollTimelineBusy||brollTimelineDirty()&&!held||!readable||!v.mediaPlanId;
+  $('#broll-timeline-open-held').disabled=brollTimelineBusy||brollTimelineDirty()||!held||!readable;
+  $('#broll-timeline-fields').disabled=brollTimelineBusy||held||!valid||!writable;
+  $('#broll-timeline-acknowledge').disabled=brollTimelineBusy||!writable;
+  $('#broll-timeline-apply').disabled=brollTimelineBusy||held||!valid||!writable||!brollTimelineFormRead?.data.ready_item_ids.length;
+  $('#broll-timeline-reconcile').disabled=brollTimelineBusy||!c.pending||!writable;
+  $('#broll-timeline-retry').disabled=brollTimelineBusy||!c.canRetry||!writable;
+  $('#broll-timeline-discard').disabled=brollTimelineBusy||held||!brollTimelineDirty();
+  $('#broll-timeline-context').textContent=valid?'Đề xuất '+v.mediaPlanId+' · Timeline v'+brollTimelineFormRead.data.timeline_version
+    +' · '+brollTimelineFormRead.data.ready_item_ids.length+' cảnh có tư liệu. Chưa cấp quyền đăng bài.':'Chọn đề xuất trong mục B-roll rồi đọc đúng bản trước khi sửa.';
+  $('#broll-timeline-status').textContent=brollTimelineController.getStatus();
+  $('#broll-timeline-pending').textContent=c.pending?JSON.stringify({request_key:c.pending.body.request_key,media_plan_id:c.pending.media_plan_id,
+    parent_version:c.pending.body.expected_version,item_ids:c.pending.body.item_ids,replace_plan_clips:c.pending.body.replace_plan_clips},null,2)
+    :held?'Có bản ghi đang giữ; chỉ đọc và đối chiếu đúng yêu cầu. Không tạo lần áp dụng mới.':'';
+}
+async function brollTimelineApi(path,options={}){const op=brollTimelineOperation;assertBrollTimelineOperation(op);
+  const route='/api/v1/projects/'+state.projectId+'/timeline/broll-review/'+state.selectedBrollPlanId,method=(options.method??'GET').toUpperCase();
+  if(path!==route||!['GET','PUT'].includes(method)||method==='PUT'&&!['apply','retry'].includes(op.kind))
+    throw Error('Chỉ đọc hoặc áp dụng đúng B-roll đã review; không gọi provider.');
+  if(method==='PUT'){const p=brollTimelineController.state().pending,body=JSON.parse(options.body);
+    if(!op.write||!p||sqlAudioStable(body)!==sqlAudioStable(p.body)||$('#broll-timeline-acknowledge').checked!==true)
+      throw Error('Chỉ gửi đúng lựa chọn đang giữ sau xác nhận rõ ràng.');
+    const key='vf-sql-broll-timeline-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+    const raw=brollTimelineStore.getItem(key);assertBrollTimelineOperation(op);
+    if(raw!==JSON.stringify(p))throw Error('Bản ghi B-roll đã đổi trước khi gửi; giữ nguyên.');
+  }
+  const value=await api(path,{...options,brollTimelineAdmission});assertBrollTimelineOperation(op);return value;}
+const brollTimelineStorage={
+  getItem(key){const op=brollTimelineOperation;
+    if(!op){const scope=()=>JSON.stringify([state.workspaceId,state.projectId,state.principal,sessionToken()]),before=scope();
+      const expected='vf-sql-broll-timeline-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal?.subject]);
+      if(key!==expected)throw Error('Chỉ đọc ô chờ B-roll của dự án hiện tại.');
+      const raw=brollTimelineStore?.getItem(key);if(scope()!==before)throw Error('Phiên đã đổi khi đọc ô chờ B-roll.');return raw;}
+    assertBrollTimelineOperation(op);
+    const raw=brollTimelineStore?.getItem(key);assertBrollTimelineOperation(op);return raw;},
+  setItem(key,raw){const op=brollTimelineOperation;assertBrollTimelineOperation(op);
+    brollTimelineStore.setItem(key,raw);assertBrollTimelineOperation(op);},
+  compareAndRemoveItem(key,raw){const op=brollTimelineOperation;assertBrollTimelineOperation(op);
+    const expected='vf-sql-broll-timeline-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+    if(key!==expected||typeof raw!=='string'||typeof brollTimelineStore?.compareAndRemoveItem!=='function')return false;
+    const result=brollTimelineStore.compareAndRemoveItem(key,raw);assertBrollTimelineOperation(op);return result===true;}
+};
+function brollTimelinePreserved(before,after,request,planId){
+  const outer=({schema_version,tracks,metadata,...v})=>v,meta=({broll_review,...v})=>v,others=tracks=>tracks.filter(t=>t.kind!=='broll').map(({order,...v})=>v);
+  if(sqlAudioStable(outer(before))!==sqlAudioStable(outer(after))||sqlAudioStable(meta(before.metadata))!==sqlAudioStable(meta(after.metadata))
+    ||sqlAudioStable(others(before.tracks))!==sqlAudioStable(others(after.tracks)))throw Error('B-roll đã đổi nguồn, âm thanh, phụ đề hoặc metadata ngoài lựa chọn.');
+  for(const t of before.tracks.filter(t=>t.kind==='broll')){const saved=after.tracks.find(v=>v.track_id===t.track_id),info=({order,clips,...v})=>v;
+    const replaced=c=>request.replace_plan_clips&&c.metadata?.media_plan_id===planId&&request.item_ids.includes(c.metadata?.media_plan_item_id);
+    if(!saved||sqlAudioStable(info(t))!==sqlAudioStable(info(saved))||t.clips.filter(c=>!replaced(c)).some(c=>!saved.clips.some(v=>sqlAudioStable(v)===sqlAudioStable(c))))
+      throw Error('B-roll đã đổi clip ngoài những cảnh được xác nhận thay thế.');}
+}
+async function refreshBrollTimeline(value,requestGuard){
+  const op=brollTimelineOperation,guard=()=>{assertBrollTimelineOperation(op,false);
+    if(typeof requestGuard!=='function'||requestGuard()!==true)throw Error('Thiếu ràng buộc đồng bộ với đúng yêu cầu B-roll.');
+    assertBrollTimelineOperation(op,false);};guard();
+  const current=brollTimelineEditorState(),r=value.receipt,t=value.timeline,request=value.request,path='/api/v1/projects/'+value.project_id+'/timeline/broll-review/'+value.media_plan_id;
+  brollTimelineRead(value.read,current);
+  if(value.workspace_id!==current.workspaceId||value.project_id!==current.projectId||value.actor_ref!==current.principal.subject
+    ||value.media_plan_id!==current.mediaPlanId||r.actor_ref!==value.actor_ref||r.media_plan_id!==value.media_plan_id
+    ||r.timeline_id!==current.timeline.timeline_id||r.parent_version_id!==value.parent_version_id||r.parent_version!==value.parent_version
+    ||r.result_version!==value.result_version||value.result_version!==value.parent_version+1||r.context_sha256!==request.expected_context_sha256
+    ||request.expected_version!==value.parent_version||request.expected_timeline_id!==r.timeline_id||request.request_key!==r.request_key
+    ||sqlAudioStable(request.item_ids)!==sqlAudioStable(r.item_ids)||request.replace_plan_clips!==r.replace_plan_clips||request.acknowledged!==true
+    ||sqlAudioStable(value.read.timeline)!==sqlAudioStable(t)||sqlAudioStable(value.read.receipt)!==sqlAudioStable(r)
+    ||![value.parent_version,value.result_version].includes(current.timeline.current_version)
+    ||current.timeline.current_version===value.parent_version&&current.timeline.current_version_id!==value.parent_version_id
+    ||current.timeline.current_version===value.result_version&&sqlAudioStable(current.timeline)!==sqlAudioStable(t))
+    throw Error('Biên nhận B-roll chưa khớp nguồn, người sửa, lựa chọn hoặc bản cha.');
+  const proof=await api(path,{cache:'no-store'});guard();brollTimelineRead(proof,brollTimelineEditorState());
+  const equalRead=(a,b)=>sqlAudioStable({...a,replayed:false})===sqlAudioStable({...b,replayed:false});
+  if(!equalRead(proof,value.read))throw Error('B-roll hiện tại chưa khớp đúng biên nhận đang giữ.');
+  const versions=await api('/api/v1/projects/'+value.project_id+'/timeline/versions',{cache:'no-store'});guard();
+  if(!videoWordHistoryMatches(versions,proof.timeline))throw Error('Lịch sử B-roll chưa khớp timeline hiện tại.');
+  const parent=versions.find(v=>v.version===value.parent_version),head=versions.find(v=>v.version===value.result_version);
+  if(parent?.timeline_version_id!==value.parent_version_id||head?.timeline_version_id!==t.current_version_id||head.actor_ref!==r.actor_ref
+    ||head.mutation?.type!=='broll-timeline-review'||head.mutation.source_media_mutated!==false||head.mutation.publish_requested!==false
+    ||sqlAudioStable(head.mutation.receipt)!==sqlAudioStable(r)||sqlAudioStable(head.snapshot)!==sqlAudioStable(t.snapshot)
+    ||value.parent_timeline&&sqlAudioStable(parent.snapshot)!==sqlAudioStable(value.parent_timeline.snapshot)
+    ||current.timeline.current_version===value.parent_version&&sqlAudioStable(parent.snapshot)!==sqlAudioStable(current.timeline.snapshot))
+    throw Error('Lịch sử chưa chứng minh đúng bản cha, nguồn và lựa chọn B-roll.');
+  brollTimelinePreserved(parent.snapshot,proof.timeline.snapshot,request,value.media_plan_id);
+  const last=await api(path,{cache:'no-store'});guard();brollTimelineRead(last,brollTimelineEditorState());
+  if(!equalRead(last,proof))throw Error('B-roll đã đổi sau khi đọc lịch sử; giữ yêu cầu.');
+  guard();
+  state.timeline=structuredClone(last.timeline);state.versions=structuredClone(versions);state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
+  state.playhead=Math.min(state.playhead??0,state.timeline.snapshot.duration_seconds);
+  if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
+  if(state.productionPackage)state.productionPackage={...state.productionPackage,current_for_timeline:false,approval:null,latest_review_render:null,latest_final_render:null};
+  state.activeProductionRender=null;stopPreviewPolling();stopProductionPolling();render();
+  brollTimelineInstalled={op,canonical:brollTimelineCanonicalContext()};
+}
+brollTimelineController=initializeSqlBrollTimelineReview({api:brollTimelineApi,getState:brollTimelineEditorState,getSessionToken:sessionToken,
+  storage:brollTimelineStorage,onSaved:refreshBrollTimeline,onRead:value=>{assertBrollTimelineOperation(brollTimelineOperation);brollTimelineRead(value,brollTimelineEditorState());},
+  onMessage:(text,error)=>toast(text,error),onBusyChanged:()=>{if(brollTimelineController)syncBrollTimelineForm();}});
+async function runBrollTimelineAction(kind){
+  if(brollTimelineBusy)return;
+  try{syncBrollTimelineForm();
+    if(kind==='read'&&brollTimelineDirty()&&!brollTimelineStored()&&!brollTimelineController.isPending())
+      throw Error('Bỏ lựa chọn chưa gửi trước khi đọc lại B-roll.');
+    if(['apply','retry'].includes(kind)&&$('#broll-timeline-acknowledge').checked!==true)throw Error('Xác nhận rõ lựa chọn hoặc đúng yêu cầu đang giữ trước khi gửi.');
+    const selection=kind==='apply'?structuredClone(brollTimelineChoice()):null;
+    const op=Object.freeze({kind,write:kind!=='read',source:brollTimelineSourceContext(),draft:brollTimelineDraft(),canonical:brollTimelineCanonicalContext()});
+    brollTimelineOperation=op;brollTimelineInstalled=null;assertBrollTimelineOperation(op);brollTimelineBusy=true;syncBrollPlanPeers();
+    if(kind==='read'){const data=await brollTimelineController.reload();assertBrollTimelineOperation(op);readBrollTimelineForm(data);}
+    else{const result=await(kind==='apply'?brollTimelineController.applySelection(selection,{acknowledged:true})
+      :kind==='reconcile'?brollTimelineController.reconcile():brollTimelineController.retry());
+      if(result&&!brollTimelineController.isPending())clearBrollTimelineForm();}
+  }catch(error){toast(error.message,true);}
+  finally{brollTimelineBusy=false;brollTimelineOperation=null;brollTimelineInstalled=null;syncBrollPlanPeers();}
+}
+for(const [id,kind]of [['broll-timeline-read','read'],['broll-timeline-apply','apply'],['broll-timeline-reconcile','reconcile'],['broll-timeline-retry','retry']])
+  $('#'+id).addEventListener('click',()=>runBrollTimelineAction(kind));
+$('#broll-timeline-form').addEventListener('submit',event=>event.preventDefault());
+$('#broll-timeline-form').addEventListener('change',syncBrollPlanPeers);
+$('#broll-timeline-discard').addEventListener('click',()=>{
+  if(brollTimelineBusy||brollTimelineStored()||brollTimelineController.isPending())return toast('Giữ yêu cầu chưa rõ kết quả; đối chiếu trước khi bỏ lựa chọn.',true);
+  const data=brollTimelineFormRead?.source===brollTimelineSourceContext()&&brollTimelineFormRead?.timeline===sqlAudioStable(state.timeline)?structuredClone(brollTimelineFormRead.data):null;
+  clearBrollTimelineForm();if(data)readBrollTimelineForm(data);syncBrollPlanPeers();
+});
+$('#broll-timeline-open-held').addEventListener('click',()=>{
+  try{
+    const v=brollTimelineEditorState();
+    if(brollTimelineBusy||brollTimelineController.isWorking()||brollTimelineDirty()||v.busy||v.dirty
+      ||!['viewer','editor','reviewer','owner'].includes(audioRole(v))||!Number.isFinite(Date.parse(v.principal?.expires_at))
+      ||Date.parse(v.principal.expires_at)<=Date.now())throw Error('Chờ hoặc bỏ bản sửa chưa gửi trước khi mở đúng yêu cầu đang giữ.');
+    const source=brollTimelineSourceContext(),canonical=brollTimelineCanonicalContext(),draft=brollTimelineDraft();
+    const key='vf-sql-broll-timeline-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+    const raw=brollTimelineStore.getItem(key);
+    const unchanged=()=>{if(source!==brollTimelineSourceContext()||canonical!==brollTimelineCanonicalContext()||draft!==brollTimelineDraft()
+      ||brollTimelineEditorState().busy||brollTimelineEditorState().dirty
+      ||!Number.isFinite(Date.parse(state.principal?.expires_at))||Date.parse(state.principal.expires_at)<=Date.now())
+      throw Error('Nguồn hoặc phiên đã đổi khi đọc yêu cầu đang giữ.');};
+    unchanged();if(typeof raw!=='string'||new TextEncoder().encode(raw).length>5*1024*1024)throw Error('Chưa có đúng bản ghi B-roll có thể đọc.');
+    const p=JSON.parse(raw),plan=state.mediaPlans.find(item=>item.media_plan_id===p.media_plan_id);
+    if(p.schema_version!=='sql-broll-timeline-pending.v1'||p.workspace_id!==state.workspaceId||p.project_id!==state.projectId||p.actor_ref!==state.principal.subject
+      ||!/^mpl_[A-Za-z0-9_-]{4,60}$/.test(p.media_plan_id)||!plan||plan.workspace_id!==state.workspaceId||plan.project_id!==state.projectId
+      ||plan.analysis_id!==state.timeline.source_analysis_id||plan.configuration?.purpose!=='supporting_broll'
+      ||p.body?.expected_timeline_id!==state.timeline.timeline_id||!Number.isSafeInteger(p.body.expected_version)
+      ||![p.body.expected_version,p.body.expected_version+1].includes(state.timeline.current_version)
+      ||!/^[A-Za-z0-9_-]{8,128}$/.test(p.body.request_key))throw Error('Bản ghi chưa xác định đúng đề xuất và nguồn của dự án.');
+    const finalRaw=brollTimelineStore.getItem(key);unchanged();if(finalRaw!==raw)throw Error('Bản ghi đang giữ đã đổi; giữ nguyên.');
+    clearBrollTimelineForm();state.selectedBrollPlanId=p.media_plan_id;state.query='';state.panelTab='broll';
+    const search=$('#browser-search');if(search)search.value='';renderBrowser();syncBrollPlanPeers();
+    $('#broll-timeline-context').textContent='Đã mở đề xuất của bản ghi đang giữ. Đọc và đối chiếu đầy đủ trước khi nhận kết quả hoặc gửi lại.';
+    $('#broll-timeline-read').focus();
+  }catch(error){toast(error.message,true);}
+});
+syncBrollTimelineForm();
+
 ensureAuthenticatedSession()
   .then(principal => { state.principal = principal; return loadProjectList(); })
   .catch((error) => { renderNoProject("Không tải được Studio.", error.message); toast(error.message, true); })
