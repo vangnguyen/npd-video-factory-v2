@@ -4253,3 +4253,20 @@ REGRESSIONS: fullStudio including32Silence cases and actualmain5linked pass; aud
 EXTERNAL BLOCKERS: actual browser/semantic/provider/genuine full media/Owner/Docker/production acceptance remain separate; no blocker for next safe work.
 OWNER ACTION REQUIRED: none for safe continuation; Owner listening/UAT deferred. Completed duplicate retention checkout retired after recovery checks; original15accepted rehashed unchanged.
 NEXT WAVE: reviewed B-roll preparation, deferred-stock human gate and UI, then remaining original North Star capabilities/acceptance.
+
+
+## Waves3/5/16 — Reviewed B-roll preparation and Studio,2026-10-15
+
+WAVE: 3/5/16
+STATUS: Scoped preparation/human stock gate implemented and independently reviewed; full waves remain open.
+HEAD SHA: `6a0695b1ff9e2b57599e997a5f0ba2b82986c490` product; API predecessor52a86cb, docs separately committed.
+CAPABILITIES COMPLETED: source/priority/learning selection,0AIbudget/noauto-provider, durable human namespace/request replay, worker+directclaim stock gate, actualmain wiring, Root exact receipt-plan-context/raw/selection/cold/privateadmission guards.
+CAPABILITIES PARTIAL: UNKNOWN abandonment recovery, legacy apply/resolve/polling, generative planning, semantic/genuine fullModeA/B/A-B-C/browser/Owner/provider/production; four other callback ownership fixes pending.
+TESTS: common24SQL-ASGI PASS56.62s0skip0socket; primarymain5PASS13.14s0socket; fullprimaryStudio1644PASS0fail0skip8012.2201ms. Common4peer andRoot9peer PASS; authorRoot73/common17/affected42 overlap, do not sum. Prior23+correctedcold1 remain separate runner evidence.
+REAL PROVIDER TESTS: none;0 actual stock/AI/paid/render/publish. Local real SQLite/ASGI transaction/admission only.
+MOCK TESTS: probe/ASR/stock MockTransport/Node DOM/storage/clock/late-await fixtures. Source/original video untouched; no fake Vision/analytics or inferred Owner approval.
+EVIDENCE: SQL_REVIEWED_BROLL_STUDIO_REVIEW.md; north-star/reviewed-broll-evidence.json; N1findings/raw failures/N2common/N4shell/SourceZIPs/Gitbundles, raw Windows fixture preserved in Root Git.
+REGRESSIONS: current fullStudio and actualmain5 pass; default planner callers unchanged; reviewed fingerprint excludes legacy-cache collision. No DDL, accepted artifact replacement, publish/approval enablement, deployment or infrastructure change.
+EXTERNAL BLOCKERS: actual browser/semantic/genuine original full media/Owner/provider/Docker/production acceptance remains separate; does not block next safe work.
+OWNER ACTION REQUIRED: none for next safe work; Owner listening/UAT deferred.
+NEXT WAVE: private pending-ownership guard across Word/Audio/Linked/Manual and explicit server-backed B-roll UNKNOWN recovery in parallel, then remaining original North Star gaps.
