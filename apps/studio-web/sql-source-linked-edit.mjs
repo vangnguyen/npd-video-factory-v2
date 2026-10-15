@@ -23,7 +23,8 @@ const effects = {brightness: [0, 2], contrast: [0, 3], saturation: [0, 3], hue_r
 export function sourceLinkedOperations(value) {
   demand(Array.isArray(value) && value.length >= 1 && value.length <= 100, 'Cần từ 1 đến 100 thay đổi rõ ràng.');
   for (const op of value) {
-    demand(object(op) && Object.hasOwn(fields, op.type) && /^clip_[A-Za-z0-9_-]{4,60}$/.test(op.clip_id)
+    demand(object(op) && typeof op.type === 'string' && typeof op.clip_id === 'string'
+      && Object.hasOwn(fields, op.type) && /^clip_[A-Za-z0-9_-]{4,60}$/.test(op.clip_id)
       && Object.keys(op).every(key => ['type', 'clip_id', ...fields[op.type]].includes(key)), 'Thay đổi nguồn có trường chưa hỗ trợ.');
     const args = Object.keys(op).filter(key => !['type', 'clip_id'].includes(key));
     demand(op.type === 'delete' || op.type === 'duplicate' || args.length > 0, 'Thay đổi chưa có giá trị cần lưu.');

@@ -245,3 +245,15 @@ test('source timing outside measured duration and source-evidence changes reject
     const s=state();mutate(s);const h=harness({s});assert.equal(await h.run(),false);assert.equal(h.calls.length,0);
   }
 });
+for(const [name,operation] of [['array-type',{type:['trim'],clip_id:OPS[0].clip_id,source_start:.3}],
+  ['array-clip',{type:'trim',clip_id:[OPS[0].clip_id],source_start:.3}]])
+  test(`strict operation identity rejects ${name} before GET and durable persistence`,async()=>{
+    assert.throws(()=>sourceLinkedOperations([operation]));const h=harness();assert.equal(await h.run([operation]),false);assert.equal(h.calls.length,0);assert.equal(h.memory.size,0);
+  });
+test('strict operation identity rejects JSON object/null and prototype type keys before any GET',async()=>{
+  for(const operation of [{type:{value:'trim'},clip_id:OPS[0].clip_id,source_start:.3},{type:null,clip_id:OPS[0].clip_id,source_start:.3},
+    {type:'trim',clip_id:{value:OPS[0].clip_id},source_start:.3},{type:'trim',clip_id:null,source_start:.3},
+    {type:'constructor',clip_id:OPS[0].clip_id},{type:'__proto__',clip_id:OPS[0].clip_id},{type:'toString',clip_id:OPS[0].clip_id}]){
+    assert.throws(()=>sourceLinkedOperations([operation]));const h=harness();assert.equal(await h.run([operation]),false);assert.equal(h.calls.length,0);assert.equal(h.memory.size,0);
+  }
+});
