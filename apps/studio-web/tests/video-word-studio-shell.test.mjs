@@ -108,9 +108,9 @@ test('actual word callback rejects a foreign receipt before a single read',async
 });
 test('actual Studio closes all other writes while word draft, work or UNKNOWN exists but permits scoped word writes and GET',async()=>{
   let held=false;const calls=[],permit=Symbol('only-word-controller');
-  const api=new Function('authenticatedFetch','videoWordsHeld','videoWordAdmission','audioProcessingHeld','audioProcessingAdmission',
+  const api=new Function('authenticatedFetch','videoWordsHeld','videoWordAdmission','audioProcessingHeld','audioProcessingAdmission','sourceLinkedHeld','sourceLinkedAdmission',
     segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
-      async(path,options)=>{calls.push({path,options});return {ok:true,status:204};},()=>held,permit,()=>false,Symbol('unused-audio-controller'));
+      async(path,options)=>{calls.push({path,options});return {ok:true,status:204};},()=>held,permit,()=>false,Symbol('unused-audio-controller'),()=>false,Symbol('unused-source-controller'));
   for(const reason of ['draft','working','unknown']){
     held=true;const before=calls.length;
     for(const method of ['POST','PUT','PATCH','DELETE'])await assert.rejects(api('/api/v1/projects/current/timeline',{method,body:'{}'}),/sửa từ/);
@@ -125,10 +125,10 @@ test('actual Studio closes all other writes while word draft, work or UNKNOWN ex
 test('actual word state excludes its own busy/pending and includes peer drafts, analysis selection and private transient getter',()=>{
   const base={busy:false,dirty:false},analysis={analysis_id:'chosen-analysis'};
   let familyBusy=false,familyPending=false,narrationBusy=false,narrationPending=false;
-  const own=new Function('sqlEditorState','reviewedAnalysis','variantFamilies','variantNarration','sqlAudioProcessing',
+  const own=new Function('sqlEditorState','reviewedAnalysis','variantFamilies','variantNarration','sqlAudioProcessing','sourceLinkedEditor','sourceLinkedHeld',
     segment('function videoWordEditorState(){','\nfunction syncVideoWordPeers()')+'\nreturn videoWordEditorState;')(
       ()=>base,()=>analysis,{isBusy:()=>familyBusy,isPending:()=>familyPending},
-      {isWorking:()=>narrationBusy,isPending:()=>narrationPending},null);
+      {isWorking:()=>narrationBusy,isPending:()=>narrationPending},null,null,()=>false);
   assert.deepEqual(own(),{busy:false,dirty:false,analysis});familyBusy=true;assert.equal(own().busy,true);
   familyBusy=false;narrationBusy=true;assert.equal(own().busy,true);narrationBusy=false;
   familyPending=true;assert.equal(own().dirty,true);familyPending=false;narrationPending=true;assert.equal(own().dirty,true);

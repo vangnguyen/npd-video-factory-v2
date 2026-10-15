@@ -27,3 +27,4 @@ apps/studio-web/tests/fixtures/sql-video-word-review/*.json -text whitespace=cr-
 
 # Preserve exact actual ASGI/SQLite captures for SQL audio processing UI.
 apps/studio-web/tests/fixtures/sql-audio-processing/*.json -text whitespace=cr-at-eol
+apps/studio-web/tests/fixtures/source-linked-edit/*.json -text whitespace=cr-at-eol

@@ -406,3 +406,7 @@
 #sql-timeline-audio-processing button:disabled { opacity: .5; cursor: not-allowed; }
 #sql-timeline-audio-processing [role="status"] { padding: 10px 12px; border-radius: 7px; background: #edf5f8; }
 @media(max-width:900px) { #sql-timeline-audio-processing { grid-template-columns: minmax(0,1fr); } }
+
+#sql-source-linked-edit{min-width:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#sql-source-linked-edit p{flex-basis:100%;overflow-wrap:anywhere}
+#sql-source-linked-edit button{min-height:38px;font-size:14px;border-radius:7px}

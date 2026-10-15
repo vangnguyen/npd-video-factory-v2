@@ -27,12 +27,12 @@ function harness(s=state(),handler,initialize=()=>({})){const calls=[],effects=[
   const history=new Function(segment('function videoWordHistoryMatches(','\nasync function refreshVideoWordReceipt')+'\nreturn videoWordHistoryMatches;')();
   const own=new Function('state','sqlEditorState','variantFamilies','variantNarration','videoWordReview','initializeSqlTimelineAudioProcessing',
     '$','api','sessionToken','toast','productionWorkbenchDraft','audioWorkbenchDraft','audioRole','audioProcessingRead',
-    'videoWordHistoryMatches','stopPreviewPolling','stopProductionPolling','render','syncVideoWordPeers','Date',
+    'videoWordHistoryMatches','stopPreviewPolling','stopProductionPolling','render','syncVideoWordPeers','Date','sourceLinkedHeld',
     "let sqlAudioProcessing=null;const audioProcessingAdmission=Symbol('private-fixture');\n"+
     segment('function sqlAudioEditorState(){','\nfunction videoWordEditorBoundary(){')+'\nreturn {refreshSqlAudioProcessing,sqlAudioEditorState};')(
       s,policy,{isBusy:()=>false,isPending:()=>false},null,null,initialize,()=>({}),api,()=>token,()=>{},
       ()=>production,()=>audio,audioRole,audioProcessingRead,history,()=>effects.push('stop-preview'),
-      ()=>effects.push('stop-production'),()=>effects.push('render'),()=>{},{parse:Date.parse,now:()=>now});
+      ()=>effects.push('stop-production'),()=>effects.push('render'),()=>{},{parse:Date.parse,now:()=>now},()=>false);
   return{...own,calls,effects,setToken:v=>{token=v;},setAudio:v=>{audio=v;},setProduction:v=>{production=v;},setNow:v=>{now=v;}};
 }
 
@@ -146,9 +146,9 @@ for(const change of ['receipt-key','receipt-hash','current-version','configurati
   });
 test('private admission permits only its controller while peer-held writers stay closed and flags never reach fetch',async()=>{
   let audioHeld=true,wordHeld=false;const calls=[],audioPermit=Symbol('audio-only'),wordPermit=Symbol('word-only');
-  const api=new Function('authenticatedFetch','videoWordsHeld','videoWordAdmission','audioProcessingHeld','audioProcessingAdmission',
+  const api=new Function('authenticatedFetch','videoWordsHeld','videoWordAdmission','audioProcessingHeld','audioProcessingAdmission','sourceLinkedHeld','sourceLinkedAdmission',
     segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
-      async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},()=>wordHeld,wordPermit,()=>audioHeld,audioPermit);
+      async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},()=>wordHeld,wordPermit,()=>audioHeld,audioPermit,()=>false,Symbol('unused-source-controller'));
   for(const method of ['POST','PUT','PATCH','DELETE'])await assert.rejects(api('/api/v1/projects/current/timeline',{method}),/cấu hình âm thanh/);
   assert.equal(calls.length,0);await api('/api/v1/projects/current/timeline');
   await api('/api/v1/projects/current/timeline/audio-processing',{method:'PUT',body:'{}',audioProcessingAdmission:audioPermit});

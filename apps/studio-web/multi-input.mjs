@@ -9,13 +9,16 @@ export function generationInputsChanged(document, input) {
     document.input_kind !== input.kind || (document.supplied_facts ?? []).join("\n") !== input.facts;
 }
 
-export function initializeMultiInput({api, getState, refresh, refreshProjects, toast, uploadFetch}) {
+export function initializeMultiInput({api, getState, refresh, refreshProjects, toast, uploadFetch,
+  dom = globalThis.document, setTimer = globalThis.setTimeout, clearTimer = globalThis.clearTimeout}) {
+  const document = dom;
   const $ = id => document.getElementById(id);
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let version = null;
   let scenes = [];
   let generation = null;
   let generationTimer = null;
+  let generationEpoch = 0;
   let busy = 1; // Initial project/session bootstrap must finish before editing.
   const busyListeners = new Set();
   function syncControls() {
@@ -78,27 +81,59 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     });
     syncControls();
   }
-  async function reload() {
-    const state = getState();
-    version = state.projectId ? await api(`/api/v1/projects/${state.projectId}/content`) : null;
-    const doc = version?.snapshot.content;
-    $("mvp-kind").value = doc?.input_kind ?? "script";
-    $("mvp-original").value = doc?.original_text ?? "";
-    $("mvp-script").value = doc?.script ?? "";
-    $("mvp-facts").value = (doc?.supplied_facts ?? []).join("\n");
-    $("mvp-protected").value = (doc?.protected_terms ?? []).join("\n");
-    scenes = structuredClone(doc?.scenes ?? []);
-    renderScenes();
-    $("mvp-status").textContent = doc ? `${doc.input_kind === "prompt" && !doc.scenes.length ? "Prompt đã lưu; cần lời đọc/script. AI content chưa được cấu hình." : doc.approved ? "Đã duyệt nội dung" : "Draft deterministic cần duyệt"} · ${version.project_version_id} · Không phải kết quả AI` : "Nhập ảnh, video hoặc text; không bắt buộc video.";
-    $("mvp-plan").textContent = doc ? JSON.stringify((await api(`/api/v1/projects/${state.projectId}/storyboard-media-plan`)).items.map(s => ({scene:s.scene_id,media:s.strategy,status:s.status})), null, 2) : "";
-    $("mvp-script-diff").textContent = (version?.provenance.script_diff ?? []).join("\n");
-    if (state.projectId) {
-      const provider = await api(`/api/v1/projects/${state.projectId}/content-provider`);
-      $("mvp-provider-status").textContent = provider.status === "FIXTURE_ONLY"
-        ? "Fixture offline — không phải AI thật; chưa nghiệm thu nội dung."
-        : `${provider.provider_key ?? "Content"} · ${provider.status} — chưa nghiệm thu; có thể nhập script thủ công.`;
-      await reloadGeneration(state.projectId);
+  async function prepareReload({isCurrent = () => true} = {}) {
+    const {projectId, workspaceId} = getState();
+    const check = () => {
+      if (isCurrent() !== true || getState().projectId !== projectId || getState().workspaceId !== workspaceId)
+        throw new Error("MULTI_INPUT_RELOAD_CONTEXT_CHANGED");
+    };
+    check();
+    let stagedVersion = null, stagedPlan = null, provider = null, stagedGeneration = null;
+    if (projectId) {
+      const response = await api(`/api/v1/projects/${projectId}/content`); check();
+      stagedVersion = structuredClone(response);
     }
+    const doc = stagedVersion?.snapshot.content;
+    if (doc) {
+      const response = await api(`/api/v1/projects/${projectId}/storyboard-media-plan`); check();
+      stagedPlan = structuredClone(response);
+    }
+    if (projectId) {
+      const response = await api(`/api/v1/projects/${projectId}/content-provider`); check();
+      provider = structuredClone(response);
+      const responseGeneration = await api(`/api/v1/projects/${projectId}/content-generation`); check();
+      stagedGeneration = structuredClone(responseGeneration);
+    }
+    const stagedScenes = structuredClone(doc?.scenes ?? []);
+    const values = {kind: doc?.input_kind ?? "script", original: doc?.original_text ?? "", script: doc?.script ?? "",
+      facts: (doc?.supplied_facts ?? []).join("\n"), protected: (doc?.protected_terms ?? []).join("\n"),
+      status: doc ? `${doc.input_kind === "prompt" && !doc.scenes.length ? "Prompt đã lưu; cần lời đọc/script. AI content chưa được cấu hình." : doc.approved ? "Đã duyệt nội dung" : "Draft deterministic cần duyệt"} · ${stagedVersion.project_version_id} · Không phải kết quả AI` : "Nhập ảnh, video hoặc text; không bắt buộc video.",
+      plan: doc ? JSON.stringify(stagedPlan.items.map(s => ({scene:s.scene_id,media:s.strategy,status:s.status})), null, 2) : "",
+      diff: (stagedVersion?.provenance.script_diff ?? []).join("\n"),
+      provider: !projectId ? "Chưa chọn project." : provider.status === "FIXTURE_ONLY"
+        ? "Fixture offline — không phải AI thật; chưa nghiệm thu nội dung."
+        : `${provider.provider_key ?? "Content"} · ${provider.status} — chưa nghiệm thu; có thể nhập script thủ công.`};
+    const stagedGenerationView = generationView(stagedGeneration);
+    let applied = false;
+    check();
+    return function apply() {
+      check();
+      if (applied) throw new Error("MULTI_INPUT_RELOAD_ALREADY_APPLIED");
+      applied = true;
+      generationEpoch++;
+      clearTimer(generationTimer); generationTimer = null;
+      version = stagedVersion; scenes = stagedScenes;
+      $("mvp-kind").value = values.kind; $("mvp-original").value = values.original; $("mvp-script").value = values.script;
+      $("mvp-facts").value = values.facts; $("mvp-protected").value = values.protected;
+      renderScenes();
+      $("mvp-status").textContent = values.status; $("mvp-plan").textContent = values.plan;
+      $("mvp-script-diff").textContent = values.diff; $("mvp-provider-status").textContent = values.provider;
+      renderGeneration(stagedGeneration, stagedGenerationView, projectId);
+    };
+  }
+  async function reload() {
+    const apply = await prepareReload();
+    apply();
   }
   async function save(approved = false) {
     captureScenes();
@@ -115,20 +150,28 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
     await refresh();
     toast(approved ? "Đã duyệt script/storyboard, chưa duyệt video final." : "Đã lưu phiên bản nội dung; approval cũ bị vô hiệu hóa.");
   }
-  async function reloadGeneration(projectId) {
-    clearTimeout(generationTimer);
-    const response = await api(`/api/v1/projects/${projectId}/content-generation`);
-    if (getState().projectId !== projectId) return;
-    generation = response;
+  function generationView(response) {
     const job = response?.job;
-    $("mvp-generation-status").textContent = job ? `${job.job_id} · ${job.status} · ${job.error?.code ?? response.provider_status}` : "Chưa có job. Save/Refresh không sinh nội dung.";
-    $("mvp-proposal").textContent = response?.proposal ? JSON.stringify({version:response.proposal.project_version_id,
+    return {status: job ? `${job.job_id} · ${job.status} · ${job.error?.code ?? response.provider_status}` : "Chưa có job. Save/Refresh không sinh nội dung.",
+      proposal: response?.proposal ? JSON.stringify({version:response.proposal.project_version_id,
       base:response.proposal.provenance.base_content_version_id, script:response.proposal.snapshot.content.script,
       diff:response.proposal.provenance.script_diff, facts_needing_source:response.proposal.snapshot.content.facts_needing_source,
       scenes:response.proposal.snapshot.content.scenes, fixture:response.proposal.provenance.fixture,
       provider:response.proposal.provenance.provider, model:response.proposal.provenance.model,
-      usage:response.proposal.provenance.usage, facts_verified:false},null,2) : "";
-    if (["queued","running"].includes(job?.status)) generationTimer = setTimeout(()=>reloadGeneration(projectId).catch(error=>toast(error.message,true)),700);
+      usage:response.proposal.provenance.usage, facts_verified:false},null,2) : ""};
+  }
+  function renderGeneration(response, presentation, projectId) {
+    generation = response;
+    $("mvp-generation-status").textContent = presentation.status; $("mvp-proposal").textContent = presentation.proposal;
+    if (["queued","running"].includes(response?.job?.status)) generationTimer = setTimer(()=>reloadGeneration(projectId).catch(error=>toast(error.message,true)),700);
+  }
+  async function reloadGeneration(projectId) {
+    const workspaceId = getState().workspaceId, ticket = generationEpoch;
+    if (getState().projectId !== projectId) return;
+    clearTimer(generationTimer); generationTimer = null;
+    const response = await api(`/api/v1/projects/${projectId}/content-generation`);
+    if (getState().projectId !== projectId || getState().workspaceId !== workspaceId || ticket !== generationEpoch) return;
+    renderGeneration(response, generationView(response), projectId);
   }
   const guarded = fn => async event => {
     event?.preventDefault();setBusy(true);
@@ -224,5 +267,5 @@ export function initializeMultiInput({api, getState, refresh, refreshProjects, t
       expected_timeline_version:state.timeline.current_version, review_render_id:review.render_id})});
     await refresh(); toast("Draft nhịp cảnh mới từ PCM; cảnh khóa giữ nguyên. Tạo package/review và duyệt lại. Caption chưa có word alignment.");
   }));
-  return {reload,setBusy,isBusy:()=>busy>0,onBusyChanged:listener=>{busyListeners.add(listener);return()=>busyListeners.delete(listener);}};
+  return {reload,prepareReload,setBusy,isBusy:()=>busy>0,onBusyChanged:listener=>{busyListeners.add(listener);return()=>busyListeners.delete(listener);}};
 }
