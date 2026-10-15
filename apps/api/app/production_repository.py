@@ -4,7 +4,7 @@ import uuid
 import copy
 from typing import Any
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select, update, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from .db import AssetORM, VideoProjectORM, utc_now
@@ -854,6 +854,162 @@ class ProductionRepository:
         expected = ('awaiting_review' if row.render_kind == 'review' else 'ready') if terminal else 'running'
         if current is None or current.status != expected or current.cancellation_requested or current.invalidated_at is not None:
             raise ApprovalBoundaryError('CANONICAL_AUDIO_CANCELLED_OR_TERMINAL')
+
+    async def _failed_evidence_locked(self, session, expected):
+        """Match project/package writer order; never take a timeline lock late."""
+        from .failed_render_evidence import context
+        if session.bind.dialect.name == 'sqlite':
+            # A virtual Session.begin() does not start SQLite's read snapshot.
+            await session.execute(text('BEGIN IMMEDIATE'))
+        hint = await session.get(ProductionRenderJobORM, expected.render_id)
+        if hint is None:
+            return None, None
+        locked = await session.execute(update(VideoProjectORM).where(VideoProjectORM.project_id == hint.project_id,
+            VideoProjectORM.workspace_id == hint.workspace_id).values(updated_at=VideoProjectORM.updated_at))
+        if locked.rowcount != 1:
+            return hint, None
+        await session.get(VideoProjectORM, hint.project_id, with_for_update=True, populate_existing=True)
+        package = await session.get(ProductionPackageORM, hint.package_id, with_for_update=True, populate_existing=True)
+        row = await session.get(ProductionRenderJobORM, hint.render_id, with_for_update=True, populate_existing=True)
+        if row is None or context(row) != context(expected):
+            return row, None
+        return row, package
+
+    async def _failed_evidence_current(self, session, row, package, *, status='running'):
+        if (row is None or package is None or row.status != status or row.cancellation_requested
+                or row.invalidated_at is not None):
+            return False
+        timeline = await session.get(TimelineORM, row.timeline_id, populate_existing=True)
+        return (timeline is not None and
+            (timeline.workspace_id, timeline.project_id, timeline.current_version_id, timeline.current_version) ==
+                (row.workspace_id, row.project_id, row.timeline_version_id, row.timeline_version) and
+            (package.workspace_id, package.project_id, package.timeline_version_id,
+                package.current_subtitle_version_id, package.current_audio_version_id) ==
+                (row.workspace_id, row.project_id, row.timeline_version_id, row.subtitle_version_id, row.audio_version_id))
+
+    async def _failed_evidence_cancelled(self, session, row, package):
+        if row is None or row.status != 'running' or not row.cancellation_requested or row.invalidated_at is not None:
+            return False
+        # A cancellation request that won during retention must not leave a
+        # completed worker's row stranded as running. Acknowledge it under the
+        # same render lock, without recording a QC failure or output pointer.
+        row.status='cancelled'; row.error_code='RENDER_CANCELLED'
+        row.failure_reason='render was cancelled'; row.updated_at=utc_now()
+        if package is not None:
+            await self._event(session,package=package,event_type='render.cancelled',entity_type='render',
+                entity_id=row.render_id,actor_ref='render-worker',payload={'error_code':'RENDER_CANCELLED','secret_free':True})
+        await session.flush()
+        return True
+
+    async def reserve_failed_evidence(self, expected, *, planned, policy):
+        """One conservative charge/owner per render, committed before upload.
+
+        The immutable event ledger survives terminal manifest replacement and
+        charges partial/abandoned objects until separately reviewed cleanup.
+        """
+        from .failed_render_evidence import context, digest, reservation_id, RESERVATION_EVENT, SCHEMA
+        if (not isinstance(planned, list) or len(planned)>6
+                or any(type(item.get('size_bytes')) is not int or item['size_bytes'] <= 0 for item in planned)):
+            raise ValueError('FAILED_EVIDENCE_PLAN_INVALID')
+        requested = sum(item['size_bytes'] for item in planned)
+        if requested > policy.per_render_bytes:
+            raise ValueError('FAILED_EVIDENCE_PLAN_LIMIT')
+        async with self.session_factory() as session:
+            async with session.begin():
+                row, package = await self._failed_evidence_locked(session, expected)
+                if await self._failed_evidence_cancelled(session,row,package):
+                    return {'owned':False, 'render':_render_read(row), 'ledger':None}
+                if not await self._failed_evidence_current(session, row, package):
+                    return {'owned':False, 'render':_render_read(row) if row else None, 'ledger':None}
+                prior = await session.get(ProductionEventORM, reservation_id(row.render_id))
+                if prior is not None:
+                    return {'owned':False, 'render':_render_read(row), 'ledger':copy.deepcopy(prior.payload_json)}
+                entries = (await session.scalars(select(ProductionEventORM).where(
+                    ProductionEventORM.project_id==row.project_id,
+                    ProductionEventORM.event_type==RESERVATION_EVENT))).all()
+                used = 0; valid = True
+                for entry in entries:
+                    value = entry.payload_json
+                    amount = value.get('reserved_bytes') if isinstance(value,dict) else None
+                    if type(amount) is not int or not 0 <= amount <= 32*1024**2:
+                        valid=False; break
+                    used += amount
+                allowed = valid and requested <= policy.per_project_bytes-used
+                attempt = uuid.uuid4().hex
+                payload = {'schema_version':SCHEMA, 'context':context(row), 'context_sha256':digest(context(row)),
+                    'attempt_id':attempt, 'reserved_bytes':requested if allowed else 0,
+                    'planned_artifacts':copy.deepcopy(planned), 'plan_sha256':digest(planned),
+                    'prefix':f'workspaces/{row.workspace_id}/projects/{row.project_id}/failed-render-evidence/{row.render_id}/{attempt}/',
+                    'claim_status':'reserved' if allowed else 'quota_exceeded' if valid else 'ledger_invalid'}
+                session.add(ProductionEventORM(event_id=reservation_id(row.render_id), package_id=row.package_id,
+                    project_id=row.project_id, event_type=RESERVATION_EVENT, entity_type='render',
+                    entity_id=row.render_id, actor_ref='render-worker', payload_json=payload, created_at=utc_now()))
+                await session.flush()
+            return {'owned':True, 'render':_render_read(row), 'ledger':payload}
+
+    async def commit_failed_evidence(self, expected, *, ledger, evidence, qc_report, reason):
+        """QC terminal state and descriptor commit together, with no approval path."""
+        from .failed_render_evidence import context, digest, reservation_id, artifact_read
+        async with self.session_factory() as session:
+            async with session.begin():
+                row, package = await self._failed_evidence_locked(session, expected)
+                if await self._failed_evidence_cancelled(session,row,package):
+                    return _render_read(row)
+                if not await self._failed_evidence_current(session, row, package):
+                    return _render_read(row) if row else None
+                saved = await session.get(ProductionEventORM, reservation_id(row.render_id))
+                if saved is None or saved.payload_json != ledger or ledger.get('context_sha256') != digest(context(row)):
+                    raise ApprovalBoundaryError('FAILED_EVIDENCE_RESERVATION_CHANGED')
+                manifest = {**copy.deepcopy(row.manifest_json or {}), 'failed_qc_evidence':copy.deepcopy(evidence)}
+                if evidence.get('context') != context(row) or evidence.get('qc_report_sha256') != digest(qc_report):
+                    raise ApprovalBoundaryError('FAILED_EVIDENCE_CONTEXT_CHANGED')
+                target = await session.execute(update(ProductionRenderJobORM).where(
+                    ProductionRenderJobORM.render_id==row.render_id, ProductionRenderJobORM.status=='running',
+                    ProductionRenderJobORM.cancellation_requested.is_(False), ProductionRenderJobORM.invalidated_at.is_(None),
+                    ProductionRenderJobORM.timeline_version_id==expected.timeline_version_id,
+                    ProductionRenderJobORM.subtitle_version_id==expected.subtitle_version_id,
+                    ProductionRenderJobORM.audio_version_id==expected.audio_version_id).values(
+                        status='failed_qc', qc_status='failed', qc_report_json=copy.deepcopy(qc_report),
+                        manifest_json=manifest, error_code='QC_FAILED', failure_reason=reason[:1000], updated_at=utc_now())
+                    .execution_options(synchronize_session=False))
+                if target.rowcount != 1:
+                    raise ApprovalBoundaryError('FAILED_EVIDENCE_TERMINAL_CHANGED')
+                row = await session.get(ProductionRenderJobORM,row.render_id,populate_existing=True)
+                if evidence.get('artifacts'):
+                    for item in evidence['artifacts']:
+                        artifact_read(_render_read(row), ledger, item['name'])
+                await self._event(session, package=package, event_type='render.failed_qc', entity_type='render',
+                    entity_id=row.render_id, actor_ref='render-worker', payload={'error_code':'QC_FAILED',
+                        'secret_free':True, 'evidence_status':evidence['status'],
+                        'artifact_count':len(evidence['artifacts'])})
+                await session.flush()
+                row = await session.get(ProductionRenderJobORM,row.render_id,populate_existing=True)
+                package = await session.get(ProductionPackageORM, row.package_id, populate_existing=True)
+                if (not await self._failed_evidence_current(session,row,package,status='failed_qc')
+                        or digest(row.qc_report_json) != digest(qc_report) or row.manifest_json != manifest
+                        or row.output_asset_id is not None or row.error_code != 'QC_FAILED'):
+                    raise ApprovalBoundaryError('FAILED_EVIDENCE_TERMINAL_CHANGED')
+            return _render_read(row)
+
+    async def failed_evidence_snapshot(self, project_id, render_id):
+        """One SELECT binds project ownership, render and immutable reservation."""
+        from .failed_render_evidence import reservation_id, RESERVATION_EVENT
+        from .verified_artifact_delivery import scalar_record
+        async with self.session_factory() as session:
+            result = (await session.execute(select(ProductionRenderJobORM, ProductionEventORM, VideoProjectORM.workspace_id)
+                .join(VideoProjectORM, VideoProjectORM.project_id==ProductionRenderJobORM.project_id)
+                .join(ProductionEventORM, ProductionEventORM.event_id==reservation_id(render_id))
+                .where(ProductionRenderJobORM.render_id==render_id, ProductionRenderJobORM.project_id==project_id,
+                    ProductionRenderJobORM.workspace_id==VideoProjectORM.workspace_id,
+                    ProductionEventORM.project_id==project_id,
+                    ProductionEventORM.package_id==ProductionRenderJobORM.package_id,
+                    ProductionEventORM.event_type==RESERVATION_EVENT, ProductionEventORM.entity_type=='render',
+                    ProductionEventORM.entity_id==render_id))).one_or_none()
+            if result is None:
+                return None
+            row, reservation, _ = result
+            return {'render':_render_read(row), 'ledger':copy.deepcopy(reservation.payload_json),
+                'snapshot':{'render':scalar_record(row),'reservation':scalar_record(reservation)}}
 
     async def fail_render(
         self,

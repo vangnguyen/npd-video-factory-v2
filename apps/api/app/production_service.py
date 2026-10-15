@@ -405,6 +405,7 @@ class ProductionRenderProcessor:
         staging_root: Path,
         brand_name: str,
         variant_narration_loader=None,
+        failed_evidence_policy=None,
     ):
         self.repository = repository
         self.platform = platform
@@ -422,6 +423,10 @@ class ProductionRenderProcessor:
             if type(variant_narration_loader) is not VariantNarrationReviewLoader:
                 raise TypeError('SQL_VARIANT_NARRATION_TYPED_LOADER_REQUIRED')
         self.variant_narration_loader = variant_narration_loader
+        from .failed_render_evidence import FailureEvidencePolicy
+        if failed_evidence_policy is not None and type(failed_evidence_policy) is not FailureEvidencePolicy:
+            raise TypeError('FAILED_EVIDENCE_TYPED_POLICY_REQUIRED')
+        self.failed_evidence_policy = failed_evidence_policy or FailureEvidencePolicy()
 
     async def process(self, render_id: str) -> RenderJobRead:
         context = await self.repository.get_render_context(render_id)
@@ -757,12 +762,12 @@ class ProductionRenderProcessor:
             observed = await self._observed_canonical_terminal(render_id, canonical)
             if observed is not None:
                 return observed
-            failed = await self.repository.fail_render(
-                render_id,
-                code="QC_FAILED",
-                reason=str(exc),
-                qc_report=exc.report,
-            )
+            # QC raises before success-only persistence. Retain bounded private
+            # diagnostics while their descriptors still exist; drain through
+            # task cancellation before the unconditional staging cleanup.
+            failed = await completed_read(self._retain_failed_qc(render, workdir, exc,
+                manifest=locals().get('manifest'), narration=locals().get('narration_manifest'),
+                mix=locals().get('mix_manifest'), renderer=locals().get('renderer_result')))
             if failed is None:
                 raise
             return failed
@@ -796,6 +801,75 @@ class ProductionRenderProcessor:
             return failed
         finally:
             shutil.rmtree(workdir, ignore_errors=True)
+
+    async def _retain_failed_qc(self, render, workdir, error, *, manifest, narration, mix, renderer):
+        from .failed_render_evidence import (prepare, PreparedEvidence, upload, bundle)
+        policy = self.failed_evidence_policy
+        prepared = PreparedEvidence(errors=['FAILED_EVIDENCE_PREPARE_FAILED'])
+        try:
+            try:
+                sanitized = _evidence_manifest(manifest or {}, narration=narration or {},
+                    mix=mix or {}, renderer=renderer or {}, qc=error.report)
+                clean_manifest = copy.deepcopy(sanitized)
+                for key in ('narration','mix','renderer_result'):
+                    clean_manifest.pop(key, None)
+                prepared = await completed_read(asyncio.to_thread(prepare, workdir=workdir,
+                    render_kind=render.render_kind, qc_report=error.report, manifest=clean_manifest,
+                    evidence=sanitized, policy=policy))
+            except Exception:
+                pass  # The original QC failure remains authoritative.
+            reservation_failed = False
+            try:
+                claim = await self.repository.reserve_failed_evidence(render,
+                    planned=[item.proof() for item in prepared.artifacts], policy=policy)
+            except Exception:
+                # One metadata-only attempt, with no upload or quota refund.
+                # An uncertain committed reservation remains owned by its
+                # original attempt and cannot be stolen by this fallback.
+                reservation_failed = True
+                prepared.close()
+                prepared = PreparedEvidence(errors=['FAILED_EVIDENCE_RESERVATION_FAILED'])
+                try:
+                    claim = await self.repository.reserve_failed_evidence(render, planned=[], policy=policy)
+                except Exception:
+                    raise error from None
+            if not claim['owned']:
+                if reservation_failed and claim['render'] is not None and claim['render'].status == 'running':
+                    raise error from None  # no false terminal persistence claim
+                return claim['render']  # Another attempt, cancellation or terminal won.
+            ledger = claim['ledger']; errors = list(prepared.errors); artifacts = []
+            if ledger['claim_status'] == 'reserved':
+                try:
+                    artifacts, errors = await upload(storage=self.object_storage, prepared=prepared,
+                        render=render, attempt_id=ledger['attempt_id'], policy=policy)
+                except Exception:
+                    artifacts=[]; errors.append('FAILED_EVIDENCE_UPLOAD_FAILED')
+                status = 'retained' if artifacts and not errors else 'partial' if artifacts else 'failed'
+            else:
+                errors.append('FAILED_EVIDENCE_PROJECT_QUOTA' if ledger['claim_status']=='quota_exceeded'
+                    else 'FAILED_EVIDENCE_LEDGER_INVALID')
+                status = 'skipped'
+            evidence = bundle(render, qc_report=error.report, attempt_id=ledger['attempt_id'],
+                reserved_bytes=ledger['reserved_bytes'], artifacts=artifacts, errors=errors, status=status, policy=policy)
+            try:
+                return await self.repository.commit_failed_evidence(render, ledger=ledger,
+                    evidence=evidence, qc_report=error.report, reason=str(error))
+            except Exception:
+                # One metadata-only fallback, without uploading or refunding
+                # the reservation. Never replace QC_FAILED with a retention error.
+                fallback = bundle(render, qc_report=error.report, attempt_id=ledger['attempt_id'],
+                    reserved_bytes=ledger['reserved_bytes'], artifacts=[],
+                    errors=['FAILED_EVIDENCE_COMMIT_FAILED'], status='failed', policy=policy)
+                try:
+                    return await self.repository.commit_failed_evidence(render, ledger=ledger,
+                        evidence=fallback, qc_report=error.report, reason=str(error))
+                except Exception:
+                    # A database that cannot commit either bounded attempt
+                    # cannot be called persisted. Preserve the original QC
+                    # exception/report rather than replacing it with IO/SDK text.
+                    raise error from None
+        finally:
+            prepared.close()
 
     async def recover_incomplete(self, queue: QueueClient) -> int:
         identifiers = await self.repository.list_incomplete_render_ids()
