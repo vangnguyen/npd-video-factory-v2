@@ -4,13 +4,13 @@ import uuid
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import select, or_,update
+from sqlalchemy import select, or_,update, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from .auto_edit_db import AutoEditAnalysisORM
 from .auto_edit_models import AutoEditAnalysisRead
-from .db import utc_now
+from .db import utc_now, VideoProjectORM
 from .media_intelligence_db import (
     MediaAssetProvenanceORM,
     MediaPlanItemORM,
@@ -276,7 +276,14 @@ class MediaIntelligenceRepository:
         provenance: dict[str, Any],
     ) -> tuple[MediaResolutionJobRead, bool]:
         async with self.session_factory() as session:
+            # Serialize ordinary admissions with the reviewed item owner. This
+            # changes no unmarked job contract, and closes SQLite's SELECT/
+            # INSERT gap before a reviewed reservation can commit.
+            if session.get_bind().dialect.name == 'sqlite':
+                await session.execute(text('BEGIN IMMEDIATE'))
             plan = await session.get(MediaPlanORM, media_plan_id)
+            if plan is not None:
+                await session.get(VideoProjectORM, plan.project_id, with_for_update=True)
             item = await session.get(MediaPlanItemORM, media_plan_item_id)
             if plan is None or item is None or item.media_plan_id != media_plan_id:
                 raise KeyError(media_plan_item_id)
@@ -285,6 +292,8 @@ class MediaIntelligenceRepository:
             )
             if existing:
                 return _resolution_job_read(existing), False
+            from .broll_internal_resolution_core import deny_active_reviewed
+            await deny_active_reviewed(session, media_plan_item_id)
             needs_approval = capability != 'internal_media' and (item.needs_approval or
                 (estimated_cost_vnd is None and provenance.get('provider_configured') is True))
             row = MediaResolutionJobORM(
@@ -331,8 +340,14 @@ class MediaIntelligenceRepository:
                     raise
                 return _resolution_job_read(existing), False
 
-    async def mark_resolution_running(self, resolution_job_id: str, *, expected_stock_claim_id: str | None = None) -> bool:
+    async def mark_resolution_running(self, resolution_job_id: str, *, expected_stock_claim_id: str | None = None,
+                                      expected_reviewed_internal_claim_id: str | None = None) -> bool:
         async with self.session_factory() as session:
+            from .broll_internal_resolution_worker import start_owned
+            handled, result = await start_owned(session, resolution_job_id, expected_reviewed_internal_claim_id)
+            if handled:
+                await session.commit()
+                return result
             if expected_stock_claim_id is not None:
                 result = await session.execute(update(MediaResolutionJobORM).where(
                     MediaResolutionJobORM.resolution_job_id == resolution_job_id,
@@ -375,8 +390,13 @@ class MediaIntelligenceRepository:
     async def mark_resolution_failed(
         self, resolution_job_id: str, *, error_code: str, reason: str,
         expected_stock_claim_id: str | None = None,
+        expected_reviewed_internal_claim_id: str | None = None,
     ) -> None:
         async with self.session_factory() as session:
+            from .broll_internal_resolution_worker import fail_owned
+            if await fail_owned(session, resolution_job_id, expected_reviewed_internal_claim_id, error_code):
+                await session.commit()
+                return
             if expected_stock_claim_id is not None:
                 result = await session.execute(update(MediaResolutionJobORM).where(
                     MediaResolutionJobORM.resolution_job_id == resolution_job_id,
@@ -427,9 +447,12 @@ class MediaIntelligenceRepository:
         downloaded_at,
         provenance: dict[str, Any],
         expected_stock_claim_id: str | None = None,
+        expected_reviewed_internal_claim_id: str | None = None,
     ) -> None:
         async with self.session_factory() as session:
             async with session.begin():
+                from .broll_internal_resolution_worker import guard_completion
+                await guard_completion(session, resolution_job_id, expected_reviewed_internal_claim_id, asset)
                 if expected_stock_claim_id is not None:
                     result=await session.execute(update(MediaResolutionJobORM).where(
                         MediaResolutionJobORM.resolution_job_id==resolution_job_id,

@@ -725,6 +725,10 @@ class MediaResolutionService:
 
     async def process(self, resolution_job_id: str) -> MediaResolutionJobRead:
         job,plan,item=await self.repository.get_resolution_context(resolution_job_id)
+        from .broll_internal_resolution_core import has_marker
+        if has_marker(job):
+            from .broll_internal_resolution_worker import process
+            return await process(self, resolution_job_id)
         adapter=self.providers.stock
         managed=job.capability=='stock_media' and not job.paid and isinstance(adapter,OfficialStockProvider) and adapter.wire_guard is not None
         if not managed or job.status in {'succeeded','failed','cancelled','needs_approval'}:
@@ -774,11 +778,13 @@ class MediaResolutionService:
             raise ValueError('STOCK_SELECTED_PROVIDER_CONFIGURATION_CHANGED')
         return selected
 
-    async def _process_once(self, resolution_job_id: str, *, stock_cycle=None,stock_claim_id=None) -> MediaResolutionJobRead:
+    async def _process_once(self, resolution_job_id: str, *, stock_cycle=None,stock_claim_id=None,
+                            reviewed_internal_claim_id=None) -> MediaResolutionJobRead:
         job, plan, item = await self.repository.get_resolution_context(resolution_job_id)
         if job.status in {"succeeded", "failed", "cancelled", "needs_approval"}:
             return job
-        if not await self.repository.mark_resolution_running(resolution_job_id, expected_stock_claim_id=stock_claim_id):
+        if not await self.repository.mark_resolution_running(resolution_job_id, expected_stock_claim_id=stock_claim_id,
+                expected_reviewed_internal_claim_id=reviewed_internal_claim_id):
             return await self.repository.get_resolution_job(resolution_job_id)
         staging_path: Path | None = None
         artifact_evidence = None
@@ -943,6 +949,7 @@ class MediaResolutionService:
                     "full_rights_record_required_for_production": True,
                 },
                 expected_stock_claim_id=stock_claim_id,
+                expected_reviewed_internal_claim_id=reviewed_internal_claim_id,
             )
         except MediaProviderNotConfigured as exc:
             await self.repository.mark_resolution_failed(
@@ -950,6 +957,7 @@ class MediaResolutionService:
                 error_code="PROVIDER_NOT_CONFIGURED",
                 reason=str(exc),
                 expected_stock_claim_id=stock_claim_id,
+                expected_reviewed_internal_claim_id=reviewed_internal_claim_id,
             )
         except ProviderSafetyBlocked as exc:
             if stock_cycle is not None and isinstance(exc.__cause__,StockProviderFailure) and exc.__cause__.retryable:
@@ -960,6 +968,7 @@ class MediaResolutionService:
                 error_code=exc.code,
                 reason=str(exc),
                 expected_stock_claim_id=stock_claim_id,
+                expected_reviewed_internal_claim_id=reviewed_internal_claim_id,
             )
         except Exception as exc:
             if stock_cycle is not None and isinstance(exc,(StockWireDeferred,StockProviderFailure)):raise
@@ -968,6 +977,7 @@ class MediaResolutionService:
                 error_code="MEDIA_RESOLUTION_FAILED",
                 reason=str(exc),
                 expected_stock_claim_id=stock_claim_id,
+                expected_reviewed_internal_claim_id=reviewed_internal_claim_id,
             )
         finally:
             if staging_path:
@@ -984,9 +994,16 @@ class MediaResolutionService:
         adapter=self.providers.stock
         now=float(adapter.wire_guard.clock()) if isinstance(adapter,OfficialStockProvider) and adapter.wire_guard is not None else time.time()
         identifiers = await self.repository.list_incomplete_resolution_job_ids(now=now)
+        count = 0
         for identifier in identifiers:
+            from .broll_internal_resolution_core import has_marker
+            if has_marker(await self.repository.get_resolution_job(identifier)):
+                # Reviewed handoff is explicit authorized POST-only. Neither
+                # startup recovery nor a read can resume a private attempt.
+                continue
             await self.queue.rpush(MEDIA_RESOLUTION_QUEUE_KEY, identifier)
-        return len(identifiers)
+            count += 1
+        return count
 
     async def recover_due_stock(self) -> int:
         """Requeue elapsed read-only stock waits without touching processing jobs."""
