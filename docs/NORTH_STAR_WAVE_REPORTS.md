@@ -4304,3 +4304,20 @@ REGRESSIONS: existing5 B-roll cases PASS; old endpoint unchanged, canonical engi
 EXTERNAL BLOCKERS: genuine media/browser/Owner/providers/PostgreSQL/Docker/production separate; no blocker for continued safe implementation.
 OWNER ACTION REQUIRED: none for safe continuation; listening/UAT deferred.
 NEXT WAVE: reviewed canonical B-roll controller/Studio and explicit server-backed UNKNOWN recovery in parallel, then remaining original capabilities.
+
+
+## Waves3/8/16 — B-roll controller and fixture restore,2026-10-15
+
+WAVE: 3/8/16
+STATUS: Controller3 integrated/independently reviewed and scoped fresh-process restore verified; RootUI/full waves remain open.
+HEAD SHA: `2ee9b8198e446eadbce4439f175b4d0470a5e747` product; docs separately committed.
+CAPABILITIES COMPLETED: reviewed GET/PUT controller, immutable intent/custody/session/form/selection, same-key UNKNOWN proof/retry and private revoked guard; restored91tables/2objects retain exact history/receipt.
+CAPABILITIES PARTIAL: RootUI/current-history-current callback still unwired; reviewed preparation recovery, internal resolution/job observation, stock/generation/browser/genuine media/Owner/PostgreSQL/production/full ModeA/B/A-B-C remain open;59 broad groups unclosed.
+TESTS: RootStudio1712PASS0fail0skip9995.1632ms; focused37 and ownfull1712 overlap; independent7newbehavior+1pinsPASS517.3001ms. Fresh-process3 main-ASGI requests preserve91table row digests/twoobject bytes/originalDB bytes,0newversion/DDL/socketattempt/provider.
+REAL PROVIDER TESTS: none; synthetic capture assets/probe/ASR/identity. No decode/render/browser/Owner acceptance inferred.
+MOCK TESTS: Node DOM/transport/storage/clock replay exact384811B actualSQL DTO. Restore uses actual owned SQLite/main-ASGI and fixture auth; not live/production/Hub state.
+EVIDENCE: SQL_BROLL_CONTROLLER_AND_RECOVERY_REVIEW.md; north-star/broll-controller-cold-evidence.json; frozen3/ZIP5/sourcebundles/Rootreview/fullStudio/restoreDB+objectZIP and raw helper failures retained.
+REGRESSIONS: source3 copied exactly, existingStudio1675 preserved; full1712PASS. No accepted replacement, DDL, publish/approval enablement, merge or deployment.
+EXTERNAL BLOCKERS: genuine browser/media/Owner/providers/production acceptance separate, not a blocker for next safe work.
+OWNER ACTION REQUIRED: none for safe continuation; listening/UAT deferred.
+NEXT WAVE: review/integrate server-backed prepared-Broll UNKNOWN recovery, wire reviewed placement UI, internal resolve/handoff/observation in parallel.

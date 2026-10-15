@@ -582,3 +582,10 @@ The bounded callback race is closed in these four paths. Continue explicit serve
 2026-10-15 — [API áp dụng B-roll có biên nhận](SQL_REVIEWED_BROLL_TIMELINE_API.md), product `ce74fa5008a85488df4115d925409fd4f8d91f1d`: GET ngữ cảnh/PUT xác nhận, full source/plan/asset custody, CAS/history và replay trong một giao dịch canonical; giữ âm thanh, hủy preview/approval cũ, không provider. Final39 SQL/API PASS và9 độc lập PASS; actual main5 request chỉ1 mutation. Studio/controller, resolve/polling, UNKNOWN recovery và browser/genuine media/Owner/provider/PostgreSQL/production vẫn mở;59 nhóm lớn chưa đóng.
 
 Continue new reviewed controller and explicit Studio integration, durable UNKNOWN settlement, provider-free internal selection followed by bounded authorized resolve/polling. Full genuine-media A/B/C, Owner and production gates remain separate.
+
+
+## Reviewed B-roll controller and scoped restore
+
+2026-10-15 — [Controller B-roll và phục hồi fixture](SQL_BROLL_CONTROLLER_AND_RECOVERY_REVIEW.md), product `2ee9b8198e446eadbce4439f175b4d0470a5e747`: source/controller có explicit read/apply/UNKNOWN/retry và private guard; Root UI chưa nối. Full primary Studio1.712 PASS, independent7 hành vi+1pins PASS. Tiến trình phục hồi mới giữ nguyên91 bảng/2object và biên nhận qua3 actualmain requests,0version mới/DDL/provider. Đây là Node/SQL fixtures, không video/browser/Owner/production acceptance;59 nhóm lớn vẫn mở.
+
+Next: integrate reviewed prepare UNKNOWN settlement after independent review, then wire reviewed placement Root UI/current-history-current and internal resolution/job observation. Production backup/restore and full original A/B/C are not certified by the fixture restore.
