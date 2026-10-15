@@ -126,6 +126,21 @@
           <label>Theo dõi chủ thể<select id="reframe-vision"><option value="">Cắt giữa · cần kiểm tra</option></select></label>
           <button id="apply-reframe" type="button">Áp dụng vào timeline</button>
           <p id="reframe-status" aria-live="polite"></p>
+          <details id="manual-reframe-workbench" class="manual-reframe-workbench">
+            <summary>Chỉnh đường crop thủ công</summary>
+            <p>Mốc thời gian tính theo video gốc. X/Y là tâm khung hình theo phần trăm; zoom 1 vừa tỷ lệ đã chọn. Crop giữ nguyên tiếng, phụ đề và các lớp khác. Đây là tọa độ bạn chọn, cần tạo preview và duyệt lại.</p>
+            <div id="sql-manual-reframe" aria-label="Đọc, đối chiếu và gửi lại yêu cầu crop thủ công"></div>
+            <form id="manual-reframe-form" novalidate>
+              <fieldset id="manual-reframe-fields" disabled>
+                <legend>Đường crop của video nguồn</legend>
+                <label>Tỷ lệ<select id="manual-reframe-aspect"><option>9:16</option><option>16:9</option><option>1:1</option><option>4:5</option></select></label>
+                <div class="manual-reframe-table"><table><thead><tr><th>Giây nguồn</th><th>X (%)</th><th>Y (%)</th><th>Zoom</th><th>Thao tác</th></tr></thead><tbody id="manual-reframe-points"></tbody></table></div>
+                <div class="manual-reframe-actions"><button id="manual-reframe-add" type="button">Thêm điểm</button><button id="manual-reframe-apply" type="submit">Lưu đường crop</button></div>
+              </fieldset>
+              <button id="manual-reframe-discard" type="button" disabled>Bỏ bản sửa chưa gửi</button>
+              <p id="manual-reframe-form-status" role="status" aria-live="polite">Đọc trạng thái hiện tại trước khi chỉnh các điểm crop.</p>
+            </form>
+          </details>
         </section>
         <section id="empty-state" class="studio-empty" hidden>
           <div class="empty-illustration">✂</div>

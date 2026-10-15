@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -24,8 +25,8 @@ function selection(){const data=r.processing_put.body;return{workspace_id:captur
 function harness(s=state(),handler,initialize=()=>({})){const calls=[],effects=[];let token='EXPLICIT_TRANSIENT_STUDIO_CONTRACT',audio='saved-audio',production='saved-production',now=Date.now();
   const policy=()=>s;
   const api=async(path,options)=>{calls.push(path);return handler?handler(path,calls.length,options):clone(path.endsWith('/versions')?r.history_after.body:r.processing_current.body);};
-  const history=new Function(segment('function videoWordHistoryMatches(','\nasync function refreshVideoWordReceipt')+'\nreturn videoWordHistoryMatches;')();
-  const own=new Function('state','sqlEditorState','variantFamilies','variantNarration','videoWordReview','initializeSqlTimelineAudioProcessing',
+  const history=withIdleManualReframe(segment('function videoWordHistoryMatches(','\nasync function refreshVideoWordReceipt')+'\nreturn videoWordHistoryMatches;')();
+  const own=withIdleManualReframe('state','sqlEditorState','variantFamilies','variantNarration','videoWordReview','initializeSqlTimelineAudioProcessing',
     '$','api','sessionToken','toast','productionWorkbenchDraft','audioWorkbenchDraft','audioRole','audioProcessingRead',
     'videoWordHistoryMatches','stopPreviewPolling','stopProductionPolling','render','syncVideoWordPeers','Date','sourceLinkedHeld',
     "let sqlAudioProcessing=null;const audioProcessingAdmission=Symbol('private-fixture');\n"+
@@ -146,7 +147,7 @@ for(const change of ['receipt-key','receipt-hash','current-version','configurati
   });
 test('private admission permits only its controller while peer-held writers stay closed and flags never reach fetch',async()=>{
   let audioHeld=true,wordHeld=false;const calls=[],audioPermit=Symbol('audio-only'),wordPermit=Symbol('word-only');
-  const api=new Function('authenticatedFetch','videoWordsHeld','videoWordAdmission','audioProcessingHeld','audioProcessingAdmission','sourceLinkedHeld','sourceLinkedAdmission',
+  const api=withIdleManualReframe('authenticatedFetch','videoWordsHeld','videoWordAdmission','audioProcessingHeld','audioProcessingAdmission','sourceLinkedHeld','sourceLinkedAdmission',
     segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
       async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},()=>wordHeld,wordPermit,()=>audioHeld,audioPermit,()=>false,Symbol('unused-source-controller'));
   for(const method of ['POST','PUT','PATCH','DELETE'])await assert.rejects(api('/api/v1/projects/current/timeline',{method}),/cấu hình âm thanh/);

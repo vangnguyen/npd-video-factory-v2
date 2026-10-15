@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -11,7 +12,7 @@ function state(){return {projectId:'prj_routing',playhead:0,redoStack:[],selecte
       {clip_id:'shot2',kind:'source',source_start:4,source_end:8,timeline_start:4,duration:4,volume:1}]},
     {track_id:'original',type:'audio',kind:'original_audio',clips:[{clip_id:'speech',kind:'audio',volume:.35}]},
     {track_id:'broll',type:'video',kind:'broll',clips:[{clip_id:'stock',kind:'video',volume:1}]}]}}};}
-function normalize(s=state()){return new Function('state','getClip',segment('function sourceLinkedOperations(','\nsourceLinkedEditor=')+'\nreturn sourceLinkedOperations;')(s,getClip);}
+function normalize(s=state()){return withIdleManualReframe('state','getClip',segment('function sourceLinkedOperations(','\nsourceLinkedEditor=')+'\nreturn sourceLinkedOperations;')(s,getClip);}
 
 test('source inspector keeps A/V linked without overwriting independent gain or caller inputs',()=>{
   const input=[{type:'trim',clip_id:'shot',source_start:.3,source_end:3,timeline_start:0},
@@ -57,7 +58,7 @@ test('storyboard and mixed Mode A sources retain their accepted editing route',(
 function mutationHarness({saved=true,pending=false,missing=false}={}){
   const s=state(),calls=[],effects=[];
   const controller=missing?null:{runOperations:async(ops,options)=>{calls.push({kind:'linked',ops,options});return saved;},isPending:()=>pending};
-  const run=new Function('state','sourceLinkedOperations','sourceLinkedEditor','setSaveStatus','toast','api','selectedClip','render','loadProject',
+  const run=withIdleManualReframe('state','sourceLinkedOperations','sourceLinkedEditor','setSaveStatus','toast','api','selectedClip','render','loadProject',
     segment('async function mutate(','\nasync function restoreVersion(')+'\nreturn mutate;')(
       s,normalize(s),controller,(...args)=>effects.push({status:args}),(message,error)=>effects.push({message,error}),
       async(path,options)=>{calls.push({kind:'generic',path,options});return path.endsWith('/versions')?[]:
@@ -92,7 +93,7 @@ test('actual independent speech mutation retains the generic route and old inval
 
 test('private linked admission cannot bypass held audio/words and never reaches fetch',async()=>{
   let linked=true,audio=false,words=false;const calls=[],l=Symbol('linked'),a=Symbol('audio'),w=Symbol('words');
-  const api=new Function('authenticatedFetch','sourceLinkedHeld','sourceLinkedAdmission','audioProcessingHeld','audioProcessingAdmission','videoWordsHeld','videoWordAdmission',
+  const api=withIdleManualReframe('authenticatedFetch','sourceLinkedHeld','sourceLinkedAdmission','audioProcessingHeld','audioProcessingAdmission','videoWordsHeld','videoWordAdmission',
     segment('class ApiError extends Error {','\nfunction toast(')+'\nreturn api;')(
       async(path,options)=>{calls.push({path,options});return{ok:true,status:204};},()=>linked,l,()=>audio,a,()=>words,w);
   for(const method of ['PUT','POST','DELETE','PATCH'])await assert.rejects(api('/api/v1/projects/current/timeline',{method}),/chỉnh shot/);
@@ -104,7 +105,7 @@ test('private linked admission cannot bypass held audio/words and never reaches 
   audio=false;words=true;await assert.rejects(api('/api/v1/projects/current/timeline/source-linked-edit',{method:'PUT',sourceLinkedAdmission:l}),/sửa từ/);
 });
 test('audio admission tracks only its own work and does not self-block a linked request',()=>{
-  const own=new Function('sqlAudioProcessing','sourceLinkedEditor',segment('function audioProcessingHeld(){','\nconst videoWordAdmission')+'\nreturn audioProcessingHeld;')(
+  const own=withIdleManualReframe('sqlAudioProcessing','sourceLinkedEditor',segment('function audioProcessingHeld(){','\nconst videoWordAdmission')+'\nreturn audioProcessingHeld;')(
     null,{isWorking:()=>true,isDirty:()=>true,isPending:()=>true});
   assert.equal(own(),false);
 });
@@ -112,7 +113,7 @@ test('audio admission tracks only its own work and does not self-block a linked 
 function initialReadHarness(s,active={}){
   const permit=Symbol('private-initial-read'),messages=[],intent='unchanged-frozen-intent';
   const preflight=segment('async function loadProject(','\n  const loadedProjectId = state.projectId;');
-  const run=new Function('state','initialProjectRead','sourceLinkedHeld','audioProcessingHeld','videoWordsHeld',
+  const run=withIdleManualReframe('state','initialProjectRead','sourceLinkedHeld','audioProcessingHeld','videoWordsHeld',
     'sourceLinkedEditor','sqlAudioProcessing','videoWordReview','variantNarration','audioReview','stockReview','toast',
     preflight+'\nreturn "READ_ONLY_ADMITTED";}\nreturn loadProject;')(
       s,permit,()=>true,()=>true,()=>true,{isWorking:()=>active.source===true},

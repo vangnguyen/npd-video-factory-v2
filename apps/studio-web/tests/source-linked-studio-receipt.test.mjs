@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -37,9 +38,9 @@ function harness(s=state(),handler,initialize=()=>null){let token='EXPLICIT_LINK
   const calls=[],effects=[];let controller;
   const api=async(path,options)=>{calls.push({path,options});return handler?handler(path,calls.length,options):
     clone(path.endsWith('/versions')?r.history_after.body:r.linked_current.body);};
-  const stable=new Function(segment('function sqlAudioStable(','\nfunction sqlAudioSourceValue(')+'\nreturn sqlAudioStable;')();
-  const history=new Function(segment('function videoWordHistoryMatches(','\nasync function refreshVideoWordReceipt')+'\nreturn videoWordHistoryMatches;')();
-  const own=new Function('state','sqlEditorState','reviewedAnalysis','variantFamilies','variantNarration','videoWordReview','sqlAudioProcessing',
+  const stable=withIdleManualReframe(segment('function sqlAudioStable(','\nfunction sqlAudioSourceValue(')+'\nreturn sqlAudioStable;')();
+  const history=withIdleManualReframe(segment('function videoWordHistoryMatches(','\nasync function refreshVideoWordReceipt')+'\nreturn videoWordHistoryMatches;')();
+  const own=withIdleManualReframe('state','sqlEditorState','reviewedAnalysis','variantFamilies','variantNarration','videoWordReview','sqlAudioProcessing',
     'audioRole','sessionToken','productionWorkbenchDraft','audioWorkbenchDraft','api','sqlAudioStable','sourceLinkedRead','videoWordHistoryMatches',
     'stopPreviewPolling','stopProductionPolling','render','getClip','initializeSqlSourceLinkedEdit','$','toast','Date','audioReview','stockReview','videoReview',
     "let sourceLinkedEditor=null;const sourceLinkedAdmission=Symbol('private-source-fixture');\n"+
