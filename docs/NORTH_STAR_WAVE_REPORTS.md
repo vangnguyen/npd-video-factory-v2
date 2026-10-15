@@ -4321,3 +4321,20 @@ REGRESSIONS: source3 copied exactly, existingStudio1675 preserved; full1712PASS.
 EXTERNAL BLOCKERS: genuine browser/media/Owner/providers/production acceptance separate, not a blocker for next safe work.
 OWNER ACTION REQUIRED: none for safe continuation; listening/UAT deferred.
 NEXT WAVE: review/integrate server-backed prepared-Broll UNKNOWN recovery, wire reviewed placement UI, internal resolve/handoff/observation in parallel.
+
+
+## Waves3/6/8/16 — Reviewed B-roll recovery/resolution/media,2026-10-15
+
+WAVE: 3/6/8/16
+STATUS: Scoped implementation integrated/preserved; local-real review QC passed. Full waves/ModeA-B remain open.
+HEAD SHA: `4f9d2cdf870ce61d6074a2f71472f8958bd44e07` product; media executed `b7bbb027b4951382f9861eecaa581163b202293d`; docs separately committed.
+CAPABILITIES COMPLETED: server-backed explicit held-request settlement/UI, immutable original/late evidence; reviewed internal admission/exact-job observation/private worker attempt/completion/source-custody fences; physical local Remotion/QC/PCM evidence archived.
+CAPABILITIES PARTIAL: absent credential renewal without server witness remains failclosed/internal implementation gap; Root placement/internaljob UI, stock/generation/semantic Vision/genuine ASR/source/Owner/production/fullA-B-C remain open. Colorfidelity NOT_VERIFIED.59 broad groups unclosed.
+TESTS: primaryStudio1758PASS0fail0skip12268.1877ms; recoverySQL32PASS133.85s. Resolver author31PASS167.64s/legacy20PASS170.61s/independent3PASS23.54s/primary8PASS25.37s separate scopes with overlap. ActualASGI capture10records/1PASS6.48s. One real review Remotion/FullQC passed; originalPCM exact,87tables schema identical/oldrows not deleted.
+REAL PROVIDER TESTS: no new external/paid/ASR/TTS/semanticVision calls. Motion visuals synthetic; speech/23ASR words reused from prior public benchmark. Local FFmpeg/Remotion/QC real; no real publication/deployment.
+MOCK TESTS: Node DOM/transport/storage and fixture human auth/source metadata; SQLite/ASGI/worker/bytes are real local components. FixtureQueue keycollision was rejected before processor then correct render ran; no Redis/production isolation claim.
+EVIDENCE: SQL_BROLL_RECOVERY_RESOLUTION_MEDIA_REVIEW.md and three north-star/broll-*-evidence indexes; source ZIP/bundles, independent reviews, raw pre-fix/harness failures, fullStudio/SQL logs, video/PCM/manifest/SRT/QC/source/database/API capture archive62entries.
+REGRESSIONS: four existing pending callback guards/controller3 preserved; newer main mounts preserved; source/inventory/bundles checked. Old accepted media not replaced. Earlier failed video remains physically missing. RawRGB MAE threshold failed and remains NOT_VERIFIED; not relabeled PASS.
+EXTERNAL BLOCKERS: Owner UAT/listening deferred; browser and providers/production acceptance separate. Missing provider is not a reason to stop safe work.
+OWNER ACTION REQUIRED: none for current safe implementation. Automatic approval review rejected cache deletion with no detailed reason; cache retained/no deletion retry.
+NEXT WAVE: Root placement UI, internal resolution controller/UI, signed witness renewal, color conversion and subsequent safe MasterSpec gaps in parallel.

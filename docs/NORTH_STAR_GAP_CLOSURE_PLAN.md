@@ -589,3 +589,10 @@ Continue new reviewed controller and explicit Studio integration, durable UNKNOW
 2026-10-15 — [Controller B-roll và phục hồi fixture](SQL_BROLL_CONTROLLER_AND_RECOVERY_REVIEW.md), product `2ee9b8198e446eadbce4439f175b4d0470a5e747`: source/controller có explicit read/apply/UNKNOWN/retry và private guard; Root UI chưa nối. Full primary Studio1.712 PASS, independent7 hành vi+1pins PASS. Tiến trình phục hồi mới giữ nguyên91 bảng/2object và biên nhận qua3 actualmain requests,0version mới/DDL/provider. Đây là Node/SQL fixtures, không video/browser/Owner/production acceptance;59 nhóm lớn vẫn mở.
 
 Next: integrate reviewed prepare UNKNOWN settlement after independent review, then wire reviewed placement Root UI/current-history-current and internal resolution/job observation. Production backup/restore and full original A/B/C are not certified by the fixture restore.
+
+
+## Reviewed B-roll recovery/resolution and local media
+
+2026-10-15 — [Recovery, internal resolution và video B-roll thực](SQL_BROLL_RECOVERY_RESOLUTION_MEDIA_REVIEW.md), product `4f9d2cdf870ce61d6074a2f71472f8958bd44e07`: recovery được ghép thành3commit; fullStudio1.758PASS và32SQLPASS. Reviewed internal resolution có1receipt/job, GET0write/handoff và source/custody/privateclaim completion fence; author31+legacy20/independent3/primary8 PASS là các tập riêng có overlap. Local video thực tại b7bbb027: Remotion+FullQC PASS, PCM giữ nguyên; 87bảng không xóa hàng cũ, archive62files/18.134.722B. Hình QA tổng hợp/lời benchmark, proxy540x960; không freshASR/provider/Owner/final/fullArtifactA. RGBcolorfidelity NOT_VERIFIED và fixturequeue không chứng nhậnRedis. UI placement/internaljob và witness cho absent credential renewal đang làm;59 nhóm lớn vẫn mở.
+
+Next safe work: finish Root placement UI and exact-job internal resolver controller/UI; dedicated stable-key witnessed absent-request renewal; inspect renderer color conversion; genuine-source and browser acceptance. No legacy unwitnessed authority relaxation. User deferred Owner listening/UAT. Failed automatic cache deletion was not retried; no bytes freed by that attempt.

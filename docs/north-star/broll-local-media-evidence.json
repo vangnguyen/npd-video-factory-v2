@@ -1,0 +1,391 @@
+{
+  "created_at": "2026-10-15T10:21:06.385229+00:00",
+  "execution_head": "b7bbb027b4951382f9861eecaa581163b202293d",
+  "archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-reviewed-media-evidence-n1.zip",
+    "bytes": 18134722,
+    "sha256": "659e69863f2f181bdfed086e28606dc740a5694bafd2bdb4ec2f32c536d31be9"
+  },
+  "files": [
+    {
+      "path": "C:\\vfns-sql-linked-real-01\\clone.sqlite",
+      "bytes": 2285568,
+      "sha256": "07241f00b22b77c0fbcf8341358e27b3ac6db5f58e51de312f2b28ed0e482ddb",
+      "archive_name": "baseline/original-clone.sqlite"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-reviewed-media-inspection-n2.json",
+      "bytes": 18871,
+      "sha256": "e3eea7190c5b806a2e51fe403c28e162aa7bde88efab6deb13a58ac0284097fe",
+      "archive_name": "execution/broll-reviewed-media-inspection-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-reviewed-media-preflight-n1.json",
+      "bytes": 401936,
+      "sha256": "66dd1f99473511c7e097370a38a732cb88dc58b47d1227280f010f33689cb760",
+      "archive_name": "execution/broll-reviewed-media-preflight-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-reviewed-media-run-n1.json",
+      "bytes": 1929,
+      "sha256": "269539bc47c6d6d2b4d7be2eabbefb7ce561b164ff2520e5340609fcbd2b5ce8",
+      "archive_name": "execution/broll-reviewed-media-run-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\inspect-reviewed-broll-media-n1.log",
+      "bytes": 314,
+      "sha256": "bb072569b2559b2d87bc19e721f03351536be43f39c4a5ff56ea06df0c78c507",
+      "archive_name": "execution/inspect-reviewed-broll-media-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\inspect-reviewed-broll-media-n1.py",
+      "bytes": 4351,
+      "sha256": "e2d6e43f2b40bc4de17ca1305620e6c85ac9f55965785dea248b90cf606c7fa6",
+      "archive_name": "execution/inspect-reviewed-broll-media-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\inspect-reviewed-broll-media-n2.log",
+      "bytes": 1229,
+      "sha256": "55339cb718726f09e5423d30a01d16bf1db88abbf44b91f3b3803a15286df26a",
+      "archive_name": "execution/inspect-reviewed-broll-media-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\inspect-reviewed-broll-media-n2.py",
+      "bytes": 4799,
+      "sha256": "51dc557e2022c120471e483493c4c275683b4e0d072a2ef34fe8b1f88be93d41",
+      "archive_name": "execution/inspect-reviewed-broll-media-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\prepare-media-inspection-n2.py",
+      "bytes": 1220,
+      "sha256": "dafb2a818c9934109604c7eb6d86a8ae318c33f85fa9db2256a3eb8d00b9e3a5",
+      "archive_name": "execution/prepare-media-inspection-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\prepare-reviewed-broll-media-n1.log",
+      "bytes": 288,
+      "sha256": "151d34f8b7d0e0c02aef0c7f96c288f748b2da039fdad151679eb9247a74a07c",
+      "archive_name": "execution/prepare-reviewed-broll-media-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\prepare-reviewed-broll-media-n1.py",
+      "bytes": 4304,
+      "sha256": "6a2a6b24e44340e37940a112d5a79902f5a7860fa7088de0adf6a46acd6b22a1",
+      "archive_name": "execution/prepare-reviewed-broll-media-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\run-reviewed-broll-media-n1.log",
+      "bytes": 2624,
+      "sha256": "1d49449677fad8af9f1299838dc7cb21e94ea2ae470775d030e883d1287a90b5",
+      "archive_name": "execution/run-reviewed-broll-media-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\run-reviewed-broll-media-n1.py",
+      "bytes": 12616,
+      "sha256": "4f82d8914ed31751e6c77181676173283474c18f218304417980b8d195f912a3",
+      "archive_name": "execution/run-reviewed-broll-media-n1.py"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\apply-reviewed-placement-intent.json",
+      "bytes": 535,
+      "sha256": "d8538480daebb02b753769142b75878bff80d7475f7ab69acd82760f8addd51f",
+      "archive_name": "fixture/api-n5-render/apply-reviewed-placement-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\apply-reviewed-placement-response.json",
+      "bytes": 353694,
+      "sha256": "3c674a13a2c535ab4a83ff00d9759b263b7872c14fa8aeac7e9f61931cfac138",
+      "archive_name": "fixture/api-n5-render/apply-reviewed-placement-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\original-speech-only-intent.json",
+      "bytes": 911,
+      "sha256": "a6b0406ecc9d1e3cf23b1b840c55092e5cdd58ce090bd5831500df140f23b7d7",
+      "archive_name": "fixture/api-n5-render/original-speech-only-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\original-speech-only-response.json",
+      "bytes": 6976,
+      "sha256": "9afba3ce5544fc600ab2c5919b5e66fe3c2e5b6b356f245c9e3b43bfcb1a0290",
+      "archive_name": "fixture/api-n5-render/original-speech-only-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\package-v7-intent.json",
+      "bytes": 223,
+      "sha256": "08fc26ec0a39eca516ef9ea3b4161d686485c29c3ee2ec2344cfac727e14f9ca",
+      "archive_name": "fixture/api-n5-render/package-v7-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\package-v7-response.json",
+      "bytes": 6288,
+      "sha256": "4c497871b911ad503b3f844c02e1c25b35f2ed79cb3b146ca3152fbe5ab9187e",
+      "archive_name": "fixture/api-n5-render/package-v7-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\plan-context-intent.json",
+      "bytes": 145,
+      "sha256": "30a7581522a4c4b16e7c8e97df15b066a39e246f8869b8001ba290b5b53d6898",
+      "archive_name": "fixture/api-n5-render/plan-context-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\plan-context-response.json",
+      "bytes": 5021,
+      "sha256": "2dfe2e1319d65ff5ba860c2cc1699477b1bc993eab5b9014926c1628475e58ca",
+      "archive_name": "fixture/api-n5-render/plan-context-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\prepare-reviewed-plan-intent.json",
+      "bytes": 549,
+      "sha256": "0ccee91c96567f198c5d86bf773beb26321b414c292a9f3cc02d9d0cfd0c10ad",
+      "archive_name": "fixture/api-n5-render/prepare-reviewed-plan-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\prepare-reviewed-plan-response.json",
+      "bytes": 10056,
+      "sha256": "30cf92433d2d77f4df647f9cf8dad66b0d3bd91810eff7a1faaedeb8d0a499e7",
+      "archive_name": "fixture/api-n5-render/prepare-reviewed-plan-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\replay-reviewed-placement-intent.json",
+      "bytes": 535,
+      "sha256": "d8538480daebb02b753769142b75878bff80d7475f7ab69acd82760f8addd51f",
+      "archive_name": "fixture/api-n5-render/replay-reviewed-placement-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\replay-reviewed-placement-response.json",
+      "bytes": 353693,
+      "sha256": "90685878646a962d3f0e42abaa7231fd85a638f582382e936469f90db244643a",
+      "archive_name": "fixture/api-n5-render/replay-reviewed-placement-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\resolve-internal-0-intent.json",
+      "bytes": 260,
+      "sha256": "7d0fc9909094c27835632cbca6145e319130f7f77c74d4ef321cf116f940b1b0",
+      "archive_name": "fixture/api-n5-render/resolve-internal-0-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\resolve-internal-0-response.json",
+      "bytes": 1652,
+      "sha256": "580308cb282e04719720f67eb8a7a3c266e16920a03eb341ba6421232583d415",
+      "archive_name": "fixture/api-n5-render/resolve-internal-0-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\review-enqueue-intent.json",
+      "bytes": 320,
+      "sha256": "2ce68dac91ab58682ae4e7925190a69f7adccb1dcb452ea73147e8df818fc614",
+      "archive_name": "fixture/api-n5-render/review-enqueue-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\review-enqueue-response.json",
+      "bytes": 2429,
+      "sha256": "c1a258cc24a2d13994058d313a61b8dc18cccdbceea6eb1732304b3e9695e238",
+      "archive_name": "fixture/api-n5-render/review-enqueue-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\review-placement-context-intent.json",
+      "bytes": 178,
+      "sha256": "9a8e73f2f6b38ba78f3076c40a8af0684916bc81a5ac4b109e47d1806fc5738d",
+      "archive_name": "fixture/api-n5-render/review-placement-context-intent.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\api-n5-render\\review-placement-context-response.json",
+      "bytes": 346380,
+      "sha256": "623fa8a5d45a7265734fec888273d1ec8ef0cecfee5a526af2561234120d3d7c",
+      "archive_name": "fixture/api-n5-render/review-placement-context-response.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\canonical-broll-audio.canonical-filter.txt",
+      "bytes": 802,
+      "sha256": "5356901101b3d54b4427fd2206384d6e28483212a02dfb60e67957a75f0876d9",
+      "archive_name": "fixture/canonical-broll-audio.canonical-filter.txt"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\canonical-broll-audio.json",
+      "bytes": 27023,
+      "sha256": "06bbc52f47216af62677f704cbb1538e3750d983eef008816e89532a7b333624",
+      "archive_name": "fixture/canonical-broll-audio.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\canonical-broll-audio.wav",
+      "bytes": 1222880,
+      "sha256": "164a8a1c02c41f576459aac10cb3a733a746761301d9946ae273d860e3aaa0a0",
+      "archive_name": "fixture/canonical-broll-audio.wav"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\clone.sqlite",
+      "bytes": 2494464,
+      "sha256": "a570dfa373d92a6e0e9e9617fbe0df84f0b7d0ed7211eb28f3133d27140762a7",
+      "archive_name": "fixture/clone.sqlite"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\inspect-motion-1s.png",
+      "bytes": 95666,
+      "sha256": "7644b5f798da03d070720700102e32d1af162f9606d70ffe57da084b42752ce6",
+      "archive_name": "fixture/inspect-motion-1s.png"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\inspect-render-1s.png",
+      "bytes": 164624,
+      "sha256": "ca94b202eb343c1854b63521178b354bbfdaa575ca42bf41dcd81e773aafdd3b",
+      "archive_name": "fixture/inspect-render-1s.png"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\internal-jobs.json",
+      "bytes": 2225,
+      "sha256": "9a79a75cec06e761100f131de486e4898e72fb4249b46a4757c5044104952e3c",
+      "archive_name": "fixture/internal-jobs.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\local-network-deny.cjs",
+      "bytes": 4000,
+      "sha256": "7567335bae2546e07f557a1bd2a9e3ac382bc6ef1198190ee3c49dc627de5b2c",
+      "archive_name": "fixture/local-network-deny.cjs"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\media-run-started.json",
+      "bytes": 329,
+      "sha256": "34a49de07fccd9fdab3b40e7a80dea7ca4ab7f53d7d6d30bfe6fec7d8ddcde50",
+      "archive_name": "fixture/media-run-started.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\network-events-2948.jsonl",
+      "bytes": 970,
+      "sha256": "9cd3568c6270859922c32f894fe1dee9c7a4de59451a718b679e0af9c8cc3005",
+      "archive_name": "fixture/network-events-2948.jsonl"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\broll\\qa-motion-7cce80300a530faa66d32e78.mp4",
+      "bytes": 6221331,
+      "sha256": "7cce80300a530faa66d32e782d0c9ef91db54be5d363f51e4f2a51fe7656bc78",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/broll/qa-motion-7cce80300a530faa66d32e78.mp4"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\production-renders\\rnd_c52295311d2945b8bf1e\\audio-mix.wav",
+      "bytes": 1222880,
+      "sha256": "164a8a1c02c41f576459aac10cb3a733a746761301d9946ae273d860e3aaa0a0",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/production-renders/rnd_c52295311d2945b8bf1e/audio-mix.wav"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\production-renders\\rnd_c52295311d2945b8bf1e\\narration.wav",
+      "bytes": 611372,
+      "sha256": "041001a853dfab90a00042c64b993e059a7ddba1daab43598b04a4dc1e18e495",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/production-renders/rnd_c52295311d2945b8bf1e/narration.wav"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\production-renders\\rnd_c52295311d2945b8bf1e\\qc.json",
+      "bytes": 1759,
+      "sha256": "e6b94e60b031f98c678f1a901a513bb4afc657757de5951590a23284ae919251",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/production-renders/rnd_c52295311d2945b8bf1e/qc.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\production-renders\\rnd_c52295311d2945b8bf1e\\render-evidence.json",
+      "bytes": 37369,
+      "sha256": "96406982c9add287cfca220affaec74640e0eca2cff6c0665945991c307678b5",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/production-renders/rnd_c52295311d2945b8bf1e/render-evidence.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\production-renders\\rnd_c52295311d2945b8bf1e\\review.mp4",
+      "bytes": 1459441,
+      "sha256": "f7a559bbb2757e6edd2667441af65bbcdbe0c879d5e21bef9e2289e821e125ae",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/production-renders/rnd_c52295311d2945b8bf1e/review.mp4"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\production-renders\\rnd_c52295311d2945b8bf1e\\subtitles.srt",
+      "bytes": 199,
+      "sha256": "518fd002a63f116f4cc0e9839023cd0046f9ef16977e8591724dca719e07bb56",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/production-renders/rnd_c52295311d2945b8bf1e/subtitles.srt"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\objects\\workspaces\\wsp_8582abb5b2004b69acc85bf4\\projects\\prj_7c9267f5bcf847a4ba7e0625\\uploads\\1a77addb76019e92c960f174\\synthetic-card-public-fleurs-speech.mp4",
+      "bytes": 411042,
+      "sha256": "1a77addb76019e92c960f17441d025927fa37994ed1a981e3ae512c3d2f39392",
+      "archive_name": "fixture/objects/workspaces/wsp_8582abb5b2004b69acc85bf4/projects/prj_7c9267f5bcf847a4ba7e0625/uploads/1a77addb76019e92c960f174/synthetic-card-public-fleurs-speech.mp4"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\ownership.json",
+      "bytes": 401936,
+      "sha256": "66dd1f99473511c7e097370a38a732cb88dc58b47d1227280f010f33689cb760",
+      "archive_name": "fixture/ownership.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\qc.json",
+      "bytes": 1695,
+      "sha256": "af4d4f413980e4339ec42de6eb5c7d19319d5927600359302206fa84900e45b6",
+      "archive_name": "fixture/qc.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\render-evidence\\audio-mix.canonical-filter.txt",
+      "bytes": 802,
+      "sha256": "5356901101b3d54b4427fd2206384d6e28483212a02dfb60e67957a75f0876d9",
+      "archive_name": "fixture/render-evidence/audio-mix.canonical-filter.txt"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\render-evidence\\audio-mix.wav",
+      "bytes": 1222880,
+      "sha256": "164a8a1c02c41f576459aac10cb3a733a746761301d9946ae273d860e3aaa0a0",
+      "archive_name": "fixture/render-evidence/audio-mix.wav"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\render-evidence\\review.mp4",
+      "bytes": 1459441,
+      "sha256": "f7a559bbb2757e6edd2667441af65bbcdbe0c879d5e21bef9e2289e821e125ae",
+      "archive_name": "fixture/render-evidence/review.mp4"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\render-evidence\\subtitles.srt",
+      "bytes": 199,
+      "sha256": "518fd002a63f116f4cc0e9839023cd0046f9ef16977e8591724dca719e07bb56",
+      "archive_name": "fixture/render-evidence/subtitles.srt"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\render-evidence\\timeline-render-manifest.json",
+      "bytes": 6978,
+      "sha256": "94df1e232d92742ad50bc2f98ac3947f416e4532ff30869851258a32d4e85aab",
+      "archive_name": "fixture/render-evidence/timeline-render-manifest.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\resolved-plan.json",
+      "bytes": 11556,
+      "sha256": "d91fceae897be218005a0a8cadcdd1f866cbee77ab8cade9cdbdc0b52f78b8a0",
+      "archive_name": "fixture/resolved-plan.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\result.json",
+      "bytes": 1595,
+      "sha256": "4bbab95263c3546112940ef452f22efcacb73fefab02da04367aac8ff051266c",
+      "archive_name": "fixture/result.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\review-frame-3s.png",
+      "bytes": 176707,
+      "sha256": "a8d96150012bae03e4f406cdae283c3719d190a00851962b3230d838067bc486",
+      "archive_name": "fixture/review-frame-3s.png"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\review-job.json",
+      "bytes": 43208,
+      "sha256": "ddc7ca97e0ca126e06b20f586dcdf435561568d4c23c00522a72384fe91a8c1b",
+      "archive_name": "fixture/review-job.json"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\synthetic-motion-qa.mp4",
+      "bytes": 6221331,
+      "sha256": "7cce80300a530faa66d32e782d0c9ef91db54be5d363f51e4f2a51fe7656bc78",
+      "archive_name": "fixture/synthetic-motion-qa.mp4"
+    },
+    {
+      "path": "C:\\vfct\\broll-reviewed-media-n1\\timeline-v7.json",
+      "bytes": 336611,
+      "sha256": "e9af4973cd9ca9979f7dcbd796b7372d4bd1658040df66db50da27e15f73d790",
+      "archive_name": "fixture/timeline-v7.json"
+    }
+  ],
+  "status": "PRESERVED_LOCAL_REAL_TECHNICAL_REVIEW",
+  "scope": "Read actual video/QC/PCM/source/DB/capturedASGI; synthetic visual fixture and historical public speech-ASR. No fresh ASR/provider/Owner/final render/full Artifact A/production acceptance.",
+  "limitations": [
+    "FixtureQueue ignores keys; rejected leftover internal job before correct render. No real Redis isolation claim.",
+    "N1 RGBMAE strict8 threshold failed16.7073; N2 records attribution only. Color fidelity NOT_VERIFIED, spatial pattern visually inspected.",
+    "540x960 proxy review, canonical1080x1920; no1080 final render/approval/publication.",
+    "Earlier failed static-card review output remains physically missing; this new review does not replace or recover it."
+  ]
+}
