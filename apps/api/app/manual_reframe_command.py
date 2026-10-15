@@ -11,6 +11,7 @@ from sqlalchemy.exc import IntegrityError, OperationalError
 from .auto_edit_db import AutoEditAnalysisORM
 from .auto_edit_models import MediaMetadata
 from .db import AssetORM
+from .frozen_storage_read import asset_custody, FrozenReadRejected
 from .manual_reframe_api import ManualReframeReceipt, ManualReframeSettings, ManualReframeSource
 from .source_linked_edit_command import _begin_snapshot, _source, current, digest, SourceLinkedConflict
 from .timeline_db import TimelineORM, TimelineVersionORM
@@ -50,10 +51,17 @@ async def _identity(session, row, analysis, snapshot):
         raise ManualReframeConflict("MANUAL_REFRAME_MEASURED_SOURCE_CHANGED")
     value.update(width=media.width, height=media.height, fps=media.fps)
     value = ManualReframeSource.model_validate(value).model_dump(mode="json")
-    binding = digest(dict(workspace_id=row.workspace_id, project_id=row.project_id, source=value,
-        asset=dict(content_type=asset.content_type, kind=asset.kind, asset_class=asset.asset_class,
-            size_bytes=asset.size_bytes, media_metadata=measured)))
+    try:
+        custody = asset_custody(asset)
+    except FrozenReadRejected as exc:
+        raise ManualReframeConflict("MANUAL_REFRAME_CUSTODY_INVALID") from exc
+    binding = digest(dict(workspace_id=row.workspace_id, project_id=row.project_id, source=value, asset=custody))
     return value, media, binding
+
+
+def _request_sha(project_id, timeline_id, parent_version, request_key, actor_ref, settings, binding):
+    return digest(dict(project_id=project_id, timeline_id=timeline_id, parent_version=parent_version,
+        request_key=request_key, actor_ref=actor_ref, settings=settings, source_binding_sha256=binding))
 
 
 def _main(snapshot, source):
@@ -166,6 +174,8 @@ async def read_manual_reframe(service, project_id):
                             or version.mutation_json.get("publish_requested") is not False
                             or parent is None or parent.timeline_id != row.timeline_id or parent.project_id != project_id
                             or parent.version != saved["parent_version"]
+                            or saved["request_sha256"] != _request_sha(project_id, row.timeline_id, saved["parent_version"],
+                                saved["request_key"], saved["actor_ref"], saved["settings"], binding)
                             or digest(snapshot.model_dump(mode="json")) != saved["result_snapshot_sha256"]
                             or saved["applied_keyframes"] != crop_keyframes(_plan(ManualReframeSettings.model_validate(settings), source), media)):
                         raise ManualReframeConflict("MANUAL_REFRAME_RECEIPT_INVALID", row.current_version)
@@ -184,9 +194,7 @@ async def apply_manual_reframe(service, project_id, payload, *, actor_ref):
     settings = ManualReframeSettings(aspect_ratio=payload.aspect_ratio, points=payload.points)
     values = settings.model_dump(mode="json")
     expected, timeline_id, key = payload.expected_version, payload.expected_timeline_id, payload.request_key
-    request_sha = digest(dict(project_id=project_id, timeline_id=timeline_id, parent_version=expected,
-        request_key=key, actor_ref=actor_ref, settings=values,
-        source_binding_sha256=payload.expected_source_binding_sha256))
+    request_sha = _request_sha(project_id, timeline_id, expected, key, actor_ref, values, payload.expected_source_binding_sha256)
     try:
         async with service.repository.session_factory() as session:
             async with session.begin():

@@ -292,3 +292,28 @@ def test_ultrawide_zoom_is_relative_to_aspect_fit_without_fake_vision_confidence
     for point in points:
         assert source_identity['width']/source_identity['height']*point['width']/point['height']==pytest.approx(9/16)
         assert 0<=point['x']<=1-point['width'] and 0<=point['y']<=1-point['height']
+
+
+@pytest.mark.parametrize('field',['storage_provider','version','provenance'])
+@pytest.mark.parametrize('already_saved',[False,True])
+async def test_complete_asset_custody_drift_rejects_new_write_replay_and_old_head_receipt(manual,field,already_saved):
+    a=manual;request=body(a)
+    if already_saved:assert (await put(a,request)).status_code==200
+    async with a.sessions() as session:
+        asset=await session.get(AssetORM,a.analysis.asset_id)
+        if field=='storage_provider':asset.storage_provider='s3'
+        elif field=='version':asset.version+=1
+        else:asset.provenance={**asset.provenance,'custody_fixture_revision':2}
+        await session.commit()
+    before=await state(a)
+    read=await a.client.get(a.path,headers=TEST_HUMAN_HEADERS)
+    if already_saved:
+        assert read.status_code==409,read.text
+        assert read.json()['detail']['code']=='MANUAL_REFRAME_RECEIPT_INVALID'
+    else:
+        assert read.status_code==200,read.text
+        assert read.json()['source_binding_sha256']!=request['expected_source_binding_sha256']
+        assert read.json()['source']==a.read['source']
+    rejected=await put(a,request)
+    assert rejected.status_code==409 and rejected.json()['detail']['code']=='MANUAL_REFRAME_SOURCE_CHANGED'
+    assert await state(a)==before
