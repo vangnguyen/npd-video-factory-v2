@@ -1,0 +1,198 @@
+// An explicit, deferred B-roll plan. Mount/read/selection never POST or run a provider.
+import {sessionToken} from './auth.mjs';
+const copy = structuredClone;
+const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+const stable = value => JSON.stringify(value, (_k, v) => object(v)
+  ? Object.fromEntries(Object.keys(v).sort().map(k => [k, v[k]])) : v);
+const same = (a, b) => stable(a) === stable(b);
+const hash = v => typeof v === 'string' && /^[a-f0-9]{64}$/.test(v);
+const demand = (v, text) => {if (!v) throw Error(text);};
+const exact = (v, keys) => object(v) && same(Object.keys(v).sort(), [...keys].sort());
+const sessionFields = ['subject', 'display_name', 'platform_role', 'workspace_roles', 'expires_at', 'human_write_enabled'];
+const session = p => Object.fromEntries(sessionFields.map(k => [k, p?.[k]]));
+const roles = {viewer: 10, editor: 20, reviewer: 30, owner: 40};
+export const defaultBrollPlanSettings = () => ({allow_stock: false, allow_ai_image: false, allow_ai_video: false,
+  max_ai_cost_vnd: '0', resolver_priority: ['user_asset', 'internal_library']});
+
+export function brollPlanSettings(value) {
+  demand(exact(value, ['allow_stock', 'allow_ai_image', 'allow_ai_video', 'max_ai_cost_vnd', 'resolver_priority'])
+    && typeof value.allow_stock === 'boolean' && value.allow_ai_image === false && value.allow_ai_video === false
+    && value.max_ai_cost_vnd === '0' && Array.isArray(value.resolver_priority) && value.resolver_priority.length >= 1
+    && value.resolver_priority.length <= 3 && new Set(value.resolver_priority).size === value.resolver_priority.length
+    && value.resolver_priority.every(v => ['user_asset', 'internal_library', 'licensed_stock'].includes(v))
+    && value.allow_stock === value.resolver_priority.includes('licensed_stock'), 'Chọn rõ nguồn và thứ tự B-roll. AI cần quy trình ngân sách được duyệt riêng.');
+  return copy(value);
+}
+
+function boundary(s) {return stable([s.workspaceId, s.projectId, session(s.principal), s.timeline, s.analysis, s.assets,
+  s.learning_snapshot_id ?? null]);}
+function validateState(s, write = false, now = Date.now()) {
+  const p = s.principal, rank = Math.max(...[p?.platform_role, p?.workspace_roles?.['*'], p?.workspace_roles?.[s.workspaceId],
+    s.workspaceSlug ? p?.workspace_roles?.['slug:' + s.workspaceSlug] : null].map(v => roles[v] ?? 0));
+  demand(/^wsp_[A-Za-z0-9_-]{4,60}$/.test(s.workspaceId) && /^prj_[A-Za-z0-9_-]{4,60}$/.test(s.projectId)
+    && typeof p?.subject === 'string' && p.subject && Date.parse(p.expires_at) > now
+    && rank >= roles.viewer && !s.busy && !s.dirty, 'Cần phiên hợp lệ, lưu thay đổi và chờ tải xong.');
+  if (write) demand(rank >= roles.editor && p.human_write_enabled === true, 'Phiên này chưa được phép tạo đề xuất.');
+  demand(s.timeline?.workspace_id === s.workspaceId && s.timeline?.project_id === s.projectId
+    && s.timeline.source_kind === 'video_analysis' && s.analysis?.analysis_id === s.timeline.source_analysis_id,
+  'Chọn timeline video và kết quả phân tích cùng nguồn.');
+}
+
+export function validateBrollPlanContext(value, s, now = Date.now()) {
+  validateState(s, false, now);
+  const t = s.timeline, a = s.analysis, m = t.snapshot?.metadata;
+  demand(object(value) && value.schema_version === 'broll-plan-review-context.v1' && hash(value.context_sha256)
+    && hash(value.authority_sha256) && value.actor_ref === s.principal.subject
+    && value.workspace_id === s.workspaceId && value.project_id === s.projectId && value.timeline_id === t.timeline_id
+    && value.timeline_version === t.current_version && value.timeline_version_id === t.current_version_id
+    && hash(value.timeline_sha256) && hash(value.supporting_assets_sha256) && hash(value.project_sha256)
+    && value.source?.analysis_id === a.analysis_id && value.source.analysis_fingerprint === a.fingerprint
+    && value.source.asset_id === m?.source_asset_id && value.source.source_sha256 === a.provenance?.source_asset_checksum
+    && value.source.transcript_id === (m?.transcript_revision?.transcript_id ?? null)
+    && value.source.transcript_version === (m?.transcript_revision?.version ?? null)
+    && typeof value.can_prepare === 'boolean' && typeof value.licensed_stock_enabled === 'boolean'
+    && value.ai_planning_enabled === false && value.max_ai_cost_vnd === '0' && value.preparation_provider_calls === 0
+    && value.publishing_enabled === false && value.owner_approval_inferred === false,
+  'Bản đọc B-roll thiếu hoặc khác nguồn, transcript, phiên bản đang xem.');
+  if (value.licensed_stock_enabled) demand(value.providers?.stock?.status === 'healthy'
+    && value.providers.stock.paid === false && object(value.stock_binding) && value.stock_binding.paid === false
+    && hash(value.stock_binding.configuration_sha256), 'Stock chưa có cấu hình hợp lệ, miễn phí và được phép.');
+  return value;
+}
+
+export function initializeBrollPlanReview({api, getState, getSessionToken = sessionToken,
+  storage = globalThis.sessionStorage, cryptoImpl = globalThis.crypto,
+  newRequestKey = () => 'bpr_' + cryptoImpl.randomUUID(), onPrepared = async () => {}, onStatus = () => {}, clock = () => Date.now()}) {
+  let context = null, viewCapture = null, busy = false, disposed = false, pending = null, mayResend = false;
+  const retained = new Map();
+  const digest = async value => [...new Uint8Array(await cryptoImpl.subtle.digest('SHA-256',
+    new TextEncoder().encode(typeof value === 'string' ? value : stable(value))))].map(v => v.toString(16).padStart(2, '0')).join('');
+  const bucket = () => 'vf-broll-plan-pending-v1:' + stable([getState().workspaceId, getState().projectId, getState().principal?.subject]);
+  const path = () => `/api/v1/projects/${getState().projectId}/broll-plan-review`;
+  const token = () => {const v = getSessionToken(); demand(typeof v === 'string' && v.length >= 8 && v.length <= 2048,
+    'Cần thông tin xác thực của phiên.'); return v;};
+  const capture = (write = false) => {validateState(getState(), write, clock());
+    return {boundary: boundary(getState()), token: token(), bucket: bucket(), write};};
+  const unchanged = c => {
+    validateState(getState(), c.write, clock());
+    demand(!disposed && boundary(getState()) === c.boundary && token() === c.token && bucket() === c.bucket,
+      'Ngữ cảnh hoặc phiên đã đổi; đọc lại trước khi thao tác.');
+  };
+  async function publicSession(c, write = false) {
+    const p = await api('/api/v1/auth/session', {cache: 'no-store'}); unchanged(c);
+    demand(same(session(p), session(getState().principal)), 'Quyền hoặc phiên truy cập đã thay đổi.');
+    validateState(getState(), write, clock());
+  }
+  function load(c) {
+    const key = c.bucket, raw = storage?.getItem(key); unchanged(c);
+    demand(!retained.has(key) || retained.get(key) === raw, 'Yêu cầu B-roll đang giữ đã bị thay đổi hoặc xóa.');
+    if (raw) {const p = JSON.parse(raw);
+      demand(exact(p, ['schema_version', 'body', 'context', 'boundary', 'session_sha256', 'credential_sha256'])
+        && p.schema_version === 'broll-plan-pending.v1' && hash(p.session_sha256) && hash(p.credential_sha256)
+        && /^[A-Za-z0-9_-]{8,128}$/.test(p.body?.request_key), 'Yêu cầu B-roll đang giữ không hợp lệ; cần kiểm tra trước.');
+      pending = p; retained.set(key, raw);
+    } else pending = null;
+  }
+  async function hold(c, body) {
+    const previous = storage?.getItem(c.bucket); unchanged(c);
+    demand(previous === null || previous === undefined, 'Một lần tạo B-roll khác đang chờ trong phiên này.');
+    const value = {schema_version: 'broll-plan-pending.v1', body, context: copy(context), boundary: c.boundary,
+      session_sha256: await digest(session(getState().principal)), credential_sha256: await digest(c.token)};
+    unchanged(c); const observed = storage.getItem(c.bucket); unchanged(c);
+    demand(observed === previous, 'Một yêu cầu B-roll khác đã vào ô chờ; không ghi đè.');
+    storage.setItem(c.bucket, stable(value)); unchanged(c);
+    const stored = storage.getItem(c.bucket); unchanged(c);
+    demand(stored === stable(value), 'Chưa giữ được yêu cầu an toàn trước khi gửi.');
+    pending = value; retained.set(c.bucket, stable(value));
+  }
+  async function checkPending(c) {
+    load(c); demand(pending && pending.boundary === c.boundary && pending.session_sha256 === await digest(session(getState().principal))
+      && pending.credential_sha256 === await digest(c.token), 'Lần tạo đang giữ thuộc phiên hoặc bản dựng khác.');
+    unchanged(c); brollPlanSettings(pending.body.settings);
+    demand(pending.body.acknowledged === true && pending.body.context_sha256 === pending.context.context_sha256,
+      'Yêu cầu đang giữ đã thay đổi.');
+    validateBrollPlanContext(pending.context, getState(), clock());
+  }
+  async function accept(value, c) {
+    unchanged(c); const p = pending, r = value?.receipt;
+    const expectedRaw = retained.get(c.bucket);
+    function retainedRequest() {
+      const raw = storage.getItem(c.bucket); unchanged(c);
+      demand(typeof expectedRaw === 'string' && expectedRaw === stable(p) && raw === expectedRaw,
+        'Yêu cầu đang giữ đã đổi trong lúc đối chiếu.');
+    }
+    retainedRequest();
+    demand(object(value) && value.schema_version === 'broll-plan-review-result.v1' && ['prepared', 'unknown', 'rejected'].includes(value.state)
+      && value.preparation_provider_calls === 0 && value.publishing_enabled === false && value.owner_approval_inferred === false
+      && r?.schema_version === 'broll-plan-review-receipt.v1' && hash(r.request_sha256)
+      && r.request_key === p.body.request_key && r.context_sha256 === p.body.context_sha256
+      && r.authority_sha256 === p.context.authority_sha256 && r.actor_ref === getState().principal.subject
+      && r.workspace_id === getState().workspaceId && r.project_id === getState().projectId
+      && same(r.settings, p.body.settings) && same(r.source, p.context.source)
+      && r.learning_snapshot_id === p.body.learning_snapshot_id
+      && r.timeline_id === p.context.timeline_id && r.timeline_version === p.context.timeline_version
+      && r.timeline_version_id === p.context.timeline_version_id, 'Biên nhận B-roll không khớp yêu cầu đã giữ.');
+    if (value.state === 'unknown') {mayResend = false; demand(value.plan === null, 'Kết quả chưa rõ không được có bản đề xuất.');
+      onStatus('Chưa rõ kết quả; đối chiếu đúng lần tạo, không tạo yêu cầu mới.'); return value;}
+    if (value.state === 'prepared') {
+      const plan = value.plan, config = plan?.configuration;
+      const ready = plan?.status === 'draft' && Array.isArray(plan.items) && plan.items.length > 0
+        || plan?.status === 'stock_waiting' && plan.stock_planning?.status === 'waiting'
+          && Number.isSafeInteger(plan.stock_planning.total_searches) && plan.stock_planning.total_searches > 0;
+      demand(plan?.workspace_id === r.workspace_id && plan.project_id === r.project_id && /^mpl_[A-Za-z0-9_-]{4,60}$/.test(plan.media_plan_id)
+        && ready
+        && plan.analysis_id === r.source.analysis_id && config?.purpose === 'supporting_broll'
+        && config.transcript_id === r.source.transcript_id && config.max_ai_cost_vnd === '0'
+        && config.learning_snapshot_id === r.learning_snapshot_id
+        && same(Object.fromEntries(Object.keys(p.body.settings).map(k => [k, config[k]])), p.body.settings)
+        && plan.provenance?.source_asset_sha256 === r.source.source_sha256 && plan.provenance.transcript_id === r.source.transcript_id
+        && plan.source_media_mutated === false && plan.publish_requested === false && plan.paid_external_call === false,
+      'Bản đề xuất trả về sai nguồn hoặc quyền thực thi.');
+      retainedRequest(); await onPrepared(copy(plan), copy(r)); unchanged(c);
+    } else demand(value.plan === null && value.error_code === 'BROLL_REVIEW_CONTEXT_CHANGED', 'Lý do dừng chưa xác định.');
+    retainedRequest(); storage.removeItem(c.bucket); unchanged(c);
+    retained.delete(c.bucket); pending = null; mayResend = false; context = null; viewCapture = null;
+    onStatus(value.state === 'prepared' ? 'Đã lưu đề xuất; lịch stock chờ xác nhận tìm kiếm riêng.' : 'Nguồn đã đổi. Đọc lại và xem xét lựa chọn mới.');
+    return value;
+  }
+  async function run(fn) {demand(!disposed && !busy, 'Chờ thao tác B-roll đang chạy.'); busy = true;
+    try {return await fn();} finally {busy = false;}}
+  async function reload() {return run(async () => {
+    const c = capture(); load(c); demand(!pending, 'Đối chiếu lần tạo đang giữ trước khi lập lựa chọn mới.');
+    await publicSession(c); const value = await api(path(), {cache: 'no-store'}); unchanged(c);
+    validateBrollPlanContext(value, getState(), clock()); const {context_sha256, context_json, ...raw} = value;
+    demand(typeof context_json === 'string' && context_json.length <= 65536 && same(JSON.parse(context_json), raw)
+      && await digest(context_json) === context_sha256, 'Hash bản đọc B-roll không hợp lệ.'); unchanged(c);
+    context = copy(value); viewCapture = c; onStatus('Đã đọc nguồn. Chọn nguồn bổ trợ, thứ tự và xác nhận tạo bản nháp.'); return copy(value);
+  });}
+  async function prepare(settings, acknowledged) {return run(async () => {
+    const c = capture(true); load(c); demand(!pending && context && acknowledged === true, 'Đọc và xác nhận rõ lựa chọn trước khi tạo.');
+    demand(viewCapture && viewCapture.boundary === c.boundary && viewCapture.token === c.token,
+      'Nguồn, quyền hoặc phiên đã đổi từ lúc đọc đề xuất.');
+    validateBrollPlanContext(context, getState(), clock()); settings = brollPlanSettings(settings);
+    demand(!settings.allow_stock || context.licensed_stock_enabled, 'Stock chưa được cấu hình hoặc được phép.');
+    await publicSession(c, true); const key = newRequestKey(); demand(typeof key === 'string' && /^[A-Za-z0-9_-]{8,128}$/.test(key), 'Mã yêu cầu không hợp lệ.');
+    const learning = getState().learning_snapshot_id ?? null;
+    demand(learning === null || typeof learning === 'string' && /^lsn_[A-Za-z0-9_-]{4,60}$/.test(learning), 'Gợi ý học chưa có snapshot hợp lệ.');
+    await hold(c, {request_key: key, context_sha256: context.context_sha256, acknowledged: true, settings, learning_snapshot_id: learning});
+    unchanged(c); const result = await api(path(), {method: 'POST', body: JSON.stringify(pending.body)}); return accept(result, c);
+  });}
+  async function reconcile() {return run(async () => {
+    const c = capture(); await publicSession(c); await checkPending(c);
+    mayResend = false;
+    try {return await accept(await api(path() + '/requests/' + pending.body.request_key, {cache: 'no-store'}), c);}
+    catch (e) {unchanged(c); if (e.status === 404) {mayResend = true; onStatus('Chưa có biên nhận. Có thể gửi lại đúng yêu cầu sau khi xác nhận.'); return null;} throw e;}
+  });}
+  async function resend(acknowledged) {return run(async () => {
+    const c = capture(true); await publicSession(c, true); await checkPending(c);
+    demand(mayResend && acknowledged === true, 'Đối chiếu chưa có biên nhận và xác nhận trước khi gửi lại.');
+    const latest = await api(path(), {cache: 'no-store'}); unchanged(c);
+    demand(same(latest, pending.context), 'Nguồn hoặc cấu hình đã đổi; không gửi lại yêu cầu cũ.');
+    const raw = storage.getItem(c.bucket); unchanged(c);
+    demand(typeof retained.get(c.bucket) === 'string' && raw === retained.get(c.bucket) && raw === stable(pending),
+      'Yêu cầu đang giữ đã đổi trước khi gửi lại.');
+    mayResend = false; return accept(await api(path(), {method: 'POST', body: JSON.stringify(pending.body)}), c);
+  });}
+  return {reload, prepare, reconcile, resend, defaults: defaultBrollPlanSettings,
+    state: () => ({busy, context: copy(context), pending: copy(pending), mayResend}), dispose: () => {disposed = true; context = null;}};
+}

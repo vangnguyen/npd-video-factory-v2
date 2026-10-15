@@ -76,6 +76,8 @@ def state(provenance):
             or value.get('claim_id') is not None and not re.fullmatch(r'[a-f0-9]{32}', value['claim_id']) \
             or type(value.get('provider_calls')) is not int or value['provider_calls'] < 0:
         raise ValueError('STOCK_PLANNER_STATE_INVALID')
+    if 'review_required' in value and type(value['review_required']) is not bool:
+        raise ValueError('STOCK_PLANNER_STATE_INVALID')
     return copy.deepcopy(value)
 
 
@@ -127,7 +129,7 @@ def owned(value, claim_id, stamp=None):
         and (stamp is None or value['lease_until'] > clock(stamp))
 
 
-async def initialize(repository, identity, binding, stamp):
+async def initialize(repository, identity, binding, stamp, *, require_review=False):
     stamp = clock(stamp)
     async with repository.session_factory() as session, session.begin():
         row = await locked(session, identity)
@@ -136,7 +138,8 @@ async def initialize(repository, identity, binding, stamp):
         value = {'schema_version': 'sql-stock-planner.v1', 'binding': binding,
             'binding_sha256': digest(binding), 'status': 'waiting', 'next_at': stamp,
             'claim_id': None, 'lease_until': None, 'results': {}, 'failed_wire_cycles': {},
-            'provider_calls': 0, 'error_code': None}
+            'provider_calls': 0, 'error_code': None,
+            **({'review_required': True} if require_review else {})}
         transition(session, row, value, 'scheduled', details={'wire_calls': 0})
 
 
@@ -156,12 +159,16 @@ async def claim(repository, identity, stamp, *, expected_version=None, binding_s
         if reviewed and (value is None or row.version != expected_version
                 or value['binding_sha256'] != binding_sha256):
             raise StockPlannerConflict('STOCK_PLANNER_REVIEW_STALE')
+        if value is not None and value.get('review_required') is True and not reviewed:
+            return None
         if not allow_claim or value is None or value['status'] in TERMINAL or value['next_at'] is not None and value['next_at'] > stamp \
                 or value['claim_id'] is not None and value['lease_until'] > stamp:
             return None
         expired = value['claim_id'] is not None
         claim_id = uuid.uuid4().hex
         value.update(status='running', claim_id=claim_id, lease_until=stamp+LEASE_SECONDS, next_at=None)
+        if value.get('review_required') is True:
+            value['review_required'] = False
         transition(session, row, value, 'claimed', details={'expired_read_lease': expired,
             'unknown_outcome': expired, 'paid_replay_authorized': False, 'wire_calls': 0})
         return claim_id
@@ -236,7 +243,7 @@ async def due(repository, stamp, limit=25):
         result = []
         for row in rows:
             value = state(row.provenance_json)
-            if value is not None and value['binding'].get('paid') is False and (
+            if value is not None and value.get('review_required') is not True and value['binding'].get('paid') is False and (
                 value['claim_id'] is not None and value['lease_until'] <= stamp
                 or value['claim_id'] is None and value['next_at'] is not None and value['next_at'] <= stamp):
                 result.append(row.media_plan_id)

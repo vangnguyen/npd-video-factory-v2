@@ -1,0 +1,2466 @@
+{
+  "fixture_notice": "Actual SQLite and authenticated ASGI; synthetic source bytes/metadata and contract transcript. No genuine provider/model/media/browser acceptance.",
+  "clock": 1792053802509.7,
+  "network_attempts": 0,
+  "state": {
+    "workspaceId": "wsp_2e204026bce247b8a83ca0b4",
+    "projectId": "prj_c47ebc96cc6a4ff4bb26a272",
+    "principal": {
+      "subject": "usr:test-owner",
+      "display_name": "Test Owner",
+      "platform_role": "owner",
+      "workspace_roles": {
+        "*": "owner"
+      },
+      "expires_at": "2026-10-15T09:43:22.338455+00:00",
+      "human_write_enabled": true
+    },
+    "analysis": {
+      "analysis_id": "ana_7e47842aded34aed91fda959",
+      "workspace_id": "wsp_2e204026bce247b8a83ca0b4",
+      "project_id": "prj_c47ebc96cc6a4ff4bb26a272",
+      "project_version_id": "pver_98f3d96198d04052973918ba",
+      "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+      "status": "succeeded",
+      "fingerprint": "eaba62d7a8c393403d699cad87d05e7ca59b8fa499942331796e776a7d188046",
+      "configuration": {
+        "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+        "acceptance_operation_id": null,
+        "top_highlights": 3,
+        "silence_threshold_db": -35.0,
+        "minimum_silence_duration": 0.5,
+        "padding_before": 0.08,
+        "padding_after": 0.08,
+        "word_timing_policy": "strict_provider_intervals"
+      },
+      "source_media": {
+        "media_kind": "video",
+        "detected_content_type": "video/mp4",
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "duration_seconds": 16.0,
+        "width": 1080,
+        "height": 1920,
+        "fps": 30.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "audio_channels": 2,
+        "audio_sample_rate": 48000
+      },
+      "transcript": {
+        "transcript_id": "trn_8196be8e944b494dbc354024",
+        "analysis_id": "ana_7e47842aded34aed91fda959",
+        "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+        "version": 1,
+        "is_original_evidence": true,
+        "provider_key": "fixture-transcription",
+        "language": "vi",
+        "confidence": 0.99,
+        "segments": [
+          {
+            "segment_id": "seg_f87ec29e80734859948f1ddb",
+            "ordinal": 0,
+            "start_seconds": 0.32,
+            "end_seconds": 3.52,
+            "text": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+            "speaker": null,
+            "confidence": 0.99,
+            "words": [
+              {
+                "word_id": "wrd_ffd90c6c95e0425cb1523a2e",
+                "ordinal": 0,
+                "start_seconds": 0.32,
+                "end_seconds": 0.566154,
+                "text": "Ba",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_8189ed1428294fb8b6aa06ce",
+                "ordinal": 1,
+                "start_seconds": 0.566154,
+                "end_seconds": 0.812308,
+                "text": "giây",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_08af354015ca458ba6e4327c",
+                "ordinal": 2,
+                "start_seconds": 0.812308,
+                "end_seconds": 1.058462,
+                "text": "đầu",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_63dd14a81f38470da4879fe2",
+                "ordinal": 3,
+                "start_seconds": 1.058462,
+                "end_seconds": 1.304615,
+                "text": "tiên",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_c01b9173d811467ead62ed80",
+                "ordinal": 4,
+                "start_seconds": 1.304615,
+                "end_seconds": 1.550769,
+                "text": "quyết",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_279315fd5f124739af0100fd",
+                "ordinal": 5,
+                "start_seconds": 1.550769,
+                "end_seconds": 1.796923,
+                "text": "định",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_2ff95be51ef54123a33f2ecd",
+                "ordinal": 6,
+                "start_seconds": 1.796923,
+                "end_seconds": 2.043077,
+                "text": "người",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_7fe19367fc8540c0af0d1838",
+                "ordinal": 7,
+                "start_seconds": 2.043077,
+                "end_seconds": 2.289231,
+                "text": "xem",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_b5e7591e03044acf9e4ce6ca",
+                "ordinal": 8,
+                "start_seconds": 2.289231,
+                "end_seconds": 2.535385,
+                "text": "có",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_935893e364a64de9ab75a891",
+                "ordinal": 9,
+                "start_seconds": 2.535385,
+                "end_seconds": 2.781538,
+                "text": "tiếp",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_18c47b389fe5414cb9181620",
+                "ordinal": 10,
+                "start_seconds": 2.781538,
+                "end_seconds": 3.027692,
+                "text": "tục",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_8e5bda7b12ed4987aff7062d",
+                "ordinal": 11,
+                "start_seconds": 3.027692,
+                "end_seconds": 3.273846,
+                "text": "hay",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_698635e52f514fffb3f1ffbd",
+                "ordinal": 12,
+                "start_seconds": 3.273846,
+                "end_seconds": 3.52,
+                "text": "không.",
+                "confidence": 0.99
+              }
+            ]
+          },
+          {
+            "segment_id": "seg_17cf5ddc6cd14580b0cd418a",
+            "ordinal": 1,
+            "start_seconds": 4.32,
+            "end_seconds": 7.52,
+            "text": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+            "speaker": null,
+            "confidence": 0.99,
+            "words": [
+              {
+                "word_id": "wrd_383ac6a759c64c75850122c0",
+                "ordinal": 13,
+                "start_seconds": 4.32,
+                "end_seconds": 4.533333,
+                "text": "Nội",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_a54b5e1c622b4303b36b9ead",
+                "ordinal": 14,
+                "start_seconds": 4.533333,
+                "end_seconds": 4.746667,
+                "text": "dung",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_a9b3d9bf3d1341c7b6107dcd",
+                "ordinal": 15,
+                "start_seconds": 4.746667,
+                "end_seconds": 4.96,
+                "text": "tốt",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_17e16b6bb58d44a5ad37a800",
+                "ordinal": 16,
+                "start_seconds": 4.96,
+                "end_seconds": 5.173333,
+                "text": "cần",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_80677563419848fc8fd36398",
+                "ordinal": 17,
+                "start_seconds": 5.173333,
+                "end_seconds": 5.386667,
+                "text": "một",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_375a32f6df9c4edea64ad823",
+                "ordinal": 18,
+                "start_seconds": 5.386667,
+                "end_seconds": 5.6,
+                "text": "thông",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_ce504e16aa844ac1afb60fca",
+                "ordinal": 19,
+                "start_seconds": 5.6,
+                "end_seconds": 5.813333,
+                "text": "tin",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_5ad8f86700d74a78901d9322",
+                "ordinal": 20,
+                "start_seconds": 5.813333,
+                "end_seconds": 6.026667,
+                "text": "rõ",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_9e56b3269cba4a1a88abb7e2",
+                "ordinal": 21,
+                "start_seconds": 6.026667,
+                "end_seconds": 6.24,
+                "text": "ràng",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_a7f3a69c145f4f9fadc9b827",
+                "ordinal": 22,
+                "start_seconds": 6.24,
+                "end_seconds": 6.453333,
+                "text": "và",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_398b020f27e64207983202e4",
+                "ordinal": 23,
+                "start_seconds": 6.453333,
+                "end_seconds": 6.666667,
+                "text": "bằng",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_1fad22ff04dc43cdbbb97492",
+                "ordinal": 24,
+                "start_seconds": 6.666667,
+                "end_seconds": 6.88,
+                "text": "chứng",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_1db808dfe6f84ea2ad803087",
+                "ordinal": 25,
+                "start_seconds": 6.88,
+                "end_seconds": 7.093333,
+                "text": "dễ",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_aa63994bd348411c90eaf012",
+                "ordinal": 26,
+                "start_seconds": 7.093333,
+                "end_seconds": 7.306667,
+                "text": "kiểm",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_c756f776535c4181b3427d7c",
+                "ordinal": 27,
+                "start_seconds": 7.306667,
+                "end_seconds": 7.52,
+                "text": "tra.",
+                "confidence": 0.99
+              }
+            ]
+          },
+          {
+            "segment_id": "seg_6cba1479e4c142f2947d5a01",
+            "ordinal": 2,
+            "start_seconds": 8.32,
+            "end_seconds": 11.52,
+            "text": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+            "speaker": null,
+            "confidence": 0.99,
+            "words": [
+              {
+                "word_id": "wrd_2b13620eaf2d4e7faaa3449a",
+                "ordinal": 28,
+                "start_seconds": 8.32,
+                "end_seconds": 8.533333,
+                "text": "Khoảng",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_f3fad1f96e894c41ac398a38",
+                "ordinal": 29,
+                "start_seconds": 8.533333,
+                "end_seconds": 8.746667,
+                "text": "lặng",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_5ca59b171dc8460b8b917be6",
+                "ordinal": 30,
+                "start_seconds": 8.746667,
+                "end_seconds": 8.96,
+                "text": "hợp",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_5b26bc4ec0cd4cc5b6a62144",
+                "ordinal": 31,
+                "start_seconds": 8.96,
+                "end_seconds": 9.173333,
+                "text": "lý",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_1411f24dd15b449b86098658",
+                "ordinal": 32,
+                "start_seconds": 9.173333,
+                "end_seconds": 9.386667,
+                "text": "giúp",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_df218341782d45e3ab051e82",
+                "ordinal": 33,
+                "start_seconds": 9.386667,
+                "end_seconds": 9.6,
+                "text": "nhịp",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_7dc14e16f2b442f49ffb569c",
+                "ordinal": 34,
+                "start_seconds": 9.6,
+                "end_seconds": 9.813333,
+                "text": "dựng",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_4fcb3365f931407797b00567",
+                "ordinal": 35,
+                "start_seconds": 9.813333,
+                "end_seconds": 10.026667,
+                "text": "tự",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_e940740071b24806a3469c00",
+                "ordinal": 36,
+                "start_seconds": 10.026667,
+                "end_seconds": 10.24,
+                "text": "nhiên",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_7cba196ac8fd47da8977e968",
+                "ordinal": 37,
+                "start_seconds": 10.24,
+                "end_seconds": 10.453333,
+                "text": "mà",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_f9f568b21cb444f8bd7092df",
+                "ordinal": 38,
+                "start_seconds": 10.453333,
+                "end_seconds": 10.666667,
+                "text": "không",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_0a7d73cfc64d47ae804ec2b9",
+                "ordinal": 39,
+                "start_seconds": 10.666667,
+                "end_seconds": 10.88,
+                "text": "cắt",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_95e357960e3f492ea42bea39",
+                "ordinal": 40,
+                "start_seconds": 10.88,
+                "end_seconds": 11.093333,
+                "text": "vào",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_4cb9e2ca9cce4276af75fdf4",
+                "ordinal": 41,
+                "start_seconds": 11.093333,
+                "end_seconds": 11.306667,
+                "text": "lời",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_ff9cb389c097438fb1d4fcce",
+                "ordinal": 42,
+                "start_seconds": 11.306667,
+                "end_seconds": 11.52,
+                "text": "nói.",
+                "confidence": 0.99
+              }
+            ]
+          },
+          {
+            "segment_id": "seg_2956c5596bbc415d832e1909",
+            "ordinal": 3,
+            "start_seconds": 12.32,
+            "end_seconds": 15.52,
+            "text": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+            "speaker": null,
+            "confidence": 0.99,
+            "words": [
+              {
+                "word_id": "wrd_96ee60eac1ad4886835b526a",
+                "ordinal": 43,
+                "start_seconds": 12.32,
+                "end_seconds": 12.586667,
+                "text": "Điểm",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_bf64f04858ff4ebeb7eeed55",
+                "ordinal": 44,
+                "start_seconds": 12.586667,
+                "end_seconds": 12.853333,
+                "text": "nổi",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_a711aa4a91af4c5a86afd2f7",
+                "ordinal": 45,
+                "start_seconds": 12.853333,
+                "end_seconds": 13.12,
+                "text": "bật",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_77309800436442fbace6464f",
+                "ordinal": 46,
+                "start_seconds": 13.12,
+                "end_seconds": 13.386667,
+                "text": "này",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_ffe2476b60b44c7bb45fe39c",
+                "ordinal": 47,
+                "start_seconds": 13.386667,
+                "end_seconds": 13.653333,
+                "text": "phù",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_fb69da1d56024eab95098e0d",
+                "ordinal": 48,
+                "start_seconds": 13.653333,
+                "end_seconds": 13.92,
+                "text": "hợp",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_21fcc3d9d83a407d8e6975f7",
+                "ordinal": 49,
+                "start_seconds": 13.92,
+                "end_seconds": 14.186667,
+                "text": "để",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_aaa9f029e5cf4af1abceda07",
+                "ordinal": 50,
+                "start_seconds": 14.186667,
+                "end_seconds": 14.453333,
+                "text": "thử",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_09e3ac450d33414bbf043708",
+                "ordinal": 51,
+                "start_seconds": 14.453333,
+                "end_seconds": 14.72,
+                "text": "nghiệm",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_de497eba96ce405ab64e978d",
+                "ordinal": 52,
+                "start_seconds": 14.72,
+                "end_seconds": 14.986667,
+                "text": "trên",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_a8ac48e1b21149c5936c143f",
+                "ordinal": 53,
+                "start_seconds": 14.986667,
+                "end_seconds": 15.253333,
+                "text": "video",
+                "confidence": 0.99
+              },
+              {
+                "word_id": "wrd_f97d95038ad2403f99906569",
+                "ordinal": 54,
+                "start_seconds": 15.253333,
+                "end_seconds": 15.52,
+                "text": "ngắn.",
+                "confidence": 0.99
+              }
+            ]
+          }
+        ],
+        "provenance": {
+          "fixture": true,
+          "paid_call": false,
+          "source_checksum": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+          "original_evidence": true,
+          "provider_safety_receipt": {
+            "operation_key": "ana_7e47842aded34aed91fda959:transcription",
+            "acceptance_lineage_id": null,
+            "provider_key": "fixture-transcription",
+            "capability": "transcription",
+            "status": "succeeded",
+            "attempts": 1,
+            "retries": 0,
+            "charged_cost_vnd": "0",
+            "currency": "VND",
+            "budget_alerts": [],
+            "circuit_state": "closed",
+            "external_call": false,
+            "paid": false,
+            "rights_allowed": true
+          }
+        },
+        "created_at": "2026-10-15T08:43:22.192121"
+      },
+      "scenes": [
+        {
+          "scene_id": "scn_00c3a731206d43168555b3d8",
+          "ordinal": 0,
+          "start_seconds": 0.0,
+          "end_seconds": 4.0,
+          "semantic_label": "Mở đầu",
+          "description": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+          "subjects": [],
+          "quality_score": 0.764,
+          "motion_score": 0.5,
+          "speech_score": 0.8,
+          "confidence": 0.81,
+          "evidence": {
+            "shot_boundary": false,
+            "transcript_segment_count": 1,
+            "transcript_keywords": [
+              "quyết",
+              "người",
+              "không"
+            ],
+            "subjects_available": false,
+            "local_metrics": {
+              "sample_count": 0,
+              "motion_score": null,
+              "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+              "local_quality_score": null,
+              "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+              "black_frame_ratio": null,
+              "overexposure_ratio": null,
+              "underexposure_ratio": null,
+              "mean_luma": null,
+              "mean_edge_strength": null,
+              "duplicate_frame_ratio": null,
+              "audio_rms": null,
+              "audio_energy_score": null,
+              "sample_timestamps": []
+            },
+            "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+            "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+            "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+            "audio_boundaries": [
+              {
+                "start_seconds": 3.6,
+                "end_seconds": 4.24
+              }
+            ],
+            "shot_detection_score": null,
+            "vision_used": false,
+            "vision_deferred_to": "V2-05"
+          }
+        },
+        {
+          "scene_id": "scn_e5421113bdbf4bbf93f34c9e",
+          "ordinal": 1,
+          "start_seconds": 4.0,
+          "end_seconds": 8.0,
+          "semantic_label": "Phân đoạn 2",
+          "description": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+          "subjects": [],
+          "quality_score": 0.764,
+          "motion_score": 0.82,
+          "speech_score": 0.8,
+          "confidence": 0.874,
+          "evidence": {
+            "shot_boundary": true,
+            "transcript_segment_count": 1,
+            "transcript_keywords": [
+              "thông",
+              "chứng"
+            ],
+            "subjects_available": false,
+            "local_metrics": {
+              "sample_count": 0,
+              "motion_score": null,
+              "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+              "local_quality_score": null,
+              "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+              "black_frame_ratio": null,
+              "overexposure_ratio": null,
+              "underexposure_ratio": null,
+              "mean_luma": null,
+              "mean_edge_strength": null,
+              "duplicate_frame_ratio": null,
+              "audio_rms": null,
+              "audio_energy_score": null,
+              "sample_timestamps": []
+            },
+            "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+            "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+            "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+            "audio_boundaries": [
+              {
+                "start_seconds": 3.6,
+                "end_seconds": 4.24
+              },
+              {
+                "start_seconds": 7.6,
+                "end_seconds": 8.24
+              }
+            ],
+            "shot_detection_score": 0.82,
+            "vision_used": false,
+            "vision_deferred_to": "V2-05"
+          }
+        },
+        {
+          "scene_id": "scn_b4266b227aaf4781849d0104",
+          "ordinal": 2,
+          "start_seconds": 8.0,
+          "end_seconds": 12.0,
+          "semantic_label": "Phân đoạn 3",
+          "description": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+          "subjects": [],
+          "quality_score": 0.764,
+          "motion_score": 0.78,
+          "speech_score": 0.8,
+          "confidence": 0.866,
+          "evidence": {
+            "shot_boundary": true,
+            "transcript_segment_count": 1,
+            "transcript_keywords": [
+              "khoảng",
+              "nhiên",
+              "không"
+            ],
+            "subjects_available": false,
+            "local_metrics": {
+              "sample_count": 0,
+              "motion_score": null,
+              "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+              "local_quality_score": null,
+              "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+              "black_frame_ratio": null,
+              "overexposure_ratio": null,
+              "underexposure_ratio": null,
+              "mean_luma": null,
+              "mean_edge_strength": null,
+              "duplicate_frame_ratio": null,
+              "audio_rms": null,
+              "audio_energy_score": null,
+              "sample_timestamps": []
+            },
+            "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+            "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+            "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+            "audio_boundaries": [
+              {
+                "start_seconds": 7.6,
+                "end_seconds": 8.24
+              },
+              {
+                "start_seconds": 11.6,
+                "end_seconds": 12.24
+              }
+            ],
+            "shot_detection_score": 0.78,
+            "vision_used": false,
+            "vision_deferred_to": "V2-05"
+          }
+        },
+        {
+          "scene_id": "scn_e291088fe8044875a9b35a20",
+          "ordinal": 3,
+          "start_seconds": 12.0,
+          "end_seconds": 16.0,
+          "semantic_label": "Phân đoạn 4",
+          "description": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+          "subjects": [],
+          "quality_score": 0.764,
+          "motion_score": 0.74,
+          "speech_score": 0.8,
+          "confidence": 0.858,
+          "evidence": {
+            "shot_boundary": true,
+            "transcript_segment_count": 1,
+            "transcript_keywords": [
+              "nghiệm",
+              "video"
+            ],
+            "subjects_available": false,
+            "local_metrics": {
+              "sample_count": 0,
+              "motion_score": null,
+              "motion_semantics": "sampled pixel difference scaled by 5; not optical flow or subject tracking",
+              "local_quality_score": null,
+              "quality_semantics": "exposure/black-frame heuristic over measured pixels; semantic quality requires Vision",
+              "black_frame_ratio": null,
+              "overexposure_ratio": null,
+              "underexposure_ratio": null,
+              "mean_luma": null,
+              "mean_edge_strength": null,
+              "duplicate_frame_ratio": null,
+              "audio_rms": null,
+              "audio_energy_score": null,
+              "sample_timestamps": []
+            },
+            "motion_score_basis": "legacy_boundary_heuristic_not_measured_motion",
+            "quality_score_basis": "legacy_speech_heuristic_not_measured_quality",
+            "confidence_basis": "heuristic_boundary_and_transcript_coverage_not_provider_probability",
+            "audio_boundaries": [
+              {
+                "start_seconds": 11.6,
+                "end_seconds": 12.24
+              }
+            ],
+            "shot_detection_score": 0.74,
+            "vision_used": false,
+            "vision_deferred_to": "V2-05"
+          }
+        }
+      ],
+      "silence_decisions": [
+        {
+          "decision_id": "sil_08b5779c030148be90dd8d19",
+          "start_seconds": 3.68,
+          "end_seconds": 4.16,
+          "padding_before_seconds": 0.08,
+          "padding_after_seconds": 0.08,
+          "enabled": false,
+          "reason": "Disabled because padding leaves less than the minimum silence duration.",
+          "conflicts_with_speech": false,
+          "evidence": {
+            "raw_start": 3.6,
+            "raw_end": 4.24,
+            "measured_db": -41.0,
+            "measured_db_available": true,
+            "speech_protection": [],
+            "threshold_db": -35.0,
+            "minimum_duration": 0.5,
+            "source_media_mutated": false
+          }
+        },
+        {
+          "decision_id": "sil_01b3761204d34ff2a5cda282",
+          "start_seconds": 7.68,
+          "end_seconds": 8.16,
+          "padding_before_seconds": 0.08,
+          "padding_after_seconds": 0.08,
+          "enabled": false,
+          "reason": "Disabled because padding leaves less than the minimum silence duration.",
+          "conflicts_with_speech": false,
+          "evidence": {
+            "raw_start": 7.6,
+            "raw_end": 8.24,
+            "measured_db": -41.0,
+            "measured_db_available": true,
+            "speech_protection": [],
+            "threshold_db": -35.0,
+            "minimum_duration": 0.5,
+            "source_media_mutated": false
+          }
+        },
+        {
+          "decision_id": "sil_5cb347fa31d84791bcaf9f1f",
+          "start_seconds": 11.68,
+          "end_seconds": 12.16,
+          "padding_before_seconds": 0.08,
+          "padding_after_seconds": 0.08,
+          "enabled": false,
+          "reason": "Disabled because padding leaves less than the minimum silence duration.",
+          "conflicts_with_speech": false,
+          "evidence": {
+            "raw_start": 11.6,
+            "raw_end": 12.24,
+            "measured_db": -41.0,
+            "measured_db_available": true,
+            "speech_protection": [],
+            "threshold_db": -35.0,
+            "minimum_duration": 0.5,
+            "source_media_mutated": false
+          }
+        }
+      ],
+      "highlights": [
+        {
+          "highlight_id": "hlt_28408d67b2a6411ebfdc9b63",
+          "rank": 1,
+          "highlight_score": 0.795833,
+          "reason": "saved text keyword/information-density heuristics; transcript coverage; hook keywords: thử nghiệm, điểm nổi bật",
+          "recommended_start": 12.0,
+          "recommended_end": 16.0,
+          "recommended_platform": "facebook_reels",
+          "scene_id": "scn_e291088fe8044875a9b35a20",
+          "evidence": {
+            "algorithm": "multimodal-highlight-v3",
+            "text_evidence_available": true,
+            "text_evidence_basis": "saved transcript/Vision evidence",
+            "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+            "audio_proxy": null,
+            "motion": null,
+            "information_density": 0.9375,
+            "hook_keywords": [
+              "thử nghiệm",
+              "điểm nổi bật"
+            ],
+            "vision_used": false,
+            "factors": {
+              "speech_coverage": 0.8,
+              "motion": null,
+              "information_density": 0.9375,
+              "hook_keywords": 0.6,
+              "quality": null,
+              "pixel_novelty": null,
+              "audio_energy": null
+            },
+            "weights": {
+              "speech_coverage": 0.25,
+              "motion": 0.15,
+              "information_density": 0.2,
+              "hook_keywords": 0.15,
+              "quality": 0.1,
+              "pixel_novelty": 0.05,
+              "audio_energy": 0.1
+            },
+            "available_weight": 0.6,
+            "contributions": {
+              "speech_coverage": 0.333333,
+              "information_density": 0.3125,
+              "hook_keywords": 0.15
+            },
+            "missing_factors": [
+              "motion",
+              "quality",
+              "pixel_novelty",
+              "audio_energy"
+            ],
+            "confidence": 0.5148
+          }
+        },
+        {
+          "highlight_id": "hlt_5d857d1d49914c2c8fd8a74f",
+          "rank": 2,
+          "highlight_score": 0.741666,
+          "reason": "saved text keyword/information-density heuristics; transcript coverage; hook keywords: quyết định",
+          "recommended_start": 0.0,
+          "recommended_end": 4.0,
+          "recommended_platform": "facebook_reels",
+          "scene_id": "scn_00c3a731206d43168555b3d8",
+          "evidence": {
+            "algorithm": "multimodal-highlight-v3",
+            "text_evidence_available": true,
+            "text_evidence_basis": "saved transcript/Vision evidence",
+            "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+            "audio_proxy": null,
+            "motion": null,
+            "information_density": 1.0,
+            "hook_keywords": [
+              "quyết định"
+            ],
+            "vision_used": false,
+            "factors": {
+              "speech_coverage": 0.8,
+              "motion": null,
+              "information_density": 1.0,
+              "hook_keywords": 0.3,
+              "quality": null,
+              "pixel_novelty": null,
+              "audio_energy": null
+            },
+            "weights": {
+              "speech_coverage": 0.25,
+              "motion": 0.15,
+              "information_density": 0.2,
+              "hook_keywords": 0.15,
+              "quality": 0.1,
+              "pixel_novelty": 0.05,
+              "audio_energy": 0.1
+            },
+            "available_weight": 0.6,
+            "contributions": {
+              "speech_coverage": 0.333333,
+              "information_density": 0.333333,
+              "hook_keywords": 0.075
+            },
+            "missing_factors": [
+              "motion",
+              "quality",
+              "pixel_novelty",
+              "audio_energy"
+            ],
+            "confidence": 0.486
+          }
+        },
+        {
+          "highlight_id": "hlt_00f7232a930a47bfab3298fd",
+          "rank": 3,
+          "highlight_score": 0.741666,
+          "reason": "saved text keyword/information-density heuristics; transcript coverage; hook keywords: bằng chứng",
+          "recommended_start": 4.0,
+          "recommended_end": 8.0,
+          "recommended_platform": "facebook_reels",
+          "scene_id": "scn_e5421113bdbf4bbf93f34c9e",
+          "evidence": {
+            "algorithm": "multimodal-highlight-v3",
+            "text_evidence_available": true,
+            "text_evidence_basis": "saved transcript/Vision evidence",
+            "speech_semantics": "keyword/information-density heuristic; no semantic model dispatched",
+            "audio_proxy": null,
+            "motion": null,
+            "information_density": 1.0,
+            "hook_keywords": [
+              "bằng chứng"
+            ],
+            "vision_used": false,
+            "factors": {
+              "speech_coverage": 0.8,
+              "motion": null,
+              "information_density": 1.0,
+              "hook_keywords": 0.3,
+              "quality": null,
+              "pixel_novelty": null,
+              "audio_energy": null
+            },
+            "weights": {
+              "speech_coverage": 0.25,
+              "motion": 0.15,
+              "information_density": 0.2,
+              "hook_keywords": 0.15,
+              "quality": 0.1,
+              "pixel_novelty": 0.05,
+              "audio_energy": 0.1
+            },
+            "available_weight": 0.6,
+            "contributions": {
+              "speech_coverage": 0.333333,
+              "information_density": 0.333333,
+              "hook_keywords": 0.075
+            },
+            "missing_factors": [
+              "motion",
+              "quality",
+              "pixel_novelty",
+              "audio_energy"
+            ],
+            "confidence": 0.5244
+          }
+        }
+      ],
+      "source_media_mutated": false,
+      "publish_requested": false,
+      "error_code": null,
+      "provenance": {
+        "algorithm_version": "v2-04.1",
+        "source_asset_checksum": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+        "source_media_mutated": false,
+        "publish_requested": false,
+        "paid_external_call": false,
+        "vision_analysis": "deferred-to-v2-05",
+        "media_signals": {
+          "fixture": true,
+          "paid_call": false,
+          "deterministic": true,
+          "waveform": null,
+          "visual": null
+        }
+      },
+      "created_at": "2026-10-15T08:43:22.126296",
+      "updated_at": "2026-10-15T08:43:22.197137"
+    },
+    "timeline": {
+      "timeline_id": "tml_fecc1cb44e13420bbf92",
+      "workspace_id": "wsp_2e204026bce247b8a83ca0b4",
+      "project_id": "prj_c47ebc96cc6a4ff4bb26a272",
+      "project_version_id": "pver_98f3d96198d04052973918ba",
+      "source_analysis_id": "ana_7e47842aded34aed91fda959",
+      "source_content_version_id": null,
+      "source_kind": "video_analysis",
+      "source_media_plan_id": null,
+      "current_version_id": "tlv_ab426c1583e34d5d88ee",
+      "current_version": 1,
+      "approval_status": "draft",
+      "approved_timeline_version": null,
+      "snapshot": {
+        "schema_version": "1.0",
+        "width": 1080,
+        "height": 1920,
+        "fps": 30.0,
+        "aspect_ratio": "9:16",
+        "duration_seconds": 16.0,
+        "tracks": [
+          {
+            "track_id": "trk_7e0237b97b9d42ec8fdf",
+            "type": "video",
+            "kind": "source",
+            "label": "Video gốc",
+            "order": 0,
+            "locked": false,
+            "muted": false,
+            "disabled": false,
+            "clips": [
+              {
+                "clip_id": "clip_a9cbc8d0f7be499faf1e",
+                "kind": "source",
+                "label": "Cảnh 1",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 0.0,
+                "source_end": 4.0,
+                "timeline_start": 0.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_00c3a731206d43168555b3d8",
+                  "scene_ordinal": 0,
+                  "semantic_label": "Mở đầu",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              },
+              {
+                "clip_id": "clip_4c477af5bd61409c8aa0",
+                "kind": "source",
+                "label": "Cảnh 2",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 4.0,
+                "source_end": 8.0,
+                "timeline_start": 4.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_e5421113bdbf4bbf93f34c9e",
+                  "scene_ordinal": 1,
+                  "semantic_label": "Phân đoạn 2",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              },
+              {
+                "clip_id": "clip_3b7cccedf69b49ebb1c8",
+                "kind": "source",
+                "label": "Cảnh 3",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 8.0,
+                "source_end": 12.0,
+                "timeline_start": 8.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_b4266b227aaf4781849d0104",
+                  "scene_ordinal": 2,
+                  "semantic_label": "Phân đoạn 3",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              },
+              {
+                "clip_id": "clip_321f6d088e37451b9bf6",
+                "kind": "source",
+                "label": "Cảnh 4",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 12.0,
+                "source_end": 16.0,
+                "timeline_start": 12.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_e291088fe8044875a9b35a20",
+                  "scene_ordinal": 3,
+                  "semantic_label": "Phân đoạn 4",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              }
+            ]
+          },
+          {
+            "track_id": "trk_62b08c4f2b3f46b29637",
+            "type": "video",
+            "kind": "broll",
+            "label": "B-roll",
+            "order": 1,
+            "locked": false,
+            "muted": false,
+            "disabled": false,
+            "clips": []
+          },
+          {
+            "track_id": "trk_b2cdac991e414dee8183",
+            "type": "text",
+            "kind": "subtitles",
+            "label": "Bản chép lời",
+            "order": 2,
+            "locked": false,
+            "muted": false,
+            "disabled": false,
+            "clips": [
+              {
+                "clip_id": "clip_3cdbed6cf5fd4c519c7b",
+                "kind": "subtitle",
+                "label": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+                "asset_id": null,
+                "source_start": 0.32,
+                "source_end": 3.52,
+                "timeline_start": 0.32,
+                "duration": 3.2,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "transcript_id": "trn_8196be8e944b494dbc354024",
+                  "segment_id": "seg_f87ec29e80734859948f1ddb",
+                  "language": "vi",
+                  "confidence": 0.99,
+                  "editable_in": "V2-08",
+                  "timing_source": "provider_native_word_intervals",
+                  "measured_source_words": [
+                    {
+                      "text": "Ba",
+                      "start_seconds": 0.32,
+                      "end_seconds": 0.566154
+                    },
+                    {
+                      "text": "giây",
+                      "start_seconds": 0.566154,
+                      "end_seconds": 0.812308
+                    },
+                    {
+                      "text": "đầu",
+                      "start_seconds": 0.812308,
+                      "end_seconds": 1.058462
+                    },
+                    {
+                      "text": "tiên",
+                      "start_seconds": 1.058462,
+                      "end_seconds": 1.304615
+                    },
+                    {
+                      "text": "quyết",
+                      "start_seconds": 1.304615,
+                      "end_seconds": 1.550769
+                    },
+                    {
+                      "text": "định",
+                      "start_seconds": 1.550769,
+                      "end_seconds": 1.796923
+                    },
+                    {
+                      "text": "người",
+                      "start_seconds": 1.796923,
+                      "end_seconds": 2.043077
+                    },
+                    {
+                      "text": "xem",
+                      "start_seconds": 2.043077,
+                      "end_seconds": 2.289231
+                    },
+                    {
+                      "text": "có",
+                      "start_seconds": 2.289231,
+                      "end_seconds": 2.535385
+                    },
+                    {
+                      "text": "tiếp",
+                      "start_seconds": 2.535385,
+                      "end_seconds": 2.781538
+                    },
+                    {
+                      "text": "tục",
+                      "start_seconds": 2.781538,
+                      "end_seconds": 3.027692
+                    },
+                    {
+                      "text": "hay",
+                      "start_seconds": 3.027692,
+                      "end_seconds": 3.273846
+                    },
+                    {
+                      "text": "không.",
+                      "start_seconds": 3.273846,
+                      "end_seconds": 3.52
+                    }
+                  ]
+                }
+              },
+              {
+                "clip_id": "clip_ad72470592db49eea464",
+                "kind": "subtitle",
+                "label": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+                "asset_id": null,
+                "source_start": 4.32,
+                "source_end": 7.52,
+                "timeline_start": 4.32,
+                "duration": 3.2,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "transcript_id": "trn_8196be8e944b494dbc354024",
+                  "segment_id": "seg_17cf5ddc6cd14580b0cd418a",
+                  "language": "vi",
+                  "confidence": 0.99,
+                  "editable_in": "V2-08",
+                  "timing_source": "provider_native_word_intervals",
+                  "measured_source_words": [
+                    {
+                      "text": "Nội",
+                      "start_seconds": 4.32,
+                      "end_seconds": 4.533333
+                    },
+                    {
+                      "text": "dung",
+                      "start_seconds": 4.533333,
+                      "end_seconds": 4.746667
+                    },
+                    {
+                      "text": "tốt",
+                      "start_seconds": 4.746667,
+                      "end_seconds": 4.96
+                    },
+                    {
+                      "text": "cần",
+                      "start_seconds": 4.96,
+                      "end_seconds": 5.173333
+                    },
+                    {
+                      "text": "một",
+                      "start_seconds": 5.173333,
+                      "end_seconds": 5.386667
+                    },
+                    {
+                      "text": "thông",
+                      "start_seconds": 5.386667,
+                      "end_seconds": 5.6
+                    },
+                    {
+                      "text": "tin",
+                      "start_seconds": 5.6,
+                      "end_seconds": 5.813333
+                    },
+                    {
+                      "text": "rõ",
+                      "start_seconds": 5.813333,
+                      "end_seconds": 6.026667
+                    },
+                    {
+                      "text": "ràng",
+                      "start_seconds": 6.026667,
+                      "end_seconds": 6.24
+                    },
+                    {
+                      "text": "và",
+                      "start_seconds": 6.24,
+                      "end_seconds": 6.453333
+                    },
+                    {
+                      "text": "bằng",
+                      "start_seconds": 6.453333,
+                      "end_seconds": 6.666667
+                    },
+                    {
+                      "text": "chứng",
+                      "start_seconds": 6.666667,
+                      "end_seconds": 6.88
+                    },
+                    {
+                      "text": "dễ",
+                      "start_seconds": 6.88,
+                      "end_seconds": 7.093333
+                    },
+                    {
+                      "text": "kiểm",
+                      "start_seconds": 7.093333,
+                      "end_seconds": 7.306667
+                    },
+                    {
+                      "text": "tra.",
+                      "start_seconds": 7.306667,
+                      "end_seconds": 7.52
+                    }
+                  ]
+                }
+              },
+              {
+                "clip_id": "clip_332b8a60b7944f75be0a",
+                "kind": "subtitle",
+                "label": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+                "asset_id": null,
+                "source_start": 8.32,
+                "source_end": 11.52,
+                "timeline_start": 8.32,
+                "duration": 3.2,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "transcript_id": "trn_8196be8e944b494dbc354024",
+                  "segment_id": "seg_6cba1479e4c142f2947d5a01",
+                  "language": "vi",
+                  "confidence": 0.99,
+                  "editable_in": "V2-08",
+                  "timing_source": "provider_native_word_intervals",
+                  "measured_source_words": [
+                    {
+                      "text": "Khoảng",
+                      "start_seconds": 8.32,
+                      "end_seconds": 8.533333
+                    },
+                    {
+                      "text": "lặng",
+                      "start_seconds": 8.533333,
+                      "end_seconds": 8.746667
+                    },
+                    {
+                      "text": "hợp",
+                      "start_seconds": 8.746667,
+                      "end_seconds": 8.96
+                    },
+                    {
+                      "text": "lý",
+                      "start_seconds": 8.96,
+                      "end_seconds": 9.173333
+                    },
+                    {
+                      "text": "giúp",
+                      "start_seconds": 9.173333,
+                      "end_seconds": 9.386667
+                    },
+                    {
+                      "text": "nhịp",
+                      "start_seconds": 9.386667,
+                      "end_seconds": 9.6
+                    },
+                    {
+                      "text": "dựng",
+                      "start_seconds": 9.6,
+                      "end_seconds": 9.813333
+                    },
+                    {
+                      "text": "tự",
+                      "start_seconds": 9.813333,
+                      "end_seconds": 10.026667
+                    },
+                    {
+                      "text": "nhiên",
+                      "start_seconds": 10.026667,
+                      "end_seconds": 10.24
+                    },
+                    {
+                      "text": "mà",
+                      "start_seconds": 10.24,
+                      "end_seconds": 10.453333
+                    },
+                    {
+                      "text": "không",
+                      "start_seconds": 10.453333,
+                      "end_seconds": 10.666667
+                    },
+                    {
+                      "text": "cắt",
+                      "start_seconds": 10.666667,
+                      "end_seconds": 10.88
+                    },
+                    {
+                      "text": "vào",
+                      "start_seconds": 10.88,
+                      "end_seconds": 11.093333
+                    },
+                    {
+                      "text": "lời",
+                      "start_seconds": 11.093333,
+                      "end_seconds": 11.306667
+                    },
+                    {
+                      "text": "nói.",
+                      "start_seconds": 11.306667,
+                      "end_seconds": 11.52
+                    }
+                  ]
+                }
+              },
+              {
+                "clip_id": "clip_604ece2483354e30a81e",
+                "kind": "subtitle",
+                "label": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+                "asset_id": null,
+                "source_start": 12.32,
+                "source_end": 15.52,
+                "timeline_start": 12.32,
+                "duration": 3.2,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "transcript_id": "trn_8196be8e944b494dbc354024",
+                  "segment_id": "seg_2956c5596bbc415d832e1909",
+                  "language": "vi",
+                  "confidence": 0.99,
+                  "editable_in": "V2-08",
+                  "timing_source": "provider_native_word_intervals",
+                  "measured_source_words": [
+                    {
+                      "text": "Điểm",
+                      "start_seconds": 12.32,
+                      "end_seconds": 12.586667
+                    },
+                    {
+                      "text": "nổi",
+                      "start_seconds": 12.586667,
+                      "end_seconds": 12.853333
+                    },
+                    {
+                      "text": "bật",
+                      "start_seconds": 12.853333,
+                      "end_seconds": 13.12
+                    },
+                    {
+                      "text": "này",
+                      "start_seconds": 13.12,
+                      "end_seconds": 13.386667
+                    },
+                    {
+                      "text": "phù",
+                      "start_seconds": 13.386667,
+                      "end_seconds": 13.653333
+                    },
+                    {
+                      "text": "hợp",
+                      "start_seconds": 13.653333,
+                      "end_seconds": 13.92
+                    },
+                    {
+                      "text": "để",
+                      "start_seconds": 13.92,
+                      "end_seconds": 14.186667
+                    },
+                    {
+                      "text": "thử",
+                      "start_seconds": 14.186667,
+                      "end_seconds": 14.453333
+                    },
+                    {
+                      "text": "nghiệm",
+                      "start_seconds": 14.453333,
+                      "end_seconds": 14.72
+                    },
+                    {
+                      "text": "trên",
+                      "start_seconds": 14.72,
+                      "end_seconds": 14.986667
+                    },
+                    {
+                      "text": "video",
+                      "start_seconds": 14.986667,
+                      "end_seconds": 15.253333
+                    },
+                    {
+                      "text": "ngắn.",
+                      "start_seconds": 15.253333,
+                      "end_seconds": 15.52
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "track_id": "trk_48421333dec144d8a5a8",
+            "type": "audio",
+            "kind": "original_audio",
+            "label": "Âm thanh gốc",
+            "order": 3,
+            "locked": false,
+            "muted": false,
+            "disabled": false,
+            "clips": [
+              {
+                "clip_id": "clip_5d21c6e3a0fb4e109e06",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc 1",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 0.0,
+                "source_end": 4.0,
+                "timeline_start": 0.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_00c3a731206d43168555b3d8",
+                  "scene_ordinal": 0,
+                  "semantic_label": "Mở đầu",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              },
+              {
+                "clip_id": "clip_bf5330a7a892473e9cb0",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc 2",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 4.0,
+                "source_end": 8.0,
+                "timeline_start": 4.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_e5421113bdbf4bbf93f34c9e",
+                  "scene_ordinal": 1,
+                  "semantic_label": "Phân đoạn 2",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              },
+              {
+                "clip_id": "clip_d8ce8c483a574d90aa93",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc 3",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 8.0,
+                "source_end": 12.0,
+                "timeline_start": 8.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_b4266b227aaf4781849d0104",
+                  "scene_ordinal": 2,
+                  "semantic_label": "Phân đoạn 3",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              },
+              {
+                "clip_id": "clip_78f02ac31d1c49928d7b",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc 4",
+                "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+                "source_start": 12.0,
+                "source_end": 16.0,
+                "timeline_start": 12.0,
+                "duration": 4.0,
+                "speed": 1.0,
+                "crop": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                "transform": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "scale": 1.0,
+                  "rotation_degrees": 0.0
+                },
+                "opacity": 1.0,
+                "volume": 1.0,
+                "transition_in": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "transition_out": {
+                  "kind": "cut",
+                  "duration_seconds": 0.0
+                },
+                "effects": [],
+                "disabled": false,
+                "metadata": {
+                  "scene_id": "scn_e291088fe8044875a9b35a20",
+                  "scene_ordinal": 3,
+                  "semantic_label": "Phân đoạn 4",
+                  "quality_score": 0.764,
+                  "source_checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+                  "content_type": "video/mp4",
+                  "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+                  "original_evidence": true
+                }
+              }
+            ]
+          },
+          {
+            "track_id": "trk_7fdb881ec0bc4b37aeea",
+            "type": "metadata",
+            "kind": "metadata",
+            "label": "Dấu mốc AI",
+            "order": 4,
+            "locked": true,
+            "muted": false,
+            "disabled": false,
+            "clips": []
+          }
+        ],
+        "metadata": {
+          "source_analysis_id": "ana_7e47842aded34aed91fda959",
+          "source_media_plan_id": null,
+          "source_asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+          "source_duration_seconds": 16.0,
+          "transcript_revision": {
+            "transcript_id": "trn_8196be8e944b494dbc354024",
+            "version": 1,
+            "human_edited": false
+          },
+          "silence_decisions_applied": 0,
+          "silence_speech_padding_preserved": true,
+          "silence_decision_ids": [],
+          "highlight_ids": [
+            "hlt_28408d67b2a6411ebfdc9b63",
+            "hlt_5d857d1d49914c2c8fd8a74f",
+            "hlt_00f7232a930a47bfab3298fd"
+          ],
+          "preview_profile": "proxy-540-canonical-audio-v2",
+          "approval_invalidates_on_change": true
+        },
+        "source_media_mutated": false,
+        "publish_requested": false
+      },
+      "latest_preview_id": null,
+      "latest_preview_valid": false,
+      "source_media_mutated": false,
+      "publish_requested": false,
+      "created_at": "2026-10-15T08:43:22.323042Z",
+      "updated_at": "2026-10-15T08:43:22.323042Z"
+    },
+    "assets": [
+      {
+        "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+        "workspace_id": "wsp_2e204026bce247b8a83ca0b4",
+        "project_id": "prj_c47ebc96cc6a4ff4bb26a272",
+        "project_version_id": "pver_98f3d96198d04052973918ba",
+        "job_id": null,
+        "asset_class": "source",
+        "kind": "video",
+        "filename": "media-source.mp4",
+        "object_key": "workspaces/wsp_2e204026bce247b8a83ca0b4/projects/prj_c47ebc96cc6a4ff4bb26a272/uploads/55a7c2fa7e22119c1bcd2122/media-source.mp4",
+        "content_type": "video/mp4",
+        "size_bytes": 100000,
+        "checksum_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+        "storage_provider": "local",
+        "version": 1,
+        "provenance": {
+          "source_type": "user_upload",
+          "rights_status": "owned",
+          "license": "user-provided",
+          "source_reference": "upl_6c6b234045a54cd5a7d67cc5",
+          "generation_provenance": null,
+          "media_metadata": {
+            "media_kind": "video",
+            "detected_content_type": "video/mp4",
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration_seconds": 16.0,
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "video_codec": "h264",
+            "audio_codec": "aac",
+            "audio_channels": 2,
+            "audio_sample_rate": 48000
+          },
+          "client_filename_retained_as_evidence": "media-source.mp4"
+        },
+        "created_at": "2026-10-15T08:43:22.100372",
+        "updated_at": "2026-10-15T08:43:22.100372"
+      }
+    ],
+    "busy": false,
+    "dirty": false
+  },
+  "context": {
+    "schema_version": "broll-plan-review-context.v1",
+    "workspace_id": "wsp_2e204026bce247b8a83ca0b4",
+    "project_id": "prj_c47ebc96cc6a4ff4bb26a272",
+    "actor_ref": "usr:test-owner",
+    "authority_sha256": "492c96a28e755fe5992aa67d7b8d05d482f4f977b39988d07e24bec671fb3446",
+    "can_prepare": true,
+    "timeline_id": "tml_fecc1cb44e13420bbf92",
+    "timeline_version": 1,
+    "timeline_version_id": "tlv_ab426c1583e34d5d88ee",
+    "timeline_sha256": "dc8486c6c72d4f020e9925c3b32fc80f570bee5ed44631c0abab328ea9908408",
+    "source": {
+      "analysis_id": "ana_7e47842aded34aed91fda959",
+      "analysis_fingerprint": "eaba62d7a8c393403d699cad87d05e7ca59b8fa499942331796e776a7d188046",
+      "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+      "source_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+      "duration_seconds": 16.0,
+      "has_audio": true,
+      "transcript_id": "trn_8196be8e944b494dbc354024",
+      "transcript_version": 1,
+      "transcript_sha256": "b2fdc07cba76c6dd3ddc424864d74a885621d9b3b9430b3dd715cb58c05ac09e"
+    },
+    "supporting_assets_sha256": "bc331b3d49df46873778dfe0495999f235d3c09a6a8b0881c2fdd116c9fe5c74",
+    "project_sha256": "3bb5d4ff00c07a6652e600372f683211313c9e1f2d7ecfbf1232ad7454170f92",
+    "platform": "facebook_reels",
+    "providers": {
+      "stock": {
+        "provider_key": "fixture-stock",
+        "status": "healthy",
+        "configured": true,
+        "external": false,
+        "paid": false,
+        "real_provider_tested": false
+      },
+      "image_generation": {
+        "provider_key": "fixture-image-generation",
+        "status": "healthy",
+        "configured": true,
+        "external": false,
+        "paid": false,
+        "real_provider_tested": false
+      },
+      "video_generation": {
+        "provider_key": "fixture-video-generation",
+        "status": "healthy",
+        "configured": true,
+        "external": false,
+        "paid": false,
+        "real_provider_tested": false
+      },
+      "external_execution_enabled": false,
+      "paid_execution_enabled": false
+    },
+    "stock_binding": null,
+    "licensed_stock_enabled": false,
+    "ai_planning_enabled": false,
+    "ai_disabled_reason": "APPROVED_GENERATIVE_PLANNING_NOT_IN_THIS_INCREMENT",
+    "max_ai_cost_vnd": "0",
+    "preparation_provider_calls": 0,
+    "publishing_enabled": false,
+    "owner_approval_inferred": false,
+    "context_json": "{\"actor_ref\":\"usr:test-owner\",\"ai_disabled_reason\":\"APPROVED_GENERATIVE_PLANNING_NOT_IN_THIS_INCREMENT\",\"ai_planning_enabled\":false,\"authority_sha256\":\"492c96a28e755fe5992aa67d7b8d05d482f4f977b39988d07e24bec671fb3446\",\"can_prepare\":true,\"licensed_stock_enabled\":false,\"max_ai_cost_vnd\":\"0\",\"owner_approval_inferred\":false,\"platform\":\"facebook_reels\",\"preparation_provider_calls\":0,\"project_id\":\"prj_c47ebc96cc6a4ff4bb26a272\",\"project_sha256\":\"3bb5d4ff00c07a6652e600372f683211313c9e1f2d7ecfbf1232ad7454170f92\",\"providers\":{\"external_execution_enabled\":false,\"image_generation\":{\"configured\":true,\"external\":false,\"paid\":false,\"provider_key\":\"fixture-image-generation\",\"real_provider_tested\":false,\"status\":\"healthy\"},\"paid_execution_enabled\":false,\"stock\":{\"configured\":true,\"external\":false,\"paid\":false,\"provider_key\":\"fixture-stock\",\"real_provider_tested\":false,\"status\":\"healthy\"},\"video_generation\":{\"configured\":true,\"external\":false,\"paid\":false,\"provider_key\":\"fixture-video-generation\",\"real_provider_tested\":false,\"status\":\"healthy\"}},\"publishing_enabled\":false,\"schema_version\":\"broll-plan-review-context.v1\",\"source\":{\"analysis_fingerprint\":\"eaba62d7a8c393403d699cad87d05e7ca59b8fa499942331796e776a7d188046\",\"analysis_id\":\"ana_7e47842aded34aed91fda959\",\"asset_id\":\"ast_cfb8a1f5fc2e4e688a2f416a\",\"duration_seconds\":16.0,\"has_audio\":true,\"source_sha256\":\"55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d\",\"transcript_id\":\"trn_8196be8e944b494dbc354024\",\"transcript_sha256\":\"b2fdc07cba76c6dd3ddc424864d74a885621d9b3b9430b3dd715cb58c05ac09e\",\"transcript_version\":1},\"stock_binding\":null,\"supporting_assets_sha256\":\"bc331b3d49df46873778dfe0495999f235d3c09a6a8b0881c2fdd116c9fe5c74\",\"timeline_id\":\"tml_fecc1cb44e13420bbf92\",\"timeline_sha256\":\"dc8486c6c72d4f020e9925c3b32fc80f570bee5ed44631c0abab328ea9908408\",\"timeline_version\":1,\"timeline_version_id\":\"tlv_ab426c1583e34d5d88ee\",\"workspace_id\":\"wsp_2e204026bce247b8a83ca0b4\"}",
+    "context_sha256": "1c871e68fe409c17cad1494deacdfa617bdc8ae42aedf08d25d09af167669f5f"
+  },
+  "request": {
+    "request_key": "reviewed-broll-request-0001",
+    "context_sha256": "1c871e68fe409c17cad1494deacdfa617bdc8ae42aedf08d25d09af167669f5f",
+    "acknowledged": true,
+    "learning_snapshot_id": null,
+    "settings": {
+      "allow_stock": false,
+      "allow_ai_image": false,
+      "allow_ai_video": false,
+      "max_ai_cost_vnd": "0",
+      "resolver_priority": [
+        "user_asset",
+        "internal_library"
+      ]
+    }
+  },
+  "response": {
+    "schema_version": "broll-plan-review-result.v1",
+    "state": "prepared",
+    "receipt": {
+      "schema_version": "broll-plan-review-receipt.v1",
+      "operation_id": "sop_e003a4783ceb440e8d4908c42616e7f6",
+      "workspace_id": "wsp_2e204026bce247b8a83ca0b4",
+      "project_id": "prj_c47ebc96cc6a4ff4bb26a272",
+      "actor_ref": "usr:test-owner",
+      "authority_sha256": "492c96a28e755fe5992aa67d7b8d05d482f4f977b39988d07e24bec671fb3446",
+      "request_key": "reviewed-broll-request-0001",
+      "request_sha256": "b154f7c18f4973314328f0909555359e8b5477243b2053c4ca573ac6290ffc55",
+      "context_sha256": "1c871e68fe409c17cad1494deacdfa617bdc8ae42aedf08d25d09af167669f5f",
+      "settings": {
+        "allow_stock": false,
+        "allow_ai_image": false,
+        "allow_ai_video": false,
+        "max_ai_cost_vnd": "0",
+        "resolver_priority": [
+          "user_asset",
+          "internal_library"
+        ]
+      },
+      "learning_snapshot_id": null,
+      "learning_feedback_sha256": null,
+      "source": {
+        "analysis_id": "ana_7e47842aded34aed91fda959",
+        "analysis_fingerprint": "eaba62d7a8c393403d699cad87d05e7ca59b8fa499942331796e776a7d188046",
+        "asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+        "source_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+        "duration_seconds": 16.0,
+        "has_audio": true,
+        "transcript_id": "trn_8196be8e944b494dbc354024",
+        "transcript_version": 1,
+        "transcript_sha256": "b2fdc07cba76c6dd3ddc424864d74a885621d9b3b9430b3dd715cb58c05ac09e"
+      },
+      "timeline_id": "tml_fecc1cb44e13420bbf92",
+      "timeline_version": 1,
+      "timeline_version_id": "tlv_ab426c1583e34d5d88ee"
+    },
+    "plan": {
+      "media_plan_id": "mpl_45125903ffaf451f83a14f64",
+      "workspace_id": "wsp_2e204026bce247b8a83ca0b4",
+      "project_id": "prj_c47ebc96cc6a4ff4bb26a272",
+      "project_version_id": "pver_98f3d96198d04052973918ba",
+      "analysis_id": "ana_7e47842aded34aed91fda959",
+      "vision_analysis_id": null,
+      "status": "draft",
+      "fingerprint": "d096a6de6527be727618b87c5529a29ff94e54b7996b91df9f1f66893b8db54d",
+      "version": 1,
+      "configuration": {
+        "learning_snapshot_id": null,
+        "purpose": "supporting_broll",
+        "analysis_id": "ana_7e47842aded34aed91fda959",
+        "transcript_id": "trn_8196be8e944b494dbc354024",
+        "vision_analysis_id": null,
+        "platform": "facebook_reels",
+        "brand_context": "NPD Video Factory",
+        "max_ai_cost_vnd": "0",
+        "allow_stock": false,
+        "allow_ai_image": false,
+        "allow_ai_video": false,
+        "selection_policy": "priority",
+        "resolver_priority": [
+          "user_asset",
+          "internal_library"
+        ]
+      },
+      "provider_status": {
+        "stock": {
+          "provider_key": "fixture-stock",
+          "status": "healthy",
+          "configured": true,
+          "external": false,
+          "paid": false,
+          "real_provider_tested": false
+        },
+        "image_generation": {
+          "provider_key": "fixture-image-generation",
+          "status": "healthy",
+          "configured": true,
+          "external": false,
+          "paid": false,
+          "real_provider_tested": false
+        },
+        "video_generation": {
+          "provider_key": "fixture-video-generation",
+          "status": "healthy",
+          "configured": true,
+          "external": false,
+          "paid": false,
+          "real_provider_tested": false
+        },
+        "external_execution_enabled": false,
+        "paid_execution_enabled": false
+      },
+      "items": [
+        {
+          "media_plan_item_id": "mpi_a4d68b3dd0e18c25ec117015",
+          "media_plan_id": "mpl_45125903ffaf451f83a14f64",
+          "scene_id": "scn_00c3a731206d43168555b3d8",
+          "ordinal": 0,
+          "strategy": "user_asset",
+          "fallback": [],
+          "broll": {
+            "broll_intent": "Mở đầu",
+            "search_query": "Mở đầu Ba giây tiên quyết định người xem có tiếp tục hay không",
+            "duration_seconds": 4.0,
+            "preferred_media_type": "video",
+            "generation_prompt": "NPD Video Factory Ba giây đầu tiên quyết định người xem có tiếp tục hay không. Ba giây đầu tiên quyết định người xem có tiếp tục hay không. original supporting visual, no logos, no copied creator treatment",
+            "placement_start_seconds": 0.0,
+            "placement_end_seconds": 4.0,
+            "confidence": 0.65,
+            "provenance": {
+              "source_type": "planning_evidence",
+              "source_analysis_id": "ana_7e47842aded34aed91fda959",
+              "source_asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+              "source_asset_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+              "transcript_id": "trn_8196be8e944b494dbc354024",
+              "transcript_version": 1,
+              "fixture_asr": true,
+              "vision_analysis_id": null,
+              "confidence_basis": "scene heuristic capped at 0.65; no Vision evidence",
+              "semantic_refresh_required": false,
+              "frame_evidence": [],
+              "provider_dispatches": 0,
+              "source_media_mutated": false,
+              "recommendation_only": true
+            }
+          },
+          "candidates": [],
+          "source_asset_id": null,
+          "selected_media_asset_id": null,
+          "estimated_cost_vnd": "0.0000",
+          "needs_approval": false,
+          "needs_attention": true,
+          "status": "planned",
+          "provenance": {
+            "algorithm": "priority-media-planner-v1",
+            "selection_policy": "priority",
+            "resolver_priority": [
+              "user_asset",
+              "internal_library"
+            ],
+            "stock_search_state": "not_searched",
+            "stock_result_count": null,
+            "stock_rejected_rights_count": null,
+            "stock_tier_available": true,
+            "source_scene_id": "scn_00c3a731206d43168555b3d8",
+            "source_analysis_id": "ana_7e47842aded34aed91fda959",
+            "vision_analysis_id": null,
+            "originality_guardrail": true,
+            "social_media_downloaded": false,
+            "strategy_estimated": true,
+            "estimated_cost_unknown": false,
+            "estimated_cost_lower_bound_only": false,
+            "supporting_candidates": [],
+            "purpose": "supporting_broll",
+            "fallback_keeps_original_footage": true
+          }
+        },
+        {
+          "media_plan_item_id": "mpi_83f140c83081203a7288cf6d",
+          "media_plan_id": "mpl_45125903ffaf451f83a14f64",
+          "scene_id": "scn_e5421113bdbf4bbf93f34c9e",
+          "ordinal": 1,
+          "strategy": "user_asset",
+          "fallback": [],
+          "broll": {
+            "broll_intent": "Phân đoạn 2",
+            "search_query": "Phân đoạn 2 Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra",
+            "duration_seconds": 4.0,
+            "preferred_media_type": "video",
+            "generation_prompt": "NPD Video Factory Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra. Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra. original supporting visual, no logos, no copied creator treatment",
+            "placement_start_seconds": 4.0,
+            "placement_end_seconds": 8.0,
+            "confidence": 0.65,
+            "provenance": {
+              "source_type": "planning_evidence",
+              "source_analysis_id": "ana_7e47842aded34aed91fda959",
+              "source_asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+              "source_asset_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+              "transcript_id": "trn_8196be8e944b494dbc354024",
+              "transcript_version": 1,
+              "fixture_asr": true,
+              "vision_analysis_id": null,
+              "confidence_basis": "scene heuristic capped at 0.65; no Vision evidence",
+              "semantic_refresh_required": false,
+              "frame_evidence": [],
+              "provider_dispatches": 0,
+              "source_media_mutated": false,
+              "recommendation_only": true
+            }
+          },
+          "candidates": [],
+          "source_asset_id": null,
+          "selected_media_asset_id": null,
+          "estimated_cost_vnd": "0.0000",
+          "needs_approval": false,
+          "needs_attention": true,
+          "status": "planned",
+          "provenance": {
+            "algorithm": "priority-media-planner-v1",
+            "selection_policy": "priority",
+            "resolver_priority": [
+              "user_asset",
+              "internal_library"
+            ],
+            "stock_search_state": "not_searched",
+            "stock_result_count": null,
+            "stock_rejected_rights_count": null,
+            "stock_tier_available": true,
+            "source_scene_id": "scn_e5421113bdbf4bbf93f34c9e",
+            "source_analysis_id": "ana_7e47842aded34aed91fda959",
+            "vision_analysis_id": null,
+            "originality_guardrail": true,
+            "social_media_downloaded": false,
+            "strategy_estimated": true,
+            "estimated_cost_unknown": false,
+            "estimated_cost_lower_bound_only": false,
+            "supporting_candidates": [],
+            "purpose": "supporting_broll",
+            "fallback_keeps_original_footage": true
+          }
+        },
+        {
+          "media_plan_item_id": "mpi_277276d055065b3da4a8acbc",
+          "media_plan_id": "mpl_45125903ffaf451f83a14f64",
+          "scene_id": "scn_b4266b227aaf4781849d0104",
+          "ordinal": 2,
+          "strategy": "user_asset",
+          "fallback": [],
+          "broll": {
+            "broll_intent": "Phân đoạn 3",
+            "search_query": "Phân đoạn 3 Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói",
+            "duration_seconds": 4.0,
+            "preferred_media_type": "video",
+            "generation_prompt": "NPD Video Factory Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói. Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói. original supporting visual, no logos, no copied creator treatment",
+            "placement_start_seconds": 8.0,
+            "placement_end_seconds": 12.0,
+            "confidence": 0.65,
+            "provenance": {
+              "source_type": "planning_evidence",
+              "source_analysis_id": "ana_7e47842aded34aed91fda959",
+              "source_asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+              "source_asset_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+              "transcript_id": "trn_8196be8e944b494dbc354024",
+              "transcript_version": 1,
+              "fixture_asr": true,
+              "vision_analysis_id": null,
+              "confidence_basis": "scene heuristic capped at 0.65; no Vision evidence",
+              "semantic_refresh_required": false,
+              "frame_evidence": [],
+              "provider_dispatches": 0,
+              "source_media_mutated": false,
+              "recommendation_only": true
+            }
+          },
+          "candidates": [],
+          "source_asset_id": null,
+          "selected_media_asset_id": null,
+          "estimated_cost_vnd": "0.0000",
+          "needs_approval": false,
+          "needs_attention": true,
+          "status": "planned",
+          "provenance": {
+            "algorithm": "priority-media-planner-v1",
+            "selection_policy": "priority",
+            "resolver_priority": [
+              "user_asset",
+              "internal_library"
+            ],
+            "stock_search_state": "not_searched",
+            "stock_result_count": null,
+            "stock_rejected_rights_count": null,
+            "stock_tier_available": true,
+            "source_scene_id": "scn_b4266b227aaf4781849d0104",
+            "source_analysis_id": "ana_7e47842aded34aed91fda959",
+            "vision_analysis_id": null,
+            "originality_guardrail": true,
+            "social_media_downloaded": false,
+            "strategy_estimated": true,
+            "estimated_cost_unknown": false,
+            "estimated_cost_lower_bound_only": false,
+            "supporting_candidates": [],
+            "purpose": "supporting_broll",
+            "fallback_keeps_original_footage": true
+          }
+        },
+        {
+          "media_plan_item_id": "mpi_086c11309f252278ed7afb40",
+          "media_plan_id": "mpl_45125903ffaf451f83a14f64",
+          "scene_id": "scn_e291088fe8044875a9b35a20",
+          "ordinal": 3,
+          "strategy": "user_asset",
+          "fallback": [],
+          "broll": {
+            "broll_intent": "Phân đoạn 4",
+            "search_query": "Phân đoạn 4 Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn",
+            "duration_seconds": 4.0,
+            "preferred_media_type": "video",
+            "generation_prompt": "NPD Video Factory Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn. Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn. original supporting visual, no logos, no copied creator treatment",
+            "placement_start_seconds": 12.0,
+            "placement_end_seconds": 16.0,
+            "confidence": 0.65,
+            "provenance": {
+              "source_type": "planning_evidence",
+              "source_analysis_id": "ana_7e47842aded34aed91fda959",
+              "source_asset_id": "ast_cfb8a1f5fc2e4e688a2f416a",
+              "source_asset_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+              "transcript_id": "trn_8196be8e944b494dbc354024",
+              "transcript_version": 1,
+              "fixture_asr": true,
+              "vision_analysis_id": null,
+              "confidence_basis": "scene heuristic capped at 0.65; no Vision evidence",
+              "semantic_refresh_required": false,
+              "frame_evidence": [],
+              "provider_dispatches": 0,
+              "source_media_mutated": false,
+              "recommendation_only": true
+            }
+          },
+          "candidates": [],
+          "source_asset_id": null,
+          "selected_media_asset_id": null,
+          "estimated_cost_vnd": "0.0000",
+          "needs_approval": false,
+          "needs_attention": true,
+          "status": "planned",
+          "provenance": {
+            "algorithm": "priority-media-planner-v1",
+            "selection_policy": "priority",
+            "resolver_priority": [
+              "user_asset",
+              "internal_library"
+            ],
+            "stock_search_state": "not_searched",
+            "stock_result_count": null,
+            "stock_rejected_rights_count": null,
+            "stock_tier_available": true,
+            "source_scene_id": "scn_e291088fe8044875a9b35a20",
+            "source_analysis_id": "ana_7e47842aded34aed91fda959",
+            "vision_analysis_id": null,
+            "originality_guardrail": true,
+            "social_media_downloaded": false,
+            "strategy_estimated": true,
+            "estimated_cost_unknown": false,
+            "estimated_cost_lower_bound_only": false,
+            "supporting_candidates": [],
+            "purpose": "supporting_broll",
+            "fallback_keeps_original_footage": true
+          }
+        }
+      ],
+      "media_assets": [],
+      "resolution_jobs": [],
+      "projected_ai_cost_vnd": "0.0000",
+      "max_ai_cost_vnd": "0.0000",
+      "needs_approval": false,
+      "publishing_blocked": true,
+      "unresolved_items": 4,
+      "source_media_mutated": false,
+      "publish_requested": false,
+      "paid_external_call": false,
+      "error_code": null,
+      "provenance": {
+        "algorithm": "priority-media-planner-v1",
+        "selection_policy": "priority",
+        "transcript_id": "trn_8196be8e944b494dbc354024",
+        "source_asset_sha256": "55a7c2fa7e22119c1bcd21220f3ec3ef1769f538f52dfd725f95f6e02c72892d",
+        "mock_tested": true,
+        "real_provider_tested": false,
+        "source_analysis_id": "ana_7e47842aded34aed91fda959",
+        "vision_analysis_id": null,
+        "rights_gate": "unknown-or-non-production-media-blocks-publishing",
+        "source_media_mutated": false,
+        "publish_requested": false,
+        "paid_external_call": false
+      },
+      "created_at": "2026-10-15T08:43:22.451214",
+      "updated_at": "2026-10-15T08:43:22.464412"
+    },
+    "error_code": null,
+    "preparation_provider_calls": 0,
+    "publishing_enabled": false,
+    "owner_approval_inferred": false,
+    "replayed": false
+  }
+}
