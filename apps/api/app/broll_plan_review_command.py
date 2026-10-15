@@ -122,11 +122,11 @@ def _public(row, *, replayed):
     if row.status == 'succeeded':
         if row.response_sha256 != digest(value) or value.get('state') != 'prepared' or not _preparation_ready(value.get('plan')):
             raise BrollPlanConflict('BROLL_RECEIPT_INVALID')
-        return {**value, 'replayed': replayed}
+        return {**{k: v for k, v in value.items() if k != '_recovery_identity'}, 'replayed': replayed}
     if row.status == 'rejected':
         if row.response_sha256 != digest(value) or value.get('state') != 'rejected':
             raise BrollPlanConflict('BROLL_RECEIPT_INVALID')
-        return {**value, 'replayed': replayed}
+        return {**{k: v for k, v in value.items() if k != '_recovery_identity'}, 'replayed': replayed}
     if row.status not in {'running', 'uncertain'}:
         raise BrollPlanConflict('BROLL_RECEIPT_INVALID')
     return {'schema_version': 'broll-plan-review-result.v1', 'state': 'unknown',
@@ -153,7 +153,8 @@ async def read_request(service, project_id, authority, key):
             return _public(row, replayed=True)
 
 
-async def prepare_plan(service, project_id, authority, payload):
+async def prepare_plan(service, project_id, authority, payload, *, recovery_identity=None):
+    from .broll_request_recovery_command import find_settlement, record_late_result, record_failed_after_settlement
     request = payload.model_dump(mode='json')
     fingerprint = digest({'project_id': project_id, 'authority': authority, 'request': request})
     factory = service.repository.session_factory
@@ -164,6 +165,8 @@ async def prepare_plan(service, project_id, authority, payload):
             project = await session.get(VideoProjectORM, project_id, with_for_update=True)
             if project is None:
                 raise KeyError(project_id)
+            if await find_settlement(session, project_id, authority['subject'], digest(authority), payload.request_key):
+                raise BrollPlanConflict('BROLL_REQUEST_ABANDONED')
             prior = await _find(session, project_id, authority, payload.request_key, lock=True)
             if prior:
                 if prior.request_sha256 != fingerprint:
@@ -197,7 +200,9 @@ async def prepare_plan(service, project_id, authority, payload):
             row = ServiceOperationORM(operation_id=operation_id, workspace_id=project.workspace_id,
                 service_id=NAMESPACE, action=ACTION, project_id=project_id, actor_ref=authority['subject'],
                 key_sha256=_identity(authority, payload.request_key, project_id), request_sha256=fingerprint,
-                status='running', response_json={'receipt': receipt}, created_at=stamp, updated_at=stamp)
+                status='running', response_json={'receipt': receipt,
+                    **({'_recovery_identity': recovery_identity} if recovery_identity is not None else {})},
+                created_at=stamp, updated_at=stamp)
             session.add(row)
     # The one attempt has durable custody before any planning await. A crash or
     # uncertain SQL outcome is read-only UNKNOWN, never another execution.
@@ -206,6 +211,8 @@ async def prepare_plan(service, project_id, authority, payload):
         transcript_id=context['source']['transcript_id'], platform=context['platform'],
         allow_stock=payload.settings.allow_stock, allow_ai_image=False, allow_ai_video=False,
         max_ai_cost_vnd='0', resolver_priority=payload.settings.resolver_priority)
+    plan = None
+    abandoned = False
     try:
         plan = await service.create(project_id=project_id, payload=configuration, defer_stock_execution=True)
         if not _preparation_ready(plan.model_dump(mode='json')):
@@ -220,25 +227,46 @@ async def prepare_plan(service, project_id, authority, payload):
         async with factory() as session:
             async with session.begin():
                 await _begin(session, write=True)
-                latest = await _context(service, session, project_id, authority, lock=True)
+                await session.get(VideoProjectORM, project_id, with_for_update=True)
                 row = await session.get(ServiceOperationORM, operation_id, with_for_update=True)
-                if row is None or row.status != 'running' or row.request_sha256 != fingerprint:
-                    raise BrollPlanConflict('BROLL_RECEIPT_CHANGED')
-                changed = latest['context_sha256'] != payload.context_sha256
-                if feedback is not None:
-                    project = await session.get(VideoProjectORM, project_id)
-                    current_feedback = await service.learning.feedback(project.workspace_id,
-                        payload.learning_snapshot_id, niche=project.niche)
-                    changed = changed or digest(current_feedback) != digest(feedback)
-                result = {'schema_version': 'broll-plan-review-result.v1', 'state': 'rejected' if changed else 'prepared',
-                    'receipt': receipt, 'plan': None if changed else plan.model_dump(mode='json'),
-                    'error_code': 'BROLL_REVIEW_CONTEXT_CHANGED' if changed else None,
-                    'preparation_provider_calls': 0, 'publishing_enabled': False, 'owner_approval_inferred': False}
-                row.status = 'rejected' if changed else 'succeeded'
-                row.response_status = 409 if changed else 201
-                row.response_json, row.response_sha256, row.updated_at = result, digest(result), utc_now()
-                return {**result, 'replayed': False}
-    except Exception:
-        # Do not fabricate a successful receipt or redispatch after a partial
-        # plan/commit. A later GET exposes the same request as UNKNOWN.
+                sealed = await find_settlement(session, project_id, authority['subject'], digest(authority), payload.request_key)
+                if sealed:
+                    await record_late_result(session, sealed, row, plan.model_dump(mode='json'))
+                    abandoned = True
+                else:
+                    return await _complete_preparation(service, session, row, project_id, authority, payload,
+                        fingerprint, context, feedback, plan)
+        if abandoned:
+            raise BrollPlanConflict('BROLL_REQUEST_ABANDONED')
+    except BrollPlanConflict as exc:
+        if exc.code == 'BROLL_REQUEST_ABANDONED':
+            raise
+        if await record_failed_after_settlement(service, project_id, authority, operation_id, plan):
+            raise BrollPlanConflict('BROLL_REQUEST_ABANDONED') from None
         raise BrollPlanConflict('BROLL_PREPARATION_OUTCOME_UNKNOWN', 503) from None
+    except Exception:
+        if await record_failed_after_settlement(service, project_id, authority, operation_id, plan):
+            raise BrollPlanConflict('BROLL_REQUEST_ABANDONED') from None
+        raise BrollPlanConflict('BROLL_PREPARATION_OUTCOME_UNKNOWN', 503) from None
+
+
+async def _complete_preparation(service, session, row, project_id, authority, payload, fingerprint, context, feedback, plan):
+    latest = await _context(service, session, project_id, authority, lock=True)
+    if row is None or row.status != 'running' or row.request_sha256 != fingerprint:
+        raise BrollPlanConflict('BROLL_RECEIPT_CHANGED')
+    changed = latest['context_sha256'] != payload.context_sha256
+    if feedback is not None:
+        project = await session.get(VideoProjectORM, project_id)
+        current_feedback = await service.learning.feedback(project.workspace_id,
+            payload.learning_snapshot_id, niche=project.niche)
+        changed = changed or digest(current_feedback) != digest(feedback)
+    result = {'schema_version': 'broll-plan-review-result.v1', 'state': 'rejected' if changed else 'prepared',
+        'receipt': row.response_json['receipt'], 'plan': None if changed else plan.model_dump(mode='json'),
+        'error_code': 'BROLL_REVIEW_CONTEXT_CHANGED' if changed else None,
+        'preparation_provider_calls': 0, 'publishing_enabled': False, 'owner_approval_inferred': False}
+    row.status = 'rejected' if changed else 'succeeded'
+    row.response_status = 409 if changed else 201
+    stored = {**result, **({'_recovery_identity': row.response_json['_recovery_identity']}
+        if '_recovery_identity' in row.response_json else {})}
+    row.response_json, row.response_sha256, row.updated_at = stored, digest(stored), utc_now()
+    return {**result, 'replayed': False}

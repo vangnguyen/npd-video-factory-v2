@@ -15,28 +15,32 @@ class Element{
  addEventListener(name,fn){(this.listeners[name]??=[]).push(fn);}focus(){this.focused=true;}
  async fire(name,target=this){for(const fn of this.listeners[name]??[])await fn({target,currentTarget:this,preventDefault(){}});}
 }
-function harness({memory=new Map(),handler,s=clone(captured.state)}={}){
+function harness({memory=new Map(),handler,scenario=null,s=clone(scenario?.state??captured.state)}={}){
+ if(scenario)memory.set('vf-broll-plan-pending-v1:'+JSON.stringify([s.workspaceId,s.projectId,s.principal.subject]),scenario.pending_raw);
  Object.assign(s,{analyses:[s.analysis],mediaPlans:[],versions:[],selectedBrollPlanId:null,transcriptDrafts:new Map(),projectLoading:0,
   preview:{status:'ready'},productionPackage:{approval:{status:'approved'}},selectedClipId:'kept-clip',undoStack:[1],redoStack:[2]});
- const names=['user','library','stock','user-order','library-order','stock-order','acknowledge','read','prepare','reconcile','resend','discard','form','fields','availability','pending','status','workbench'];
+ const names=['user','library','stock','user-order','library-order','stock-order','acknowledge','read','prepare','reconcile','resend','discard','form','fields','availability','pending','status','workbench','recovery-read','abandon','abandon-acknowledge','recovery'];
  const ids=Object.fromEntries(names.map(name=>['broll-plan-'+name,new Element('broll-plan-'+name)]));
- for(const name of ['user','library','stock','acknowledge']){ids['broll-plan-'+name].type='checkbox';ids['broll-plan-'+name].dataset.brollSetting='';}
+ for(const name of ['user','library','stock','acknowledge','abandon-acknowledge']){ids['broll-plan-'+name].type='checkbox';ids['broll-plan-'+name].dataset.brollSetting='';}
  for(const name of ['user-order','library-order','stock-order']){ids['broll-plan-'+name].type='select';ids['broll-plan-'+name].dataset.brollSetting='';}
  ids['broll-plan-user'].checked=ids['broll-plan-library'].checked=true;
  for(const [name,value]of [['user-order','1'],['library-order','2'],['stock-order','3']])ids['broll-plan-'+name].value=value;
  const settings=Object.values(ids).filter(v=>Object.hasOwn(v.dataset,'brollSetting'));
  const dom={querySelectorAll:selector=>selector.includes('data-broll-setting')?settings:[]};
- let token='vf1.fixture-local-not-provider',clock=captured.clock,learning=null,committed=false,root;
+ let token=scenario?'vf1.renewed-owner.'+'r'.repeat(40):'vf1.fixture-local-not-provider',clock=scenario?.clock??captured.clock,learning=null,committed=false,root;
  const calls=[],effects=[],messages=[],peers={family:false,narration:false,words:false,audio:false,linked:false,manual:false};
  const peer=name=>({sync(){},isBusy:()=>peers[name],isWorking:()=>peers[name],isPending:()=>peers[name],isDirty:()=>peers[name]});
  const storage={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value),
   compareAndRemoveItem:(key,value)=>{if(memory.get(key)!==value)return false;memory.delete(key);return true;}};
  const api=async(path,options={})=>{const c={path,method:options.method??'GET',body:options.body?JSON.parse(options.body):null};calls.push(c);
   let phase,value;if(path==='/api/v1/auth/session'){phase='session';value=clone(s.principal);}
+  else if(path.endsWith('/recovery/inspect')){phase='recovery-inspect';value=clone(scenario.observed);}
+  else if(path.endsWith('/recovery/abandon')){phase='recovery-abandon';value=clone(scenario.settled);}
+  else if(path.includes('/recovery/settlements/')){phase='recovery-proof';value=clone(scenario.settled);}
   else if(c.method==='POST'){phase='post';committed=true;value=clone(captured.response);}
   else if(path.includes('/requests/')){phase='receipt';value={...clone(captured.response),replayed:true};}
   else if(path.includes('/media-plans/')){phase='plan';value=clone(captured.response.plan);}
-  else{phase=committed?'context-proof':'context';value=clone(captured.context);}
+  else{phase=committed?'context-proof':'context';value=clone(scenario?.context??captured.context);}
   return handler?handler(c,phase,value,{s,peers,memory,storage,setToken:v=>{token=v;},setClock:v=>{clock=v;},setLearning:v=>{learning=v;}}):value;
  };
  const stable=new Function(segment('function sqlAudioStable(','\nfunction sqlAudioSourceValue(')+'\nreturn sqlAudioStable;')();
@@ -57,6 +61,7 @@ function harness({memory=new Map(),handler,s=clone(captured.state)}={}){
  const change=async(name,value)=>{const e=ids['broll-plan-'+name];if(e.type==='checkbox')e.checked=value;else e.value=value;await ids['broll-plan-form'].fire('change',e);};
  return {...root,s,ids,calls,effects,messages,memory,peers,change,storage,setClock:v=>{clock=v;},setToken:v=>{token=v;},setLearning:v=>{learning=v;},
   read:()=>ids['broll-plan-read'].fire('click'),prepare:()=>ids['broll-plan-prepare'].fire('click'),reconcile:()=>ids['broll-plan-reconcile'].fire('click'),
+  inspectRecovery:()=>ids['broll-plan-recovery-read'].fire('click'),abandonRecovery:()=>ids['broll-plan-abandon'].fire('click'),
   resend:()=>ids['broll-plan-resend'].fire('click'),discard:()=>ids['broll-plan-discard'].fire('click')};
 }
 test('persistent reviewed form is outside transient browser-content, and the legacy create action only opens it',()=>{
@@ -247,4 +252,57 @@ for(const changed of ['selection','plan-list'])test(`a newer ${changed} inside t
  assert.deepEqual(h.s.mediaPlans,changed==='plan-list'?[newer]:[]);
  assert.equal(h.s.selectedBrollPlanId,changed==='selection'?newer.media_plan_id:null);
  assert.deepEqual(h.effects,[]);assert.equal(h.memory.size,1);
+});
+
+const recoveryCaptured=JSON.parse(readFileSync(new URL('./fixtures/broll-request-recovery.json',import.meta.url),'utf8'));
+for(const scenario of recoveryCaptured.scenarios)test(`actual Root + actual controller explicit recovery: ${scenario.scenario}`,async()=>{
+ const h=harness({scenario}),before=clone(h.s);assert.equal(h.calls.length,0);assert.equal(h.brollPlanHeld(),true);
+ assert.equal(h.ids['broll-plan-recovery-read'].disabled,false);assert.equal(h.ids['broll-plan-abandon'].disabled,true);
+ await h.abandonRecovery();assert.equal(h.calls.length,0);await h.inspectRecovery();assert.equal(h.memory.size,1);
+ assert.equal(h.ids['broll-plan-abandon'].disabled,false);assert.ok(h.controller.state().recovery);
+ await h.abandonRecovery();assert.equal(h.memory.size,1);await h.change('abandon-acknowledge',true);await h.abandonRecovery();
+ assert.equal(h.memory.size,0);assert.equal(h.brollPlanHeld(),false);assert.equal(h.controller.state().pending,null);
+ for(const key of ['timeline','assets','analyses','versions','preview','productionPackage','mediaPlans','selectedBrollPlanId'])assert.deepEqual(h.s[key],before[key]);
+ assert.deepEqual(h.effects,[]);assert.deepEqual(h.calls.filter(v=>v.method==='POST').map(v=>v.path.split('/').at(-1)),['inspect','abandon']);
+ assert.equal(h.calls.filter(v=>v.path.includes('/recovery/settlements/')).length,3);
+ assert.ok(!h.calls.some(v=>/stock-search|resolve|apply-broll|render/.test(v.path)));
+});
+for(const phase of ['recovery-inspect','recovery-abandon','recovery-proof'])for(const drift of ['raw','token','source','form','plans','dispose'])test(`Root recovery ${drift} during ${phase} keeps UNKNOWN and avoids local change`,async()=>{
+ let attack=false;const foreign='foreign B retained';const scenario=recoveryCaptured.scenarios[0];
+ const h=harness({scenario,handler:(c,p,v,t)=>{if(attack&&p===phase){
+  if(drift==='raw')t.memory.set([...t.memory.keys()][0],foreign);else if(drift==='token')t.setToken('vf1.changed-literal');
+  else if(drift==='source')t.s.analysis.fingerprint='f'.repeat(64);else if(drift==='form')h.ids['broll-plan-user-order'].value='3';
+  else if(drift==='plans')t.s.selectedBrollPlanId='mpl_newer-selection';else h.controller.dispose();
+ }return v;}});
+ if(phase!=='recovery-inspect'){await h.inspectRecovery();await h.change('abandon-acknowledge',true);}attack=true;
+ await (phase==='recovery-inspect'?h.inspectRecovery():h.abandonRecovery());
+ assert.equal(h.memory.size,1);assert.deepEqual(h.effects,[]);assert.deepEqual(h.s.mediaPlans,[]);
+ if(drift==='raw')assert.equal([...h.memory.values()][0],foreign);
+ if(drift==='plans')assert.equal(h.s.selectedBrollPlanId,'mpl_newer-selection');
+});
+test('final private native get changing selection after proof prevents CAS removal',async()=>{
+ let proofReads=0,armed=false;
+ const h=harness({scenario:recoveryCaptured.scenarios[0],handler:(_c,phase,value)=>{
+  if(phase==='recovery-proof'&&++proofReads===3)armed=true;return value;}});
+ await h.inspectRecovery();await h.change('abandon-acknowledge',true);
+ const get=h.storage.getItem;let reads=0;
+ h.storage.getItem=k=>{const raw=get(k);if(armed&&++reads===2)h.s.selectedBrollPlanId='mpl_new-selection';return raw;};
+ const original=h.storage.compareAndRemoveItem;let removals=0;h.storage.compareAndRemoveItem=(...a)=>{removals++;return original(...a);};
+ await h.abandonRecovery();assert.equal(proofReads,3);assert.ok(reads>=2);assert.equal(h.memory.size,1);
+ assert.equal(h.s.selectedBrollPlanId,'mpl_new-selection');assert.equal(removals,0);assert.deepEqual(h.effects,[]);
+});
+test('recovery controls preserve malformed/foreign record and require server inspection, not local discard',async()=>{
+ const h=harness({scenario:recoveryCaptured.scenarios[0]});const foreign='malformed retained bytes';h.memory.set([...h.memory.keys()][0],foreign);
+ await h.discard();await h.inspectRecovery();assert.deepEqual([...h.memory.values()],[foreign]);
+ assert.equal(h.calls.filter(v=>v.method==='POST').length,0);assert.deepEqual(h.effects,[]);
+ assert.match(html,/id="broll-plan-abandon-acknowledge"[^>]*data-broll-setting/);
+ assert.match(html,/kế hoạch, kết quả đến muộn và lịch sử vẫn được giữ/);
+});
+test('unverifiable original authority is an explicit implementation limit and keeps exact held bytes',async()=>{
+ const scenario=recoveryCaptured.scenarios[0];
+ const h=harness({scenario,handler:(_c,phase,value)=>{if(phase==='recovery-inspect')throw Object.assign(Error('API 409'),
+  {status:409,detail:{error:{code:'BROLL_RECOVERY_IDENTITY_UNVERIFIABLE'}}});return value;}});
+ await h.inspectRecovery();assert.deepEqual([...h.memory.values()],[scenario.pending_raw]);assert.deepEqual(h.effects,[]);
+ assert.ok(h.messages.some(v=>String(v[0]).includes('cần phiên gốc còn hiệu lực')));
+ assert.match(html,/Yêu cầu chưa tới server cần đúng phiên gốc còn hiệu lực/);
 });
