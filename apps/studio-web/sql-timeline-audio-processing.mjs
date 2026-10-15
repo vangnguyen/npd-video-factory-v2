@@ -206,8 +206,20 @@ export function initializeSqlTimelineAudioProcessing({root, api, getState, onMes
     current(ticket, identity, bound, true); audioProcessingRead(data, getState()); demand(resultMatches(data, p), 'Biên nhận chưa chứng minh đúng lần lưu; giữ yêu cầu.');
     demand(await sourceHash(data.timeline) === p.ui_source_sha256, 'Nguồn timeline trong biên nhận đã đổi.'); current(ticket, identity, bound, true);
     observedReceipts.set(p.body.request_key, data.receipt.request_sha256);
-    await onSaved({workspace_id: p.workspace_id, project_id: p.project_id, actor_ref: p.actor_ref, parent_version: p.body.expected_version,
-      result_version: data.timeline.current_version, ui_source_sha256: p.ui_source_sha256, receipt: copy(data.receipt), timeline: copy(data.timeline)});
+    const callbackBucket = held?.bucket, callbackRaw = retained.get(p.body.request_key), callbackHeld = held;
+    let callbackActive = true;
+    const requestGuard = () => {
+      demand(callbackActive, 'Phạm vi đối chiếu yêu cầu đã kết thúc.');
+      const raw = storage.getItem(callbackBucket);
+      current(ticket, identity, bound, true);
+      demand(bucket() === callbackBucket && pending === p && held === callbackHeld
+        && typeof callbackRaw === 'string' && retained.get(p.body.request_key) === callbackRaw
+        && held?.raw === callbackRaw && raw === callbackRaw, 'Bản ghi đang giữ đã đổi; chưa được nhận timeline.');
+      return true;
+    };
+    try {requestGuard(); await onSaved({workspace_id: p.workspace_id, project_id: p.project_id, actor_ref: p.actor_ref, parent_version: p.body.expected_version,
+      result_version: data.timeline.current_version, ui_source_sha256: p.ui_source_sha256, receipt: copy(data.receipt), timeline: copy(data.timeline)}, requestGuard);
+    } finally {callbackActive = false;}
     current(ticket, identity, undefined, true);
     demand(same(getState().timeline, data.timeline), 'Studio chưa chứng minh đúng timeline vừa lưu; giữ yêu cầu.');
     const key = bucket(), exact = retained.get(p.body.request_key), readback = storage.getItem(key);

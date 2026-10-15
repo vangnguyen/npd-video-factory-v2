@@ -78,6 +78,18 @@ test('selected actual ASGI fixture remains pinned and explicitly separates Node 
  assert.equal(captured.scope.actual_sqlite,true);assert.equal(captured.scope.actual_asgi,true);assert.equal(captured.scope.actual_decode,false);assert.equal(captured.scope.owner_uat,false);
  assert.equal(manifest.selected_records,4);assert.equal(manifest.manual_put_body_equals_current_body,true);
 });
+for(const guard of [undefined,()=>false,()=>{throw Error('foreign owned intent');},()=>Promise.resolve(true)])
+ test('Root manual callback requires a synchronous private true guard before reads',async()=>{
+  const h=harness(),before=clone(h.s);await assert.rejects(h.refreshManualReframe({},guard));
+  assert.deepEqual(h.s,before);assert.equal(h.calls.length,0);assert.deepEqual(h.effects,[]);
+ });
+for(const phase of ['proof','history','final'])test(`shipped manual controller blocks foreign pending B during ${phase} before Root adopts`,async()=>{
+ let key,foreign;const h=harness({handler:(c,p,data)=>{if(p===phase){[key]=[...h.memory.keys()];const b=JSON.parse(h.memory.get(key));
+  b.body.request_key='foreign-manual-callback-B';foreign=JSON.stringify(b);h.memory.set(key,foreign);}return data;}});
+ await h.read();await h.fill();const before=clone(h.s.timeline);await h.submit();
+ assert.deepEqual(h.s.timeline,before);assert.equal(h.memory.get(key),foreign);assert.equal(h.controller.isPending(),true);
+ assert.equal(h.effects.includes('render'),false);assert.equal(h.effects.includes('stop-preview'),false);
+});
 test('actual initializer and Root form remain unread/disabled at mount, then explicit read hydrates only current source',async()=>{
  const h=harness();assert.equal(h.calls.length,0);assert.equal(h.ids['manual-reframe-fields'].disabled,true);assert.equal(h.formRead(),null);
  await h.read();assert.deepEqual(h.calls.map(c=>c.method),['GET']);assert.equal(h.ids['manual-reframe-fields'].disabled,false);

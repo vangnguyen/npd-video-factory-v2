@@ -46,12 +46,26 @@ function harness({s = state(), handler, storage, crypto, onSaved, onBusyChanged,
     storage: storage ?? {getItem: k => memory.get(k) ?? null, setItem: (k, v) => memory.set(k, v),
       compareAndRemoveItem: (k, raw) => {if (memory.get(k) !== raw) return false; memory.delete(k); return true;}},
     onMessage: (...value) => messages.push(value), onBusyChanged: () => {if (onBusyChanged) onBusyChanged();},
-    onSaved: async value => {saved.push(value); if (onSaved) return onSaved(value, s); s.timeline = clone(value.timeline);}});
+    onSaved: async (value,guard) => {saved.push(value); if (onSaved) return onSaved(value, s, guard); s.timeline = clone(value.timeline);}});
   const edit = (name = 'duck_threshold', value = '0.025') => {const input = get(name); if (input.type === 'checkbox') input.checked = value;
     else input.value = value; input.listeners[input.type === 'checkbox' ? 'change' : 'input'](); get('ack').checked = true; get('ack').listeners.change();};
   return {s, controller, get, calls, saved, memory, messages, edit, setToken: value => {token = value;}, click: name => get(name).listeners.click()};
 }
 
+test('private synchronous callback guard rejects foreign raw, checks scope after storage and is revoked', async () => {
+  for (const change of ['foreign', 'storage-source', 'none']) {
+    const memory = new Map(); let h, armed = false, guardRef;
+    const storage = {getItem:k=>{const raw=memory.get(k)??null;if(armed&&change==='storage-source')h.s.principal.subject='usr:changed-by-storage';return raw;},
+      setItem:(k,v)=>memory.set(k,v),compareAndRemoveItem:(k,v)=>{if(memory.get(k)!==v)return false;memory.delete(k);return true;}};
+    h = harness({storage,onSaved:async(value,s,guard)=>{guardRef=guard;assert.equal(guard(),true);await Promise.resolve();
+      if(change==='foreign'){const[k,raw]=[...memory][0];const b=JSON.parse(raw);b.body.request_key='foreign-callback-request-B';memory.set(k,JSON.stringify(b));}
+      armed=true;if(change==='none'){assert.equal(guard(),true);s.timeline=clone(value.timeline);}else assert.throws(()=>guard());}});
+    await h.click('read');h.edit();const before=clone(h.s.timeline);await h.click('save');assert.throws(()=>guardRef());
+    assert.equal(h.calls.filter(c=>c.method==='PUT').length,1);
+    if(change!=='none'){assert.deepEqual(h.s.timeline,before);assert.equal(memory.size,1);if(change==='foreign')assert.equal(h.controller.isPending(),true);}
+    else assert.equal(h.controller.isPending(),false);
+  }
+});
 test('mount/sync perform zero calls; explicit GET loads exact server off defaults and .02 without token_id', async () => {
   const h = harness(); h.controller.sync(); assert.equal(h.calls.length, 0); assert.equal(h.get('duck_threshold').value, '');
   await h.click('read'); assert.equal(h.calls.length, 1); assert.equal(h.get('duck_threshold').value, '0.02');

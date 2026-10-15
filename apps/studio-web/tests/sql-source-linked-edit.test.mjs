@@ -40,11 +40,24 @@ function harness({capture = actual, s = state('editor', capture), handler, stora
   const controller = initializeSqlSourceLinkedEdit({root, dom, api, getState: () => s, storage: backing,
     cryptoImpl: crypto ?? webcrypto, newRequestKey: () => key, getSessionToken: () => token,
     onMessage: (...message) => messages.push(message), onBusyChanged: () => {if (onBusyChanged) onBusyChanged();},
-    onSaved: async value => {saved.push(value); if (onSaved) return onSaved(value, s); s.timeline = clone(value.timeline);}});
+    onSaved: async (value,guard) => {saved.push(value); if (onSaved) return onSaved(value, s, guard); s.timeline = clone(value.timeline);}});
   return {controller, calls, saved, s, memory, get, messages, setToken: value => {token = value;}, result,
     run: (operations = clone(OPS), options = {acknowledged: true}) => controller.runOperations(operations, options)};
 }
 
+test('private synchronous callback guard rejects foreign raw, checks scope after storage and is revoked', async () => {
+  for (const change of ['foreign', 'storage-source', 'none']) {
+    const memory = new Map(); let h, armed = false, guardRef;
+    const storage = {getItem:k=>{const raw=memory.get(k)??null;if(armed&&change==='storage-source')h.s.assets[0].checksum_sha256='f'.repeat(64);return raw;},
+      setItem:(k,v)=>memory.set(k,v),compareAndRemoveItem:(k,v)=>{if(memory.get(k)!==v)return false;memory.delete(k);return true;}};
+    h = harness({storage,onSaved:async(value,s,guard)=>{guardRef=guard;assert.equal(guard(),true);await Promise.resolve();
+      if(change==='foreign'){const[k,raw]=[...memory][0];const b=JSON.parse(raw);b.body.request_key='foreign-callback-request-B';memory.set(k,JSON.stringify(b));}
+      armed=true;if(change==='none'){assert.equal(guard(),true);s.timeline=clone(value.timeline);}else assert.throws(()=>guard());}});
+    const before=clone(h.s.timeline);assert.equal(Boolean(await h.run()),change==='none');
+    assert.throws(()=>guardRef());assert.equal(h.calls.filter(c=>c.method==='PUT').length,1);
+    if(change!=='none'){assert.deepEqual(h.s.timeline,before);assert.equal(memory.size,1);assert.equal(h.controller.isPending(),true);}
+  }
+});
 test('exact preserved ASGI selected DTOs validate without request/result Python digest recomputation', () => {
   const s = state(); assert.equal(actual.scope.actual_sqlite, true); assert.equal(actual.scope.actual_asgi, true);
   assert.equal(actual.scope.actual_decode, false); assert.equal(actual.scope.owner_uat, false);

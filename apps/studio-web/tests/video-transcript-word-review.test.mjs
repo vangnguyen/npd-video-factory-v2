@@ -51,7 +51,7 @@ function harness({s = state(), handler, storage, crypto, onSaved, mediaFetch, ge
       compareAndRemoveItem: (k, v) => {if (memory.get(k) !== v) return false; memory.delete(k); return true;}},
     cryptoImpl: crypto ?? {...webcrypto, subtle: webcrypto.subtle, randomUUID: () => 'fixture-word-intent-0001'},
     onMessage: (...v) => messages.push(v), onBusyChanged: () => busyEvents++,
-    onSaved: async selection => {saved.push(selection); if (onSaved) return onSaved(selection, s);
+    onSaved: async (selection,guard) => {saved.push(selection); if (onSaved) return onSaved(selection, s, guard);
       s.analysis = clone(selection.receipt); s.analyses = [clone(selection.receipt)]; s.timeline = clone(fixture.responses.timeline_after.body);},
     urls: {createObjectURL: () => 'blob:explicit-fixture', revokeObjectURL: value => revoked.push(value)}});
   function edit() {get('text')[0].value += '!'; get('text')[0].listeners.input(); get('ack')[0].checked = true; get('ack')[0].listeners.change();}
@@ -59,6 +59,20 @@ function harness({s = state(), handler, storage, crypto, onSaved, mediaFetch, ge
     click: name => get(name)[0].listeners.click(), busyEvents: () => busyEvents};
 }
 
+test('private synchronous callback guard rejects foreign raw, checks scope after storage and is revoked', async () => {
+  for (const change of ['foreign', 'storage-source', 'none']) {
+    const memory = new Map(); let h, armed = false, guardRef;
+    const storage = {getItem:k=>{const raw=memory.get(k)??null;if(armed&&change==='storage-source')h.s.assets[0].checksum_sha256='f'.repeat(64);return raw;},
+      setItem:(k,v)=>memory.set(k,v),compareAndRemoveItem:(k,v)=>{if(memory.get(k)!==v)return false;memory.delete(k);return true;}};
+    h = harness({s:publicSessionState(),storage,onSaved:async(value,s,guard)=>{guardRef=guard;assert.equal(guard(),true);await Promise.resolve();
+      if(change==='foreign'){const[k,raw]=[...memory][0];const b=JSON.parse(raw);b.body.note='FOREIGN_CALLBACK_REQUEST_B';memory.set(k,JSON.stringify(b));}
+      armed=true;if(change==='none'){assert.equal(guard(),true);s.analysis=clone(value.receipt);s.analyses=[clone(value.receipt)];s.timeline=clone(fixture.responses.timeline_after.body);}else assert.throws(()=>guard());}});
+    await h.click('read');h.edit();const before=clone(h.s.timeline);await h.click('save');assert.throws(()=>guardRef());
+    assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+    if(change!=='none'){assert.deepEqual(h.s.timeline,before);assert.equal(memory.size,1);assert.equal(h.controller.isPending(),true);}
+    else assert.equal(h.controller.isPending(),false);
+  }
+});
 test('immutable actual ASGI bytes include one scoped SQL word CAS and untouched original/source/usage', () => {
   assert.equal(createHash('sha256').update(capturedBytes).digest('hex'), manifest.asgi_sha256);
   assert.equal(capturedBytes.length, manifest.asgi_bytes);

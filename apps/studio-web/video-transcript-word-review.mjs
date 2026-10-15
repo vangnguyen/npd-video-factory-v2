@@ -386,9 +386,23 @@ export function initializeVideoTranscriptWordReview({root, api, mediaFetch, getS
   async function accepted(a, p) {
     demand(sameSource(p), 'Dự án, nguồn hoặc phiên truy cập đã đổi sau lần lưu.'); session(getState(), true); validateVideoWords(a, getState());
     demand(videoWordReceiptMatches(a, p), 'Phản hồi chưa chứng minh đúng lần sửa; giữ yêu cầu để đối chiếu.');
-    await onSaved({workspace_id: p.workspaceId, project_id: p.projectId, analysis_id: p.analysisId, asset_id: a.asset_id,
+    const callbackBucket = held?.bucket, callbackRaw = retainedBytes.get(p.key), callbackHeld = held,
+      callbackBinding = rootBinding(getState());
+    let callbackActive = true;
+    const requestGuard = () => {
+      demand(callbackActive, 'Phạm vi đối chiếu yêu cầu đã kết thúc.');
+      const raw = storage.getItem(callbackBucket);
+      session(getState(), true);
+      demand(sameSource(p) && rootBinding(getState()) === callbackBinding && key() === callbackBucket
+        && pending === p && held === callbackHeld && typeof callbackRaw === 'string'
+        && retainedBytes.get(p.key) === callbackRaw && held?.raw === callbackRaw && raw === callbackRaw,
+      'Bản ghi đang giữ hoặc nguồn đã đổi; chưa được nhận timeline.');
+      return true;
+    };
+    try {requestGuard(); await onSaved({workspace_id: p.workspaceId, project_id: p.projectId, analysis_id: p.analysisId, asset_id: a.asset_id,
       source_sha256: source(getState(), a).checksum_sha256, base_transcript_id: p.body.expected_transcript_id,
-      result_transcript_id: a.transcript.transcript_id, expected_timeline_version: p.body.expected_timeline_version, receipt: copy(a)});
+      result_transcript_id: a.transcript.transcript_id, expected_timeline_version: p.body.expected_timeline_version, receipt: copy(a)}, requestGuard);
+    } finally {callbackActive = false;}
     function currentReceipt() {
       demand(sameSource(p), 'Ngữ cảnh đã đổi khi tải lại dự án; yêu cầu vẫn được giữ.'); session(getState(), true);
       if (p.body.expected_timeline_version !== null) demand(getState().timeline?.current_version === p.body.expected_timeline_version + 1
