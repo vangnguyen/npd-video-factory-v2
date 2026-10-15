@@ -4380,3 +4380,10 @@ Full requested report fields: [SQL_UPLOAD_RIGHTS_DEFAULTS_REVIEW.md](SQL_UPLOAD_
 2026-10-15 — [Witness pending và capability API](SQL_BROLL_WITNESS_PENDING_REVIEW.md), product `61ada558f6dce4163d9c21b1da170c495d5752e5`: optional v2 giữ literal intent/envelope/hash, issue→verify trước durable prepare, không tự re-sign/fallback; v1 default giữ nguyên. Đã đóng live API switch sau SQL await. Primary29 SQL/API PASS101.74s và fullStudio1.983PASS0fail/skip18.005s; author21/340 và peer3API/2Node có overlap. Real key NOT_CONFIGURED; Root adapter/UI chưa nối. Browser/Owner/provider/production/full Mode A-B còn mở;59 nhóm lớn chưa đóng.
 
 Full requested report fields: [SQL_BROLL_WITNESS_PENDING_REVIEW.md](SQL_BROLL_WITNESS_PENDING_REVIEW.md).
+
+
+## Wave 3 — Terminal B-roll Studio recovery
+
+2026-10-15 — [Studio đóng yêu cầu B-roll đã kết thúc](SQL_BROLL_TERMINAL_STUDIO_REVIEW.md), product `9e58b6b494c9cbfa551561858dba9e7b618f0bab`: explicit inspect/ack/settle/readback, chỉ exact raw CAS và thay controller sau proof; không đổi project/plan/assets/timeline/preview/approval. Lost response chỉ đọc biên nhận; CAS không rõ giữ khóa/tải lại. Primary fullStudio2.038PASS0fail/skip28.036s; authorN2full1970/55new +peer2, N1affected282/peer4 là lịch sử; không cộng. Backend không đổi. Witness Root UI/browser/Owner/provider/production/full Mode A-B còn mở;59 nhóm lớn chưa đóng.
+
+Full requested report fields: [SQL_BROLL_TERMINAL_STUDIO_REVIEW.md](SQL_BROLL_TERMINAL_STUDIO_REVIEW.md).
