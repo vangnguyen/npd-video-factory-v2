@@ -610,3 +610,10 @@ Next: internal-resolution Root UI with exactjob-context-exactjob proof and4field
 2026-10-15 — [Signed B-roll recovery backend](SQL_BROLL_WITNESSED_RECOVERY_REVIEW.md), product `297427e15985ce98a6d9b4bc6047156f82d0ce30`: typed verified witness trong originalprojectlock, observationCAS ràng buộc exactenvelope, replay/history giữ originalproof/auditchain, lateoldPOST409; v1 không đổi. Final24/independent4/primarymain15 PASS là các tập riêng có overlap. Actualmain14requests(12recorded+2helperGET) tạo1settlement/0plan/provider. Key thật NOT_CONFIGURED; pendingv2/RootUI chưa nối, legacyabsent-renewal thiếuwitness vẫn failclosed. FullStudio1.843 thuộcsource9b9 trướcbackendincrement, không rerun/khôngbrowserclaim.59 nhóm lớn vẫn mở.
 
 Next: explicit opt-in controller pendingv2 and later Root adapter (current v1raw/route guard intentionally rejects v2), internal-job UI with exactjob-context-exactjob proof, known-terminal internal intent settlement preserving all original rows. No forced queued/running takeover or absent execution inference. Continue other safe MasterSpec gaps; OwnerUAT deferred.
+
+
+## Internal-resolution Root UI
+
+2026-10-15 — [Internal B-roll resolution Studio](SQL_BROLL_INTERNAL_RESOLUTION_STUDIO_REVIEW.md), product `632b8171679375d9e2fddbccb5db21bab451f6af`: form chọn rõplan/item/candidate, explicitack/admit, exactjob observe/retry; callback exactjob-currentcontext-exactjob+literalhash/privateguard chỉnhận4field item, giữtimeline/preview/approval. Legacyinternalbutton mởform0dispatch; peerholds liênkết. FullprimaryStudio1.915PASS0fail/skip17.981ms, independent4PASS; own72/affected229/full1915 overlap khôngcộng. ActualN3 raw207426B/e8c4… exactphysical/Git, Node replay không phảiSQLmới. Terminalsettlement/UIv2/browser/Owner/provider/production/fullModeA-B cònmở;59 nhóm lớn chưađóng.
+
+Next: server-proven terminal settlement and explicit UI release preserving originals; witness-aware pendingv2/controller and later Root allowlist/outerraw adapter. Keep queued/running/receipt-null/unknown ownership failclosed, no browser workaround, publish/deploy disabled and OwnerUAT deferred.
