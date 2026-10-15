@@ -28,3 +28,6 @@ apps/studio-web/tests/fixtures/sql-video-word-review/*.json -text whitespace=cr-
 # Preserve exact actual ASGI/SQLite captures for SQL audio processing UI.
 apps/studio-web/tests/fixtures/sql-audio-processing/*.json -text whitespace=cr-at-eol
 apps/studio-web/tests/fixtures/source-linked-edit/*.json -text whitespace=cr-at-eol
+
+# Preserve the exact reviewed B-roll HTTP fixture, including Windows EOL.
+apps/studio-web/tests/fixtures/sql-broll-plan-review.json -text whitespace=cr-at-eol

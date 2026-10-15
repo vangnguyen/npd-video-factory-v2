@@ -151,7 +151,8 @@ class MediaPlanningService:
         self.learning = learning
         self.object_storage = object_storage
 
-    async def create(self, *, project_id: str, payload: MediaPlanRequest) -> MediaPlanRead:
+    async def create(self, *, project_id: str, payload: MediaPlanRequest,
+                     defer_stock_execution: bool = False) -> MediaPlanRead:
         project = await self.platform.get_project(project_id)
         analysis = await self.auto_edit_repository.get_analysis(payload.analysis_id,transcript_id=payload.transcript_id)
         if project is None or analysis is None or analysis.project_id != project_id:
@@ -194,6 +195,7 @@ class MediaPlanningService:
                     "configuration": payload.model_dump(mode="json", exclude={'learning_snapshot_id'} if payload.learning_snapshot_id is None else set()),
                     "providers": provider_status,
                     "algorithm": "priority-media-planner-v1",
+                    **({'execution_mode': 'reviewed-preparation-only-v1'} if defer_stock_execution else {}),
                     **({'supporting_assets':[(asset.asset_id,asset.checksum_sha256,asset.provenance,asset.filename)
                         for asset in supporting_assets]} if payload.purpose=='supporting_broll' else {}),
                 },
@@ -231,11 +233,14 @@ class MediaPlanningService:
             return existing
         if self._managed_stock():
             binding = await self._freeze_stock_plan(project, analysis, vision, source_asset, supporting_assets,
-                payload, provider_status)
+                payload, provider_status, defer_stock_execution=defer_stock_execution)
             if binding['searches']:
                 binding.update(media_plan_id=media_plan_id, fingerprint=fingerprint,
                     project_version_id=analysis.project_version_id)
-                await stock_planner.initialize(self.repository, media_plan_id, binding, self._stock_clock())
+                await stock_planner.initialize(self.repository, media_plan_id, binding, self._stock_clock(),
+                    require_review=defer_stock_execution)
+                if defer_stock_execution:
+                    return await self.repository.get_plan(media_plan_id)
                 return await self.process_stock_plan(media_plan_id)
         try:
             stock_available = self._provider_available(self.providers.stock)
@@ -250,10 +255,12 @@ class MediaPlanningService:
                 aspect_ratio=platform_aspect_ratio(payload.platform),
             )
             image_cost = (
-                await self.providers.image.estimate_cost(image_input) if image_available else None
+                await self.providers.image.estimate_cost(image_input)
+                if image_available and (not defer_stock_execution or payload.allow_ai_image) else None
             )
             video_cost = (
-                await self.providers.video.estimate_cost(video_input) if video_available else None
+                await self.providers.video.estimate_cost(video_input)
+                if video_available and (not defer_stock_execution or payload.allow_ai_video) else None
             )
             stock_candidates: dict[str, list[StockMediaCandidateRead]] = {}
             total_stock_candidates = 0
@@ -280,6 +287,8 @@ class MediaPlanningService:
                         stock=stock_available,image=image_available,video=video_available,preferred_type=broll.preferred_media_type)
                 if strategy not in {"stock_image", "stock_video"}:
                     continue
+                if defer_stock_execution:
+                    raise ValueError('REVIEWED_STOCK_SCHEDULER_REQUIRED')
                 with stock_request_scope(project.workspace_id), stock_wire_operation(workspace_id=project.workspace_id,
                     project_id=project_id,source_ref='media-plan:'+media_plan_id+':'+scene.scene_id,
                     budget_sha256=stock_digest({'max_ai_cost_vnd':str(payload.max_ai_cost_vnd),'paid':False})):
@@ -360,14 +369,15 @@ class MediaPlanningService:
     def _stock_clock(self):
         return stock_planner.clock(self.providers.stock.wire_guard.clock())
 
-    async def _freeze_stock_plan(self, project, analysis, vision, source, supporting, payload, provider_status):
+    async def _freeze_stock_plan(self, project, analysis, vision, source, supporting, payload, provider_status,
+                                 *, defer_stock_execution=False):
         available = {'stock': self._provider_available(self.providers.stock),
             'image': self._provider_available(self.providers.image), 'video': self._provider_available(self.providers.video)}
         aspect = platform_aspect_ratio(payload.platform)
         image_cost = await self.providers.image.estimate_cost(ImageGenerationInput(prompt='media-plan-estimate',
-            aspect_ratio=aspect)) if available['image'] else None
+            aspect_ratio=aspect)) if available['image'] and (not defer_stock_execution or payload.allow_ai_image) else None
         video_cost = await self.providers.video.estimate_cost(VideoGenerationInput(prompt='media-plan-estimate',
-            aspect_ratio=aspect)) if available['video'] else None
+            aspect_ratio=aspect)) if available['video'] and (not defer_stock_execution or payload.allow_ai_video) else None
         searches = []
         for scene in analysis.scenes:
             broll = build_broll_decision(analysis=analysis, scene=scene, vision=vision, brand_context=payload.brand_context)
