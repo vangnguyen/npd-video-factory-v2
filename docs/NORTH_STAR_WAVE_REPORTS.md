@@ -4359,3 +4359,10 @@ Full requested report fields: [SQL_BROLL_WITNESSED_RECOVERY_REVIEW.md](SQL_BROLL
 Full requested report fields: [SQL_BROLL_INTERNAL_RESOLUTION_STUDIO_REVIEW.md](SQL_BROLL_INTERNAL_RESOLUTION_STUDIO_REVIEW.md).
 
 2026-10-15 — [Internal B-roll resolution Studio](SQL_BROLL_INTERNAL_RESOLUTION_STUDIO_REVIEW.md), product `632b8171679375d9e2fddbccb5db21bab451f6af`: form chọn rõplan/item/candidate, explicitack/admit, exactjob observe/retry; callback exactjob-currentcontext-exactjob+literalhash/privateguard chỉnhận4field item, giữtimeline/preview/approval. Legacyinternalbutton mởform0dispatch; peerholds liênkết. FullprimaryStudio1.915PASS0fail/skip17.981ms, independent4PASS; own72/affected229/full1915 overlap khôngcộng. ActualN3 raw207426B/e8c4… exactphysical/Git, Node replay không phảiSQLmới. Terminalsettlement/UIv2/browser/Owner/provider/production/fullModeA-B cònmở;59 nhóm lớn chưađóng.
+
+
+## Wave 3 — Known-terminal B-roll recovery
+
+2026-10-15 — [Giải phóng yêu cầu B-roll đã kết thúc](BROLL_INTERNAL_TERMINAL_SETTLEMENT.md), product `a4dd1416bf4218d921619b5bf3191087a8fa61fd`: API inspect/settle/read dùng original private admission và CAS, chỉ thêm một biên nhận; giữ job, tài sản, chi phí, timeline và approvals gốc. Final31/resolver31/independent3/primary10 PASS là các tập có overlap, không cộng. Capture actual-main7 request dùng synthetic metadata, không provider. Studio release đang triển khai; unknown/receipt-null vẫn giữ nguyên. Browser bị policy từ chối; PostgreSQL/Owner/production/full Mode A-B còn mở. 59 nhóm lớn chưa đóng.
+
+Full requested report fields: [BROLL_INTERNAL_TERMINAL_SETTLEMENT.md](BROLL_INTERNAL_TERMINAL_SETTLEMENT.md).
