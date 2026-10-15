@@ -28,12 +28,13 @@ import {initializeAnalyticsConsole} from '/analytics-console.mjs';
 import {initializeAnalyticsChannels} from '/analytics-channels.mjs';
 import {initializeAnalyticsRefresh} from '/analytics-refresh.mjs';
 import {initializeChannelLearning} from '/channel-learning.mjs';
-import {initializeUploadedAudioReview} from '/uploaded-audio-review.mjs?v=sql-audio-1';
+import {initializeUploadedAudioReview,audioRole} from '/uploaded-audio-review.mjs?v=sql-audio-1';
 import {initializeStockPlanningReview} from '/stock-planning-review.mjs?v=sql-stock-1';
 import {initializeVideoAnalysisJobs,videoReviewSelection,selectedVideoReviewAnalysis} from '/video-analysis-jobs.mjs?v=sql-video-jobs-1';
 import {initializeSqlVariantFamilies} from '/sql-variant-families.mjs?v=sql-family-1';
 import {initializeSqlVariantNarration} from '/sql-variant-narration.mjs?v=sql-narration-1';
 import {initializeVideoTranscriptWordReview} from '/video-transcript-word-review.mjs?v=sql-video-words-1';
+import {initializeSqlTimelineAudioProcessing,audioProcessingRead} from '/sql-timeline-audio-processing.mjs?v=sql-audio-processing-1';
 
 const state = {
   workspaceId: null,
@@ -84,6 +85,9 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 let videoWordReview = null;
+let sqlAudioProcessing = null;
+const audioProcessingAdmission = Symbol('scoped-audio-processing-controller');
+function audioProcessingHeld(){return sqlAudioProcessing?.isWorking()===true || sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true;}
 const videoWordAdmission = Symbol('scoped-word-controller');
 function videoWordsHeld(){return videoWordReview?.isWorking()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true;}
 const multiInput = initializeMultiInput({api, getState: () => state, refresh: () => loadProject(),
@@ -101,12 +105,12 @@ function productionWorkbenchDraft(){return JSON.stringify([...document.querySele
   '#subtitle-list [data-cue-field],#subtitle-position,#subtitle-animation,#subtitle-template,#subtitle-keywords,#subtitle-font-size,#subtitle-safe-margin,#voice-enabled,#voice-speed,#voice-gain,#music-gain,#music-ducking,#music-asset')]
   .map(input=>[input.id,input.dataset.cueField,input.type==='checkbox'?input.checked:input.value]));}
 const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-review'), api,
-  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true,
-    dirty: videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true,
+    dirty: sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onUploaded: () => loadProject(), onCanonicalSaved: () => loadProject()});
 const stockReview = initializeStockPlanningReview({root: $('#stock-planning-review'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true,
-    dirty: videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true,
+    dirty: sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onPlanUpdated: plan => {
     if (plan.project_id !== state.projectId || plan.workspace_id !== state.workspaceId) return;
@@ -114,8 +118,8 @@ const stockReview = initializeStockPlanningReview({root: $('#stock-planning-revi
     if (state.timeline) renderBrowser();
   }});
 const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true,
-    dirty: videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true,
+    dirty: sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onReview: async value => {
     const selection=videoReviewSelection(state,value);
@@ -132,10 +136,10 @@ function sqlEditorState(){return{...state,busy: state.projectLoading > 0 || mult
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline
       || productionBaseline !== null && productionWorkbenchDraft() !== productionBaseline};}
 function sqlFamilyState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true,
-  dirty:value.dirty||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
+  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true,
+  dirty:value.dirty||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 function sqlNarrationState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true,dirty:value.dirty||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
+  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true,dirty:value.dirty||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-families'),api,getState:sqlFamilyState,
   onMessage: toast,onChild: async selection => {
     const principal=state.principal,subject=principal?.subject,tokenId=principal?.token_id;
@@ -151,18 +155,77 @@ const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-fami
     state.projectId=selection.child_project_id;$('#project-select').value=state.projectId;
     window.localStorage.setItem('npd-studio-project',state.projectId);await loadProject();
   }});
-const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();});
 variantNarration = initializeSqlVariantNarration({root:$('#sql-variant-narration'),api,getState:sqlNarrationState,
   onMessage:toast,onImported:refreshNarrationAssets,onReviewQueued:refreshNarrationReview});
 
 function videoWordEditorState(){const value=sqlEditorState();return {...value,analysis:reviewedAnalysis(),
-  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true,
-  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true};}
-function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();}
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||sqlAudioProcessing?.isWorking()===true,
+  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();sqlAudioProcessing?.sync();}
 videoWordReview=initializeVideoTranscriptWordReview({root:$('#video-transcript-word-review'),
   api:(path,options={})=>api(path,{...options,videoWordAdmission}),mediaFetch:authenticatedFetch,
   getState:videoWordEditorState,getSessionToken:sessionToken,onMessage:toast,
   onSaved:refreshVideoWordReceipt,onBusyChanged:syncVideoWordPeers});
+
+function sqlAudioEditorState(){const value=sqlEditorState();return {...value,
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true,
+  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
+function syncSqlAudioPeers(){syncVideoWordPeers();videoWordReview?.sync();}
+sqlAudioProcessing=initializeSqlTimelineAudioProcessing({root:$('#sql-timeline-audio-processing'),
+  api:(path,options={})=>api(path,{...options,audioProcessingAdmission}),getState:sqlAudioEditorState,
+  getSessionToken:sessionToken,onMessage:toast,onSaved:refreshSqlAudioProcessing,onBusyChanged:syncSqlAudioPeers});
+function sqlAudioStable(value){return JSON.stringify(value,(_key,item)=>item&&typeof item==='object'&&!Array.isArray(item)
+  ?Object.fromEntries(Object.keys(item).sort().map(key=>[key,item[key]])):item);}
+function sqlAudioSourceValue(timeline){const snapshot=structuredClone(timeline.snapshot);delete snapshot.metadata.source_audio_processing;
+  return {timeline_id:timeline.timeline_id,project_id:timeline.project_id,workspace_id:timeline.workspace_id,
+    source_analysis_id:timeline.source_analysis_id,source_content_version_id:timeline.source_content_version_id,
+    source_kind:timeline.source_kind,source_media_plan_id:timeline.source_media_plan_id,snapshot};}
+function sqlAudioEditorBoundary(){const value=sqlAudioEditorState();return JSON.stringify([
+  value.workspaceId,value.projectId,value.principal,sessionToken(),value.timeline,value.assets,value.analyses,value.mediaPlans,
+  value.productionPackage,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
+function assertSqlAudioBoundary(boundary){const value=sqlAudioEditorState();
+  if(value.busy||value.dirty||sqlAudioEditorBoundary()!==boundary||value.principal?.human_write_enabled!==true
+    ||!['editor','reviewer','owner'].includes(audioRole(value))
+    ||!Number.isFinite(Date.parse(value.principal?.expires_at))||Date.parse(value.principal.expires_at)<=Date.now())
+    throw Error('Nguồn, phiên hoặc bản sửa khác đã đổi; giữ cấu hình âm thanh để đối chiếu.');}
+async function refreshSqlAudioProcessing(value){
+  const boundary=sqlAudioEditorBoundary(),current=sqlAudioEditorState(),receipt=value.receipt,timeline=value.timeline;
+  assertSqlAudioBoundary(boundary);
+  if(!current.timeline||value.workspace_id!==current.workspaceId||value.project_id!==current.projectId
+    ||value.actor_ref!==current.principal?.subject||receipt?.actor_ref!==value.actor_ref
+    ||receipt.workspace_id!==value.workspace_id||receipt.project_id!==value.project_id
+    ||receipt.timeline_id!==current.timeline.timeline_id||timeline?.timeline_id!==current.timeline.timeline_id
+    ||timeline.workspace_id!==value.workspace_id||timeline.project_id!==value.project_id
+    ||receipt.parent_version!==value.parent_version||receipt.result_version!==value.result_version
+    ||value.result_version!==value.parent_version+1||timeline.current_version!==value.result_version
+    ||![value.parent_version,value.result_version].includes(current.timeline.current_version)
+    ||sqlAudioStable(sqlAudioSourceValue(current.timeline))!==sqlAudioStable(sqlAudioSourceValue(timeline))
+    ||current.timeline.current_version===value.result_version&&sqlAudioStable(current.timeline)!==sqlAudioStable(timeline))
+    throw Error('Biên nhận cấu hình chưa khớp đúng nguồn, người sửa và timeline; không đổi CAS.');
+  const path=`/api/v1/projects/${value.project_id}/timeline/audio-processing`;
+  const proof=await api(path);assertSqlAudioBoundary(boundary);audioProcessingRead(proof,sqlAudioEditorState());
+  if(sqlAudioStable(proof.timeline)!==sqlAudioStable(timeline)||sqlAudioStable(proof.receipt)!==sqlAudioStable(receipt))
+    throw Error('Cấu hình hiện tại chưa chứng minh đúng lần lưu; giữ yêu cầu.');
+  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);assertSqlAudioBoundary(boundary);
+  if(!videoWordHistoryMatches(versions,proof.timeline))throw Error('Lịch sử timeline chưa khớp cấu hình đã đọc; giữ yêu cầu.');
+  const head=versions.find(row=>row.version===proof.timeline.current_version
+    &&row.timeline_version_id===proof.timeline.current_version_id);
+  if(head?.actor_ref!==receipt.actor_ref||head.mutation?.type!=='source-audio-processing'
+    ||head.mutation.source_media_mutated!==false||head.mutation.publish_requested!==false
+    ||sqlAudioStable(head.mutation.receipt)!==sqlAudioStable(receipt))
+    throw Error('Lịch sử timeline chưa khớp người sửa và biên nhận âm thanh; giữ yêu cầu.');
+  const finalProof=await api(path);assertSqlAudioBoundary(boundary);audioProcessingRead(finalProof,sqlAudioEditorState());
+  if(sqlAudioStable(finalProof.timeline)!==sqlAudioStable(proof.timeline)||sqlAudioStable(finalProof.receipt)!==sqlAudioStable(receipt))
+    throw Error('Timeline hoặc biên nhận đã đổi sau khi đọc lịch sử; giữ yêu cầu.');
+  state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);
+  state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
+  if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
+  if(state.productionPackage)state.productionPackage={...state.productionPackage,current_for_timeline:false,
+    approval:null,latest_review_render:null,latest_final_render:null};
+  state.activeProductionRender=null;stopPreviewPolling();stopProductionPolling();render();
+}
+
 function videoWordEditorBoundary(){const value=videoWordEditorState();return JSON.stringify([
   value.workspaceId,value.projectId,value.principal,sessionToken(),value.analysis,value.assets,value.timeline,
   value.productionPackage,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
@@ -258,7 +321,7 @@ document.addEventListener('input', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
@@ -266,7 +329,7 @@ document.addEventListener('change', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -303,7 +366,9 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
-  const {videoWordAdmission:admission,...requestOptions}=options;
+  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,...requestOptions}=options;
+  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&audioProcessingHeld()&&processingAdmission!==audioProcessingAdmission)
+    throw Error('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&videoWordsHeld()&&admission!==videoWordAdmission)
     throw new ApiError('Lưu/bỏ bản sửa từ hoặc đối chiếu yêu cầu đang giữ trước khi thay đổi dự án.',409,{});
   const response = await authenticatedFetch(path, {
@@ -384,6 +449,7 @@ async function loadProjectList() {
 
 async function loadProject({ quiet = false } = {}) {
   if (!state.projectId) return;
+  if(audioProcessingHeld()){toast('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi tải lại.',true);return;}
   if(videoWordsHeld()){toast('Lưu/bỏ bản sửa từ hoặc đối chiếu lần lưu chưa rõ kết quả trước khi tải lại.',true);return;}
   if (variantNarration?.isWorking() || variantNarration?.isPending()) {
     toast('Chờ nhập/review giọng đọc hoàn tất hoặc đối chiếu yêu cầu cũ trước khi tải lại dự án.', true);return;
@@ -399,7 +465,7 @@ async function loadProject({ quiet = false } = {}) {
   multiInput.setBusy(true);
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -486,7 +552,7 @@ async function loadProject({ quiet = false } = {}) {
     videoReview.sync();
     variantFamilies.sync();
     variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
   }
   if (state.projectId === loadedProjectId) {
     await audioReview.reload();
@@ -500,7 +566,7 @@ function renderNoProject(title, description) {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -515,7 +581,7 @@ function render() {
   stockReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -935,7 +1001,7 @@ function renderProduction({preserveDraft=false}={}) {
   renderPublishing();
   if(!preserveDraft)productionBaseline=productionWorkbenchDraft();
   variantNarration?.sync();
-  videoWordReview?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();
 }
 
 function selectedPublishingPlatform() {
@@ -1582,6 +1648,7 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if(audioProcessingHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
   if(videoWordsHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ bản sửa từ hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
   if(variantNarration?.isWorking()||variantNarration?.isPending()){
     event.target.value=state.projectId??'';
@@ -1941,7 +2008,7 @@ window.addEventListener("beforeunload", () => {
   videoReview.dispose();
   variantFamilies.dispose();
   variantNarration?.dispose();
-  videoWordReview?.dispose();
+  videoWordReview?.dispose();sqlAudioProcessing?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();

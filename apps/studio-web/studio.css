@@ -396,3 +396,13 @@
 #video-transcript-word-review [role="status"] { padding: 10px 12px; border-radius: 7px; background: #edf5f8; }
 #video-transcript-word-review [data-video-word-history] { padding: 12px; border: 1px solid var(--line); border-radius: 7px; }
 @media(max-width:900px) { #video-transcript-word-review [data-video-word-row] { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
+
+#sql-timeline-audio-processing { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; padding: 0 16px 16px; font-size: 14px; min-width: 0; }
+#sql-timeline-audio-processing h3, #sql-timeline-audio-processing p { margin: 0; grid-column: 1 / -1; line-height: 1.6; overflow-wrap: anywhere; }
+#sql-timeline-audio-processing label { display: grid; gap: 5px; min-width: 0; }
+#sql-timeline-audio-processing label:has(> input[type="checkbox"]) { display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 8px; }
+#sql-timeline-audio-processing input[type="number"] { min-width: 0; max-width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 7px; font: inherit; }
+#sql-timeline-audio-processing button { min-height: 38px; justify-self: start; max-width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #edf5f8; font: inherit; cursor: pointer; }
+#sql-timeline-audio-processing button:disabled { opacity: .5; cursor: not-allowed; }
+#sql-timeline-audio-processing [role="status"] { padding: 10px 12px; border-radius: 7px; background: #edf5f8; }
+@media(max-width:900px) { #sql-timeline-audio-processing { grid-template-columns: minmax(0,1fr); } }

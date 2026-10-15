@@ -24,3 +24,6 @@ apps/studio-web/tests/fixtures/sql-variant-import-review/*.json -text whitespace
 
 # Saved video word HTTP fixtures retain exact original bytes and Windows EOL.
 apps/studio-web/tests/fixtures/sql-video-word-review/*.json -text whitespace=cr-at-eol
+
+# Preserve exact actual ASGI/SQLite captures for SQL audio processing UI.
+apps/studio-web/tests/fixtures/sql-audio-processing/*.json -text whitespace=cr-at-eol
