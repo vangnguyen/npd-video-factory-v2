@@ -106,8 +106,12 @@ async def observation(service, session, op, saved):
     job = await job_row(session, r['resolution_job_id'])
     linked, _ = await marked_admission(session, job)
     require(linked.operation_id == op.operation_id, 'BROLL_INTERNAL_OBSERVATION_MISMATCH')
+    from .broll_internal_settlement_command import settlement_for
+    sealed = await settlement_for(session, op, saved)
     current, code, output = False, None, None
-    if job.status in {'queued', 'running', 'succeeded'}:
+    if sealed is not None:
+        code = 'BROLL_INTERNAL_REQUEST_SETTLED'
+    elif job.status in {'queued', 'running', 'succeeded'}:
         try:
             asset, _ = await bound(session, job, saved, terminal=job.status == 'succeeded')
             if job.status == 'succeeded':
@@ -141,7 +145,10 @@ async def reject_queued(service, identifier):
             first = await job_row(session, identifier)
             await session.get(VideoProjectORM, first.project_id, with_for_update=True)
             job = await job_row(session, identifier, True)
-            _, saved = await marked_admission(session, job)
+            op, saved = await marked_admission(session, job)
+            from .broll_internal_settlement_command import settlement_for
+            if await settlement_for(session, op, saved) is not None:
+                return
             if job.status != 'queued':
                 return
             item = await session.get(MediaPlanItemORM, job.media_plan_item_id, with_for_update=True)
@@ -156,9 +163,12 @@ async def handoff(service, operation_id):
     async with service.repository.session_factory() as session:
         async with session.begin():
             await begin(session)
-            _, saved = await admission(session, operation_id)
+            op, saved = await admission(session, operation_id)
             job = await job_row(session, saved['receipt']['resolution_job_id'])
             await marked_admission(session, job)
+            from .broll_internal_settlement_command import settlement_for
+            if await settlement_for(session, op, saved) is not None:
+                return 'not_queued'
             if job.status != 'queued':
                 return 'not_queued'
             try:
@@ -188,7 +198,10 @@ async def claim(service, identifier):
             first = await job_row(session, identifier)
             await session.get(VideoProjectORM, first.project_id, with_for_update=True)
             job = await job_row(session, identifier, True)
-            _, saved = await marked_admission(session, job)
+            op, saved = await marked_admission(session, job)
+            from .broll_internal_settlement_command import settlement_for
+            if await settlement_for(session, op, saved) is not None:
+                return None
             if job.status != 'queued':
                 return None
             # No lease takeover: an existing attempt is never replayed.
@@ -255,7 +268,10 @@ async def start_owned(session, identifier, token):
     await begin(session, True)
     await session.get(VideoProjectORM, project_id, with_for_update=True)
     job = await job_row(session, identifier, True)
-    _, saved = await marked_admission(session, job)
+    op, saved = await marked_admission(session, job)
+    from .broll_internal_settlement_command import settlement_for
+    if await settlement_for(session, op, saved) is not None:
+        return True, False
     row = await own_claim(session, job, token)
     if job.status != 'running' or row.response_json['materialization_started']:
         return True, False
@@ -275,7 +291,9 @@ async def guard_completion(session, identifier, token, asset):
     await begin(session, True)
     await session.get(VideoProjectORM, project_id, with_for_update=True)
     job = await job_row(session, identifier, True)
-    _, saved = await marked_admission(session, job)
+    op, saved = await marked_admission(session, job)
+    from .broll_internal_settlement_command import require_unsettled
+    await require_unsettled(session, op, saved)
     require(job.status == 'running', 'BROLL_INTERNAL_CLAIM_LOST')
     row = await own_claim(session, job, token)
     current_asset, _ = await bound(session, job, saved, lock=True, materialized_asset=asset)
@@ -302,7 +320,10 @@ async def fail_owned(session, identifier, token, error_code):
     await begin(session, True)
     await session.get(VideoProjectORM, project_id, with_for_update=True)
     job = await job_row(session, identifier, True)
-    _, saved = await marked_admission(session, job)
+    op, saved = await marked_admission(session, job)
+    from .broll_internal_settlement_command import settlement_for
+    if await settlement_for(session, op, saved) is not None:
+        return True
     if job.status != 'running':
         return True
     row = await own_claim(session, job, token)
