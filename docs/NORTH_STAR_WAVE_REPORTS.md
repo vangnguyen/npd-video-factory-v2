@@ -4236,3 +4236,20 @@ REGRESSIONS: focused and primary integration pass; ordinary success paths unchan
 EXTERNAL BLOCKERS: real S3/provider/browser/Owner/full genuine-source acceptance and production approval remain separate; they do not block next safe implementation.
 OWNER ACTION REQUIRED: none for safe continuation; Owner listening/UAT remains deferred.
 NEXT WAVE: manual reframe canonical API/Studio form and reviewed B-roll planner controls, then remaining original North Star gaps.
+
+
+## Waves3/4/16 — Canonical SQL manual crop and Studio integration,2026-10-15
+
+WAVE: 3/4/16
+STATUS: Scoped manual override capability implemented, independently reviewed, API/Node tested; full waves open.
+HEAD SHA: `d439614df55551ff4a3506016a584edda54c313e` product; API predecessor8653536, docs separately committed.
+CAPABILITIES COMPLETED:4ratios/1…200source-second X/Y/zoom points, measured-custody/CAS/replay, source-only canonical crop, explicit readable/editable Studio form, private apply hash, exact current-history-current/UNKNOWN and clean project switch.
+CAPABILITIES PARTIAL: semantic tracking/genuine footage/full ModeA/B/browser3viewports/Owner approval and original A/B/C; reviewed B-roll work continues separately.59 broad groups remain unclosed.
+TESTS: backend73PASS94.63s(68component+5main); primarymanual5+linked5PASS42.53s; fullprimaryStudio1554PASS0FAIL0SKIP7654.8881ms. Controller31/Root56/peer7SQL/peer4new+3selected overlap; do not sum.
+REAL PROVIDER TESTS: none;0 new Vision/model/ASR/TTS/stock/generation/render operation. Actual SQLite/ASGI metadata/transaction paths only.
+MOCK TESTS: explicit source probe/ASR and Node DOM/transport/storage/late-await fixtures; selected4DTO exact rawN5, full rawWindowsEOL preserved.
+EVIDENCE: SQL_MANUAL_REFRAME_REVIEW.md; north-star/manual-reframe-evidence.json; core5/main2/shell15 final independent PASS, source22 commit/sourceZIP/bundle and Root CSS append proof. Raw custody finding and clean-switch RED kept.
+REGRESSIONS: fullStudio including32Silence cases and actualmain5linked pass; audio/caption/independent tracks preserved. No accepted artifact/source replacement, DDL, publishing/approval enablement or deployment.
+EXTERNAL BLOCKERS: actual browser/semantic/provider/genuine full media/Owner/Docker/production acceptance remain separate; no blocker for next safe work.
+OWNER ACTION REQUIRED: none for safe continuation; Owner listening/UAT deferred. Completed duplicate retention checkout retired after recovery checks; original15accepted rehashed unchanged.
+NEXT WAVE: reviewed B-roll preparation, deferred-stock human gate and UI, then remaining original North Star capabilities/acceptance.
