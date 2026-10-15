@@ -72,3 +72,44 @@ SOURCE_PRESERVED=YES. IMPLEMENTATION_COMPLETE=NO;
 REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO.
 The primary matrix stays 5 IMPLEMENTED_REAL / 58 PARTIAL / 1 NOT_VERIFIED:
 59 broad groups remain unclosed. This component does not certify Mode A/B.
+
+
+## Transport helper component — still not mounted
+
+WAVE: 3/8. STATUS: Additive helper implemented/mock-tested; full wave PARTIAL.
+HEAD SHA: `7d4741e5276a8e3eb8614b7be08a5e4428db938e`.
+
+CAPABILITIES COMPLETED: One private transport instance per explicit operation;
+strict scoped route/body admission, original pre-durable issuer body/envelope,
+v1/v2 exact raw descriptor, immutable options and fresh guards across every await,
+native storage read and helper-return boundary. Failed issuance poisons that
+operation; no fallback, new key or automatic request is authorized.
+
+CAPABILITIES PARTIAL: Root import/hook, storage admission, complete private
+callback receipt proof, opt-in controls and actual browser/operator acceptance.
+The helper cannot replace those Root checks and does not adopt or clear data.
+
+TESTS: Author 54 PASS/17,814.6167 ms; primary 54 PASS/17,009.4548 ms; independent
+five new Node cases PASS/2,272.4911 ms. They use the actual common controller
+and four exact source dependencies with captured SQL/ASGI DTO transport fixtures.
+No new SQL or external provider result is inferred. The preceding full Studio
+2,038 PASS belongs to the pre-helper source; this unused additive module did not
+justify another broad run. Counts overlap and are not added as unique tests.
+
+REAL PROVIDER TESTS: None. MOCK TESTS: Controller/helper transport and fake DOM
+where stated. EVIDENCE: [Hashed transport support](north-star/broll-root-admission-evidence.json),
+exact source ZIP, author branch/bundle, peer report and primary log.
+
+REGRESSIONS: No scoped failure. Existing source, fixtures, API, attributes and
+Root UI are unchanged. The independent runner's cp1252 console print failed
+after the Node child had passed and written complete logs/pins; its report
+retains that bookkeeping failure and does not rerun or relabel the tests.
+
+EXTERNAL BLOCKERS: Browser policy denial; real key NOT_CONFIGURED; provider,
+Owner and production acceptance remain separate. OWNER ACTION REQUIRED: None
+for safe implementation. NEXT WAVE: The sole Root UI owner integrates this
+helper with full original raw/proof callbacks and explicit optional controls.
+
+SOURCE_PRESERVED=YES; IMPLEMENTATION_COMPLETE=NO;
+REAL_PROVIDER_ACCEPTANCE_COMPLETE=NO; PRODUCTION_DEPLOYED=NO.
+The matrix stays 5/58/1 and 59 broad unclosed groups; full Mode A/B is unaccepted.
