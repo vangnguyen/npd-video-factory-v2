@@ -4202,3 +4202,20 @@ REGRESSIONS: source-linked identity/final-digest/controller/history gaps and Roo
 EXTERNAL BLOCKERS: callable browser UI unavailable; genuine moving footage/Owner UAT, configured real providers, Docker and deployment acceptance remain separate.
 OWNER ACTION REQUIRED: none for next safe implementation; listening/UAT deferred. No main merge/deploy/publish/paid call.
 NEXT WAVE: bounded private failed-QC evidence preservation and next audited Mode B UI/canonical gap, then remaining original safe waves/full A/B/C.
+
+
+## Waves3/8/16 — Configurable silence analysis and pending ownership,2026-10-15
+
+WAVE: 3/8/16
+STATUS: COMPONENT IMPLEMENTED, Node+local-SQL tested; original full-wave acceptance remains open.
+HEAD SHA: `a47b878852b5a5483a047ea1164359feb0d5e24e` product; docs separately committed.
+CAPABILITIES COMPLETED: four silence configuration fields with unchanged defaults, explicit new-job submission, saved config read-only, exact custom body/key retry/restore; foreign pending-record replacement cannot be deleted/adopted by another response.
+CAPABILITIES PARTIAL: genuine footage/ASR/cut-quality/non-developer browser flow and Owner approval/final/QC; manual crop and failed-QC retention in separate branches;59 broad groups remain unclosed.
+TESTS: fullStudio1467PASS0FAIL0SKIP8147.957ms; selected61PASS(29existing+32new); actualSQLite/ASGI3PASS14.45s; independent20new+5selected overlap, do not sum.
+REAL PROVIDER TESTS: none; no new worker/ASR/model/provider/TTS/media render operation in this component.
+MOCK TESTS: DOM/transport/storage/races; backend uses explicit probe/runtime fixtures and real SQLite/ASGI metadata/idempotency/fingerprint paths.
+EVIDENCE: SQL_VIDEO_SILENCE_SETTINGS_REVIEW.md; north-star/video-silence-settings-evidence.json; N1 finding/environment/metadata-helper failures kept raw, N2 independent PASS closes VIDEO-JOB-PENDING-01.
+REGRESSIONS: prior Studio suite passes; source/track/render/provider implementation unchanged. Exact raw pending ownership repair affects legacy queue send/forget safely; no accepted artifacts changed.
+EXTERNAL BLOCKERS: browser three-viewports and genuine full original A/B/C/Owner/provider/Docker/production acceptance remain separate.
+OWNER ACTION REQUIRED: none for next safe implementation; optional listening/UAT deferred. Two completed duplicate checkouts retired under existing cleanup authorization; all branches/recovery/evidence/models and15accepted hashes retained.
+NEXT WAVE: close bounded failed-QC retention then manual-reframe UI/API, remaining safe Mode B/B-roll and original North Star waves.

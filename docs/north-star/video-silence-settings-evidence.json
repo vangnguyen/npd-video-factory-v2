@@ -1,0 +1,373 @@
+{
+  "schema_version": "north-star-video-silence-settings-evidence.v1",
+  "product_head": "a47b878852b5a5483a047ea1164359feb0d5e24e",
+  "recorded_at": "2026-10-15T08:19:53.394533+00:00",
+  "archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-support-n1.zip",
+    "bytes": 221376,
+    "sha256": "c66a8227600481603ef4fa09f161d45817d205a7d3618b3070ffc403fa123a12"
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\completed-linked-worktrees-retirement-after-n2.json",
+      "bytes": 1638,
+      "sha256": "47ee1f4880a2c3e20aed407267964599268dc6b2dab458b18bc0dff50afb7f02",
+      "archive_name": "recovery/completed-linked-worktrees-retirement-after-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\completed-linked-worktrees-retirement-after-n3.json",
+      "bytes": 1917,
+      "sha256": "09a80a9e70c63042c332951374566bc98da2912a06322559cd69c0bbaf972999",
+      "archive_name": "recovery/completed-linked-worktrees-retirement-after-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\completed-linked-worktrees-retirement-before-n2.json",
+      "bytes": 1430,
+      "sha256": "c77f30160918ca4c32bf09b8e486af03aa0c25da907549ab36d0109c8ef522cc",
+      "archive_name": "recovery/completed-linked-worktrees-retirement-before-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-silence-settings-ui-n1.log",
+      "bytes": 279,
+      "sha256": "b7b112e81d1dfdc85be3bf2635e971ffc31064e95513bc36dfb89352bbd95346",
+      "archive_name": "recovery/freeze-silence-settings-ui-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-silence-settings-ui-n1.py",
+      "bytes": 2068,
+      "sha256": "f91bd270de26780f9aeff31eb16fc29de3e4843b992928d17d94ebbbec95813a",
+      "archive_name": "recovery/freeze-silence-settings-ui-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-silence-settings-ui-n2.log",
+      "bytes": 279,
+      "sha256": "3e9997c003c4c0191a2d1f42c541000d4514e36521d5e32ba9054668d3de9c8e",
+      "archive_name": "recovery/freeze-silence-settings-ui-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-silence-settings-ui-n2.py",
+      "bytes": 2135,
+      "sha256": "ecbb416ba630cd746af52cb20bd7ffc0b91b89cf1176f58f8fd695ccc307836e",
+      "archive_name": "recovery/freeze-silence-settings-ui-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\next-mode-b-after-linked-audit-n1.json",
+      "bytes": 61051,
+      "sha256": "2e6506070fa8a4cdbde99d1b1a63e05a0b97b1aaa6db7ba540d47aed08ad15ea",
+      "archive_name": "recovery/next-mode-b-after-linked-audit-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\preserve-silence-settings-ui-n1.log",
+      "bytes": 550,
+      "sha256": "1daf8b6d5bb2e1431762378ebfe45bdac4cc5d97ae748df90c80ab6f6a5ef527",
+      "archive_name": "recovery/preserve-silence-settings-ui-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\preserve-silence-settings-ui-n1.py",
+      "bytes": 3127,
+      "sha256": "d146f79706a77ec764ef56fdec036e0a3436c9c3bd442696b5a76ad3e3d06836",
+      "archive_name": "recovery/preserve-silence-settings-ui-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\retire-completed-linked-worktrees-n1.log",
+      "bytes": 1119,
+      "sha256": "caa1ae87bd9ddae2c2be7446112e73ff51068dc315862ab06e0715783a34548b",
+      "archive_name": "recovery/retire-completed-linked-worktrees-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\retire-completed-linked-worktrees-n1.py",
+      "bytes": 4084,
+      "sha256": "90e53319c5a58d4992fdc6a6229d7deb3beaac79709bf261daa95d2405836d0c",
+      "archive_name": "recovery/retire-completed-linked-worktrees-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\retire-completed-linked-worktrees-n2.log",
+      "bytes": 157,
+      "sha256": "74cc1fffed4c31f56f7d37aa5ca43103bf0cef22deae20f9a6ecd647073895f8",
+      "archive_name": "recovery/retire-completed-linked-worktrees-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\retire-completed-linked-worktrees-n2.py",
+      "bytes": 4148,
+      "sha256": "afe3cd150ff48e65a72c87c4ad31856ea27cc62f448dc7cf6bc18c91faabf204",
+      "archive_name": "recovery/retire-completed-linked-worktrees-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-actual-SQL-ASGI-n1.log",
+      "bytes": 15688,
+      "sha256": "acdef814cb3c62b26ee25b770aa9cd63e36498e650d609bfa1a60d20654a0170",
+      "archive_name": "recovery/silence-settings-actual-SQL-ASGI-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-actual-SQL-ASGI-n2.log",
+      "bytes": 101,
+      "sha256": "88592e090a121c1e9f8e2ceaa6ad1844de1569b8a023fe99e169c16bb67ac807",
+      "archive_name": "recovery/silence-settings-actual-SQL-ASGI-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-actual-SQL-ASGI-n3.log",
+      "bytes": 101,
+      "sha256": "8457cb17a82dd90cf7b2919186f415956695c76b67115b54dae7f718f2cb1ada",
+      "archive_name": "recovery/silence-settings-actual-SQL-ASGI-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-foreign-intent-final-n1.json",
+      "bytes": 881,
+      "sha256": "ea03064a373717e86c30aacdae34b45838d708eebcdc18b0d66381bf4ad075b7",
+      "archive_name": "recovery/silence-settings-foreign-intent-final-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-foreign-intent-final-n1.log",
+      "bytes": 145,
+      "sha256": "335e924cff8a556998684a6644ed86e8e56867a592580faf5ee3e320ad10e537",
+      "archive_name": "recovery/silence-settings-foreign-intent-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-foreign-intent-final-n1.mjs",
+      "bytes": 5951,
+      "sha256": "0fc0390fa6356865ee61aae93ed1f66d8f94743236f5d0a8bf311d1876182d03",
+      "archive_name": "recovery/silence-settings-foreign-intent-final-n1.mjs"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-foreign-intent-repro-n1.json",
+      "bytes": 1091,
+      "sha256": "20d77c2bc9d1e5e01074fc498f0aa642e6293c2695beb7f9ba486113a48c71ae",
+      "archive_name": "recovery/silence-settings-foreign-intent-repro-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-foreign-intent-repro-n1.log",
+      "bytes": 171,
+      "sha256": "f96d87e93e20395057ccdb351eb83e73c4f3cb2e4e28faeb024d0dbb94d77696",
+      "archive_name": "recovery/silence-settings-foreign-intent-repro-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-foreign-intent-repro-n1.mjs",
+      "bytes": 5604,
+      "sha256": "57d26b7bd686d0945104e5614f3e121b827dc4178404eb05ccf7d769973e97ca",
+      "archive_name": "recovery/silence-settings-foreign-intent-repro-n1.mjs"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-full-Studio-n1.log",
+      "bytes": 146319,
+      "sha256": "4439fcc460b792eba21eadc804dc3db8006570acbe000c639c774532acd65845",
+      "archive_name": "recovery/silence-settings-full-Studio-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-full-Studio-n2.log",
+      "bytes": 146787,
+      "sha256": "144b271c54090f6950c05404dccde83781715341bcb41004238b991913726fba",
+      "archive_name": "recovery/silence-settings-full-Studio-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-node-n1.log",
+      "bytes": 5592,
+      "sha256": "ef1f284d6db9e39875261ddc5b2a0a61e3ea2c93f057e2710ad999445f2cdb2a",
+      "archive_name": "recovery/silence-settings-node-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-node-n2.log",
+      "bytes": 5597,
+      "sha256": "91642a41a92b33349d7c21d9dc3de31bd7ab87489cfc77fadf969b388b93db11",
+      "archive_name": "recovery/silence-settings-node-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-node-n3.log",
+      "bytes": 6042,
+      "sha256": "b2ad25fb203d46ddc71439f236f43029e7817e4998ecb5cb88d7db88a11e0d63",
+      "archive_name": "recovery/silence-settings-node-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-before-n1.zip",
+      "bytes": 13172,
+      "sha256": "e9e9b64dba73a850595f4d91dba4e780d5821b1a36b831737f38da90455671d3",
+      "archive_name": "recovery/silence-settings-ui-before-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-bundle-verify-n1.log",
+      "bytes": 342,
+      "sha256": "b49ee3249a89e598d6730073ce28937c7f79e2746298b1845e03f3067cf05918",
+      "archive_name": "recovery/silence-settings-ui-bundle-verify-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-freeze-n1.json",
+      "bytes": 2684,
+      "sha256": "9c26427b8583065058d06562d843fb393eb651d8437272b186ece1df2d961631",
+      "archive_name": "recovery/silence-settings-ui-freeze-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-freeze-n2.json",
+      "bytes": 2751,
+      "sha256": "417bd0b02944ab6b472e8c0dcbd0c084e182fc25ec868d009d63ccb394fa099d",
+      "archive_name": "recovery/silence-settings-ui-freeze-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-freeze-n3.json",
+      "bytes": 3156,
+      "sha256": "e53d09edb6495ba83ce65dbdc74f37486c88fdba9882da0a78b887174936476e",
+      "archive_name": "recovery/silence-settings-ui-freeze-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-incremental-n1.bundle",
+      "bytes": 9323,
+      "sha256": "ae0d97cd3f47414b9985b2428a3ed13d59f80fc28b7cd959bf8da93c8724ee33",
+      "archive_name": "recovery/silence-settings-ui-incremental-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-before-n1.json",
+      "bytes": 2684,
+      "sha256": "9c26427b8583065058d06562d843fb393eb651d8437272b186ece1df2d961631",
+      "archive_name": "recovery/silence-settings-ui-independent-before-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-before-n2.json",
+      "bytes": 1784,
+      "sha256": "8681dc85affe605f507a93ebeb631b64db12a2599eb10e7bcdb3a8548eefb6cc",
+      "archive_name": "recovery/silence-settings-ui-independent-before-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-probes-n1.json",
+      "bytes": 2565,
+      "sha256": "44d55ccca5f39adc24be2f3e3d911b4562fef8685414be3c45bfec7210e3326c",
+      "archive_name": "recovery/silence-settings-ui-independent-probes-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-probes-n1.log",
+      "bytes": 147,
+      "sha256": "3974b9add6ac0305fbf11c49c21bdce5388a5f67fd827852f4ab74964f1a044c",
+      "archive_name": "recovery/silence-settings-ui-independent-probes-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-probes-n1.mjs",
+      "bytes": 7651,
+      "sha256": "22fddc51fa694c2abf63c99cfe92632dd44dba31ad787e5fd9e5476bf6d5187e",
+      "archive_name": "recovery/silence-settings-ui-independent-probes-n1.mjs"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-probes-n2.json",
+      "bytes": 2565,
+      "sha256": "c71ab6fdfa3de39233899f50ca1927ed2270dd7453297257b8274d5bb0fd2850",
+      "archive_name": "recovery/silence-settings-ui-independent-probes-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-probes-n2.log",
+      "bytes": 147,
+      "sha256": "3f9a1c6f4d4d68cf1553c85b1596cd8b1a719689b9dc34891b555cc8f71fc9ff",
+      "archive_name": "recovery/silence-settings-ui-independent-probes-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-probes-n2.mjs",
+      "bytes": 7737,
+      "sha256": "9e6e58475d8f9f4ad1a9f30046c98d19f15f08423796ef957e09123fb9be112b",
+      "archive_name": "recovery/silence-settings-ui-independent-probes-n2.mjs"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-review-n1.json",
+      "bytes": 4914,
+      "sha256": "1207933b42fd5baaf87ba65884db42ac611de83ecffff5ebe69dc537844fea8b",
+      "archive_name": "recovery/silence-settings-ui-independent-review-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-independent-review-n2.json",
+      "bytes": 6690,
+      "sha256": "d19783899ea2019f3ddf74f4fdeef12481dbf700937a9c53b5ce0bac291011da",
+      "archive_name": "recovery/silence-settings-ui-independent-review-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-ownership-selected-n1.log",
+      "bytes": 570,
+      "sha256": "b7e9930154a052767ebf671a3e393fe15493f2947cedf34debf72e76e82eeb61",
+      "archive_name": "recovery/silence-settings-ui-ownership-selected-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-preservation-n1.json",
+      "bytes": 2306,
+      "sha256": "c36090f3b231aec5c50291600c3d9f940f66213603f7f28fc8022608017609bb",
+      "archive_name": "recovery/silence-settings-ui-preservation-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-source-n1.zip",
+      "bytes": 19757,
+      "sha256": "f793d1c123affbdef7e02f2eafce5fd9b4d88bc1769ef41cfa288af3bf9a0357",
+      "archive_name": "recovery/silence-settings-ui-source-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-ui-source-n2.zip",
+      "bytes": 20517,
+      "sha256": "89fab2f297c56ecd39c91a65d5a195b5d1114f02c2a36a1a67a098ad1f33ecbf",
+      "archive_name": "recovery/silence-settings-ui-source-n2.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\silence-settings-video-regression-n1.log",
+      "bytes": 3092,
+      "sha256": "8c23c34bee71fec17c6c11f9da42d496972db30cf915e2cc9d34d087206e1a0f",
+      "archive_name": "recovery/silence-settings-video-regression-n1.log"
+    }
+  ],
+  "full_Studio": {
+    "pass": 1467,
+    "fail": 0,
+    "skip": 0,
+    "ms": 8147.957
+  },
+  "selected_Node": {
+    "pass": 61,
+    "existing": 29,
+    "new": 32
+  },
+  "actual_SQL_ASGI": {
+    "pass": 3,
+    "seconds": 14.45,
+    "worker_ASR_model_provider_calls": 0
+  },
+  "independent_Node": {
+    "new_config_and_ownership": 20,
+    "selected_existing": 5,
+    "overlap_do_not_sum": true
+  },
+  "browser_UI": "NOT_VERIFIED",
+  "owner_UAT": false,
+  "capability_counts": {
+    "IMPLEMENTED_REAL": 5,
+    "PARTIAL": 58,
+    "NOT_VERIFIED": 1
+  },
+  "unclosed_groups": 59,
+  "cleanup": {
+    "status": "COMPLETED_VERIFIED_SOURCE_RECOVERY_AND_ACCEPTED_ARTIFACTS",
+    "targets": [
+      {
+        "path": "C:\\vfns-source-linked-ui-01",
+        "branch": "codex/vf-sql-source-linked-ui-01",
+        "head": "e1d2c245734129260c6a5225f100d7d176b33a12",
+        "tree_oid": "7201af38e967dd8cb7bce2e8b5c0bbf5087da0aa",
+        "canonical_tracked_files": 8423,
+        "canonical_tracked_bytes": 692267985,
+        "ignored_reproducible_cache_files": 0,
+        "checkout_absent": true,
+        "branch_ref_retained": true
+      },
+      {
+        "path": "C:\\vfns-sql-source-linked-edit-01",
+        "branch": "codex/vf-sql-source-linked-edit-01",
+        "head": "aaed1e0b75633464d40da3dddc6e23c9cfdeca27",
+        "tree_oid": "4de43f2cc88a643046e0bebc54fa61501b5de197",
+        "canonical_tracked_files": 8422,
+        "canonical_tracked_bytes": 692108913,
+        "ignored_reproducible_cache_files": 275,
+        "checkout_absent": true,
+        "branch_ref_retained": true
+      }
+    ],
+    "canonical_tracked_bytes_total": 1384376898,
+    "physical_removed_bytes": null,
+    "observed_C_drive_free_space_delta_during_operation": 1437503488,
+    "free_space_delta_is_not_an_exact_file_size_measurement": true,
+    "accepted_original_artifacts_fresh_reverified": 15,
+    "source_models_evidence_and_active_worktrees_deleted": false,
+    "correction": "N1 stat failed on Windows MAX_PATH before deletion. N2 used malformed extended walk prefix and counted no files; do not use its files/bytes0 as size evidence. Absolute target, clean Git state, ignored-cache whitelist, accepted-path exclusion, remote branch and verified recovery bundle checks did run before git worktree remove. N3 verifies canonical tree counts from retained immutable Git trees and all original accepted hashes; exact physical pre-delete byte count is unavailable. N1/N2 raw files unchanged.",
+    "recovery_pair": "sql-source-linked-studio-recovery-pair.json"
+  },
+  "IMPLEMENTATION_COMPLETE": false,
+  "REAL_PROVIDER_ACCEPTANCE_COMPLETE": false,
+  "PRODUCTION_DEPLOYED": false
+}
