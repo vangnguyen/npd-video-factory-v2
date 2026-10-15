@@ -4287,3 +4287,20 @@ REGRESSIONS: fullStudio preserves current B-roll UI and Silence/manual adaptatio
 EXTERNAL BLOCKERS: browser/genuine original media/providers/Owner/Docker/production acceptance separate; no blocker for next safe work.
 OWNER ACTION REQUIRED: none for safe continuation; listening/UAT remains deferred.
 NEXT WAVE: server-backed B-roll UNKNOWN settlement and reviewed canonical B-roll placement/controller in parallel, then remaining North Star gaps.
+
+
+## Waves3/5/16 — Reviewed B-roll canonical placement API,2026-10-15
+
+WAVE: 3/5/16
+STATUS: Scoped backend implemented, independently reviewed, actual owned SQL/main-ASGI tested; full waves remain open.
+HEAD SHA: `ce74fa5008a85488df4115d925409fd4f8d91f1d` product; docs separately committed.
+CAPABILITIES COMPLETED: exact context/full source-plan-asset custody; explicit ack/selection; same-session canonical CAS/receipt/history/invalidation; unchanged replay; unrelated plan receipt isolation; strict measured media/rights/provenance.
+CAPABILITIES PARTIAL: new Studio/controller, legacy resolve/polling, B-roll UNKNOWN recovery; genuine media/browser/Owner/provider/PostgreSQL/production/full ModeA/B/A-B-C remain open;59 broad groups unclosed.
+TESTS: final39SQL/API PASS93.19s (34new+5legacy); independent exact9PASS34.87s/source4 frozen; actual main5-request capture oneversion mutation and unchanged replay. No broad Studio rerun for this backend-only increment; latest Studio1675 belongs to preceding callback integration.
+REAL PROVIDER TESTS: none;0provider/paid/new decode/render/browser/Owner acceptance. Real owned SQLite/main-ASGI only.
+MOCK TESTS: probe/ASR/synthetic asset bytes/internal resolution setup/CI identity. RawN1/N2 helper/test defects and peerN1 findings retained, not counted as final PASS.
+EVIDENCE: SQL_REVIEWED_BROLL_TIMELINE_API.md; north-star/broll-timeline-api-evidence.json; source4/ZIP4/peerreports/capture/Git bundle.
+REGRESSIONS: existing5 B-roll cases PASS; old endpoint unchanged, canonical engine reused, independent tracks/audio preserved; no DDL/accepted replacement/publishing or approval enablement/merge/deployment.
+EXTERNAL BLOCKERS: genuine media/browser/Owner/providers/PostgreSQL/Docker/production separate; no blocker for continued safe implementation.
+OWNER ACTION REQUIRED: none for safe continuation; listening/UAT deferred.
+NEXT WAVE: reviewed canonical B-roll controller/Studio and explicit server-backed UNKNOWN recovery in parallel, then remaining original capabilities.

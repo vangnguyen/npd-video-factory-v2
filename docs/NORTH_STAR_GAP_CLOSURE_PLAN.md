@@ -575,3 +575,10 @@ Next safe scopes: explicit SQL normalization/ducking Studio panel with current c
 2026-10-15 — [Giữ đúng yêu cầu ở bốn callback](SQL_PENDING_CALLBACK_OWNERSHIP_REVIEW.md), product `35999c1bbcc542cdebcae70f362465060e6e004a`: sửa Word/Audio/Linked/Manual bằng private synchronous guard, kiểm tra sau mỗi await và trước ghi trạng thái; yêu cầu khác không bị kết quả cũ ghi đè. Full primary Studio 1.675 PASS, 0 FAIL/0 SKIP; review độc lập PASS. Đây là Node/DTO fixtures, không browser/provider/Owner acceptance. B-roll UNKNOWN recovery, reviewed canonical apply/resolve/polling và full Mode A/B tiếp tục; 59 nhóm lớn vẫn mở.
 
 The bounded callback race is closed in these four paths. Continue explicit server-backed B-roll UNKNOWN settlement, reviewed canonical apply/resolve/polling, genuine media/UI/provider and original A/B/C acceptance. No whole-wave or broader group readiness is inferred.
+
+
+## Reviewed canonical B-roll placement API
+
+2026-10-15 — [API áp dụng B-roll có biên nhận](SQL_REVIEWED_BROLL_TIMELINE_API.md), product `ce74fa5008a85488df4115d925409fd4f8d91f1d`: GET ngữ cảnh/PUT xác nhận, full source/plan/asset custody, CAS/history và replay trong một giao dịch canonical; giữ âm thanh, hủy preview/approval cũ, không provider. Final39 SQL/API PASS và9 độc lập PASS; actual main5 request chỉ1 mutation. Studio/controller, resolve/polling, UNKNOWN recovery và browser/genuine media/Owner/provider/PostgreSQL/production vẫn mở;59 nhóm lớn chưa đóng.
+
+Continue new reviewed controller and explicit Studio integration, durable UNKNOWN settlement, provider-free internal selection followed by bounded authorized resolve/polling. Full genuine-media A/B/C, Owner and production gates remain separate.

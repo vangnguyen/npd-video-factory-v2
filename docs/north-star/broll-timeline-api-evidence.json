@@ -1,0 +1,180 @@
+{
+  "created_at": "2026-10-15T09:41:37.605592+00:00",
+  "product_head": "ce74fa5008a85488df4115d925409fd4f8d91f1d",
+  "scope": "Reviewed canonical Broll apply backend only; actual owned SQL/main-ASGI fixtures; no Studio/provider/browser/realmedia/Owner/PostgreSQL/production acceptance",
+  "archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-api-primary-support-n1.zip",
+    "bytes": 153236,
+    "sha256": "577bac6f4254226e67c743867da771b36fccb519d7584f10b2b12e7be00659b6"
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-api-primary-incremental-n1.bundle",
+      "bytes": 11887,
+      "sha256": "4b09fa7ca5346ad00fb3f2b0710dab041c1c12e0e788be13f6e8340087690dd6",
+      "archive_name": "broll-timeline-api-primary-incremental-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-api-primary-preservation-n1.json",
+      "bytes": 1708,
+      "sha256": "aa5e8716095a697b44a7c8e2ec6c66e3810e561355aa52e16b99bf5a42b30bb3",
+      "archive_name": "broll-timeline-api-primary-preservation-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-draft-freeze-n1.json",
+      "bytes": 1258,
+      "sha256": "fe59fd8b965a85f0a112fbd7e7f074b165a08fbb4185e60931c3f78d42c9f4a7",
+      "archive_name": "broll-timeline-draft-freeze-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-draft-source-n1.zip",
+      "bytes": 23297,
+      "sha256": "6e887e8948896d74f0c4b91f528ed3d67c8ce626620576db7d48bb3a146a1e7f",
+      "archive_name": "broll-timeline-draft-source-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-review-actual-asgi-n1.json",
+      "bytes": 384811,
+      "sha256": "0a9942826ccc131bf48dc112fc65f9c61bfd5ab1594a6cde49799ae50d19a53c",
+      "archive_name": "broll-timeline-review-actual-asgi-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-review-backend-n1.log",
+      "bytes": 18730,
+      "sha256": "7547f2d26a6cf440711edef991b547743f9bce0497eaf5ea9dec0692f436a37c",
+      "archive_name": "broll-timeline-review-backend-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-review-backend-n2.log",
+      "bytes": 2574,
+      "sha256": "1c3491a61bd46e8f115b3de5eaf06ca2efe66f96045f1b2ca8a48e394d1787ae",
+      "archive_name": "broll-timeline-review-backend-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-review-backend-n3.log",
+      "bytes": 112,
+      "sha256": "e129d0171059950a20f68281f2400c167a31e81ec26538e866cc148802edd64d",
+      "archive_name": "broll-timeline-review-backend-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-review-freeze-n3.json",
+      "bytes": 1283,
+      "sha256": "264953c29f1364bf79ed6aa48e0e90748be60f2522fb9245a7796911e87a0efa",
+      "archive_name": "broll-timeline-review-freeze-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-timeline-review-source-n3.zip",
+      "bytes": 23487,
+      "sha256": "c4c8ecc25ba10a47b35d20cca61a2c0ad6d5dd5dcced005e4cb8ada01d275aa9",
+      "archive_name": "broll-timeline-review-source-n3.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\capture-broll-timeline-asgi-n1.log",
+      "bytes": 286,
+      "sha256": "790a7fa3394341be47d4bed8b8d6de34f176a5d25fb2815a39f14770a7100613",
+      "archive_name": "capture-broll-timeline-asgi-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\capture-broll-timeline-asgi-n1.py",
+      "bytes": 3969,
+      "sha256": "0f35b6da365d7209a866fae02610bcc0155704956ea327b9d6bb6ba1cf88b74b",
+      "archive_name": "capture-broll-timeline-asgi-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\commit-broll-timeline-api-primary-n1.log",
+      "bytes": 2521,
+      "sha256": "aed6a354f463f6cc0d9c7e6d012f6ceea2a6ec91cc7319ac2702b21bc73b90fb",
+      "archive_name": "commit-broll-timeline-api-primary-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\commit-broll-timeline-api-primary-n1.py",
+      "bytes": 3032,
+      "sha256": "9b6313b3036a9b1d8d7d634cdbf37bbf09521bcfe39206733122a30dd2a9f061",
+      "archive_name": "commit-broll-timeline-api-primary-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-broll-timeline-n3.log",
+      "bytes": 439,
+      "sha256": "fdadb8438d4a9bfaf9d816b2a2c4e1789ba876c4ed3e12cb82a638e813f37772",
+      "archive_name": "freeze-broll-timeline-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\freeze-broll-timeline-n3.py",
+      "bytes": 1421,
+      "sha256": "0db13ea95089ee384fdc67d8bc4c5bfd7daa5d80755b2f1f55c3162d9ef0e491",
+      "archive_name": "freeze-broll-timeline-n3.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-before-n1.json",
+      "bytes": 1031,
+      "sha256": "a6c4dcd32d6ce16eec2c89a1e5e85f96f6bafb80d21f4c82123d293d9b74ffd1",
+      "archive_name": "processing-broll-timeline-before-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-final-before-n1.json",
+      "bytes": 7146,
+      "sha256": "a77ffd9ec1e6a878156cbcaf2d9dc9803811b96f6efb5fcbba3622c6535458c4",
+      "archive_name": "processing-broll-timeline-final-before-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-final-n1.json",
+      "bytes": 2400,
+      "sha256": "d3610a0056362c4b2f3ebd6e8232adb04b30912f81a2946fa2d0e00db03eefe8",
+      "archive_name": "processing-broll-timeline-final-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-final-n1.log",
+      "bytes": 101,
+      "sha256": "8437933a1ec6f33407e6a086b5e23fe73b049da7cd748016043fab421a609183",
+      "archive_name": "processing-broll-timeline-final-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-final-n1.py",
+      "bytes": 5444,
+      "sha256": "8cf449e26b3fe75f7d7cdd96221bba42551ab783e357f83cc59c9012292edbef",
+      "archive_name": "processing-broll-timeline-final-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-repro-n1.json",
+      "bytes": 2430,
+      "sha256": "ceda66f03c2ba72ccc20aa387b68c1684592238fcfd8f81734f902e4abfd8354",
+      "archive_name": "processing-broll-timeline-repro-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-repro-n1.log",
+      "bytes": 11783,
+      "sha256": "14c0db945d3beb3b7c7a6803801225af0e838c0773eee91b47a8de3f5a5f6d6e",
+      "archive_name": "processing-broll-timeline-repro-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-repro-n1.py",
+      "bytes": 5442,
+      "sha256": "6899dfef1349614321c8f5dd1b41da869c2a7a4990c3155c008e33ad6744fab8",
+      "archive_name": "processing-broll-timeline-repro-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-repro-source-n1.zip",
+      "bytes": 28313,
+      "sha256": "0a4beba39a2f99f8384c431be8afc90b3db64b400ac11c4ebc28da8b5a9bd784",
+      "archive_name": "processing-broll-timeline-repro-source-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-review-n1.json",
+      "bytes": 6402,
+      "sha256": "732fa6af9b6d05374dfea5d26ccb968606817fbb9afaec888ad2328811737410",
+      "archive_name": "processing-broll-timeline-review-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-broll-timeline-review-n2.json",
+      "bytes": 8564,
+      "sha256": "033e25fd2ebae34fa301623ea37a4797f48e797cda4960d5327a2098c0380c2d",
+      "archive_name": "processing-broll-timeline-review-n2.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\snapshot-broll-timeline-draft-n1.py",
+      "bytes": 1269,
+      "sha256": "17f15875f18461a96dc167fff2dd7acebd2beedeeaa47ca3202efc4a751b8d47",
+      "archive_name": "snapshot-broll-timeline-draft-n1.py"
+    }
+  ]
+}
