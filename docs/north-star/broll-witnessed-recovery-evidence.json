@@ -1,0 +1,204 @@
+{
+  "created_at": "2026-10-15T10:44:42.689159+00:00",
+  "product_head": "297427e15985ce98a6d9b4bc6047156f82d0ce30",
+  "scope": "Signed authorization settlement backend only; legacyv1 unchanged. No pendingv2/RootUI/configured realkey/provider/browser/Owner/deploy acceptance.",
+  "archive": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-primary-support-n1.zip",
+    "bytes": 225103,
+    "sha256": "078b5263cc9f76c7116efe54db69c8d06b8aa5fda5e1a9a4add9eac7698333a7"
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-request-witness-final-source-n1.zip",
+      "bytes": 50420,
+      "sha256": "2842568e7ec2b685d7ca7cc294ea4f24317f3b78c8d2e55e888eeef4c9846a51",
+      "archive_name": "broll-request-witness-final-source-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-request-witness-handoff-helper-n1.py",
+      "bytes": 5730,
+      "sha256": "b074f389374a8ba9988ec6c0373ec1991766b1ee6ab66ea225910e000732018d",
+      "archive_name": "broll-request-witness-handoff-helper-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-request-witness-handoff-n1.json",
+      "bytes": 12887,
+      "sha256": "1b6addc955bb2c192b2213827b49050cf2b97811535fa8c8cfa3d0e95de5ef1f",
+      "archive_name": "broll-request-witness-handoff-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-request-witness-program-n1.bundle",
+      "bytes": 34482,
+      "sha256": "4119b299cc8ec059aed95747c491a854c6a0e2a8cd96fe77babc56c482841fb0",
+      "archive_name": "broll-request-witness-program-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-capture-helper-n1.py",
+      "bytes": 6232,
+      "sha256": "0a22b27df527e01aa4652b9100245184dbb4bbc282edc1e2dbd285e3b1292957",
+      "archive_name": "broll-witnessed-recovery-actual-capture-helper-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-capture-helper-n2.py",
+      "bytes": 6332,
+      "sha256": "fca16aba68977110a554f731e8b54d577e225a948d19ac9d09a6d59707fc9741",
+      "archive_name": "broll-witnessed-recovery-actual-capture-helper-n2.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-capture-helper-n3.py",
+      "bytes": 6420,
+      "sha256": "c4f60db41bcbf441c264bd5b65ad0d3107690ca8c555b5f6e2ca0a710db5e129",
+      "archive_name": "broll-witnessed-recovery-actual-capture-helper-n3.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-capture-n1.log",
+      "bytes": 3476,
+      "sha256": "3791340ee8c86f1e76466be28b7af840ce3cd26a9d5987f423f9e5d2251b2d00",
+      "archive_name": "broll-witnessed-recovery-actual-capture-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-capture-n2.log",
+      "bytes": 1777,
+      "sha256": "d9725ffbfc2ae29b6c767d1a3364e17d7fd8b8408f8e640ba6c3790a61f9a0f6",
+      "archive_name": "broll-witnessed-recovery-actual-capture-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-capture-n3.log",
+      "bytes": 1904,
+      "sha256": "732341e2053216a8235ec2f6979face27f0d04f2c5cd0cd7e1b1800f92d4f8df",
+      "archive_name": "broll-witnessed-recovery-actual-capture-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-main-n3.json",
+      "bytes": 441896,
+      "sha256": "8c837257587f3c6cc39ad54a0d697b4cb7e04672a602e72d92da9ea823462445",
+      "archive_name": "broll-witnessed-recovery-actual-main-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-actual-manifest-n3.json",
+      "bytes": 1677,
+      "sha256": "a7017ee534731794b44bafc4d7f07a2754dbb0043b73df3244c86b8353b1c365",
+      "archive_name": "broll-witnessed-recovery-actual-manifest-n3.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-affected-tests-n2.log",
+      "bytes": 113,
+      "sha256": "77ded98b1b52707d917a152a2405dd860f879059a4d85af4c14b2b01cf0ca5cc",
+      "archive_name": "broll-witnessed-recovery-affected-tests-n2.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-focused-tests-n3.log",
+      "bytes": 112,
+      "sha256": "54ecdf7301d1533b8597b4bf08e2c10fbc6b928fd596dfb437583ef7fa71ac84",
+      "archive_name": "broll-witnessed-recovery-focused-tests-n3.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-freeze-helper-n1.py",
+      "bytes": 3940,
+      "sha256": "e0c12b340e610b4e08581dfce94da10a9539ecb9662082c936382aed543d3b06",
+      "archive_name": "broll-witnessed-recovery-freeze-helper-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-freeze-n1.json",
+      "bytes": 5474,
+      "sha256": "f92e61163c2fb2d67735e76da78fc4ba46fc632a580b8fd32cf60021e3c5e4d9",
+      "archive_name": "broll-witnessed-recovery-freeze-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-incremental-n1.bundle",
+      "bytes": 9185,
+      "sha256": "b14e856c125fa4d3fa00dfac386804f6af420e178e77ac3126284e640df21b66",
+      "archive_name": "broll-witnessed-recovery-incremental-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-legacy-hook-n1.patch",
+      "bytes": 4486,
+      "sha256": "568e88f3117b6234fc6a338665d99acd72a1b5b02cd98bcb6d83c5ae4b0dc944",
+      "archive_name": "broll-witnessed-recovery-legacy-hook-n1.patch"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-main-router-n1.patch",
+      "bytes": 1336,
+      "sha256": "153916049089db95de2b0c49ffd6d46cf2e018261132de3fd35d07827bcf0d4e",
+      "archive_name": "broll-witnessed-recovery-main-router-n1.patch"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-primary-import-n1.json",
+      "bytes": 1865,
+      "sha256": "f410cbc29e716fc3f471f6c45a4d69813909233de3e40d2fa2ebd66bcfa4ad4c",
+      "archive_name": "broll-witnessed-recovery-primary-import-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-primary-incremental-n1.bundle",
+      "bytes": 9809,
+      "sha256": "67280949aac850dfae475b4b5fcece0dd690717df7ad76c9674445fe3c3482f1",
+      "archive_name": "broll-witnessed-recovery-primary-incremental-n1.bundle"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-primary-preservation-n1.json",
+      "bytes": 1651,
+      "sha256": "2c62a352708c50bccab3d437dd03ddb222fcfe1c833a22619a7255f1fc53703d",
+      "archive_name": "broll-witnessed-recovery-primary-preservation-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-primary-SQL-n1.log",
+      "bytes": 112,
+      "sha256": "865ae95bf8895c125108148b57f8b7f78c4a1f1c92473c45bdb126972f6bb275",
+      "archive_name": "broll-witnessed-recovery-primary-SQL-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-source-n1.zip",
+      "bytes": 26005,
+      "sha256": "f80a11b90d0b8ca1e6906fc1e7531682a9e65deb18a909c508f2d2c0ce3c233c",
+      "archive_name": "broll-witnessed-recovery-source-n1.zip"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\broll-witnessed-recovery-tests-n1.log",
+      "bytes": 102,
+      "sha256": "f501883460d71cf6e6af20d152c6f5faa4d44e60f78d6586950c368cfd7d3c84",
+      "archive_name": "broll-witnessed-recovery-tests-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\commit-broll-witnessed-recovery-primary-n1.log",
+      "bytes": 2511,
+      "sha256": "40f05146fa3a5757924707293e4944f9a7bba6995e867a203216fa503af77ab6",
+      "archive_name": "commit-broll-witnessed-recovery-primary-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\commit-broll-witnessed-recovery-primary-n1.py",
+      "bytes": 2565,
+      "sha256": "385fcb5929c8bf0942ce1e0774ba540f80b4cc476f097bc6c469d2b0974cccf9",
+      "archive_name": "commit-broll-witnessed-recovery-primary-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-broll-witnessed-recovery-primary-n1.log",
+      "bytes": 36,
+      "sha256": "1b48eb6e89131e8b379bd12ed32ec46017f2fcd55c8e534606f9c7577284c6fe",
+      "archive_name": "import-broll-witnessed-recovery-primary-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\import-broll-witnessed-recovery-primary-n1.py",
+      "bytes": 2974,
+      "sha256": "fe030840d778707715e48dd8e3216d0902523839b015e70c864ef6451edd8155",
+      "archive_name": "import-broll-witnessed-recovery-primary-n1.py"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-witnessed-recovery-review-n1.json",
+      "bytes": 8574,
+      "sha256": "dcc4dade87ca61ad1e65a90e9903f50618e08b4ab20427a38525510fef79fa73",
+      "archive_name": "processing-witnessed-recovery-review-n1.json"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-witnessed-recovery-review-n1.log",
+      "bytes": 101,
+      "sha256": "86d24cb5975d725bf375cb9c4252a66a6c24ff4337a8c4a40ac9541ca136589b",
+      "archive_name": "processing-witnessed-recovery-review-n1.log"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\processing-witnessed-recovery-review-n1.py",
+      "bytes": 8059,
+      "sha256": "b3eece21c9c0277e5caec1bbe32db1b817178af142a118d1395c46400fe02ac9",
+      "archive_name": "processing-witnessed-recovery-review-n1.py"
+    }
+  ]
+}
