@@ -707,6 +707,7 @@ function brollPlanContext(){const v=brollPlanEditorState();return sqlAudioStable
   productionWorkbenchDraft(),audioWorkbenchDraft()]);}
 function assertBrollPlanOperation(op){const v=brollPlanEditorState();
   if(brollPlanOperation!==op||brollPlanContext()!==op.context||brollPlanDraft()!==op.draft||v.busy||v.dirty
+    ||['recover-inspect','abandon'].includes(op.kind)&&sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==op.plans
     ||!Number.isFinite(Date.parse(v.principal?.expires_at))||Date.parse(v.principal.expires_at)<=Date.now()
     ||!['viewer','editor','reviewer','owner'].includes(audioRole(v))
     ||op.write&&(v.principal.human_write_enabled!==true||!['editor','reviewer','owner'].includes(audioRole(v))))
@@ -726,7 +727,7 @@ function renderBrollPlanSettings(value){
     $('#broll-plan-'+name).checked=settings.resolver_priority.includes(tier);
     $('#broll-plan-'+name+'-order').value=String(settings.resolver_priority.includes(tier)?settings.resolver_priority.indexOf(tier)+1:index);
   }
-  $('#broll-plan-acknowledge').checked=false;
+  $('#broll-plan-acknowledge').checked=false;$('#broll-plan-abandon-acknowledge').checked=false;
 }
 function clearBrollPlanForm(){brollPlanFormRead=null;brollPlanFormBaseline=null;renderBrollPlanSettings(defaultBrollPlanSettings());}
 function syncBrollPlanForm(){
@@ -741,6 +742,10 @@ function syncBrollPlanForm(){
   $('#broll-plan-reconcile').disabled=brollPlanBusy||!held||!readable;
   $('#broll-plan-resend').disabled=brollPlanBusy||!held||c?.mayResend!==true||!writable;
   $('#broll-plan-discard').disabled=brollPlanBusy||held||!brollPlanDirty();
+  $('#broll-plan-recovery-read').disabled=brollPlanBusy||!held||!writable;
+  $('#broll-plan-abandon').disabled=brollPlanBusy||!held||!writable||!c?.recovery;
+  $('#broll-plan-abandon-acknowledge').disabled=brollPlanBusy||!held||!writable;
+  $('#broll-plan-recovery').textContent=c?.recovery?`Server: ${c.recovery.state==='settled'?'đã ghi nhận dừng':'đã đối chiếu'}. ${c.recovery.preserved_plan?'Kế hoạch gốc được giữ; đây là ảnh chụp lịch sử, không thay thế tiến trình hiện tại.':'Chưa có kế hoạch trong biên nhận gốc.'} Chưa gỡ bản ghi đang giữ cho tới khi xác minh dừng thành công.`:'';
   $('#broll-plan-acknowledge').disabled=brollPlanBusy||!writable;
   $('#broll-plan-stock').disabled=!valid||held||brollPlanBusy||!writable||brollPlanFormRead.context.licensed_stock_enabled!==true;
   $('#broll-plan-availability').textContent=!valid?'Đọc nguồn để xem khả năng stock hiện tại. AI tắt · ngân sách AI 0 VND.':
@@ -754,16 +759,27 @@ async function brollPlanApi(path,options={}){
   const op=brollPlanOperation;if(!op)throw Error('B-roll chỉ đọc/gửi sau thao tác rõ ràng.');assertBrollPlanOperation(op);
   const route=`/api/v1/projects/${state.projectId}/broll-plan-review`,method=(options.method??'GET').toUpperCase();
   const requestRead=path.startsWith(route+'/requests/')&&/^[A-Za-z0-9_-]{8,128}$/.test(path.slice((route+'/requests/').length));
-  if(!(method==='GET'&&(path==='/api/v1/auth/session'||path===route||requestRead)||method==='POST'&&path===route))
-    throw Error('Lệnh chuẩn bị B-roll không được áp dụng, resolve hoặc chạy provider.');
+  const settlementRead=path.startsWith(route+'/recovery/settlements/')&&/^sop_[a-f0-9]{32}$/.test(path.slice((route+'/recovery/settlements/').length));
+  const recoveryPost=method==='POST'&&(op.kind==='recover-inspect'&&path===route+'/recovery/inspect'||op.kind==='abandon'&&path===route+'/recovery/abandon');
+  if(!(method==='GET'&&(path==='/api/v1/auth/session'||path===route||requestRead||settlementRead)||method==='POST'&&path===route&&['prepare','resend'].includes(op.kind)||recoveryPost))
+    throw Error('Lệnh B-roll chỉ chuẩn bị hoặc đối chiếu đúng yêu cầu; không áp dụng hay gọi provider.');
   if(method==='POST'){
     const body=JSON.parse(options.body),pending=brollPlanController.state().pending;
-    if(!op.write||!pending||sqlAudioStable(body)!==sqlAudioStable(pending.body)
+    if(!op.write||!pending)throw Error('Thiếu yêu cầu đang giữ cho thao tác B-roll.');
+    const key='vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+    const raw=brollPlanStore.getItem(key);assertBrollPlanOperation(op);
+    if(raw!==sqlAudioStable(pending))throw Error('Bản ghi đang giữ đã đổi; không gửi lại hoặc ghi đè yêu cầu khác.');
+    if(recoveryPost){
+      const keys=op.kind==='abandon'?['acknowledged','intent_json','intent_sha256','observation_sha256']:['intent_json','intent_sha256'];
+      if(sqlAudioStable(Object.keys(body).sort())!==sqlAudioStable(keys.sort())||body.intent_json!==raw
+        ||typeof body.intent_sha256!=='string'||!/^[a-f0-9]{64}$/.test(body.intent_sha256)
+        ||op.kind==='abandon'&&(body.acknowledged!==true||$('#broll-plan-abandon-acknowledge').checked!==true
+          ||body.observation_sha256!==brollPlanController.state().recovery?.observation_sha256))
+        throw Error('Chỉ đối chiếu hoặc dừng đúng bản ghi cũ sau xác nhận riêng.');
+    }else if(sqlAudioStable(body)!==sqlAudioStable(pending.body)
       ||op.kind==='prepare'&&(body.context_sha256!==brollPlanFormRead?.context.context_sha256
         ||sqlAudioStable(body.settings)!==sqlAudioStable(brollPlanSettingsFromForm())))
       throw Error('Yêu cầu B-roll phải giữ nguyên lựa chọn và mã lần chuẩn bị.');
-    const key='vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
-    if(brollPlanStore.getItem(key)!==sqlAudioStable(pending))throw Error('Bản ghi đang giữ đã đổi; không gửi lại hoặc ghi đè yêu cầu khác.');
     assertBrollPlanOperation(op);
   }
   const value=await api(path,{...options,brollPlanAdmission});assertBrollPlanOperation(op);return value;
@@ -773,12 +789,16 @@ const brollPlanStorage={
   getItem(key){const op=brollPlanOperation;if(!op||!brollPlanStore)throw Error('Chưa có nơi giữ yêu cầu B-roll an toàn.');assertBrollPlanOperation(op);
     const value=brollPlanStore.getItem(key);assertBrollPlanOperation(op);brollPlanObservedStorage.set(key,value);return value;},
   setItem(key,value){const op=brollPlanOperation;assertBrollPlanOperation(op);brollPlanStore.setItem(key,value);assertBrollPlanOperation(op);},
+  compareAndRemoveItem(key,raw){const op=brollPlanOperation;assertBrollPlanOperation(op);
+    const expected='vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
+    if(op.kind!=='abandon'||key!==expected||typeof raw!=='string'||typeof brollPlanStore?.compareAndRemoveItem!=='function')return false;
+    const result=brollPlanStore.compareAndRemoveItem(key,raw);assertBrollPlanOperation(op);return result===true;},
   removeItem(key){const op=brollPlanOperation;assertBrollPlanOperation(op);const raw=brollPlanObservedStorage.get(key);
     if(typeof raw!=='string'||typeof brollPlanStore?.compareAndRemoveItem!=='function'||!brollPlanStore.compareAndRemoveItem(key,raw))
       throw Error('Bản ghi B-roll đã đổi; giữ nguyên để kiểm tra.');
     assertBrollPlanOperation(op);brollPlanObservedStorage.delete(key);}
 };
-async function adoptPreparedBrollPlan(plan,receipt){
+async function adoptPreparedBrollPlan(plan,receipt,requestGuard){
   const op=brollPlanOperation;assertBrollPlanOperation(op);const pending=brollPlanController.state().pending;
   if(!pending||receipt.request_key!==pending.body.request_key||receipt.context_sha256!==pending.context.context_sha256
     ||receipt.actor_ref!==state.principal.subject||receipt.workspace_id!==state.workspaceId||receipt.project_id!==state.projectId
@@ -791,11 +811,14 @@ async function adoptPreparedBrollPlan(plan,receipt){
   const plans=sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId]);
   const pendingKey='vf-broll-plan-pending-v1:'+JSON.stringify([state.workspaceId,state.projectId,state.principal.subject]);
   const expectedRaw=sqlAudioStable(pending);
-  const guard=()=>{assertBrollPlanOperation(op);if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)
+  const guard=()=>{assertBrollPlanOperation(op);if(typeof requestGuard!=='function'||requestGuard()!==true)throw Error('Quyền giữ yêu cầu B-roll đã kết thúc.');
+    assertBrollPlanOperation(op);if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)
     throw Error('Danh sách đề xuất đã đổi trong lúc đối chiếu.');
     const raw=brollPlanStore.getItem(pendingKey);assertBrollPlanOperation(op);
     if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)throw Error('Danh sách đề xuất đã đổi khi đọc bản ghi đang giữ.');
-    if(raw!==expectedRaw)throw Error('Bản ghi B-roll đang giữ đã đổi; chưa nhận đề xuất vào dự án.');};
+    if(raw!==expectedRaw)throw Error('Bản ghi B-roll đang giữ đã đổi; chưa nhận đề xuất vào dự án.');
+    if(requestGuard()!==true)throw Error('Quyền giữ yêu cầu B-roll đã kết thúc.');assertBrollPlanOperation(op);
+    if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)throw Error('Danh sách đề xuất đã đổi sau đối chiếu cuối.');};
   guard();
   const base=`/api/v1/projects/${state.projectId}`;
   const proof=await api(`${base}/broll-plan-review/requests/${receipt.request_key}`,{cache:'no-store'});guard();
@@ -811,28 +834,59 @@ async function adoptPreparedBrollPlan(plan,receipt){
   state.mediaPlans=[structuredClone(saved),...state.mediaPlans.filter(v=>v.media_plan_id!==saved.media_plan_id)];state.selectedBrollPlanId=saved.media_plan_id;
   renderBrowser();stockReview.sync();
 }
+function brollRecoveryGuard(requestGuard){
+  const op=brollPlanOperation;assertBrollPlanOperation(op);
+  const plans=sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId]);
+  return()=>{assertBrollPlanOperation(op);
+    if(typeof requestGuard!=='function'||requestGuard()!==true)throw Error('Quyền giữ yêu cầu khôi phục đã kết thúc.');
+    assertBrollPlanOperation(op);
+    if(sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])!==plans)throw Error('Danh sách hoặc lựa chọn đã đổi trong lúc khôi phục.');
+    return true;};
+}
+async function readBrollRecovery(value,requestGuard){
+  const guard=brollRecoveryGuard(requestGuard);guard();
+  const context=await api(`/api/v1/projects/${state.projectId}/broll-plan-review`,{cache:'no-store'});guard();
+  validateBrollPlanContext(context,brollPlanEditorState());
+  if(context.context_sha256!==value.current_context_sha256||context.authority_sha256!==value.current_authority_sha256
+    ||sqlAudioStable(context.source)!==sqlAudioStable(value.source))throw Error('Nguồn hoặc quyền trên server đã đổi trong lúc đối chiếu.');
+  guard();return true;
+}
+async function settleBrollRecovery(value,requestGuard){
+  const guard=brollRecoveryGuard(requestGuard);guard();
+  const route=`/api/v1/projects/${state.projectId}/broll-plan-review/recovery/settlements/${value.settlement.settlement_id}`;
+  const first=await api(route,{cache:'no-store'});guard();
+  if(sqlAudioStable(first)!==sqlAudioStable(value))throw Error('Bản ghi dừng trên server chưa khớp.');
+  await readBrollRecovery(value,guard);guard();
+  const last=await api(route,{cache:'no-store'});guard();
+  if(sqlAudioStable(last)!==sqlAudioStable(value))throw Error('Bản ghi dừng đã đổi khi đọc lại.');
+  guard();return true;
+}
 brollPlanController=initializeBrollPlanReview({api:brollPlanApi,getState:brollPlanEditorState,getSessionToken:sessionToken,storage:brollPlanStorage,
-  onPrepared:adoptPreparedBrollPlan,onStatus:text=>{$('#broll-plan-status').textContent=text;}});
+  onPrepared:adoptPreparedBrollPlan,onRecoveryRead:readBrollRecovery,onRecovered:settleBrollRecovery,onStatus:text=>{$('#broll-plan-status').textContent=text;}});
 async function runBrollPlanAction(kind){
   if(brollPlanBusy)return;
   try{
     syncBrollPlanForm();if(kind==='read'&&brollPlanDirty())throw Error('Bỏ lựa chọn chưa gửi trước khi đọc lại.');
     if(kind==='prepare'&&(brollPlanFormRead?.binding!==brollPlanContext()||brollPlanStored()))throw Error('Đọc đúng nguồn hiện tại và đối chiếu lần đang giữ trước khi chuẩn bị.');
-    const op=Object.freeze({kind,write:['prepare','resend'].includes(kind),context:brollPlanContext(),draft:brollPlanDraft()});
+    const op=Object.freeze({kind,write:['prepare','resend','recover-inspect','abandon'].includes(kind),context:brollPlanContext(),draft:brollPlanDraft(),
+      plans:sqlAudioStable([state.mediaPlans,state.selectedBrollPlanId])});
     brollPlanOperation=op;assertBrollPlanOperation(op);
     const settings=kind==='prepare'?brollPlanSettingsFromForm():null;
     if(['prepare','resend'].includes(kind)&&$('#broll-plan-acknowledge').checked!==true)throw Error('Xác nhận rõ lựa chọn hoặc đúng yêu cầu đang giữ trước khi gửi.');
+    if(kind==='abandon'&&$('#broll-plan-abandon-acknowledge').checked!==true)throw Error('Xác nhận dừng đúng yêu cầu cũ; kế hoạch và lịch sử vẫn được giữ.');
     brollPlanBusy=true;syncBrollPlanPeers();
     if(kind==='read'){
       const context=await brollPlanController.reload();assertBrollPlanOperation(op);
       brollPlanFormRead={context:structuredClone(context),binding:brollPlanContext()};renderBrollPlanSettings(defaultBrollPlanSettings());brollPlanFormBaseline=brollPlanDraft();
     }else{
-      const result=await (kind==='prepare'?brollPlanController.prepare(settings,true):kind==='resend'?brollPlanController.resend(true):brollPlanController.reconcile());
-      assertBrollPlanOperation(op);if(result&&['prepared','rejected'].includes(result.state))clearBrollPlanForm();
+      const result=await (kind==='prepare'?brollPlanController.prepare(settings,true):kind==='resend'?brollPlanController.resend(true):kind==='recover-inspect'?brollPlanController.inspectRecovery():kind==='abandon'?brollPlanController.abandonRecovery(true):brollPlanController.reconcile());
+      assertBrollPlanOperation(op);if(result&&(['prepared','rejected'].includes(result.state)||kind==='abandon'&&result.state==='settled'))clearBrollPlanForm();
     }
-  }catch(error){toast(error.message,true);}finally{brollPlanBusy=false;brollPlanOperation=null;syncBrollPlanPeers();}
+  }catch(error){toast(error.detail?.error?.code==='BROLL_RECOVERY_IDENTITY_UNVERIFIABLE'
+    ?'Chưa chứng minh được đúng phiên gốc. Yêu cầu chưa tới server hiện cần phiên gốc còn hiệu lực; giữ nguyên bản ghi để kiểm tra.'
+    :error.message,true);}finally{brollPlanBusy=false;brollPlanOperation=null;syncBrollPlanPeers();}
 }
-for(const [id,kind] of [['broll-plan-read','read'],['broll-plan-prepare','prepare'],['broll-plan-reconcile','reconcile'],['broll-plan-resend','resend']])
+for(const [id,kind] of [['broll-plan-read','read'],['broll-plan-prepare','prepare'],['broll-plan-reconcile','reconcile'],['broll-plan-resend','resend'],['broll-plan-recovery-read','recover-inspect'],['broll-plan-abandon','abandon']])
   $('#'+id).addEventListener('click',()=>runBrollPlanAction(kind));
 $('#broll-plan-form').addEventListener('submit',event=>{event.preventDefault();});
 $('#broll-plan-form').addEventListener('change',syncBrollPlanPeers);

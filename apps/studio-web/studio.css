@@ -436,3 +436,6 @@
 .broll-plan-workbench input[type=checkbox] { width: 20px; flex-shrink: 0; }
 .broll-plan-actions, .broll-plan-acknowledge { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
 .broll-plan-pending { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+
+/* Explicit B-roll recovery; no provider or canonical edit. */
+.broll-plan-workbench .broll-plan-recovery{display:grid;gap:10px;margin-top:16px;min-width:0}.broll-plan-workbench .broll-plan-recovery button{min-height:38px;font-size:14px;white-space:normal}.broll-plan-workbench .broll-plan-recovery p{overflow-wrap:anywhere}
