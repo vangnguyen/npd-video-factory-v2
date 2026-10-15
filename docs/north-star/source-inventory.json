@@ -1,6 +1,6 @@
 {
-  "head": "8840e44ebd66c12517d7084d9b7e788ab9aeda8c",
-  "audited_at": "2026-10-15T11:14:59.905112+00:00",
+  "head": "75e93525bc20d6cad8240453b1535276241a5ce9",
+  "audited_at": "2026-10-15T11:17:38.388749+00:00",
   "sha256": {
     ".dockerignore": "e574f90667ac9fe8779a9716936f38fb8bb93cb083ef8b9674139a3fce4ee4da",
     ".env.example": "3095f99a3da00216e230b77218f168a18afebc07fb3e3795bcef5a30d39b7d7a",
@@ -62,7 +62,7 @@
     "apps/api/app/broll_request_recovery_api.py": "73d159429518859ff0cfe2038c55b9b141ba8ca654d02f321fa7202184583471",
     "apps/api/app/broll_request_recovery_command.py": "a39346a765f5f3373892b08c41ec1b06ca142419dfae8536cc823747fb45f498",
     "apps/api/app/broll_request_witness.py": "63652c0fb86adb6d00f0bebf4166c59dbb6428ac1a2dab0e71bb50aa563fa62d",
-    "apps/api/app/broll_request_witness_api.py": "4b960cdbb57c154123c3f498100c60e8d0a7ca7a2404c16b273cce5a352226c7",
+    "apps/api/app/broll_request_witness_api.py": "2202076bdb8c67254ecd44ce545d0d025879103a7c6bd0c0473f3837b1aa1168",
     "apps/api/app/broll_request_witness_command.py": "dfe70eb17d8af957e5e2e02e5ba90675028cb6041ee1156639e33304adfa9c7a",
     "apps/api/app/broll_request_witness_secrets.py": "4f7d94a0fa64ea7bb0f85d9ad2450637189b5f95fe11fad25d0f281f2711d172",
     "apps/api/app/broll_timeline_review_api.py": "dc4b20ebe1e6d382de18353c75bd7d616b78c901e7e4edc255d238c6c9b89649",
@@ -301,6 +301,7 @@
     "apps/api/tests/test_broll_request_witness_main.py": "a412569fd3bec029462b043f6b5336994e6c79d7f06987f009f87567d7581bd2",
     "apps/api/tests/test_broll_request_witness_secrets.py": "8cb2b53530adcaf96ffcd141cb5f8d46c39ba485a14fc0aa9d7cf86e16308634",
     "apps/api/tests/test_broll_timeline_review.py": "575ed81faf9eaa9b045c8fe0767701ea92b38310a0fc046a61194b8193fa674b",
+    "apps/api/tests/test_broll_witness_status.py": "4ceef96e25dba9189a6ce96dac6f89278114df5ffff94d8326d386d516f3c210",
     "apps/api/tests/test_broll_witnessed_recovery.py": "fd33d647fd38f68978c5322255e26af5f33c081cbb3806064a5b52e0c3a88c64",
     "apps/api/tests/test_broll_witnessed_recovery_main.py": "85a3a5a0f52d028b7631a68340858fdba680426d054b99d2ccd29191f3979338",
     "apps/api/tests/test_canonical_audio_processing.py": "08da12fc184324c6f36a23a40568c69642fde1ae97d9c470f96936c3602784e2",
