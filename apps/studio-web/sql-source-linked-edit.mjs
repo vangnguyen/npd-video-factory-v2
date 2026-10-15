@@ -244,12 +244,24 @@ export function initializeSqlSourceLinkedEdit({root, api, getState, getSessionTo
       && ['source_start', 'source_end'].some(key => op[key] !== undefined && op[key] !== data.receipt.applied_operations[index][key]));
     const placementAdjusted = data.receipt.requested_operations.some((op, index) => ['move', 'duplicate'].includes(op.type)
       && op.timeline_start !== data.receipt.applied_operations[index].timeline_start);
-    await onSaved({workspace_id: p.workspace_id, project_id: p.project_id, actor_ref: p.actor_ref, parent_version_id: p.parent_version_id,
+    const callbackBucket = held?.bucket, callbackRaw = retained.get(p.body.request_key), callbackHeld = held;
+    let callbackActive = true;
+    const requestGuard = () => {
+      demand(callbackActive, 'Phạm vi đối chiếu yêu cầu đã kết thúc.');
+      const raw = storage.getItem(callbackBucket);
+      current(ticket, identity, bound, true);
+      demand(bucket() === callbackBucket && pending === p && held === callbackHeld
+        && typeof callbackRaw === 'string' && retained.get(p.body.request_key) === callbackRaw
+        && held?.raw === callbackRaw && raw === callbackRaw, 'Bản ghi đang giữ đã đổi; chưa được nhận timeline.');
+      return true;
+    };
+    try {requestGuard(); await onSaved({workspace_id: p.workspace_id, project_id: p.project_id, actor_ref: p.actor_ref, parent_version_id: p.parent_version_id,
       parent_version: p.body.expected_version, parent_timeline: copy(parents.get(p.body.request_key) ?? null),
       result_version: data.timeline.current_version, ui_source_sha256: p.ui_source_sha256,
       parent_timeline_sha256: p.parent_timeline_sha256, source_evidence: copy(p.source_evidence), receipt: copy(data.receipt), timeline: copy(data.timeline),
       requested_operations: copy(data.receipt.requested_operations), applied_operations: copy(data.receipt.applied_operations),
-      word_boundary_adjusted: adjusted, placement_adjusted: placementAdjusted});
+      word_boundary_adjusted: adjusted, placement_adjusted: placementAdjusted}, requestGuard);
+    } finally {callbackActive = false;}
     current(ticket, identity, undefined, true); demand(same(getState().timeline, data.timeline), 'Studio chưa chứng minh đúng timeline vừa lưu; giữ UNKNOWN.');
     const installedBinding = binding(getState());
     const fingerprint = await digest(source(getState()).ui); current(ticket, identity, installedBinding, true);

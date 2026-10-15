@@ -34,7 +34,9 @@ function harness(s=state(),handler,initialize=()=>({})){const calls=[],effects=[
       s,policy,{isBusy:()=>false,isPending:()=>false},null,null,initialize,()=>({}),api,()=>token,()=>{},
       ()=>production,()=>audio,audioRole,audioProcessingRead,history,()=>effects.push('stop-preview'),
       ()=>effects.push('stop-production'),()=>effects.push('render'),()=>{},{parse:Date.parse,now:()=>now},()=>false);
-  return{...own,calls,effects,setToken:v=>{token=v;},setAudio:v=>{audio=v;},setProduction:v=>{production=v;},setNow:v=>{now=v;}};
+  return{...own,rawRefreshSqlAudioProcessing:own.refreshSqlAudioProcessing,
+    refreshSqlAudioProcessing:(value,guard=()=>true)=>own.refreshSqlAudioProcessing(value,guard),
+    calls,effects,setToken:v=>{token=v;},setAudio:v=>{audio=v;},setProduction:v=>{production=v;},setNow:v=>{now=v;}};
 }
 
 test('raw actual main fixture preserves original DB/source/history and records one logical metadata CAS',()=>{
@@ -65,6 +67,16 @@ test('actual callback installs only exact current receipt/history and invalidate
   assert.equal(JSON.stringify(r.history_before.body),original);
   assert.equal(h.calls.length,3);assert.ok(h.calls.every(path=>!path.includes('render')&&!path.includes('publish')));
   assert.deepEqual(h.effects,['stop-preview','stop-production','render']);
+});
+for(const guard of [undefined,()=>false,()=>{throw Error('foreign owned intent');},()=>Promise.resolve(true)])
+ test('Root audio callback requires a synchronous private true guard before reads',async()=>{
+  const s=state(),before=clone(s),h=harness(s);await assert.rejects(h.rawRefreshSqlAudioProcessing(selection(),guard));
+  assert.deepEqual(s,before);assert.equal(h.calls.length,0);assert.deepEqual(h.effects,[]);
+ });
+for(const phase of [1,2,3])test(`Root audio callback fences exact pending guard after proof ${phase}`,async()=>{
+ const s=state(),before=clone(s);let valid=true;
+ const h=harness(s,(path,n)=>{if(n===phase)valid=false;return clone(path.endsWith('/versions')?r.history_after.body:r.processing_current.body);});
+ await assert.rejects(h.rawRefreshSqlAudioProcessing(selection(),()=>valid));assert.deepEqual(s,before);assert.deepEqual(h.effects,[]);
 });
 test('exact already-installed result can reconcile while another same-number version cannot',async()=>{
   const s=state();s.timeline=clone(r.processing_put.body.timeline);const h=harness(s);

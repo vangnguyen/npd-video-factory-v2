@@ -49,7 +49,9 @@ function harness(s=state(),handler,initialize=()=>null){let token='EXPLICIT_LINK
       api,stable,sourceLinkedRead,history,()=>effects.push('stop-preview'),()=>effects.push('stop-production'),
       ()=>{effects.push('render');controller?.sync();},getClip,options=>(controller=initialize(options)),()=>({}),()=>{},
       {parse:Date.parse,now:()=>now},{sync(){}},{sync(){}},{sync(){}});
-  return {...own,calls,effects,setToken:v=>{token=v;},setAudio:v=>{audio=v;},setProduction:v=>{production=v;},setNow:v=>{now=v;}};
+  return {...own,rawRefreshSourceLinkedReceipt:own.refreshSourceLinkedReceipt,
+    refreshSourceLinkedReceipt:(value,guard=()=>true)=>own.refreshSourceLinkedReceipt(value,guard),
+    calls,effects,setToken:v=>{token=v;},setAudio:v=>{audio=v;},setProduction:v=>{production=v;},setNow:v=>{now=v;}};
 }
 test('raw final component capture stays byte exact with its actual SQL/HTTP limits',()=>{
   assert.equal(createHash('sha256').update(bytes).digest('hex'),manifest.artifact_sha256);assert.equal(bytes.length,manifest.artifact_bytes);
@@ -65,6 +67,16 @@ test('actual callback verifies three reads and immutable parent/head before inst
   assert.equal(s.productionPackage.current_for_timeline,false);assert.equal(s.selectedClipId,null);
   assert.equal(s.playhead,s.timeline.snapshot.duration_seconds);assert.equal(h.calls.length,3);
   assert.deepEqual(h.effects,['stop-preview','stop-production','render']);
+});
+for(const guard of [undefined,()=>false,()=>{throw Error('foreign owned intent');},()=>Promise.resolve(true)])
+ test('Root source callback requires a synchronous private true guard before reads',async()=>{
+  const s=state(),before=clone(s),h=harness(s);await assert.rejects(h.rawRefreshSourceLinkedReceipt(selection(),guard));
+  assert.deepEqual(s,before);assert.equal(h.calls.length,0);assert.deepEqual(h.effects,[]);
+ });
+for(const phase of [1,2,3])test(`Root source callback fences exact pending guard after proof ${phase}`,async()=>{
+ const s=state(),before=clone(s);let valid=true;
+ const h=harness(s,(path,n)=>{if(n===phase)valid=false;return clone(path.endsWith('/versions')?r.history_after.body:r.linked_current.body);});
+ await assert.rejects(h.rawRefreshSourceLinkedReceipt(selection(),()=>valid));assert.deepEqual(s,before);assert.deepEqual(h.effects,[]);
 });
 test('reload at exact installed result can use history parent when in-memory parent clone is absent',async()=>{
   const s=state(),v=selection();s.timeline=clone(v.timeline);v.parent_timeline=null;

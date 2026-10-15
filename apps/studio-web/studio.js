@@ -204,7 +204,9 @@ function assertSqlAudioBoundary(boundary){const value=sqlAudioEditorState();
     ||!['editor','reviewer','owner'].includes(audioRole(value))
     ||!Number.isFinite(Date.parse(value.principal?.expires_at))||Date.parse(value.principal.expires_at)<=Date.now())
     throw Error('Nguồn, phiên hoặc bản sửa khác đã đổi; giữ cấu hình âm thanh để đối chiếu.');}
-async function refreshSqlAudioProcessing(value){
+async function refreshSqlAudioProcessing(value,requestGuard){
+  const guard=()=>{if(typeof requestGuard!=='function'||requestGuard()!==true)
+    throw Error('Thiếu ràng buộc đồng bộ với đúng yêu cầu âm thanh đang giữ.');};guard();
   const boundary=sqlAudioEditorBoundary(),current=sqlAudioEditorState(),receipt=value.receipt,timeline=value.timeline;
   assertSqlAudioBoundary(boundary);
   if(!current.timeline||value.workspace_id!==current.workspaceId||value.project_id!==current.projectId
@@ -219,10 +221,10 @@ async function refreshSqlAudioProcessing(value){
     ||current.timeline.current_version===value.result_version&&sqlAudioStable(current.timeline)!==sqlAudioStable(timeline))
     throw Error('Biên nhận cấu hình chưa khớp đúng nguồn, người sửa và timeline; không đổi CAS.');
   const path=`/api/v1/projects/${value.project_id}/timeline/audio-processing`;
-  const proof=await api(path);assertSqlAudioBoundary(boundary);audioProcessingRead(proof,sqlAudioEditorState());
+  const proof=await api(path);guard();assertSqlAudioBoundary(boundary);audioProcessingRead(proof,sqlAudioEditorState());
   if(sqlAudioStable(proof.timeline)!==sqlAudioStable(timeline)||sqlAudioStable(proof.receipt)!==sqlAudioStable(receipt))
     throw Error('Cấu hình hiện tại chưa chứng minh đúng lần lưu; giữ yêu cầu.');
-  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);assertSqlAudioBoundary(boundary);
+  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);guard();assertSqlAudioBoundary(boundary);
   if(!videoWordHistoryMatches(versions,proof.timeline))throw Error('Lịch sử timeline chưa khớp cấu hình đã đọc; giữ yêu cầu.');
   const head=versions.find(row=>row.version===proof.timeline.current_version
     &&row.timeline_version_id===proof.timeline.current_version_id);
@@ -230,10 +232,10 @@ async function refreshSqlAudioProcessing(value){
     ||head.mutation.source_media_mutated!==false||head.mutation.publish_requested!==false
     ||sqlAudioStable(head.mutation.receipt)!==sqlAudioStable(receipt))
     throw Error('Lịch sử timeline chưa khớp người sửa và biên nhận âm thanh; giữ yêu cầu.');
-  const finalProof=await api(path);assertSqlAudioBoundary(boundary);audioProcessingRead(finalProof,sqlAudioEditorState());
+  const finalProof=await api(path);guard();assertSqlAudioBoundary(boundary);audioProcessingRead(finalProof,sqlAudioEditorState());
   if(sqlAudioStable(finalProof.timeline)!==sqlAudioStable(proof.timeline)||sqlAudioStable(finalProof.receipt)!==sqlAudioStable(receipt))
     throw Error('Timeline hoặc biên nhận đã đổi sau khi đọc lịch sử; giữ yêu cầu.');
-  state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);
+  guard();state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);
   state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
   if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
   if(state.productionPackage)state.productionPackage={...state.productionPackage,current_for_timeline:false,
@@ -263,7 +265,9 @@ function videoWordHistoryMatches(versions,timeline){
     ?Object.fromEntries(Object.keys(item).sort().map(key=>[key,item[key]])):item);
   return !!head&&head.timeline_version_id===timeline.current_version_id&&stable(head.snapshot)===stable(timeline.snapshot);
 }
-async function refreshVideoWordReceipt(value){
+async function refreshVideoWordReceipt(value,requestGuard){
+  const guard=()=>{if(typeof requestGuard!=='function'||requestGuard()!==true)
+    throw Error('Thiếu ràng buộc đồng bộ với đúng yêu cầu sửa từ đang giữ.');};guard();
   const boundary=videoWordEditorBoundary(),current=videoWordEditorState(),receipt=value.receipt;
   assertVideoWordEditorBoundary(boundary);
   const source=current.assets.find(asset=>asset.asset_id===value.asset_id);
@@ -277,17 +281,17 @@ async function refreshVideoWordReceipt(value){
     throw Error('Biên nhận sửa từ không còn khớp nguồn và timeline đang xem.');
   const timeline=await api(`/api/v1/projects/${value.project_id}/timeline`).catch(error=>{
     if(error.status===404&&value.expected_timeline_version===null)return null;throw error;});
-  assertVideoWordEditorBoundary(boundary);
+  guard();assertVideoWordEditorBoundary(boundary);
   if(value.expected_timeline_version===null?timeline!==null:
     !timeline||timeline.project_id!==value.project_id||timeline.workspace_id!==value.workspace_id
       ||timeline.source_analysis_id!==value.analysis_id||timeline.current_version!==value.expected_timeline_version+1
       ||timeline.snapshot?.metadata?.transcript_revision?.transcript_id!==value.result_transcript_id)
     throw Error('Timeline chưa chứng minh đúng lần lưu từ; không đổi CAS hoặc bỏ yêu cầu chờ.');
   const versions=timeline?await api(`/api/v1/projects/${value.project_id}/timeline/versions`):[];
-  assertVideoWordEditorBoundary(boundary);
+  guard();assertVideoWordEditorBoundary(boundary);
   if(timeline?!videoWordHistoryMatches(versions,timeline):!Array.isArray(versions)||versions.length)
     throw Error('Lịch sử timeline không khớp phiên bản vừa đọc; giữ yêu cầu để đối chiếu.');
-  state.analyses=state.analyses.map(analysis=>analysis.analysis_id===value.analysis_id?structuredClone(receipt):analysis);
+  guard();state.analyses=state.analyses.map(analysis=>analysis.analysis_id===value.analysis_id?structuredClone(receipt):analysis);
   state.timeline=timeline;state.versions=versions;state.videoReviewSelection=null;state.selectedSceneAssessmentId='';
   state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
   if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
@@ -429,7 +433,9 @@ function assertSourceLinkedBoundary(boundary){const v=sourceLinkedEditorState();
     ||!['editor','reviewer','owner'].includes(audioRole(v))
     ||!Number.isFinite(Date.parse(v.principal?.expires_at))||Date.parse(v.principal.expires_at)<=Date.now())
     throw Error('Nguồn, phiên hoặc bản sửa khác đã đổi; giữ lần chỉnh shot để đối chiếu.');}
-async function refreshSourceLinkedReceipt(value){
+async function refreshSourceLinkedReceipt(value,requestGuard){
+  const guard=()=>{if(typeof requestGuard!=='function'||requestGuard()!==true)
+    throw Error('Thiếu ràng buộc đồng bộ với đúng yêu cầu chỉnh shot đang giữ.');};guard();
   const boundary=sourceLinkedEditorBoundary(),current=sourceLinkedEditorState(),receipt=value.receipt,timeline=value.timeline;
   assertSourceLinkedBoundary(boundary);
   const parent=current.timeline?.current_version===value.parent_version;
@@ -449,10 +455,10 @@ async function refreshSourceLinkedReceipt(value){
     ||sqlAudioStable(receipt.applied_operations)!==sqlAudioStable(value.applied_operations))
     throw Error('Biên nhận chỉnh shot chưa khớp nguồn, người sửa và phiên bản; không đổi CAS.');
   const path=`/api/v1/projects/${value.project_id}/timeline/source-linked-edit`;
-  const proof=await api(path);assertSourceLinkedBoundary(boundary);sourceLinkedRead(proof,sourceLinkedEditorState());
+  const proof=await api(path);guard();assertSourceLinkedBoundary(boundary);sourceLinkedRead(proof,sourceLinkedEditorState());
   if(sqlAudioStable(proof.timeline)!==sqlAudioStable(timeline)||sqlAudioStable(proof.receipt)!==sqlAudioStable(receipt))
     throw Error('Timeline hiện tại chưa chứng minh đúng lần chỉnh shot; giữ yêu cầu.');
-  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);assertSourceLinkedBoundary(boundary);
+  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);guard();assertSourceLinkedBoundary(boundary);
   if(!videoWordHistoryMatches(versions,proof.timeline))throw Error('Lịch sử timeline chưa khớp lần chỉnh shot; giữ yêu cầu.');
   const previous=versions.find(row=>row.version===value.parent_version),head=versions.find(row=>row.version===value.result_version);
   if(previous?.timeline_version_id!==value.parent_version_id
@@ -461,10 +467,10 @@ async function refreshSourceLinkedReceipt(value){
     ||head.mutation.source_media_mutated!==false||head.mutation.publish_requested!==false
     ||sqlAudioStable(head.mutation.receipt)!==sqlAudioStable(receipt))
     throw Error('Lịch sử timeline chưa khớp phiên bản gốc và biên nhận chỉnh shot; giữ yêu cầu.');
-  const finalProof=await api(path);assertSourceLinkedBoundary(boundary);sourceLinkedRead(finalProof,sourceLinkedEditorState());
+  const finalProof=await api(path);guard();assertSourceLinkedBoundary(boundary);sourceLinkedRead(finalProof,sourceLinkedEditorState());
   if(sqlAudioStable(finalProof.timeline)!==sqlAudioStable(proof.timeline)||sqlAudioStable(finalProof.receipt)!==sqlAudioStable(receipt))
     throw Error('Timeline hoặc biên nhận đã đổi sau khi đọc lịch sử; giữ yêu cầu.');
-  state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);
+  guard();state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);
   state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
   state.playhead=Math.min(state.playhead??0,state.timeline.snapshot.duration_seconds);
   if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
@@ -600,7 +606,9 @@ function manualReframePreservedValue(timeline){const snapshot=structuredClone(ti
     source_content_version_id:timeline.source_content_version_id,source_kind:timeline.source_kind,
     source_media_plan_id:timeline.source_media_plan_id,created_at:timeline.created_at,snapshot};
 }
-async function refreshManualReframe(value){
+async function refreshManualReframe(value,requestGuard){
+  const guard=()=>{if(typeof requestGuard!=='function'||requestGuard()!==true)
+    throw Error('Thiếu ràng buộc đồng bộ với đúng yêu cầu crop đang giữ.');};guard();
   const boundary=manualReframeBoundary(),current=manualReframeEditorState(),receipt=value.receipt,timeline=value.timeline;
   assertManualReframeBoundary(boundary);
   const parent=current.timeline?.current_version===value.parent_version,result=current.timeline?.current_version===value.result_version;
@@ -618,21 +626,21 @@ async function refreshManualReframe(value){
       ||manualReframeApplying.source_binding_sha256!==value.source_binding_sha256))
     throw Error('Biên nhận crop chưa giữ đúng nguồn, âm thanh, phụ đề, người sửa hoặc phiên bản.');
   const path=`/api/v1/projects/${value.project_id}/timeline/manual-reframe`;
-  const proof=await api(path);assertManualReframeBoundary(boundary);manualReframeRead(proof,manualReframeEditorState());
+  const proof=await api(path);guard();assertManualReframeBoundary(boundary);manualReframeRead(proof,manualReframeEditorState());
   if(sqlAudioStable(proof)!==sqlAudioStable(read)){
     const withoutReplay=object=>({...object,replayed:false});
     if(sqlAudioStable(withoutReplay(proof))!==sqlAudioStable(read))throw Error('Bản đọc crop hiện tại chưa khớp biên nhận.');
   }
-  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);assertManualReframeBoundary(boundary);
+  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);guard();assertManualReframeBoundary(boundary);
   if(!videoWordHistoryMatches(versions,proof.timeline))throw Error('Lịch sử crop chưa khớp timeline hiện tại.');
   const previous=versions.find(v=>v.version===value.parent_version),head=versions.find(v=>v.version===value.result_version);
   if(previous?.timeline_version_id!==value.parent_version_id||value.parent_timeline&&sqlAudioStable(previous.snapshot)!==sqlAudioStable(value.parent_timeline.snapshot)
     ||head?.actor_ref!==receipt.actor_ref||head.mutation?.type!=='manual-reframe'||head.mutation.source_media_mutated!==false
     ||head.mutation.publish_requested!==false||sqlAudioStable(head.mutation.receipt)!==sqlAudioStable(receipt))
     throw Error('Lịch sử crop chưa chứng minh đúng bản cha, người sửa và biên nhận.');
-  const finalProof=await api(path);assertManualReframeBoundary(boundary);manualReframeRead(finalProof,manualReframeEditorState());
+  const finalProof=await api(path);guard();assertManualReframeBoundary(boundary);manualReframeRead(finalProof,manualReframeEditorState());
   if(sqlAudioStable({...finalProof,replayed:false})!==sqlAudioStable({...proof,replayed:false}))throw Error('Crop đã đổi sau khi đọc lịch sử; giữ yêu cầu.');
-  state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
+  guard();state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
   state.playhead=Math.min(state.playhead??0,state.timeline.snapshot.duration_seconds);
   if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
   if(state.productionPackage)state.productionPackage={...state.productionPackage,current_for_timeline:false,approval:null,latest_review_render:null,latest_final_render:null};

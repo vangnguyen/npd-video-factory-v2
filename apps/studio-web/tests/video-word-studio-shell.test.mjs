@@ -29,7 +29,9 @@ function refresh(s,handler){const effects=[],calls=[];let token='TRANSIENT_WORD_
       s,policy,()=>token,()=>production,()=>audio,async path=>{calls.push(path);return handler?handler(path):
         path.endsWith('/versions')?clone(history.versions):clone(fixture.responses.timeline_after.body);},
       ()=>effects.push('stop-preview'),()=>effects.push('stop-production'),()=>effects.push('render'));
-  return {...h,calls,effects,setToken:value=>{token=value;},setAudio:value=>{audio=value;},setProduction:value=>{production=value;}};
+  return {...h,rawRefreshVideoWordReceipt:h.refreshVideoWordReceipt,
+    refreshVideoWordReceipt:(value,guard=()=>true)=>h.refreshVideoWordReceipt(value,guard),
+    calls,effects,setToken:value=>{token=value;},setAudio:value=>{audio=value;},setProduction:value=>{production=value;}};
 }
 test('actual Studio admits only its current word receipt and invalidates preview/approval without another write',async()=>{
   assert.equal(createHash('sha256').update(historyBytes).digest('hex'),'923dd47a9dc8443caedb4469e8160f9d33e1b078e27f21fe54bac303e40039a6');
@@ -44,6 +46,16 @@ test('actual Studio admits only its current word receipt and invalidates preview
   assert.equal(s.videoReviewSelection,null);assert.equal(s.selectedSceneAssessmentId,'');assert.equal(s.selectedClipId,null);
   assert.deepEqual(s.undoStack,[]);assert.deepEqual(s.redoStack,[]);
   assert.equal(h.calls.length,2);assert.deepEqual(h.effects,['stop-preview','stop-production','render']);
+});
+for(const guard of [undefined,()=>false,()=>{throw Error('foreign owned intent');},()=>Promise.resolve(true)])
+ test('Root word callback requires a synchronous private true guard before reads',async()=>{
+  const s=state(),before=clone(s),h=refresh(s);await assert.rejects(h.rawRefreshVideoWordReceipt(receipt(),guard));
+  assert.deepEqual(s,before);assert.equal(h.calls.length,0);assert.deepEqual(h.effects,[]);
+ });
+for(const phase of [1,2])test(`Root word callback fences exact pending guard after proof ${phase}`,async()=>{
+ const s=state(),before=clone(s);let valid=true,reads=0;
+ const h=refresh(s,path=>{if(++reads===phase)valid=false;return clone(path.endsWith('/versions')?history.versions:fixture.responses.timeline_after.body);});
+ await assert.rejects(h.rawRefreshVideoWordReceipt(receipt(),()=>valid));assert.deepEqual(s,before);assert.deepEqual(h.effects,[]);
 });
 for(const change of ['newer','foreign-project','foreign-timeline','duplicate-version','duplicate-id','wrong-head-id','wrong-head-snapshot','missing-head','empty'])
   test(`actual word callback retains current state when final history is ${change}`,async()=>{
