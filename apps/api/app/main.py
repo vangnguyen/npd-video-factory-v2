@@ -107,6 +107,7 @@ from .content_service import ContentService
 from .content_routes import router as content_router
 from .timeline_routes import router as timeline_router
 from .timeline_audio_processing_api import router as timeline_audio_processing_router
+from .source_linked_edit_api import router as source_linked_edit_router
 from .timeline_service import (
     FFmpegProxyRenderer,
     PreviewService,
@@ -451,6 +452,7 @@ app.include_router(vision_router, dependencies=_human_route_dependencies)
 app.include_router(media_intelligence_router, dependencies=_human_route_dependencies)
 app.include_router(timeline_router, dependencies=_human_route_dependencies)
 app.include_router(timeline_audio_processing_router, dependencies=_human_route_dependencies)
+app.include_router(source_linked_edit_router, dependencies=_human_route_dependencies)
 app.include_router(content_router, dependencies=_human_route_dependencies)
 app.include_router(production_router, dependencies=_human_route_dependencies)
 app.include_router(publishing_router, dependencies=_human_route_dependencies)
