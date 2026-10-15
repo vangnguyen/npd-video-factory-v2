@@ -62,7 +62,7 @@ function timeline(value, s) {
     && /^tml_[A-Za-z0-9_-]{4,60}$/.test(value.timeline_id) && typeof value.current_version_id === 'string' && value.current_version_id
     && Number.isSafeInteger(value.current_version) && value.current_version >= 1 && value.source_kind === 'video_analysis'
     && value.source_media_mutated === false && value.publish_requested === false && object(value.snapshot)
-    && object(value.snapshot.metadata) && Array.isArray(value.snapshot.tracks)
+    && object(value.snapshot.metadata) && Array.isArray(value.snapshot.tracks) && finite(value.snapshot.duration_seconds, Number.MIN_VALUE, 86400)
     && value.snapshot.source_media_mutated === false && value.snapshot.publish_requested === false,
   'Timeline nguồn thiếu bằng chứng hoặc không thuộc dự án hiện tại.'); return value;
 }
@@ -96,9 +96,13 @@ function receiptSource(value, s, t) {
   for (const [key, item] of Object.entries(proof)) demand(same(value[key], item), 'Biên nhận không khớp video hoặc transcript đã chọn.');
   demand(proof.transcript_id === null ? value.transcript_sha256 === null : hash(value.transcript_sha256), 'Hash transcript nguồn chưa hợp lệ.');
 }
-function compatible(requested, applied) {
+function compatible(requested, applied, resultDuration) {
   if (requested.length !== applied.length) return false;
   return requested.every((op, i) => {const actual = applied[i]; if (op.type !== actual.type || op.clip_id !== actual.clip_id) return false;
+    if (['move', 'duplicate'].includes(op.type)) {
+      const withoutPosition = value => Object.fromEntries(Object.entries(value).filter(([key]) => key !== 'timeline_start'));
+      return finite(actual.timeline_start, 0, resultDuration) && same(withoutPosition(op), withoutPosition(actual));
+    }
     if (op.type !== 'trim') return same(op, actual);
     return Object.keys(actual).every(k => ['type', 'clip_id', 'source_start', 'source_end'].includes(k))
       && actual.source_start !== undefined && actual.source_end !== undefined
@@ -118,7 +122,7 @@ export function sourceLinkedRead(value, s) {
       && r.result_version === r.parent_version + 1 && r.result_version === t.current_version && typeof r.actor_ref === 'string' && r.actor_ref,
     'Biên nhận chỉnh nguồn không hợp lệ.');
     sourceLinkedOperations(r.requested_operations); sourceLinkedOperations(r.applied_operations); receiptSource(r.source, s, t);
-    demand(compatible(r.requested_operations, r.applied_operations), 'Thay đổi áp dụng không khớp yêu cầu nguồn.');
+    demand(compatible(r.requested_operations, r.applied_operations, t.snapshot.duration_seconds), 'Thay đổi áp dụng không khớp yêu cầu nguồn.');
     for (const op of r.applied_operations) if (op.type === 'trim') demand(op.source_end <= r.source.duration_seconds,
       'Mốc áp dụng vượt thời lượng nguồn đã đo.');
   }
@@ -236,25 +240,33 @@ export function initializeSqlSourceLinkedEdit({root, api, getState, getSessionTo
   async function accept(data, p, ticket, identity, bound) {
     current(ticket, identity, bound, true); sourceLinkedRead(data, getState()); demand(matches(data, p), 'Biên nhận chưa chứng minh đúng lần chỉnh; giữ UNKNOWN.');
     observed.set(p.body.request_key, stable({timeline: data.timeline, receipt: data.receipt}));
-    const adjusted = !same(data.receipt.requested_operations, data.receipt.applied_operations);
+    const adjusted = data.receipt.requested_operations.some((op, index) => op.type === 'trim'
+      && ['source_start', 'source_end'].some(key => op[key] !== undefined && op[key] !== data.receipt.applied_operations[index][key]));
+    const placementAdjusted = data.receipt.requested_operations.some((op, index) => ['move', 'duplicate'].includes(op.type)
+      && op.timeline_start !== data.receipt.applied_operations[index].timeline_start);
     await onSaved({workspace_id: p.workspace_id, project_id: p.project_id, actor_ref: p.actor_ref, parent_version_id: p.parent_version_id,
       parent_version: p.body.expected_version, parent_timeline: copy(parents.get(p.body.request_key) ?? null),
       result_version: data.timeline.current_version, ui_source_sha256: p.ui_source_sha256,
       parent_timeline_sha256: p.parent_timeline_sha256, source_evidence: copy(p.source_evidence), receipt: copy(data.receipt), timeline: copy(data.timeline),
-      requested_operations: copy(data.receipt.requested_operations), applied_operations: copy(data.receipt.applied_operations), word_boundary_adjusted: adjusted});
+      requested_operations: copy(data.receipt.requested_operations), applied_operations: copy(data.receipt.applied_operations),
+      word_boundary_adjusted: adjusted, placement_adjusted: placementAdjusted});
     current(ticket, identity, undefined, true); demand(same(getState().timeline, data.timeline), 'Studio chưa chứng minh đúng timeline vừa lưu; giữ UNKNOWN.');
-    const fingerprint = await digest(source(getState()).ui); current(ticket, identity, undefined, true);
+    const installedBinding = binding(getState());
+    const fingerprint = await digest(source(getState()).ui); current(ticket, identity, installedBinding, true);
     demand(fingerprint === p.ui_source_sha256 && same(getState().timeline, data.timeline), 'Nguồn đã đổi sau đối chiếu; giữ UNKNOWN.');
     const key = bucket(), exactRaw = retained.get(p.body.request_key), raw = storage.getItem(key);
-    current(ticket, identity, undefined, true); demand(same(getState().timeline, data.timeline), 'Timeline đổi sau đọc bản ghi; giữ UNKNOWN.');
+    current(ticket, identity, installedBinding, true); demand(same(getState().timeline, data.timeline), 'Timeline đổi sau đọc bản ghi; giữ UNKNOWN.');
     demand(typeof exactRaw === 'string' && held?.bucket === key && held.raw === exactRaw && raw === exactRaw,
       'Bản ghi đang giữ đã đổi; không xóa bản ghi khác.');
     demand(typeof storage.compareAndRemoveItem === 'function' && storage.compareAndRemoveItem(key, exactRaw) === true,
       'Chưa xóa có đối chiếu được bản ghi này; giữ UNKNOWN.');
     retained.delete(p.body.request_key); parents.delete(p.body.request_key); pending = null; held = null; view = null;
-    status(adjusted ? 'Đã lưu. Điểm cắt được mở rộng để giữ trọn từ; kiểm tra mốc áp dụng trước khi duyệt lại.'
+    const notices = [];
+    if (adjusted) notices.push('Điểm cắt được mở rộng để giữ trọn từ; kiểm tra mốc áp dụng.');
+    if (placementAdjusted) notices.push('Vị trí được căn theo thứ tự cảnh nguồn, dồn liền cùng âm thanh và phụ đề.');
+    status(notices.length ? 'Đã lưu. ' + notices.join(' ') + ' Cần duyệt lại.'
       : 'Đã lưu chỉnh nguồn cùng âm thanh và phụ đề. Preview, audio review và phê duyệt cần cập nhật.');
-    if (adjusted) {try {onMessage(statusText, false);} catch {}}
+    if (notices.length) {try {onMessage(statusText, false);} catch {}}
   }
   async function runOperations(operations, {acknowledged = false} = {}) {
     sync(); session(getState(), true); demand(acknowledged === true && literal && !working && !held && !pending,
