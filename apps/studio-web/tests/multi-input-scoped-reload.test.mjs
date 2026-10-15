@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -174,7 +175,7 @@ function crossModule({gate = null} = {}) {
   const args = ['state','initialProjectRead','sourceLinkedHeld','audioProcessingHeld','videoWordsHeld','sourceLinkedEditor','sqlAudioProcessing','videoWordReview','variantNarration',
     'audioReview','stockReview','toast','sessionToken','productionWorkbenchDraft','audioWorkbenchDraft','$','videoReview','multiInput','variantFamilies',
     'stopPreviewPolling','stopProductionPolling','stopAnalyticsPolling','setSaveStatus','api','timelineTranscriptId','render','startPreviewPolling','startProductionPolling','startAnalyticsPolling'];
-  const actual = new Function(...args, 'let multiInputBaseline="old-baseline";\n' + code.slice(start, end) + '\nreturn {run:loadProject,baseline:()=>multiInputBaseline};')(
+  const actual = withIdleManualReframe(...args, 'let multiInputBaseline="old-baseline";\n' + code.slice(start, end) + '\nreturn {run:loadProject,baseline:()=>multiInputBaseline};')(
     state, permit, () => true, () => true, () => true, peer, peer, peer, peer, peer, peer, (...a) => effects.push(['toast', ...a]),
     h.getToken, () => 'production-draft', () => JSON.stringify(h.dom.contentSnapshot()), id => h.dom.get(id.slice(1)), peer, h.editor, peer,
     () => effects.push('stop-preview'), () => effects.push('stop-production'), () => effects.push('stop-analytics'), (...a) => effects.push(['status', ...a]),

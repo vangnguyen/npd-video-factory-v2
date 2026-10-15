@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -14,7 +15,7 @@ test('actual Studio selects the saved canvas final profile for storyboard childr
   for(const [aspect_ratio,final] of [['16:9','landscape-1920x1080'],['9:16','vertical-1080x1920'],
     ['1:1','square-1080x1080'],['4:5','portrait-1080x1350']]){
     const state={timeline:{snapshot:{aspect_ratio,metadata:{}}}},profile={value:'vertical-1080x1920',dataset:{}},panel={hidden:false};
-    const run=new Function('state','$','reframeProfiles','activeAnalysis',
+    const run=withIdleManualReframe('state','$','reframeProfiles','activeAnalysis',
       segment('function renderReframe(){','\nfunction renderAnalysisReview(){')+'\nreturn renderReframe;')(
         state,selector=>selector==='#final-profile'?profile:panel,reframeProfiles,()=>null);
     run();assert.equal(profile.value,final);assert.equal(panel.hidden,true);
@@ -23,7 +24,7 @@ test('actual Studio selects the saved canvas final profile for storyboard childr
 test('actual Studio preserves an explicit final profile on the same canvas and picks a new default only when canvas or project changes',()=>{
   const s={workspaceId:'wsp_same',projectId:'prj_same',timeline:{current_version:3,
     snapshot:{aspect_ratio:'16:9',width:1920,height:1080,fps:30,metadata:{}}}},profile={value:'',dataset:{}},panel={hidden:false};
-  const run=new Function('state','$','reframeProfiles','activeAnalysis',
+  const run=withIdleManualReframe('state','$','reframeProfiles','activeAnalysis',
     segment('function renderReframe(){','\nfunction renderAnalysisReview(){')+'\nreturn renderReframe;')(
       s,selector=>selector==='#final-profile'?profile:panel,reframeProfiles,()=>null);
   run();assert.equal(profile.value,'landscape-1920x1080');
@@ -35,7 +36,7 @@ test('actual Studio preserves an explicit final profile on the same canvas and p
 test('actual parent state blocks unsaved audio/subtitles and family operations without locking its own narration callback',()=>{
   const s={projectLoading:0,activeProductionRender:null,transcriptDrafts:new Map()};
   let draft='saved',pending=false,working=false,familyPending=false;
-  const policies=new Function('state','multiInput','audioReview','stockReview','videoReview','multiInputBaseline','audioWorkbenchDraft',
+  const policies=withIdleManualReframe('state','multiInput','audioReview','stockReview','videoReview','multiInputBaseline','audioWorkbenchDraft',
     'productionBaseline','productionWorkbenchDraft','variantNarration','variantFamilies','videoWordReview','sqlAudioProcessing','sourceLinkedEditor','sourceLinkedHeld',
     segment('function sqlEditorState(){','\nconst variantFamilies =')+'\nreturn {sqlFamilyState,sqlNarrationState};')(
       s,{isBusy:()=>false},{isDirty:()=>false},{isPending:()=>false},{isPending:()=>false},null,()=>'',
@@ -52,7 +53,7 @@ function state(){return{workspaceId:captured.context.workspace_id,projectId:capt
   timeline:clone(captured.timeline),productionPackage:clone(captured.package_before),assets:[],busy:false,dirty:false};}
 function callbacks(s,api){
   const effects=[];let token='transient-fixture-token';
-  const value=new Function('state','sqlNarrationState','sessionToken','api','renderBrowser','renderSummary','renderProduction','startProductionPolling',
+  const value=withIdleManualReframe('state','sqlNarrationState','sessionToken','api','renderBrowser','renderSummary','renderProduction','startProductionPolling',
     segment('function narrationEditorBoundary(){','\ndocument.addEventListener')+'\nreturn {refreshNarrationAssets,refreshNarrationReview};')(
       s,()=>s,()=>token,api,...['browser','summary','production','poll'].map(name=>()=>effects.push(name)));
   return{...value,effects,setToken:v=>{token=v;}};
@@ -86,7 +87,7 @@ test('actual Studio review callback adopts exact new review; a competing review 
   }
 });
 test('actual Studio approval guard preserves approved history but refuses a new review with identical content versions',()=>{
-  const current=new Function(segment('function currentProductionApproval(','\nfunction renderProduction(')+'\nreturn currentProductionApproval;')();
+  const current=withIdleManualReframe(segment('function currentProductionApproval(','\nfunction renderProduction(')+'\nreturn currentProductionApproval;')();
   const p=clone(captured.package_before),review=clone(captured.review_response);
   p.latest_review_render=review;
   p.approval={approval_id:'apr_fixture_history',project_id:p.project_id,package_id:p.package_id,
@@ -102,7 +103,7 @@ test('actual Studio approval guard preserves approved history but refuses a new 
 for(const change of ['project','token','render','timeline','package'])test(`actual Studio poll cannot adopt stale ${change} after package await`,async()=>{
   const s=state(),render=clone(captured.review_response);s.activeProductionRender=render;
   let token='old-token',release,calls=0;const effects=[];
-  const poll=new Function('state','sessionToken','api','renderSummary','renderProduction','describeProductionRender','stopProductionPolling','toast',
+  const poll=withIdleManualReframe('state','sessionToken','api','renderSummary','renderProduction','describeProductionRender','stopProductionPolling','toast',
     'let productionPollGeneration=0,productionPollInFlight=null,productionBaseline=null;const productionWorkbenchDraft=()=>null;\n'+segment('function productionPollingBoundary(){','\nfunction stopProductionPolling()')+'\nreturn pollProductionRender;')(
       s,()=>token,async()=>{calls++;return calls===1?render:new Promise(resolve=>{release=resolve;});},
       ()=>effects.push('summary'),()=>effects.push('production'),()=>({terminal:true}),()=>effects.push('stop'),()=>effects.push('toast'));
@@ -118,7 +119,7 @@ for(const change of ['project','token','render','timeline','package'])test(`actu
   assert.equal(JSON.stringify(s.productionPackage),current);assert.deepEqual(effects,[]);
 });
 function pollHarness(s,api,{draft=()=>null,baseline=null,renderProduction}={}){const effects=[];
-  const value=new Function('state','sessionToken','api','renderSummary','renderProduction','describeProductionRender','toast','window','productionWorkbenchDraft','productionBaseline',
+  const value=withIdleManualReframe('state','sessionToken','api','renderSummary','renderProduction','describeProductionRender','toast','window','productionWorkbenchDraft','productionBaseline',
     'let productionPollGeneration=0,productionPollInFlight=null;\n'+
     segment('function productionPollingBoundary(){','\nasync function requestProductionApproval()')+
     '\nreturn {poll:pollProductionRender,stop:stopProductionPolling};')(
@@ -159,7 +160,7 @@ for(const changed of ['audio','subtitle'])test(`actual Studio keeps the original
   await h.poll();assert.equal(JSON.stringify(s.productionPackage),original);assert.equal(s.productionPollTimer,null);
   const fields={'#voice-enabled':{checked:true},'#voice-speed':{value:'1'},'#voice-gain':{value:'-7'},'#music-asset':{value:''},
     '#music-gain':{value:'-25'},'#music-ducking':{value:'16'}};
-  const save=new Function('state','$','api','renderSummary','renderProduction','toast',
+  const save=withIdleManualReframe('state','$','api','renderSummary','renderProduction','toast',
     segment('async function saveAudioMix()','\nasync function createProductionRender(')+'\nreturn saveAudioMix;')(
       s,name=>fields[name],api,()=>assert.fail('No actual write'),()=>assert.fail('No actual write'),()=>{});
   await save();assert.equal(requests.length,1);assert.equal(requests[0].expected_audio_version,s.productionPackage.audio_mix.version);
@@ -169,7 +170,7 @@ test('actual production view preserves existing subtitle/audio controls and thei
   const s=state(),fields=new Map(),control=(name)=>{if(!fields.has(name))fields.set(name,{value:'unsaved',checked:true,textContent:'',innerHTML:'',className:'',
     options:[],hidden:false,removeAttribute(){}});return fields.get(name);};
   const gain=control('#voice-gain');gain.value=-7;
-  const render=new Function('state','$','describeApproval','describeProductionRender','qcItems','attachAuthenticatedMedia',
+  const render=withIdleManualReframe('state','$','describeApproval','describeProductionRender','qcItems','attachAuthenticatedMedia',
     'clearAuthenticatedMedia','renderPublishing','variantNarration','videoWordReview','sqlAudioProcessing','productionWorkbenchDraft','escapeHtml','compatibleSubtitleTemplates','updateSubtitleAlignment','sourceLinkedEditor',
     'let productionBaseline="saved";\n'+segment('function currentProductionApproval(','\nfunction selectedPublishingPlatform()')+
     '\nreturn {draw:renderProduction,baseline:()=>productionBaseline};')(

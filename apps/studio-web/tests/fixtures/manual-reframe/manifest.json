@@ -1,0 +1,10 @@
+{
+  "original_capture": "manual-reframe-sql-actual-asgi-n5.json",
+  "original_sha256": "e769921695583235380cc768fcf070c5da33cd612d2b54b719f7672afe1be06c",
+  "artifact_bytes": 174344,
+  "artifact_sha256": "0a2ff68a246d27761c428832a506643bd821259af98589e14820f9dfd91474ad",
+  "selected_records": 4,
+  "selected_records_value_exact": true,
+  "manual_put_body_equals_current_body": true,
+  "scope": "Actual isolated component ASGI/SQLite with synthetic probe and deterministic ASR. Node transport/DOM/principal-expiry projections are mocks; zero model/provider/render/Owner UAT."
+}

@@ -1,0 +1,4315 @@
+{
+  "schema_version": "manual-reframe-actual-asgi-v1",
+  "source_head": "bf87e5d6138e6a4b5ac6b28dc96fd368cef62108",
+  "context": {
+    "workspace_id": "wsp_d868a1230672436ab4af0dde",
+    "project_id": "prj_6b7f27525e9b4b41a160087e",
+    "timeline_id": "tml_f4703db93da743a7adfd",
+    "parent_version": 1,
+    "result_version": 2
+  },
+  "scenario": "manual_two_points",
+  "scope": {
+    "execution_source": "frozen uncommitted files bound by manifest, not base Git HEAD implementation",
+    "actual_sqlite": true,
+    "actual_asgi": true,
+    "synthetic_probe": true,
+    "deterministic_asr_fixture": true,
+    "actual_decode": false,
+    "local_model_inferences": 0,
+    "external_provider_dispatches": 0,
+    "paid_calls": 0,
+    "owner_uat": false,
+    "worker": false,
+    "render": false,
+    "production": false
+  },
+  "responses": {
+    "session": {
+      "method": "GET",
+      "path": "/api/v1/auth/session",
+      "request": null,
+      "status": 200,
+      "safe_headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "subject": "usr:test-owner",
+        "display_name": "Test Owner",
+        "platform_role": null,
+        "workspace_roles": {
+          "wsp_d868a1230672436ab4af0dde": "editor"
+        },
+        "expires_at": "2026-10-15T09:25:35.339288+00:00",
+        "human_write_enabled": true
+      }
+    },
+    "manual_before": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_6b7f27525e9b4b41a160087e/timeline/manual-reframe",
+      "request": null,
+      "status": 200,
+      "safe_headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "timeline": {
+          "timeline_id": "tml_f4703db93da743a7adfd",
+          "workspace_id": "wsp_d868a1230672436ab4af0dde",
+          "project_id": "prj_6b7f27525e9b4b41a160087e",
+          "project_version_id": "pver_e8c5f762ed164856a77c098b",
+          "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+          "source_content_version_id": null,
+          "source_kind": "video_analysis",
+          "source_media_plan_id": null,
+          "current_version_id": "tlv_8800ede023874da99e76",
+          "current_version": 1,
+          "approval_status": "draft",
+          "approved_timeline_version": null,
+          "snapshot": {
+            "schema_version": "1.0",
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "aspect_ratio": "9:16",
+            "duration_seconds": 16.0,
+            "tracks": [
+              {
+                "track_id": "trk_ec51385e16c0400fb82c",
+                "type": "video",
+                "kind": "source",
+                "label": "Video gốc",
+                "order": 0,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_91c21be087694299b637",
+                    "kind": "source",
+                    "label": "Cảnh 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_126aae4122bb4d0b8f92",
+                    "kind": "source",
+                    "label": "Cảnh 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_3efeabef2a7749988d45",
+                    "kind": "source",
+                    "label": "Cảnh 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_2b97297378104bb6a5c4",
+                    "kind": "source",
+                    "label": "Cảnh 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_70dacd48f9534863ac73",
+                "type": "video",
+                "kind": "broll",
+                "label": "B-roll",
+                "order": 1,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              },
+              {
+                "track_id": "trk_811d81c0fe77406098b9",
+                "type": "text",
+                "kind": "subtitles",
+                "label": "Bản chép lời",
+                "order": 2,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_6c6c9ffe250743d48fa2",
+                    "kind": "subtitle",
+                    "label": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+                    "asset_id": null,
+                    "source_start": 0.32,
+                    "source_end": 3.52,
+                    "timeline_start": 0.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_168962c45dac47dfbcc6d409",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Ba",
+                          "start_seconds": 0.32,
+                          "end_seconds": 0.566154
+                        },
+                        {
+                          "text": "giây",
+                          "start_seconds": 0.566154,
+                          "end_seconds": 0.812308
+                        },
+                        {
+                          "text": "đầu",
+                          "start_seconds": 0.812308,
+                          "end_seconds": 1.058462
+                        },
+                        {
+                          "text": "tiên",
+                          "start_seconds": 1.058462,
+                          "end_seconds": 1.304615
+                        },
+                        {
+                          "text": "quyết",
+                          "start_seconds": 1.304615,
+                          "end_seconds": 1.550769
+                        },
+                        {
+                          "text": "định",
+                          "start_seconds": 1.550769,
+                          "end_seconds": 1.796923
+                        },
+                        {
+                          "text": "người",
+                          "start_seconds": 1.796923,
+                          "end_seconds": 2.043077
+                        },
+                        {
+                          "text": "xem",
+                          "start_seconds": 2.043077,
+                          "end_seconds": 2.289231
+                        },
+                        {
+                          "text": "có",
+                          "start_seconds": 2.289231,
+                          "end_seconds": 2.535385
+                        },
+                        {
+                          "text": "tiếp",
+                          "start_seconds": 2.535385,
+                          "end_seconds": 2.781538
+                        },
+                        {
+                          "text": "tục",
+                          "start_seconds": 2.781538,
+                          "end_seconds": 3.027692
+                        },
+                        {
+                          "text": "hay",
+                          "start_seconds": 3.027692,
+                          "end_seconds": 3.273846
+                        },
+                        {
+                          "text": "không.",
+                          "start_seconds": 3.273846,
+                          "end_seconds": 3.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_39520c4d1b2840e8858f",
+                    "kind": "subtitle",
+                    "label": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+                    "asset_id": null,
+                    "source_start": 4.32,
+                    "source_end": 7.52,
+                    "timeline_start": 4.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_98ecceac49194c27815c4834",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Nội",
+                          "start_seconds": 4.32,
+                          "end_seconds": 4.533333
+                        },
+                        {
+                          "text": "dung",
+                          "start_seconds": 4.533333,
+                          "end_seconds": 4.746667
+                        },
+                        {
+                          "text": "tốt",
+                          "start_seconds": 4.746667,
+                          "end_seconds": 4.96
+                        },
+                        {
+                          "text": "cần",
+                          "start_seconds": 4.96,
+                          "end_seconds": 5.173333
+                        },
+                        {
+                          "text": "một",
+                          "start_seconds": 5.173333,
+                          "end_seconds": 5.386667
+                        },
+                        {
+                          "text": "thông",
+                          "start_seconds": 5.386667,
+                          "end_seconds": 5.6
+                        },
+                        {
+                          "text": "tin",
+                          "start_seconds": 5.6,
+                          "end_seconds": 5.813333
+                        },
+                        {
+                          "text": "rõ",
+                          "start_seconds": 5.813333,
+                          "end_seconds": 6.026667
+                        },
+                        {
+                          "text": "ràng",
+                          "start_seconds": 6.026667,
+                          "end_seconds": 6.24
+                        },
+                        {
+                          "text": "và",
+                          "start_seconds": 6.24,
+                          "end_seconds": 6.453333
+                        },
+                        {
+                          "text": "bằng",
+                          "start_seconds": 6.453333,
+                          "end_seconds": 6.666667
+                        },
+                        {
+                          "text": "chứng",
+                          "start_seconds": 6.666667,
+                          "end_seconds": 6.88
+                        },
+                        {
+                          "text": "dễ",
+                          "start_seconds": 6.88,
+                          "end_seconds": 7.093333
+                        },
+                        {
+                          "text": "kiểm",
+                          "start_seconds": 7.093333,
+                          "end_seconds": 7.306667
+                        },
+                        {
+                          "text": "tra.",
+                          "start_seconds": 7.306667,
+                          "end_seconds": 7.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_263cd77b51894e328d55",
+                    "kind": "subtitle",
+                    "label": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+                    "asset_id": null,
+                    "source_start": 8.32,
+                    "source_end": 11.52,
+                    "timeline_start": 8.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_171bdc2d79214823b66545a2",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Khoảng",
+                          "start_seconds": 8.32,
+                          "end_seconds": 8.533333
+                        },
+                        {
+                          "text": "lặng",
+                          "start_seconds": 8.533333,
+                          "end_seconds": 8.746667
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 8.746667,
+                          "end_seconds": 8.96
+                        },
+                        {
+                          "text": "lý",
+                          "start_seconds": 8.96,
+                          "end_seconds": 9.173333
+                        },
+                        {
+                          "text": "giúp",
+                          "start_seconds": 9.173333,
+                          "end_seconds": 9.386667
+                        },
+                        {
+                          "text": "nhịp",
+                          "start_seconds": 9.386667,
+                          "end_seconds": 9.6
+                        },
+                        {
+                          "text": "dựng",
+                          "start_seconds": 9.6,
+                          "end_seconds": 9.813333
+                        },
+                        {
+                          "text": "tự",
+                          "start_seconds": 9.813333,
+                          "end_seconds": 10.026667
+                        },
+                        {
+                          "text": "nhiên",
+                          "start_seconds": 10.026667,
+                          "end_seconds": 10.24
+                        },
+                        {
+                          "text": "mà",
+                          "start_seconds": 10.24,
+                          "end_seconds": 10.453333
+                        },
+                        {
+                          "text": "không",
+                          "start_seconds": 10.453333,
+                          "end_seconds": 10.666667
+                        },
+                        {
+                          "text": "cắt",
+                          "start_seconds": 10.666667,
+                          "end_seconds": 10.88
+                        },
+                        {
+                          "text": "vào",
+                          "start_seconds": 10.88,
+                          "end_seconds": 11.093333
+                        },
+                        {
+                          "text": "lời",
+                          "start_seconds": 11.093333,
+                          "end_seconds": 11.306667
+                        },
+                        {
+                          "text": "nói.",
+                          "start_seconds": 11.306667,
+                          "end_seconds": 11.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_8016cabe9827491cb443",
+                    "kind": "subtitle",
+                    "label": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+                    "asset_id": null,
+                    "source_start": 12.32,
+                    "source_end": 15.52,
+                    "timeline_start": 12.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_b0a9e1510a62418c8f5bf486",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Điểm",
+                          "start_seconds": 12.32,
+                          "end_seconds": 12.586667
+                        },
+                        {
+                          "text": "nổi",
+                          "start_seconds": 12.586667,
+                          "end_seconds": 12.853333
+                        },
+                        {
+                          "text": "bật",
+                          "start_seconds": 12.853333,
+                          "end_seconds": 13.12
+                        },
+                        {
+                          "text": "này",
+                          "start_seconds": 13.12,
+                          "end_seconds": 13.386667
+                        },
+                        {
+                          "text": "phù",
+                          "start_seconds": 13.386667,
+                          "end_seconds": 13.653333
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 13.653333,
+                          "end_seconds": 13.92
+                        },
+                        {
+                          "text": "để",
+                          "start_seconds": 13.92,
+                          "end_seconds": 14.186667
+                        },
+                        {
+                          "text": "thử",
+                          "start_seconds": 14.186667,
+                          "end_seconds": 14.453333
+                        },
+                        {
+                          "text": "nghiệm",
+                          "start_seconds": 14.453333,
+                          "end_seconds": 14.72
+                        },
+                        {
+                          "text": "trên",
+                          "start_seconds": 14.72,
+                          "end_seconds": 14.986667
+                        },
+                        {
+                          "text": "video",
+                          "start_seconds": 14.986667,
+                          "end_seconds": 15.253333
+                        },
+                        {
+                          "text": "ngắn.",
+                          "start_seconds": 15.253333,
+                          "end_seconds": 15.52
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_992193a6380f417aa60e",
+                "type": "audio",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc",
+                "order": 3,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_128497c7d9e74455925b",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_98fd6899bb404fdf973f",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_5e0c1d057d534d9aaed6",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_353c5c2ddc3a4cf7bec2",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_5eebb251f0364a9cad19",
+                "type": "metadata",
+                "kind": "metadata",
+                "label": "Dấu mốc AI",
+                "order": 4,
+                "locked": true,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              }
+            ],
+            "metadata": {
+              "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+              "source_media_plan_id": null,
+              "source_asset_id": "ast_4aa203ebe480442c832f9f6c",
+              "source_duration_seconds": 16.0,
+              "transcript_revision": {
+                "transcript_id": "trn_5e1af28234014882bfc6e334",
+                "version": 1,
+                "human_edited": false
+              },
+              "silence_decisions_applied": 0,
+              "silence_speech_padding_preserved": true,
+              "silence_decision_ids": [],
+              "highlight_ids": [
+                "hlt_a19d3953844a4eb0906ec5c3",
+                "hlt_a4ba5d1c42c84a2687afed60",
+                "hlt_ede997327d57436a9d337a96"
+              ],
+              "preview_profile": "proxy-540-canonical-audio-v2",
+              "approval_invalidates_on_change": true
+            },
+            "source_media_mutated": false,
+            "publish_requested": false
+          },
+          "latest_preview_id": null,
+          "latest_preview_valid": false,
+          "source_media_mutated": false,
+          "publish_requested": false,
+          "created_at": "2026-10-15T08:25:35.327207Z",
+          "updated_at": "2026-10-15T08:25:35.327207Z"
+        },
+        "source": {
+          "analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+          "analysis_fingerprint": "4fd658f4a767d0509ec99ffe0bf9a056a0d7092bdd4054cd7a35ad4daf374206",
+          "asset_id": "ast_4aa203ebe480442c832f9f6c",
+          "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+          "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+          "duration_seconds": 16.0,
+          "has_audio": true,
+          "transcript_id": "trn_5e1af28234014882bfc6e334",
+          "transcript_version": 1,
+          "transcript_sha256": "befc2f3582c0ecf34c8663fa02fb271cb5d3ba8b630ea9e2e593c4a63f86e644",
+          "width": 1080,
+          "height": 1920,
+          "fps": 30.0
+        },
+        "source_binding_sha256": "c8a12220e2ca86230b43828f786dfa922da00ad63cc23ba9c9a73707f6696d3a",
+        "settings": null,
+        "receipt": null,
+        "replayed": false
+      }
+    },
+    "manual_put": {
+      "method": "PUT",
+      "path": "/api/v1/projects/prj_6b7f27525e9b4b41a160087e/timeline/manual-reframe",
+      "request": {
+        "expected_timeline_id": "tml_f4703db93da743a7adfd",
+        "expected_version": 1,
+        "request_key": "manual-reframe-fixture-01",
+        "acknowledged": true,
+        "expected_source_binding_sha256": "c8a12220e2ca86230b43828f786dfa922da00ad63cc23ba9c9a73707f6696d3a",
+        "aspect_ratio": "9:16",
+        "points": [
+          {
+            "time": 0,
+            "x": 0.2,
+            "y": 0.5,
+            "zoom": 1
+          },
+          {
+            "time": 8,
+            "x": 0.8,
+            "y": 0.5,
+            "zoom": 1.1
+          }
+        ]
+      },
+      "status": 200,
+      "safe_headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "timeline": {
+          "timeline_id": "tml_f4703db93da743a7adfd",
+          "workspace_id": "wsp_d868a1230672436ab4af0dde",
+          "project_id": "prj_6b7f27525e9b4b41a160087e",
+          "project_version_id": "pver_e8c5f762ed164856a77c098b",
+          "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+          "source_content_version_id": null,
+          "source_kind": "video_analysis",
+          "source_media_plan_id": null,
+          "current_version_id": "tlv_9b2a040765204589bc72",
+          "current_version": 2,
+          "approval_status": "draft",
+          "approved_timeline_version": null,
+          "snapshot": {
+            "schema_version": "1.0",
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "aspect_ratio": "9:16",
+            "duration_seconds": 16.0,
+            "tracks": [
+              {
+                "track_id": "trk_ec51385e16c0400fb82c",
+                "type": "video",
+                "kind": "source",
+                "label": "Video gốc",
+                "order": 0,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_91c21be087694299b637",
+                    "kind": "source",
+                    "label": "Cảnh 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "clip_id": "clip_126aae4122bb4d0b8f92",
+                    "kind": "source",
+                    "label": "Cảnh 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "clip_id": "clip_3efeabef2a7749988d45",
+                    "kind": "source",
+                    "label": "Cảnh 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "clip_id": "clip_2b97297378104bb6a5c4",
+                    "kind": "source",
+                    "label": "Cảnh 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_70dacd48f9534863ac73",
+                "type": "video",
+                "kind": "broll",
+                "label": "B-roll",
+                "order": 1,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              },
+              {
+                "track_id": "trk_811d81c0fe77406098b9",
+                "type": "text",
+                "kind": "subtitles",
+                "label": "Bản chép lời",
+                "order": 2,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_6c6c9ffe250743d48fa2",
+                    "kind": "subtitle",
+                    "label": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+                    "asset_id": null,
+                    "source_start": 0.32,
+                    "source_end": 3.52,
+                    "timeline_start": 0.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_168962c45dac47dfbcc6d409",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Ba",
+                          "start_seconds": 0.32,
+                          "end_seconds": 0.566154
+                        },
+                        {
+                          "text": "giây",
+                          "start_seconds": 0.566154,
+                          "end_seconds": 0.812308
+                        },
+                        {
+                          "text": "đầu",
+                          "start_seconds": 0.812308,
+                          "end_seconds": 1.058462
+                        },
+                        {
+                          "text": "tiên",
+                          "start_seconds": 1.058462,
+                          "end_seconds": 1.304615
+                        },
+                        {
+                          "text": "quyết",
+                          "start_seconds": 1.304615,
+                          "end_seconds": 1.550769
+                        },
+                        {
+                          "text": "định",
+                          "start_seconds": 1.550769,
+                          "end_seconds": 1.796923
+                        },
+                        {
+                          "text": "người",
+                          "start_seconds": 1.796923,
+                          "end_seconds": 2.043077
+                        },
+                        {
+                          "text": "xem",
+                          "start_seconds": 2.043077,
+                          "end_seconds": 2.289231
+                        },
+                        {
+                          "text": "có",
+                          "start_seconds": 2.289231,
+                          "end_seconds": 2.535385
+                        },
+                        {
+                          "text": "tiếp",
+                          "start_seconds": 2.535385,
+                          "end_seconds": 2.781538
+                        },
+                        {
+                          "text": "tục",
+                          "start_seconds": 2.781538,
+                          "end_seconds": 3.027692
+                        },
+                        {
+                          "text": "hay",
+                          "start_seconds": 3.027692,
+                          "end_seconds": 3.273846
+                        },
+                        {
+                          "text": "không.",
+                          "start_seconds": 3.273846,
+                          "end_seconds": 3.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_39520c4d1b2840e8858f",
+                    "kind": "subtitle",
+                    "label": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+                    "asset_id": null,
+                    "source_start": 4.32,
+                    "source_end": 7.52,
+                    "timeline_start": 4.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_98ecceac49194c27815c4834",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Nội",
+                          "start_seconds": 4.32,
+                          "end_seconds": 4.533333
+                        },
+                        {
+                          "text": "dung",
+                          "start_seconds": 4.533333,
+                          "end_seconds": 4.746667
+                        },
+                        {
+                          "text": "tốt",
+                          "start_seconds": 4.746667,
+                          "end_seconds": 4.96
+                        },
+                        {
+                          "text": "cần",
+                          "start_seconds": 4.96,
+                          "end_seconds": 5.173333
+                        },
+                        {
+                          "text": "một",
+                          "start_seconds": 5.173333,
+                          "end_seconds": 5.386667
+                        },
+                        {
+                          "text": "thông",
+                          "start_seconds": 5.386667,
+                          "end_seconds": 5.6
+                        },
+                        {
+                          "text": "tin",
+                          "start_seconds": 5.6,
+                          "end_seconds": 5.813333
+                        },
+                        {
+                          "text": "rõ",
+                          "start_seconds": 5.813333,
+                          "end_seconds": 6.026667
+                        },
+                        {
+                          "text": "ràng",
+                          "start_seconds": 6.026667,
+                          "end_seconds": 6.24
+                        },
+                        {
+                          "text": "và",
+                          "start_seconds": 6.24,
+                          "end_seconds": 6.453333
+                        },
+                        {
+                          "text": "bằng",
+                          "start_seconds": 6.453333,
+                          "end_seconds": 6.666667
+                        },
+                        {
+                          "text": "chứng",
+                          "start_seconds": 6.666667,
+                          "end_seconds": 6.88
+                        },
+                        {
+                          "text": "dễ",
+                          "start_seconds": 6.88,
+                          "end_seconds": 7.093333
+                        },
+                        {
+                          "text": "kiểm",
+                          "start_seconds": 7.093333,
+                          "end_seconds": 7.306667
+                        },
+                        {
+                          "text": "tra.",
+                          "start_seconds": 7.306667,
+                          "end_seconds": 7.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_263cd77b51894e328d55",
+                    "kind": "subtitle",
+                    "label": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+                    "asset_id": null,
+                    "source_start": 8.32,
+                    "source_end": 11.52,
+                    "timeline_start": 8.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_171bdc2d79214823b66545a2",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Khoảng",
+                          "start_seconds": 8.32,
+                          "end_seconds": 8.533333
+                        },
+                        {
+                          "text": "lặng",
+                          "start_seconds": 8.533333,
+                          "end_seconds": 8.746667
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 8.746667,
+                          "end_seconds": 8.96
+                        },
+                        {
+                          "text": "lý",
+                          "start_seconds": 8.96,
+                          "end_seconds": 9.173333
+                        },
+                        {
+                          "text": "giúp",
+                          "start_seconds": 9.173333,
+                          "end_seconds": 9.386667
+                        },
+                        {
+                          "text": "nhịp",
+                          "start_seconds": 9.386667,
+                          "end_seconds": 9.6
+                        },
+                        {
+                          "text": "dựng",
+                          "start_seconds": 9.6,
+                          "end_seconds": 9.813333
+                        },
+                        {
+                          "text": "tự",
+                          "start_seconds": 9.813333,
+                          "end_seconds": 10.026667
+                        },
+                        {
+                          "text": "nhiên",
+                          "start_seconds": 10.026667,
+                          "end_seconds": 10.24
+                        },
+                        {
+                          "text": "mà",
+                          "start_seconds": 10.24,
+                          "end_seconds": 10.453333
+                        },
+                        {
+                          "text": "không",
+                          "start_seconds": 10.453333,
+                          "end_seconds": 10.666667
+                        },
+                        {
+                          "text": "cắt",
+                          "start_seconds": 10.666667,
+                          "end_seconds": 10.88
+                        },
+                        {
+                          "text": "vào",
+                          "start_seconds": 10.88,
+                          "end_seconds": 11.093333
+                        },
+                        {
+                          "text": "lời",
+                          "start_seconds": 11.093333,
+                          "end_seconds": 11.306667
+                        },
+                        {
+                          "text": "nói.",
+                          "start_seconds": 11.306667,
+                          "end_seconds": 11.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_8016cabe9827491cb443",
+                    "kind": "subtitle",
+                    "label": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+                    "asset_id": null,
+                    "source_start": 12.32,
+                    "source_end": 15.52,
+                    "timeline_start": 12.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_b0a9e1510a62418c8f5bf486",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Điểm",
+                          "start_seconds": 12.32,
+                          "end_seconds": 12.586667
+                        },
+                        {
+                          "text": "nổi",
+                          "start_seconds": 12.586667,
+                          "end_seconds": 12.853333
+                        },
+                        {
+                          "text": "bật",
+                          "start_seconds": 12.853333,
+                          "end_seconds": 13.12
+                        },
+                        {
+                          "text": "này",
+                          "start_seconds": 13.12,
+                          "end_seconds": 13.386667
+                        },
+                        {
+                          "text": "phù",
+                          "start_seconds": 13.386667,
+                          "end_seconds": 13.653333
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 13.653333,
+                          "end_seconds": 13.92
+                        },
+                        {
+                          "text": "để",
+                          "start_seconds": 13.92,
+                          "end_seconds": 14.186667
+                        },
+                        {
+                          "text": "thử",
+                          "start_seconds": 14.186667,
+                          "end_seconds": 14.453333
+                        },
+                        {
+                          "text": "nghiệm",
+                          "start_seconds": 14.453333,
+                          "end_seconds": 14.72
+                        },
+                        {
+                          "text": "trên",
+                          "start_seconds": 14.72,
+                          "end_seconds": 14.986667
+                        },
+                        {
+                          "text": "video",
+                          "start_seconds": 14.986667,
+                          "end_seconds": 15.253333
+                        },
+                        {
+                          "text": "ngắn.",
+                          "start_seconds": 15.253333,
+                          "end_seconds": 15.52
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_992193a6380f417aa60e",
+                "type": "audio",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc",
+                "order": 3,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_128497c7d9e74455925b",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_98fd6899bb404fdf973f",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_5e0c1d057d534d9aaed6",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_353c5c2ddc3a4cf7bec2",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_5eebb251f0364a9cad19",
+                "type": "metadata",
+                "kind": "metadata",
+                "label": "Dấu mốc AI",
+                "order": 4,
+                "locked": true,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              }
+            ],
+            "metadata": {
+              "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+              "source_media_plan_id": null,
+              "source_asset_id": "ast_4aa203ebe480442c832f9f6c",
+              "source_duration_seconds": 16.0,
+              "transcript_revision": {
+                "transcript_id": "trn_5e1af28234014882bfc6e334",
+                "version": 1,
+                "human_edited": false
+              },
+              "silence_decisions_applied": 0,
+              "silence_speech_padding_preserved": true,
+              "silence_decision_ids": [],
+              "highlight_ids": [
+                "hlt_a19d3953844a4eb0906ec5c3",
+                "hlt_a4ba5d1c42c84a2687afed60",
+                "hlt_ede997327d57436a9d337a96"
+              ],
+              "preview_profile": "proxy-540-canonical-audio-v2",
+              "approval_invalidates_on_change": true,
+              "reframe": {
+                "aspect_ratio": "9:16",
+                "vision_analysis_id": null,
+                "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                "strategy": "manual_override",
+                "confidence": null,
+                "fallback": "none",
+                "needs_attention": true,
+                "affected_clip_ids": [
+                  "clip_91c21be087694299b637",
+                  "clip_126aae4122bb4d0b8f92",
+                  "clip_3efeabef2a7749988d45",
+                  "clip_2b97297378104bb6a5c4"
+                ],
+                "human_review_required": true,
+                "provider_dispatches": 0
+              },
+              "manual_reframe": {
+                "schema_version": "manual-reframe-settings-v1",
+                "source": {
+                  "analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+                  "analysis_fingerprint": "4fd658f4a767d0509ec99ffe0bf9a056a0d7092bdd4054cd7a35ad4daf374206",
+                  "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                  "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                  "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                  "duration_seconds": 16.0,
+                  "has_audio": true,
+                  "transcript_id": "trn_5e1af28234014882bfc6e334",
+                  "transcript_version": 1,
+                  "transcript_sha256": "befc2f3582c0ecf34c8663fa02fb271cb5d3ba8b630ea9e2e593c4a63f86e644",
+                  "width": 1080,
+                  "height": 1920,
+                  "fps": 30.0
+                },
+                "settings": {
+                  "aspect_ratio": "9:16",
+                  "points": [
+                    {
+                      "time": 0.0,
+                      "x": 0.2,
+                      "y": 0.5,
+                      "zoom": 1.0
+                    },
+                    {
+                      "time": 8.0,
+                      "x": 0.8,
+                      "y": 0.5,
+                      "zoom": 1.1
+                    }
+                  ]
+                },
+                "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                "applied_keyframes_sha256": "b5b5799dcb3bfe58c4dd0131b6d037d8b7e915b29c51d2fea1519c4154d8035d",
+                "provider_dispatches": 0,
+                "confidence_basis": "explicit_human_crop_coordinates",
+                "human_review_required": true
+              }
+            },
+            "source_media_mutated": false,
+            "publish_requested": false
+          },
+          "latest_preview_id": null,
+          "latest_preview_valid": false,
+          "source_media_mutated": false,
+          "publish_requested": false,
+          "created_at": "2026-10-15T08:25:35.327207Z",
+          "updated_at": "2026-10-15T08:25:35.608171Z"
+        },
+        "source": {
+          "analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+          "analysis_fingerprint": "4fd658f4a767d0509ec99ffe0bf9a056a0d7092bdd4054cd7a35ad4daf374206",
+          "asset_id": "ast_4aa203ebe480442c832f9f6c",
+          "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+          "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+          "duration_seconds": 16.0,
+          "has_audio": true,
+          "transcript_id": "trn_5e1af28234014882bfc6e334",
+          "transcript_version": 1,
+          "transcript_sha256": "befc2f3582c0ecf34c8663fa02fb271cb5d3ba8b630ea9e2e593c4a63f86e644",
+          "width": 1080,
+          "height": 1920,
+          "fps": 30.0
+        },
+        "source_binding_sha256": "c8a12220e2ca86230b43828f786dfa922da00ad63cc23ba9c9a73707f6696d3a",
+        "settings": {
+          "aspect_ratio": "9:16",
+          "points": [
+            {
+              "time": 0.0,
+              "x": 0.2,
+              "y": 0.5,
+              "zoom": 1.0
+            },
+            {
+              "time": 8.0,
+              "x": 0.8,
+              "y": 0.5,
+              "zoom": 1.1
+            }
+          ]
+        },
+        "receipt": {
+          "schema_version": "manual-reframe-v1",
+          "request_key": "manual-reframe-fixture-01",
+          "request_sha256": "7bfdea81fc84215f3ad328e89207b396ba7b1ef331d76277fdfe22cec818cfcf",
+          "workspace_id": "wsp_d868a1230672436ab4af0dde",
+          "project_id": "prj_6b7f27525e9b4b41a160087e",
+          "timeline_id": "tml_f4703db93da743a7adfd",
+          "parent_version_id": "tlv_8800ede023874da99e76",
+          "parent_version": 1,
+          "result_version": 2,
+          "actor_ref": "usr:test-owner",
+          "source": {
+            "analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+            "analysis_fingerprint": "4fd658f4a767d0509ec99ffe0bf9a056a0d7092bdd4054cd7a35ad4daf374206",
+            "asset_id": "ast_4aa203ebe480442c832f9f6c",
+            "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+            "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+            "duration_seconds": 16.0,
+            "has_audio": true,
+            "transcript_id": "trn_5e1af28234014882bfc6e334",
+            "transcript_version": 1,
+            "transcript_sha256": "befc2f3582c0ecf34c8663fa02fb271cb5d3ba8b630ea9e2e593c4a63f86e644",
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0
+          },
+          "settings": {
+            "aspect_ratio": "9:16",
+            "points": [
+              {
+                "time": 0.0,
+                "x": 0.2,
+                "y": 0.5,
+                "zoom": 1.0
+              },
+              {
+                "time": 8.0,
+                "x": 0.8,
+                "y": 0.5,
+                "zoom": 1.1
+              }
+            ]
+          },
+          "applied_keyframes": [
+            {
+              "time": 0.0,
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            },
+            {
+              "time": 8.0,
+              "x": 0.09090909090909094,
+              "y": 0.04545454545454547,
+              "width": 0.9090909090909091,
+              "height": 0.9090909090909091
+            }
+          ],
+          "result_snapshot_sha256": "233a8e7a203950f11e391b401058821b683c689dd9c5860265941d64ed29628f"
+        },
+        "replayed": false
+      }
+    },
+    "history_after": {
+      "method": "GET",
+      "path": "/api/v1/projects/prj_6b7f27525e9b4b41a160087e/timeline/versions",
+      "request": null,
+      "status": 200,
+      "safe_headers": {
+        "content-type": "application/json"
+      },
+      "body": [
+        {
+          "timeline_version_id": "tlv_9b2a040765204589bc72",
+          "timeline_id": "tml_f4703db93da743a7adfd",
+          "project_id": "prj_6b7f27525e9b4b41a160087e",
+          "version": 2,
+          "snapshot": {
+            "schema_version": "1.0",
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "aspect_ratio": "9:16",
+            "duration_seconds": 16.0,
+            "tracks": [
+              {
+                "track_id": "trk_ec51385e16c0400fb82c",
+                "type": "video",
+                "kind": "source",
+                "label": "Video gốc",
+                "order": 0,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_91c21be087694299b637",
+                    "kind": "source",
+                    "label": "Cảnh 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "clip_id": "clip_126aae4122bb4d0b8f92",
+                    "kind": "source",
+                    "label": "Cảnh 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "clip_id": "clip_3efeabef2a7749988d45",
+                    "kind": "source",
+                    "label": "Cảnh 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "clip_id": "clip_2b97297378104bb6a5c4",
+                    "kind": "source",
+                    "label": "Cảnh 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true,
+                      "reframe": {
+                        "schema_version": 1,
+                        "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                        "vision_analysis_id": null,
+                        "aspect_ratio": "9:16",
+                        "strategy": "manual_override",
+                        "confidence": null,
+                        "fallback": "none",
+                        "needs_attention": true,
+                        "source_width": 1080,
+                        "source_height": 1920,
+                        "time_space": "source_seconds",
+                        "keyframes": [
+                          {
+                            "time": 0.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 1.0,
+                            "height": 1.0
+                          },
+                          {
+                            "time": 8.0,
+                            "x": 0.09090909090909094,
+                            "y": 0.04545454545454547,
+                            "width": 0.9090909090909091,
+                            "height": 0.9090909090909091
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_70dacd48f9534863ac73",
+                "type": "video",
+                "kind": "broll",
+                "label": "B-roll",
+                "order": 1,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              },
+              {
+                "track_id": "trk_811d81c0fe77406098b9",
+                "type": "text",
+                "kind": "subtitles",
+                "label": "Bản chép lời",
+                "order": 2,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_6c6c9ffe250743d48fa2",
+                    "kind": "subtitle",
+                    "label": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+                    "asset_id": null,
+                    "source_start": 0.32,
+                    "source_end": 3.52,
+                    "timeline_start": 0.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_168962c45dac47dfbcc6d409",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Ba",
+                          "start_seconds": 0.32,
+                          "end_seconds": 0.566154
+                        },
+                        {
+                          "text": "giây",
+                          "start_seconds": 0.566154,
+                          "end_seconds": 0.812308
+                        },
+                        {
+                          "text": "đầu",
+                          "start_seconds": 0.812308,
+                          "end_seconds": 1.058462
+                        },
+                        {
+                          "text": "tiên",
+                          "start_seconds": 1.058462,
+                          "end_seconds": 1.304615
+                        },
+                        {
+                          "text": "quyết",
+                          "start_seconds": 1.304615,
+                          "end_seconds": 1.550769
+                        },
+                        {
+                          "text": "định",
+                          "start_seconds": 1.550769,
+                          "end_seconds": 1.796923
+                        },
+                        {
+                          "text": "người",
+                          "start_seconds": 1.796923,
+                          "end_seconds": 2.043077
+                        },
+                        {
+                          "text": "xem",
+                          "start_seconds": 2.043077,
+                          "end_seconds": 2.289231
+                        },
+                        {
+                          "text": "có",
+                          "start_seconds": 2.289231,
+                          "end_seconds": 2.535385
+                        },
+                        {
+                          "text": "tiếp",
+                          "start_seconds": 2.535385,
+                          "end_seconds": 2.781538
+                        },
+                        {
+                          "text": "tục",
+                          "start_seconds": 2.781538,
+                          "end_seconds": 3.027692
+                        },
+                        {
+                          "text": "hay",
+                          "start_seconds": 3.027692,
+                          "end_seconds": 3.273846
+                        },
+                        {
+                          "text": "không.",
+                          "start_seconds": 3.273846,
+                          "end_seconds": 3.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_39520c4d1b2840e8858f",
+                    "kind": "subtitle",
+                    "label": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+                    "asset_id": null,
+                    "source_start": 4.32,
+                    "source_end": 7.52,
+                    "timeline_start": 4.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_98ecceac49194c27815c4834",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Nội",
+                          "start_seconds": 4.32,
+                          "end_seconds": 4.533333
+                        },
+                        {
+                          "text": "dung",
+                          "start_seconds": 4.533333,
+                          "end_seconds": 4.746667
+                        },
+                        {
+                          "text": "tốt",
+                          "start_seconds": 4.746667,
+                          "end_seconds": 4.96
+                        },
+                        {
+                          "text": "cần",
+                          "start_seconds": 4.96,
+                          "end_seconds": 5.173333
+                        },
+                        {
+                          "text": "một",
+                          "start_seconds": 5.173333,
+                          "end_seconds": 5.386667
+                        },
+                        {
+                          "text": "thông",
+                          "start_seconds": 5.386667,
+                          "end_seconds": 5.6
+                        },
+                        {
+                          "text": "tin",
+                          "start_seconds": 5.6,
+                          "end_seconds": 5.813333
+                        },
+                        {
+                          "text": "rõ",
+                          "start_seconds": 5.813333,
+                          "end_seconds": 6.026667
+                        },
+                        {
+                          "text": "ràng",
+                          "start_seconds": 6.026667,
+                          "end_seconds": 6.24
+                        },
+                        {
+                          "text": "và",
+                          "start_seconds": 6.24,
+                          "end_seconds": 6.453333
+                        },
+                        {
+                          "text": "bằng",
+                          "start_seconds": 6.453333,
+                          "end_seconds": 6.666667
+                        },
+                        {
+                          "text": "chứng",
+                          "start_seconds": 6.666667,
+                          "end_seconds": 6.88
+                        },
+                        {
+                          "text": "dễ",
+                          "start_seconds": 6.88,
+                          "end_seconds": 7.093333
+                        },
+                        {
+                          "text": "kiểm",
+                          "start_seconds": 7.093333,
+                          "end_seconds": 7.306667
+                        },
+                        {
+                          "text": "tra.",
+                          "start_seconds": 7.306667,
+                          "end_seconds": 7.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_263cd77b51894e328d55",
+                    "kind": "subtitle",
+                    "label": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+                    "asset_id": null,
+                    "source_start": 8.32,
+                    "source_end": 11.52,
+                    "timeline_start": 8.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_171bdc2d79214823b66545a2",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Khoảng",
+                          "start_seconds": 8.32,
+                          "end_seconds": 8.533333
+                        },
+                        {
+                          "text": "lặng",
+                          "start_seconds": 8.533333,
+                          "end_seconds": 8.746667
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 8.746667,
+                          "end_seconds": 8.96
+                        },
+                        {
+                          "text": "lý",
+                          "start_seconds": 8.96,
+                          "end_seconds": 9.173333
+                        },
+                        {
+                          "text": "giúp",
+                          "start_seconds": 9.173333,
+                          "end_seconds": 9.386667
+                        },
+                        {
+                          "text": "nhịp",
+                          "start_seconds": 9.386667,
+                          "end_seconds": 9.6
+                        },
+                        {
+                          "text": "dựng",
+                          "start_seconds": 9.6,
+                          "end_seconds": 9.813333
+                        },
+                        {
+                          "text": "tự",
+                          "start_seconds": 9.813333,
+                          "end_seconds": 10.026667
+                        },
+                        {
+                          "text": "nhiên",
+                          "start_seconds": 10.026667,
+                          "end_seconds": 10.24
+                        },
+                        {
+                          "text": "mà",
+                          "start_seconds": 10.24,
+                          "end_seconds": 10.453333
+                        },
+                        {
+                          "text": "không",
+                          "start_seconds": 10.453333,
+                          "end_seconds": 10.666667
+                        },
+                        {
+                          "text": "cắt",
+                          "start_seconds": 10.666667,
+                          "end_seconds": 10.88
+                        },
+                        {
+                          "text": "vào",
+                          "start_seconds": 10.88,
+                          "end_seconds": 11.093333
+                        },
+                        {
+                          "text": "lời",
+                          "start_seconds": 11.093333,
+                          "end_seconds": 11.306667
+                        },
+                        {
+                          "text": "nói.",
+                          "start_seconds": 11.306667,
+                          "end_seconds": 11.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_8016cabe9827491cb443",
+                    "kind": "subtitle",
+                    "label": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+                    "asset_id": null,
+                    "source_start": 12.32,
+                    "source_end": 15.52,
+                    "timeline_start": 12.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_b0a9e1510a62418c8f5bf486",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Điểm",
+                          "start_seconds": 12.32,
+                          "end_seconds": 12.586667
+                        },
+                        {
+                          "text": "nổi",
+                          "start_seconds": 12.586667,
+                          "end_seconds": 12.853333
+                        },
+                        {
+                          "text": "bật",
+                          "start_seconds": 12.853333,
+                          "end_seconds": 13.12
+                        },
+                        {
+                          "text": "này",
+                          "start_seconds": 13.12,
+                          "end_seconds": 13.386667
+                        },
+                        {
+                          "text": "phù",
+                          "start_seconds": 13.386667,
+                          "end_seconds": 13.653333
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 13.653333,
+                          "end_seconds": 13.92
+                        },
+                        {
+                          "text": "để",
+                          "start_seconds": 13.92,
+                          "end_seconds": 14.186667
+                        },
+                        {
+                          "text": "thử",
+                          "start_seconds": 14.186667,
+                          "end_seconds": 14.453333
+                        },
+                        {
+                          "text": "nghiệm",
+                          "start_seconds": 14.453333,
+                          "end_seconds": 14.72
+                        },
+                        {
+                          "text": "trên",
+                          "start_seconds": 14.72,
+                          "end_seconds": 14.986667
+                        },
+                        {
+                          "text": "video",
+                          "start_seconds": 14.986667,
+                          "end_seconds": 15.253333
+                        },
+                        {
+                          "text": "ngắn.",
+                          "start_seconds": 15.253333,
+                          "end_seconds": 15.52
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_992193a6380f417aa60e",
+                "type": "audio",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc",
+                "order": 3,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_128497c7d9e74455925b",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_98fd6899bb404fdf973f",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_5e0c1d057d534d9aaed6",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_353c5c2ddc3a4cf7bec2",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_5eebb251f0364a9cad19",
+                "type": "metadata",
+                "kind": "metadata",
+                "label": "Dấu mốc AI",
+                "order": 4,
+                "locked": true,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              }
+            ],
+            "metadata": {
+              "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+              "source_media_plan_id": null,
+              "source_asset_id": "ast_4aa203ebe480442c832f9f6c",
+              "source_duration_seconds": 16.0,
+              "transcript_revision": {
+                "transcript_id": "trn_5e1af28234014882bfc6e334",
+                "version": 1,
+                "human_edited": false
+              },
+              "silence_decisions_applied": 0,
+              "silence_speech_padding_preserved": true,
+              "silence_decision_ids": [],
+              "highlight_ids": [
+                "hlt_a19d3953844a4eb0906ec5c3",
+                "hlt_a4ba5d1c42c84a2687afed60",
+                "hlt_ede997327d57436a9d337a96"
+              ],
+              "preview_profile": "proxy-540-canonical-audio-v2",
+              "approval_invalidates_on_change": true,
+              "reframe": {
+                "aspect_ratio": "9:16",
+                "vision_analysis_id": null,
+                "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                "strategy": "manual_override",
+                "confidence": null,
+                "fallback": "none",
+                "needs_attention": true,
+                "affected_clip_ids": [
+                  "clip_91c21be087694299b637",
+                  "clip_126aae4122bb4d0b8f92",
+                  "clip_3efeabef2a7749988d45",
+                  "clip_2b97297378104bb6a5c4"
+                ],
+                "human_review_required": true,
+                "provider_dispatches": 0
+              },
+              "manual_reframe": {
+                "schema_version": "manual-reframe-settings-v1",
+                "source": {
+                  "analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+                  "analysis_fingerprint": "4fd658f4a767d0509ec99ffe0bf9a056a0d7092bdd4054cd7a35ad4daf374206",
+                  "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                  "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                  "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                  "duration_seconds": 16.0,
+                  "has_audio": true,
+                  "transcript_id": "trn_5e1af28234014882bfc6e334",
+                  "transcript_version": 1,
+                  "transcript_sha256": "befc2f3582c0ecf34c8663fa02fb271cb5d3ba8b630ea9e2e593c4a63f86e644",
+                  "width": 1080,
+                  "height": 1920,
+                  "fps": 30.0
+                },
+                "settings": {
+                  "aspect_ratio": "9:16",
+                  "points": [
+                    {
+                      "time": 0.0,
+                      "x": 0.2,
+                      "y": 0.5,
+                      "zoom": 1.0
+                    },
+                    {
+                      "time": 8.0,
+                      "x": 0.8,
+                      "y": 0.5,
+                      "zoom": 1.1
+                    }
+                  ]
+                },
+                "plan_id": "rfr_manual_6cf96cacfabde556cff4d6c7",
+                "applied_keyframes_sha256": "b5b5799dcb3bfe58c4dd0131b6d037d8b7e915b29c51d2fea1519c4154d8035d",
+                "provider_dispatches": 0,
+                "confidence_basis": "explicit_human_crop_coordinates",
+                "human_review_required": true
+              }
+            },
+            "source_media_mutated": false,
+            "publish_requested": false
+          },
+          "mutation": {
+            "type": "manual-reframe",
+            "receipt": {
+              "schema_version": "manual-reframe-v1",
+              "request_key": "manual-reframe-fixture-01",
+              "request_sha256": "7bfdea81fc84215f3ad328e89207b396ba7b1ef331d76277fdfe22cec818cfcf",
+              "workspace_id": "wsp_d868a1230672436ab4af0dde",
+              "project_id": "prj_6b7f27525e9b4b41a160087e",
+              "timeline_id": "tml_f4703db93da743a7adfd",
+              "parent_version_id": "tlv_8800ede023874da99e76",
+              "parent_version": 1,
+              "result_version": 2,
+              "actor_ref": "usr:test-owner",
+              "source": {
+                "analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+                "analysis_fingerprint": "4fd658f4a767d0509ec99ffe0bf9a056a0d7092bdd4054cd7a35ad4daf374206",
+                "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                "source_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                "duration_seconds": 16.0,
+                "has_audio": true,
+                "transcript_id": "trn_5e1af28234014882bfc6e334",
+                "transcript_version": 1,
+                "transcript_sha256": "befc2f3582c0ecf34c8663fa02fb271cb5d3ba8b630ea9e2e593c4a63f86e644",
+                "width": 1080,
+                "height": 1920,
+                "fps": 30.0
+              },
+              "settings": {
+                "aspect_ratio": "9:16",
+                "points": [
+                  {
+                    "time": 0.0,
+                    "x": 0.2,
+                    "y": 0.5,
+                    "zoom": 1.0
+                  },
+                  {
+                    "time": 8.0,
+                    "x": 0.8,
+                    "y": 0.5,
+                    "zoom": 1.1
+                  }
+                ]
+              },
+              "applied_keyframes": [
+                {
+                  "time": 0.0,
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 1.0,
+                  "height": 1.0
+                },
+                {
+                  "time": 8.0,
+                  "x": 0.09090909090909094,
+                  "y": 0.04545454545454547,
+                  "width": 0.9090909090909091,
+                  "height": 0.9090909090909091
+                }
+              ],
+              "result_snapshot_sha256": "233a8e7a203950f11e391b401058821b683c689dd9c5860265941d64ed29628f"
+            },
+            "source_media_mutated": false,
+            "publish_requested": false
+          },
+          "actor_ref": "usr:test-owner",
+          "created_at": "2026-10-15T08:25:35.608171"
+        },
+        {
+          "timeline_version_id": "tlv_8800ede023874da99e76",
+          "timeline_id": "tml_f4703db93da743a7adfd",
+          "project_id": "prj_6b7f27525e9b4b41a160087e",
+          "version": 1,
+          "snapshot": {
+            "schema_version": "1.0",
+            "width": 1080,
+            "height": 1920,
+            "fps": 30.0,
+            "aspect_ratio": "9:16",
+            "duration_seconds": 16.0,
+            "tracks": [
+              {
+                "track_id": "trk_ec51385e16c0400fb82c",
+                "type": "video",
+                "kind": "source",
+                "label": "Video gốc",
+                "order": 0,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_91c21be087694299b637",
+                    "kind": "source",
+                    "label": "Cảnh 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_126aae4122bb4d0b8f92",
+                    "kind": "source",
+                    "label": "Cảnh 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_3efeabef2a7749988d45",
+                    "kind": "source",
+                    "label": "Cảnh 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_2b97297378104bb6a5c4",
+                    "kind": "source",
+                    "label": "Cảnh 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_70dacd48f9534863ac73",
+                "type": "video",
+                "kind": "broll",
+                "label": "B-roll",
+                "order": 1,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              },
+              {
+                "track_id": "trk_811d81c0fe77406098b9",
+                "type": "text",
+                "kind": "subtitles",
+                "label": "Bản chép lời",
+                "order": 2,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_6c6c9ffe250743d48fa2",
+                    "kind": "subtitle",
+                    "label": "Ba giây đầu tiên quyết định người xem có tiếp tục hay không.",
+                    "asset_id": null,
+                    "source_start": 0.32,
+                    "source_end": 3.52,
+                    "timeline_start": 0.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_168962c45dac47dfbcc6d409",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Ba",
+                          "start_seconds": 0.32,
+                          "end_seconds": 0.566154
+                        },
+                        {
+                          "text": "giây",
+                          "start_seconds": 0.566154,
+                          "end_seconds": 0.812308
+                        },
+                        {
+                          "text": "đầu",
+                          "start_seconds": 0.812308,
+                          "end_seconds": 1.058462
+                        },
+                        {
+                          "text": "tiên",
+                          "start_seconds": 1.058462,
+                          "end_seconds": 1.304615
+                        },
+                        {
+                          "text": "quyết",
+                          "start_seconds": 1.304615,
+                          "end_seconds": 1.550769
+                        },
+                        {
+                          "text": "định",
+                          "start_seconds": 1.550769,
+                          "end_seconds": 1.796923
+                        },
+                        {
+                          "text": "người",
+                          "start_seconds": 1.796923,
+                          "end_seconds": 2.043077
+                        },
+                        {
+                          "text": "xem",
+                          "start_seconds": 2.043077,
+                          "end_seconds": 2.289231
+                        },
+                        {
+                          "text": "có",
+                          "start_seconds": 2.289231,
+                          "end_seconds": 2.535385
+                        },
+                        {
+                          "text": "tiếp",
+                          "start_seconds": 2.535385,
+                          "end_seconds": 2.781538
+                        },
+                        {
+                          "text": "tục",
+                          "start_seconds": 2.781538,
+                          "end_seconds": 3.027692
+                        },
+                        {
+                          "text": "hay",
+                          "start_seconds": 3.027692,
+                          "end_seconds": 3.273846
+                        },
+                        {
+                          "text": "không.",
+                          "start_seconds": 3.273846,
+                          "end_seconds": 3.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_39520c4d1b2840e8858f",
+                    "kind": "subtitle",
+                    "label": "Nội dung tốt cần một thông tin rõ ràng và bằng chứng dễ kiểm tra.",
+                    "asset_id": null,
+                    "source_start": 4.32,
+                    "source_end": 7.52,
+                    "timeline_start": 4.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_98ecceac49194c27815c4834",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Nội",
+                          "start_seconds": 4.32,
+                          "end_seconds": 4.533333
+                        },
+                        {
+                          "text": "dung",
+                          "start_seconds": 4.533333,
+                          "end_seconds": 4.746667
+                        },
+                        {
+                          "text": "tốt",
+                          "start_seconds": 4.746667,
+                          "end_seconds": 4.96
+                        },
+                        {
+                          "text": "cần",
+                          "start_seconds": 4.96,
+                          "end_seconds": 5.173333
+                        },
+                        {
+                          "text": "một",
+                          "start_seconds": 5.173333,
+                          "end_seconds": 5.386667
+                        },
+                        {
+                          "text": "thông",
+                          "start_seconds": 5.386667,
+                          "end_seconds": 5.6
+                        },
+                        {
+                          "text": "tin",
+                          "start_seconds": 5.6,
+                          "end_seconds": 5.813333
+                        },
+                        {
+                          "text": "rõ",
+                          "start_seconds": 5.813333,
+                          "end_seconds": 6.026667
+                        },
+                        {
+                          "text": "ràng",
+                          "start_seconds": 6.026667,
+                          "end_seconds": 6.24
+                        },
+                        {
+                          "text": "và",
+                          "start_seconds": 6.24,
+                          "end_seconds": 6.453333
+                        },
+                        {
+                          "text": "bằng",
+                          "start_seconds": 6.453333,
+                          "end_seconds": 6.666667
+                        },
+                        {
+                          "text": "chứng",
+                          "start_seconds": 6.666667,
+                          "end_seconds": 6.88
+                        },
+                        {
+                          "text": "dễ",
+                          "start_seconds": 6.88,
+                          "end_seconds": 7.093333
+                        },
+                        {
+                          "text": "kiểm",
+                          "start_seconds": 7.093333,
+                          "end_seconds": 7.306667
+                        },
+                        {
+                          "text": "tra.",
+                          "start_seconds": 7.306667,
+                          "end_seconds": 7.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_263cd77b51894e328d55",
+                    "kind": "subtitle",
+                    "label": "Khoảng lặng hợp lý giúp nhịp dựng tự nhiên mà không cắt vào lời nói.",
+                    "asset_id": null,
+                    "source_start": 8.32,
+                    "source_end": 11.52,
+                    "timeline_start": 8.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_171bdc2d79214823b66545a2",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Khoảng",
+                          "start_seconds": 8.32,
+                          "end_seconds": 8.533333
+                        },
+                        {
+                          "text": "lặng",
+                          "start_seconds": 8.533333,
+                          "end_seconds": 8.746667
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 8.746667,
+                          "end_seconds": 8.96
+                        },
+                        {
+                          "text": "lý",
+                          "start_seconds": 8.96,
+                          "end_seconds": 9.173333
+                        },
+                        {
+                          "text": "giúp",
+                          "start_seconds": 9.173333,
+                          "end_seconds": 9.386667
+                        },
+                        {
+                          "text": "nhịp",
+                          "start_seconds": 9.386667,
+                          "end_seconds": 9.6
+                        },
+                        {
+                          "text": "dựng",
+                          "start_seconds": 9.6,
+                          "end_seconds": 9.813333
+                        },
+                        {
+                          "text": "tự",
+                          "start_seconds": 9.813333,
+                          "end_seconds": 10.026667
+                        },
+                        {
+                          "text": "nhiên",
+                          "start_seconds": 10.026667,
+                          "end_seconds": 10.24
+                        },
+                        {
+                          "text": "mà",
+                          "start_seconds": 10.24,
+                          "end_seconds": 10.453333
+                        },
+                        {
+                          "text": "không",
+                          "start_seconds": 10.453333,
+                          "end_seconds": 10.666667
+                        },
+                        {
+                          "text": "cắt",
+                          "start_seconds": 10.666667,
+                          "end_seconds": 10.88
+                        },
+                        {
+                          "text": "vào",
+                          "start_seconds": 10.88,
+                          "end_seconds": 11.093333
+                        },
+                        {
+                          "text": "lời",
+                          "start_seconds": 11.093333,
+                          "end_seconds": 11.306667
+                        },
+                        {
+                          "text": "nói.",
+                          "start_seconds": 11.306667,
+                          "end_seconds": 11.52
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "clip_id": "clip_8016cabe9827491cb443",
+                    "kind": "subtitle",
+                    "label": "Điểm nổi bật này phù hợp để thử nghiệm trên video ngắn.",
+                    "asset_id": null,
+                    "source_start": 12.32,
+                    "source_end": 15.52,
+                    "timeline_start": 12.32,
+                    "duration": 3.2,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "transcript_id": "trn_5e1af28234014882bfc6e334",
+                      "segment_id": "seg_b0a9e1510a62418c8f5bf486",
+                      "language": "vi",
+                      "confidence": 0.99,
+                      "editable_in": "V2-08",
+                      "timing_source": "provider_native_word_intervals",
+                      "measured_source_words": [
+                        {
+                          "text": "Điểm",
+                          "start_seconds": 12.32,
+                          "end_seconds": 12.586667
+                        },
+                        {
+                          "text": "nổi",
+                          "start_seconds": 12.586667,
+                          "end_seconds": 12.853333
+                        },
+                        {
+                          "text": "bật",
+                          "start_seconds": 12.853333,
+                          "end_seconds": 13.12
+                        },
+                        {
+                          "text": "này",
+                          "start_seconds": 13.12,
+                          "end_seconds": 13.386667
+                        },
+                        {
+                          "text": "phù",
+                          "start_seconds": 13.386667,
+                          "end_seconds": 13.653333
+                        },
+                        {
+                          "text": "hợp",
+                          "start_seconds": 13.653333,
+                          "end_seconds": 13.92
+                        },
+                        {
+                          "text": "để",
+                          "start_seconds": 13.92,
+                          "end_seconds": 14.186667
+                        },
+                        {
+                          "text": "thử",
+                          "start_seconds": 14.186667,
+                          "end_seconds": 14.453333
+                        },
+                        {
+                          "text": "nghiệm",
+                          "start_seconds": 14.453333,
+                          "end_seconds": 14.72
+                        },
+                        {
+                          "text": "trên",
+                          "start_seconds": 14.72,
+                          "end_seconds": 14.986667
+                        },
+                        {
+                          "text": "video",
+                          "start_seconds": 14.986667,
+                          "end_seconds": 15.253333
+                        },
+                        {
+                          "text": "ngắn.",
+                          "start_seconds": 15.253333,
+                          "end_seconds": 15.52
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_992193a6380f417aa60e",
+                "type": "audio",
+                "kind": "original_audio",
+                "label": "Âm thanh gốc",
+                "order": 3,
+                "locked": false,
+                "muted": false,
+                "disabled": false,
+                "clips": [
+                  {
+                    "clip_id": "clip_128497c7d9e74455925b",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 1",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 0.0,
+                    "source_end": 4.0,
+                    "timeline_start": 0.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_43cdcceae0ee494987e8a342",
+                      "scene_ordinal": 0,
+                      "semantic_label": "Mở đầu",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_98fd6899bb404fdf973f",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 2",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 4.0,
+                    "source_end": 8.0,
+                    "timeline_start": 4.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_ad49b74ff351415c88d59fac",
+                      "scene_ordinal": 1,
+                      "semantic_label": "Phân đoạn 2",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_5e0c1d057d534d9aaed6",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 3",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 8.0,
+                    "source_end": 12.0,
+                    "timeline_start": 8.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_6850199f05a342daa081cb85",
+                      "scene_ordinal": 2,
+                      "semantic_label": "Phân đoạn 3",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  },
+                  {
+                    "clip_id": "clip_353c5c2ddc3a4cf7bec2",
+                    "kind": "original_audio",
+                    "label": "Âm thanh gốc 4",
+                    "asset_id": "ast_4aa203ebe480442c832f9f6c",
+                    "source_start": 12.0,
+                    "source_end": 16.0,
+                    "timeline_start": 12.0,
+                    "duration": 4.0,
+                    "speed": 1.0,
+                    "crop": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 1.0,
+                      "height": 1.0
+                    },
+                    "transform": {
+                      "x": 0.0,
+                      "y": 0.0,
+                      "scale": 1.0,
+                      "rotation_degrees": 0.0
+                    },
+                    "opacity": 1.0,
+                    "volume": 1.0,
+                    "transition_in": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "transition_out": {
+                      "kind": "cut",
+                      "duration_seconds": 0.0
+                    },
+                    "effects": [],
+                    "disabled": false,
+                    "metadata": {
+                      "scene_id": "scn_4911d69737604af4a2369781",
+                      "scene_ordinal": 3,
+                      "semantic_label": "Phân đoạn 4",
+                      "quality_score": 0.764,
+                      "source_checksum_sha256": "4b67633763f62cc572298a5ec74a494640153e598e689ed1113903c685a54698",
+                      "content_type": "video/mp4",
+                      "object_key": "workspaces/wsp_d868a1230672436ab4af0dde/projects/prj_6b7f27525e9b4b41a160087e/uploads/4b67633763f62cc572298a5e/Video-thu-nghiem.MP4",
+                      "original_evidence": true
+                    }
+                  }
+                ]
+              },
+              {
+                "track_id": "trk_5eebb251f0364a9cad19",
+                "type": "metadata",
+                "kind": "metadata",
+                "label": "Dấu mốc AI",
+                "order": 4,
+                "locked": true,
+                "muted": false,
+                "disabled": false,
+                "clips": []
+              }
+            ],
+            "metadata": {
+              "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+              "source_media_plan_id": null,
+              "source_asset_id": "ast_4aa203ebe480442c832f9f6c",
+              "source_duration_seconds": 16.0,
+              "transcript_revision": {
+                "transcript_id": "trn_5e1af28234014882bfc6e334",
+                "version": 1,
+                "human_edited": false
+              },
+              "silence_decisions_applied": 0,
+              "silence_speech_padding_preserved": true,
+              "silence_decision_ids": [],
+              "highlight_ids": [
+                "hlt_a19d3953844a4eb0906ec5c3",
+                "hlt_a4ba5d1c42c84a2687afed60",
+                "hlt_ede997327d57436a9d337a96"
+              ],
+              "preview_profile": "proxy-540-canonical-audio-v2",
+              "approval_invalidates_on_change": true
+            },
+            "source_media_mutated": false,
+            "publish_requested": false
+          },
+          "mutation": {
+            "type": "initialize",
+            "source_analysis_id": "ana_1dfa6f9cbd4a401aa6e80b10",
+            "source_media_plan_id": null
+          },
+          "actor_ref": "SYNTHETIC FIXTURE",
+          "created_at": "2026-10-15T08:25:35.327207"
+        }
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -127,14 +128,14 @@ for(const ratio of['9:16','16:9','1:1','4:5'])test(`actual Studio callback selec
   const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8');const start=code.indexOf('function renderReframe(){'),end=code.indexOf('\nfunction renderAnalysisReview',start);
   assert.ok(start>=0&&end>start);const profile={value:'vertical-1080x1920',dataset:{}},review={hidden:false};
   const s={timeline:{source_analysis_id:null,snapshot:{metadata:{reframe:{aspect_ratio:ratio}}}}};
-  new Function('state','$','activeAnalysis','reframeProfiles','matchingVision',code.slice(start,end)+'\nrenderReframe();')(
+  withIdleManualReframe('state','$','activeAnalysis','reframeProfiles','matchingVision',code.slice(start,end)+'\nrenderReframe();')(
     s,selector=>selector==='#final-profile'?profile:review,()=>null,reframeProfiles,()=>[]);
   assert.equal(profile.value,reframeProfiles(s.timeline.snapshot).final);assert.equal(review.hidden,true);
 });
 for(const change of['draft','principal'])test(`actual Studio child-open callback preserves master when ${change} changes during project read`,async()=>{
   const code=readFileSync(new URL('../studio.js',import.meta.url),'utf8'),start=code.indexOf('const variantFamilies = initializeSqlVariantFamilies('),end=code.indexOf('\nconst unsubscribeVideoBusy',start);
   assert.ok(start>=0&&end>start);const s=state(),before=JSON.stringify(s.timeline),select={value:s.projectId,innerHTML:''},writes=[];let release,dirty=false,loads=0;
-  const options=new Function('state','$','initializeSqlVariantFamilies','api','toast','sqlFamilyState','escapeHtml','window','loadProject',
+  const options=withIdleManualReframe('state','$','initializeSqlVariantFamilies','api','toast','sqlFamilyState','escapeHtml','window','loadProject',
     code.slice(start,end)+'\nreturn variantFamilies;')(s,()=>select,v=>v,()=>new Promise(r=>{release=r;}),()=>{},()=>({busy:false,dirty}),
     v=>v,{localStorage:{setItem:(...v)=>writes.push(v)}},async()=>{loads++;});
   const m=current.members.find(m=>m.child_project_id),task=options.onChild({workspace_id:s.workspaceId,master_project_id:s.projectId,child_project_id:m.child_project_id});

@@ -36,6 +36,7 @@ import {initializeSqlVariantNarration} from '/sql-variant-narration.mjs?v=sql-na
 import {initializeVideoTranscriptWordReview} from '/video-transcript-word-review.mjs?v=sql-video-words-1';
 import {initializeSqlTimelineAudioProcessing,audioProcessingRead} from '/sql-timeline-audio-processing.mjs?v=sql-audio-processing-1';
 import {initializeSqlSourceLinkedEdit,sourceLinkedRead} from '/sql-source-linked-edit.mjs?v=sql-source-linked-1';
+import {initializeSqlManualReframe,manualReframeRead,manualReframeSettings} from '/sql-manual-reframe.mjs?v=sql-manual-reframe-1';
 
 const state = {
   workspaceId: null,
@@ -88,6 +89,15 @@ const $ = (selector) => document.querySelector(selector);
 let videoWordReview = null;
 let sqlAudioProcessing = null;
 let sourceLinkedEditor = null;
+let manualReframeEditor = null;
+let manualReframeFormRead = null;
+let manualReframeFormBaseline = null;
+let manualReframeApplying = null;
+const manualReframeAdmission = Symbol('scoped-manual-reframe-controller');
+function manualReframeDraft(){return JSON.stringify([$('#manual-reframe-aspect')?.value??'',
+  [...document.querySelectorAll('#manual-reframe-points [data-manual-reframe-field]')].map(input=>[input.dataset.manualReframeField,input.value])]);}
+function manualReframeDirty(){return manualReframeFormRead!==null&&manualReframeFormBaseline!==manualReframeDraft();}
+function manualReframeHeld(){return manualReframeApplying!==null||manualReframeDirty()||manualReframeEditor?.isWorking()===true||manualReframeEditor?.isPending()===true;}
 const initialProjectRead = Symbol('initial-canonical-project-read');
 const sourceLinkedAdmission = Symbol('scoped-source-linked-controller');
 function sourceLinkedHeld(){return sourceLinkedEditor?.isWorking()===true||sourceLinkedEditor?.isDirty()===true||sourceLinkedEditor?.isPending()===true;}
@@ -110,12 +120,12 @@ function productionWorkbenchDraft(){return JSON.stringify([...document.querySele
   '#subtitle-list [data-cue-field],#subtitle-position,#subtitle-animation,#subtitle-template,#subtitle-keywords,#subtitle-font-size,#subtitle-safe-margin,#voice-enabled,#voice-speed,#voice-gain,#music-gain,#music-ducking,#music-asset')]
   .map(input=>[input.id,input.dataset.cueField,input.type==='checkbox'?input.checked:input.value]));}
 const audioReview = initializeUploadedAudioReview({root: $('#uploaded-audio-review'), api,
-  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
-    dirty: sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
+  mediaFetch: authenticatedFetch, getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+    dirty: manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || state.transcriptDrafts.size > 0 || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onUploaded: () => loadProject(), onCanonicalSaved: () => loadProject()});
 const stockReview = initializeStockPlanningReview({root: $('#stock-planning-review'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
-    dirty: sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+    dirty: manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onPlanUpdated: plan => {
     if (plan.project_id !== state.projectId || plan.workspace_id !== state.workspaceId) return;
@@ -123,8 +133,8 @@ const stockReview = initializeStockPlanningReview({root: $('#stock-planning-revi
     if (state.timeline) renderBrowser();
   }});
 const videoReview = initializeVideoAnalysisJobs({root: $('#video-analysis-jobs'), api,
-  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
-    dirty: sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
+  getState: () => ({...state, busy: state.projectLoading > 0 || multiInput.isBusy() || videoWordReview?.isWorking()===true || sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+    dirty: manualReframeHeld()||sourceLinkedHeld()||sqlAudioProcessing?.isDirty()===true || sqlAudioProcessing?.isPending()===true || videoWordReview?.isDirty()===true || videoWordReview?.isPending()===true || audioReview.isDirty() || stockReview.isPending() || state.transcriptDrafts.size > 0
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline}),
   onMessage: toast, onReview: async value => {
     const selection=videoReviewSelection(state,value);
@@ -141,10 +151,10 @@ function sqlEditorState(){return{...state,busy: state.projectLoading > 0 || mult
       || multiInputBaseline !== null && audioWorkbenchDraft() !== multiInputBaseline
       || productionBaseline !== null && productionWorkbenchDraft() !== productionBaseline};}
 function sqlFamilyState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
-  dirty:value.dirty||sourceLinkedHeld()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+  busy:value.busy||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+  dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 function sqlNarrationState(){const value=sqlEditorState();return{...value,
-  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,dirty:value.dirty||sourceLinkedHeld()||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+  busy:value.busy||variantFamilies.isBusy()||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
 const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-families'),api,getState:sqlFamilyState,
   onMessage: toast,onChild: async selection => {
     const principal=state.principal,subject=principal?.subject,tokenId=principal?.token_id;
@@ -160,14 +170,14 @@ const variantFamilies = initializeSqlVariantFamilies({root: $('#sql-variant-fami
     state.projectId=selection.child_project_id;$('#project-select').value=state.projectId;
     window.localStorage.setItem('npd-studio-project',state.projectId);await loadProject();
   }});
-const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();});
+const unsubscribeVideoBusy = multiInput.onBusyChanged(() => {videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();});
 variantNarration = initializeSqlVariantNarration({root:$('#sql-variant-narration'),api,getState:sqlNarrationState,
   onMessage:toast,onImported:refreshNarrationAssets,onReviewQueued:refreshNarrationReview});
 
 function videoWordEditorState(){const value=sqlEditorState();return {...value,analysis:reviewedAnalysis(),
-  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
-  dirty:value.dirty||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
-function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();}
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+  dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function syncVideoWordPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();}
 videoWordReview=initializeVideoTranscriptWordReview({root:$('#video-transcript-word-review'),
   api:(path,options={})=>api(path,{...options,videoWordAdmission}),mediaFetch:authenticatedFetch,
   getState:videoWordEditorState,getSessionToken:sessionToken,onMessage:toast,
@@ -175,7 +185,7 @@ videoWordReview=initializeVideoTranscriptWordReview({root:$('#video-transcript-w
 
 function sqlAudioEditorState(){const value=sqlEditorState();return {...value,
   busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true,
-  dirty:value.dirty||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
+  dirty:value.dirty||manualReframeHeld()||sourceLinkedHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true};}
 function syncSqlAudioPeers(){syncVideoWordPeers();videoWordReview?.sync();}
 sqlAudioProcessing=initializeSqlTimelineAudioProcessing({root:$('#sql-timeline-audio-processing'),
   api:(path,options={})=>api(path,{...options,audioProcessingAdmission}),getState:sqlAudioEditorState,
@@ -326,7 +336,7 @@ document.addEventListener('input', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
 });
 document.addEventListener('change', event => {
   if (event.target.closest('#multi-input-workbench')) audioReview.sync();
@@ -334,7 +344,7 @@ document.addEventListener('change', event => {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
 });
 const publishingConsole = initializePublishingConsole({api, getState: () => state, publicationPayload,
   setPublication: publication => {
@@ -371,7 +381,9 @@ class ApiError extends Error {
 }
 
 async function api(path, options = {}) {
-  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,...requestOptions}=options;
+  const {videoWordAdmission:admission,audioProcessingAdmission:processingAdmission,sourceLinkedAdmission:linkedAdmission,manualReframeAdmission:manualAdmission,...requestOptions}=options;
+  if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&manualReframeHeld()&&manualAdmission!==manualReframeAdmission)
+    throw Error('Lưu/bỏ đường crop hoặc đối chiếu yêu cầu đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&sourceLinkedHeld()&&linkedAdmission!==sourceLinkedAdmission)
     throw Error('Đối chiếu lần chỉnh shot đang giữ trước khi sửa phần khác.');
   if(!['GET','HEAD'].includes((requestOptions.method??'GET').toUpperCase())&&audioProcessingHeld()&&processingAdmission!==audioProcessingAdmission)
@@ -406,9 +418,9 @@ function setSaveStatus(label, tone = "safe") {
 }
 
 function sourceLinkedEditorState(){const value=sqlEditorState();return {...value,analysis:reviewedAnalysis(),
-  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true,
-  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
-function syncSourceLinkedPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();}
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true||sqlAudioProcessing?.isWorking()===true||manualReframeEditor?.isWorking()===true,
+  dirty:value.dirty||manualReframeHeld()||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true};}
+function syncSourceLinkedPeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();manualReframeEditor?.sync();syncManualReframeForm();}
 function sourceLinkedEditorBoundary(){const v=sourceLinkedEditorState();return JSON.stringify([
   v.workspaceId,v.projectId,v.principal,sessionToken(),v.timeline,v.analysis,v.assets,v.analyses,v.mediaPlans,
   v.productionPackage,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
@@ -510,6 +522,163 @@ function selectedClip() {
   return getClip(state.timeline, state.selectedClipId);
 }
 
+function manualReframeEditorState(){const value=sqlEditorState();return {...value,analysis:activeAnalysis(),
+  busy:value.busy||variantFamilies.isBusy()||variantNarration?.isWorking()===true||videoWordReview?.isWorking()===true
+    ||sqlAudioProcessing?.isWorking()===true||sourceLinkedEditor?.isWorking()===true,
+  dirty:value.dirty||variantFamilies.isPending()||variantNarration?.isPending()===true||videoWordReview?.isDirty()===true
+    ||videoWordReview?.isPending()===true||sqlAudioProcessing?.isDirty()===true||sqlAudioProcessing?.isPending()===true||sourceLinkedHeld()};}
+function manualReframeContext(){const v=manualReframeEditorState();return sqlAudioStable([
+  v.workspaceId,v.projectId,v.principal,sessionToken(),v.timeline,v.analysis,v.assets,v.analyses,v.mediaPlans,
+  v.productionPackage,v.videoReviewSelection,productionWorkbenchDraft(),audioWorkbenchDraft()]);}
+function manualReframeBoundary(){return sqlAudioStable([manualReframeContext(),manualReframeDraft()]);}
+function assertManualReframeBoundary(boundary){const v=manualReframeEditorState();
+  if(v.busy||v.dirty||manualReframeBoundary()!==boundary||v.principal?.human_write_enabled!==true
+    ||!['editor','reviewer','owner'].includes(audioRole(v))||!Number.isFinite(Date.parse(v.principal?.expires_at))
+    ||Date.parse(v.principal.expires_at)<=Date.now())throw Error('Nguồn, phiên hoặc bản sửa đã đổi; giữ đường crop để đối chiếu.');}
+function manualReframeSettingsFromForm(){
+  const number=(raw)=>{if(typeof raw!=='string'||!/^\d+(?:\.\d*)?(?:e[+-]?\d+)?$|^\.\d+(?:e[+-]?\d+)?$/i.test(raw.trim()))
+    throw Error('Điền đủ mốc giây, X/Y và zoom bằng số hữu hạn.');return Number(raw);};
+  const rows=[...document.querySelectorAll('#manual-reframe-points tr')];
+  return manualReframeSettings({aspect_ratio:$('#manual-reframe-aspect').value,points:rows.map(row=>{
+    const read=field=>number(row.querySelector(`[data-manual-reframe-field="${field}"]`)?.value);
+    return{time:read('time'),x:read('x')/100,y:read('y')/100,zoom:read('zoom')};
+  })},manualReframeFormRead?.data.source.duration_seconds??0);
+}
+function renderManualReframePoints(settings){
+  $('#manual-reframe-aspect').value=settings.aspect_ratio;
+  $('#manual-reframe-points').innerHTML=settings.points.map((p,index)=>`<tr>${[
+    ['time',p.time,'0',manualReframeFormRead.data.source.duration_seconds,'Giây nguồn'],['x',p.x*100,'0','100','X phần trăm'],
+    ['y',p.y*100,'0','100','Y phần trăm'],['zoom',p.zoom,'1','4','Zoom']].map(([field,value,min,max,label])=>
+    `<td><input type="number" step="any" min="${min}" max="${max}" data-manual-reframe-field="${field}" aria-label="${label} điểm ${index+1}" value="${value}"></td>`).join('')}
+    <td><button type="button" data-manual-reframe-remove="${index}" aria-label="Xóa điểm ${index+1}">Xóa</button></td></tr>`).join('');
+}
+function clearManualReframeForm(){manualReframeFormRead=null;manualReframeFormBaseline=null;
+  $('#manual-reframe-points').innerHTML='';$('#manual-reframe-aspect').value='9:16';}
+function syncManualReframeForm(){
+  const dirty=manualReframeDirty();
+  if(manualReframeFormRead&&manualReframeFormRead.context!==manualReframeContext()&&!dirty)clearManualReframeForm();
+  const value=manualReframeEditorState(),valid=manualReframeFormRead?.context===manualReframeContext();
+  const busy=manualReframeEditor?.isWorking()===true||manualReframeEditor?.isPending()===true||manualReframeApplying!==null;
+  const write=value.principal?.human_write_enabled===true&&['editor','reviewer','owner'].includes(audioRole(value))
+    &&Number.isFinite(Date.parse(value.principal?.expires_at))&&Date.parse(value.principal.expires_at)>Date.now();
+  $('#manual-reframe-fields').disabled=!valid||busy||value.busy||value.dirty||!write;
+  $('#manual-reframe-discard').disabled=!dirty||busy;
+  $('#manual-reframe-add').disabled=!valid||busy||value.busy||value.dirty||!write
+    ||document.querySelectorAll('#manual-reframe-points tr').length>=200;
+  $('#manual-reframe-form-status').textContent=busy?'Đang giữ lần chỉnh crop; đối chiếu đúng yêu cầu trước khi thay đổi.':
+    !valid?'Đọc trạng thái hiện tại trước khi chỉnh các điểm crop.':dirty?'Có bản sửa crop chưa gửi. Lưu hoặc bỏ bản sửa trước khi sửa phần khác.':
+    `Timeline v${value.timeline.current_version} · ${manualReframeFormRead.data.source.duration_seconds} giây nguồn · ${manualReframeFormRead.data.source.width}×${manualReframeFormRead.data.source.height}. ${manualReframeFormRead.data.settings===null?'Chưa có đường crop thủ công được lưu; điểm giữa là gợi ý để bắt đầu.':'Đã đọc đường crop thủ công đã lưu.'} Cần kiểm tra preview trước khi duyệt.`;
+}
+function syncManualReframePeers(){audioReview.sync();stockReview.sync();videoReview.sync();variantFamilies.sync();
+  variantNarration?.sync();videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();syncManualReframeForm();}
+function readManualReframeForm(data){
+  if(manualReframeDirty())throw Error('Lưu hoặc bỏ bản sửa crop trước khi đọc và điền lại biểu mẫu.');
+  const v=manualReframeEditorState();
+  if(v.busy||v.dirty)throw Error('Hoàn tất bản sửa khác trước khi đọc crop.');
+  manualReframeRead(data,v);
+  if(sqlAudioStable(data.timeline)!==sqlAudioStable(v.timeline))throw Error('Đọc đúng timeline hiện tại trước khi chỉnh crop.');
+  manualReframeFormRead={data:structuredClone(data),context:manualReframeContext()};
+  renderManualReframePoints(data.settings??{aspect_ratio:data.timeline.snapshot.aspect_ratio??'9:16',points:[{time:0,x:.5,y:.5,zoom:1}]});
+  manualReframeFormBaseline=manualReframeDraft();syncManualReframePeers();
+}
+async function manualReframeApi(path,options={}){
+  const expectedPath=`/api/v1/projects/${state.projectId}/timeline/manual-reframe`,method=(options.method??'GET').toUpperCase();
+  if(path!==expectedPath||!['GET','PUT'].includes(method))throw Error('Lệnh crop chỉ được đọc hoặc lưu trên dự án hiện tại.');
+  const applying=manualReframeApplying;
+  const current=()=>applying===null||manualReframeApplying===applying&&manualReframeContext()===applying.context&&manualReframeDraft()===applying.draft;
+  if(!current())throw Error('Biểu mẫu hoặc nguồn crop đã đổi trước khi gửi.');
+  const data=await api(path,{...options,manualReframeAdmission});
+  if(!current()||applying&&data.source_binding_sha256!==applying.source_binding_sha256)
+    throw Error('Ràng buộc nguồn đã đổi sau lần đọc; đọc lại trước khi chỉnh, không đổi CAS tự động.');
+  return data;
+}
+function manualReframePreservedValue(timeline){const snapshot=structuredClone(timeline.snapshot);
+  delete snapshot.width;delete snapshot.height;delete snapshot.aspect_ratio;delete snapshot.metadata.reframe;delete snapshot.metadata.manual_reframe;
+  for(const track of snapshot.tracks)if(track.type==='video'&&track.kind==='source')for(const clip of track.clips){delete clip.crop;delete clip.metadata.reframe;}
+  return{timeline_id:timeline.timeline_id,workspace_id:timeline.workspace_id,project_id:timeline.project_id,
+    project_version_id:timeline.project_version_id,source_analysis_id:timeline.source_analysis_id,
+    source_content_version_id:timeline.source_content_version_id,source_kind:timeline.source_kind,
+    source_media_plan_id:timeline.source_media_plan_id,created_at:timeline.created_at,snapshot};
+}
+async function refreshManualReframe(value){
+  const boundary=manualReframeBoundary(),current=manualReframeEditorState(),receipt=value.receipt,timeline=value.timeline;
+  assertManualReframeBoundary(boundary);
+  const parent=current.timeline?.current_version===value.parent_version,result=current.timeline?.current_version===value.result_version;
+  const read={timeline,source:value.source,source_binding_sha256:value.source_binding_sha256,settings:value.settings,receipt,replayed:false};
+  manualReframeRead(read,current);
+  if(!current.timeline||value.workspace_id!==current.workspaceId||value.project_id!==current.projectId
+    ||value.actor_ref!==current.principal?.subject||receipt.actor_ref!==value.actor_ref
+    ||receipt.parent_version_id!==value.parent_version_id||receipt.parent_version!==value.parent_version
+    ||receipt.result_version!==value.result_version||value.result_version!==value.parent_version+1||!(parent||result)
+    ||parent&&(current.timeline.current_version_id!==value.parent_version_id||sqlAudioStable(current.timeline)!==sqlAudioStable(value.parent_timeline))
+    ||result&&sqlAudioStable(current.timeline)!==sqlAudioStable(timeline)
+    ||sqlAudioStable(manualReframePreservedValue(current.timeline))!==sqlAudioStable(manualReframePreservedValue(timeline))
+    ||sqlAudioStable(receipt.settings)!==sqlAudioStable(value.settings)||sqlAudioStable(receipt.applied_keyframes)!==sqlAudioStable(value.applied_keyframes)
+    ||manualReframeApplying&&(manualReframeApplying.context!==manualReframeContext()||manualReframeApplying.draft!==manualReframeDraft()
+      ||manualReframeApplying.source_binding_sha256!==value.source_binding_sha256))
+    throw Error('Biên nhận crop chưa giữ đúng nguồn, âm thanh, phụ đề, người sửa hoặc phiên bản.');
+  const path=`/api/v1/projects/${value.project_id}/timeline/manual-reframe`;
+  const proof=await api(path);assertManualReframeBoundary(boundary);manualReframeRead(proof,manualReframeEditorState());
+  if(sqlAudioStable(proof)!==sqlAudioStable(read)){
+    const withoutReplay=object=>({...object,replayed:false});
+    if(sqlAudioStable(withoutReplay(proof))!==sqlAudioStable(read))throw Error('Bản đọc crop hiện tại chưa khớp biên nhận.');
+  }
+  const versions=await api(`/api/v1/projects/${value.project_id}/timeline/versions`);assertManualReframeBoundary(boundary);
+  if(!videoWordHistoryMatches(versions,proof.timeline))throw Error('Lịch sử crop chưa khớp timeline hiện tại.');
+  const previous=versions.find(v=>v.version===value.parent_version),head=versions.find(v=>v.version===value.result_version);
+  if(previous?.timeline_version_id!==value.parent_version_id||value.parent_timeline&&sqlAudioStable(previous.snapshot)!==sqlAudioStable(value.parent_timeline.snapshot)
+    ||head?.actor_ref!==receipt.actor_ref||head.mutation?.type!=='manual-reframe'||head.mutation.source_media_mutated!==false
+    ||head.mutation.publish_requested!==false||sqlAudioStable(head.mutation.receipt)!==sqlAudioStable(receipt))
+    throw Error('Lịch sử crop chưa chứng minh đúng bản cha, người sửa và biên nhận.');
+  const finalProof=await api(path);assertManualReframeBoundary(boundary);manualReframeRead(finalProof,manualReframeEditorState());
+  if(sqlAudioStable({...finalProof,replayed:false})!==sqlAudioStable({...proof,replayed:false}))throw Error('Crop đã đổi sau khi đọc lịch sử; giữ yêu cầu.');
+  state.timeline=structuredClone(finalProof.timeline);state.versions=structuredClone(versions);state.selectedClipId=null;state.undoStack=[];state.redoStack=[];
+  state.playhead=Math.min(state.playhead??0,state.timeline.snapshot.duration_seconds);
+  if(state.preview)state.preview={...state.preview,status:'stale',valid_for_current_timeline:false};
+  if(state.productionPackage)state.productionPackage={...state.productionPackage,current_for_timeline:false,approval:null,latest_review_render:null,latest_final_render:null};
+  state.activeProductionRender=null;stopPreviewPolling();stopProductionPolling();
+  manualReframeFormRead={data:structuredClone(finalProof),context:manualReframeContext()};renderManualReframePoints(finalProof.settings);
+  manualReframeFormBaseline=manualReframeDraft();render();
+}
+manualReframeEditor=initializeSqlManualReframe({root:$('#sql-manual-reframe'),api:manualReframeApi,getState:manualReframeEditorState,
+  getSessionToken:sessionToken,onRead:readManualReframeForm,onSaved:refreshManualReframe,onBusyChanged:syncManualReframePeers,onMessage:toast});
+$('#manual-reframe-form').addEventListener('submit',async event=>{
+  event.preventDefault();if(manualReframeApplying)return;
+  try{
+    const boundary=manualReframeBoundary();assertManualReframeBoundary(boundary);
+    if(manualReframeEditor.isWorking()||manualReframeEditor.isPending()||manualReframeFormRead?.context!==manualReframeContext())
+      throw Error('Đọc đúng trạng thái crop hiện tại và hoàn tất yêu cầu đang giữ trước khi lưu.');
+    const settings=manualReframeSettingsFromForm();
+    manualReframeApplying=Object.freeze({context:manualReframeContext(),draft:manualReframeDraft(),source_binding_sha256:manualReframeFormRead.data.source_binding_sha256});
+    syncManualReframePeers();const saved=await manualReframeEditor.runSettings(settings,{acknowledged:true});
+    setSaveStatus(saved?'Đã lưu':manualReframeEditor.isPending()?'Cần đối chiếu':'Chưa lưu',saved?'safe':'warning');
+  }catch(error){toast(error.message,true);}finally{manualReframeApplying=null;syncManualReframePeers();}
+});
+$('#manual-reframe-form').addEventListener('input',syncManualReframePeers);
+$('#manual-reframe-aspect').addEventListener('change',syncManualReframePeers);
+$('#manual-reframe-add').addEventListener('click',()=>{
+  try{
+    if($('#manual-reframe-fields').disabled)throw Error('Đọc trạng thái crop trước khi thêm điểm.');
+    const settings=manualReframeSettingsFromForm(),last=settings.points.at(-1),duration=manualReframeFormRead.data.source.duration_seconds;
+    if(settings.points.length>=200||last.time>=duration)throw Error('Đã tới giới hạn điểm hoặc hết thời lượng nguồn.');
+    settings.points.push({...last,time:Math.min(duration,last.time+1)});renderManualReframePoints(settings);syncManualReframePeers();
+  }catch(error){toast(error.message,true);}
+});
+$('#manual-reframe-points').addEventListener('click',event=>{
+  const button=event.target.closest('[data-manual-reframe-remove]');if(!button)return;
+  try{
+    if($('#manual-reframe-fields').disabled)throw Error('Chờ thao tác crop hoàn tất trước khi xóa điểm.');
+    const settings=manualReframeSettingsFromForm(),index=Number(button.dataset.manualReframeRemove);
+    if(!Number.isSafeInteger(index)||index<0||index>=settings.points.length||settings.points.length<=1)throw Error('Giữ ít nhất một điểm crop.');
+    settings.points.splice(index,1);renderManualReframePoints(settings);syncManualReframePeers();
+  }catch(error){toast(error.message,true);}
+});
+$('#manual-reframe-discard').addEventListener('click',()=>{
+  if(manualReframeEditor.isWorking()||manualReframeEditor.isPending()||manualReframeApplying)return toast('Giữ yêu cầu chưa rõ kết quả; đối chiếu trước khi bỏ bản sửa.',true);
+  const read=manualReframeFormRead?.context===manualReframeContext()?structuredClone(manualReframeFormRead.data):null;
+  clearManualReframeForm();if(read)readManualReframeForm(read);syncManualReframePeers();
+});
+
 async function loadProjectList() {
   multiInput.setBusy(true);
   try {
@@ -542,8 +711,10 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   if (!state.projectId) return;
   const initialCanonicalRead=initialRead===initialProjectRead&&state.timeline===null&&state.projectLoading===0
     &&state.assets.length===0&&state.analyses.length===0&&state.versions.length===0&&state.transcriptDrafts.size===0
+    &&manualReframeEditor?.isWorking()!==true&&!manualReframeDirty()&&manualReframeApplying===null
     &&sourceLinkedEditor?.isWorking()!==true&&sqlAudioProcessing?.isWorking()!==true
     &&videoWordReview?.isWorking()!==true&&variantNarration?.isWorking()!==true;
+  if(!initialCanonicalRead&&manualReframeHeld()){toast('Lưu/bỏ crop hoặc đối chiếu lần lưu đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&sourceLinkedHeld()){toast('Đối chiếu lần chỉnh shot đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&audioProcessingHeld()){toast('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi tải lại.',true);return;}
   if(!initialCanonicalRead&&videoWordsHeld()){toast('Lưu/bỏ bản sửa từ hoặc đối chiếu lần lưu chưa rõ kết quả trước khi tải lại.',true);return;}
@@ -552,9 +723,12 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   }
   if (!initialCanonicalRead&&audioReview.isDirty()) {toast('Lưu/bỏ sửa hoặc đối chiếu yêu cầu audio trước khi tải lại dự án.', true); return;}
   if (!initialCanonicalRead&&stockReview.isPending()) {toast('Đối chiếu yêu cầu tìm tư liệu trong panel trước khi tải lại dự án.', true); return;}
+  // A clean form from the previous project is invalidated before capturing the
+  // read boundary. Dirty forms and UNKNOWN requests have already been fenced.
+  syncManualReframeForm();
   const loadedProjectId = state.projectId;
   const readBoundary=()=>JSON.stringify([state.workspaceId,state.projectId,state.principal,sessionToken(),
-    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft()]);
+    [...state.transcriptDrafts],productionWorkbenchDraft(),audioWorkbenchDraft(),manualReframeDraft()]);
   const expectedReadBoundary=readBoundary();
   const readCurrent=()=>readBoundary()===expectedReadBoundary
     &&(!state.principal?.expires_at||Date.parse(state.principal.expires_at)>Date.now());
@@ -571,7 +745,7 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
   multiInput.setBusy(true);
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
   stopPreviewPolling();
   stopProductionPolling();
   stopAnalyticsPolling();
@@ -655,7 +829,7 @@ async function loadProject({ quiet = false, initialRead = null } = {}) {
     videoReview.sync();
     variantFamilies.sync();
     variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
   }
   if (installedBoundary!==null&&readBoundary()===installedBoundary) {
     await audioReview.reload();
@@ -669,7 +843,7 @@ function renderNoProject(title, description) {
   videoReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
   if (!state.projectId) $("#analysis-review").hidden = true;
   $("#multi-input-workbench").open = !state.projectId || !state.assets.length;
   $("#studio-workspace").hidden = true;
@@ -684,7 +858,7 @@ function render() {
   stockReview.sync();
   variantFamilies.sync();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
   renderAnalysisReview();
   renderReframe();
   if (!state.timeline) {
@@ -1109,7 +1283,7 @@ function renderProduction({preserveDraft=false}={}) {
   renderPublishing();
   if(!preserveDraft)productionBaseline=productionWorkbenchDraft();
   variantNarration?.sync();
-  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();
+  videoWordReview?.sync();sqlAudioProcessing?.sync();sourceLinkedEditor?.sync();manualReframeEditor?.sync();syncManualReframeForm();
 }
 
 function selectedPublishingPlatform() {
@@ -1766,6 +1940,7 @@ function formatBytes(value) {
 }
 
 $("#project-select").addEventListener("change", async (event) => {
+  if(manualReframeHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ crop hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
   if(sourceLinkedHeld()){event.target.value=state.projectId??'';return toast('Đối chiếu lần chỉnh shot đang giữ trước khi đổi dự án.',true);}
   if(audioProcessingHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ cấu hình âm thanh hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
   if(videoWordsHeld()){event.target.value=state.projectId??'';return toast('Lưu/bỏ bản sửa từ hoặc đối chiếu yêu cầu đang giữ trước khi đổi dự án.',true);}
@@ -2127,7 +2302,7 @@ window.addEventListener("beforeunload", () => {
   videoReview.dispose();
   variantFamilies.dispose();
   variantNarration?.dispose();
-  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();
+  videoWordReview?.dispose();sqlAudioProcessing?.dispose();sourceLinkedEditor?.dispose();manualReframeEditor?.dispose();
   unsubscribeVideoBusy();
   stopPreviewPolling();
   stopProductionPolling();

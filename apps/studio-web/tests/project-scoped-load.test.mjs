@@ -1,3 +1,4 @@
+import {withIdleManualReframe} from './root-manual-reframe-idle-context.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -65,7 +66,7 @@ function harness({gate=null,reject=false,missing=[],noTimeline=false,wrongTransc
     'sqlAudioProcessing','videoWordReview','variantNarration','audioReview','stockReview','toast','sessionToken','productionWorkbenchDraft',
     'audioWorkbenchDraft','$','videoReview','multiInput','variantFamilies','stopPreviewPolling','stopProductionPolling','stopAnalyticsPolling',
     'setSaveStatus','api','timelineTranscriptId','render','startPreviewPolling','startProductionPolling','startAnalyticsPolling'];
-  const made=new Function(...functions,'let multiInputBaseline="kept-baseline";\n'+code.slice(first,last)+
+  const made=withIdleManualReframe(...functions,'let multiInputBaseline="kept-baseline";\n'+code.slice(first,last)+
     '\nreturn {run:loadProject,baseline:()=>multiInputBaseline};')(
       state,permit,()=>true,()=>true,()=>true,peer,peer,peer,peer,peer,peer,(...args)=>effects.push(['toast',...args]),
       ()=>token,()=>productionDraft,()=>audioDraft,()=>({disabled:false}),peer,multiInput,peer,

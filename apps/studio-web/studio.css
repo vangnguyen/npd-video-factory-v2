@@ -410,3 +410,16 @@
 #sql-source-linked-edit{min-width:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #sql-source-linked-edit p{flex-basis:100%;overflow-wrap:anywhere}
 #sql-source-linked-edit button{min-height:38px;font-size:14px;border-radius:7px}
+
+/* Manual crop editor: scoped, readable source-second points. */
+.manual-reframe-workbench { margin-top: 1rem; font-size: 14px; }
+.manual-reframe-workbench fieldset { min-width: 0; border: 1px solid var(--border, #d7dde5); border-radius: 8px; padding: .75rem; }
+.manual-reframe-table { overflow-x: auto; margin-block: .75rem; }
+.manual-reframe-table table { width: 100%; min-width: 420px; border-collapse: collapse; }
+.manual-reframe-table th, .manual-reframe-table td { padding: .35rem; text-align: left; }
+.manual-reframe-workbench input, .manual-reframe-workbench select, .manual-reframe-workbench button { min-height: 38px; font-size: 14px; }
+.manual-reframe-table input { width: 100%; min-width: 62px; box-sizing: border-box; }
+.manual-reframe-actions, #sql-manual-reframe { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+#sql-manual-reframe [data-manual-reframe-status] { flex-basis: 100%; }
+.manual-reframe-workbench button:disabled { cursor: not-allowed; }
+@media (max-width: 1366px) { .manual-reframe-workbench fieldset { padding: .5rem; } .manual-reframe-table th, .manual-reframe-table td { padding: .25rem; } }
