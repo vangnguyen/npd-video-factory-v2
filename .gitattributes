@@ -31,3 +31,6 @@ apps/studio-web/tests/fixtures/source-linked-edit/*.json -text whitespace=cr-at-
 
 # Preserve the exact reviewed B-roll HTTP fixture, including Windows EOL.
 apps/studio-web/tests/fixtures/sql-broll-plan-review.json -text whitespace=cr-at-eol
+
+# Keep the exact internal B-roll SQL/ASGI capture, including Windows EOL.
+apps/studio-web/tests/fixtures/sql-broll-internal-resolution.json -text whitespace=cr-at-eol
