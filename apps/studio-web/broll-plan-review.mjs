@@ -1,5 +1,7 @@
 // An explicit, deferred B-roll plan. Mount/read/selection never POST or run a provider.
 import {sessionToken} from './auth.mjs';
+import {validateWitnessCapability, validateWitnessEnvelope, validateIssuedWitness, decodeWitnessPending,
+  validateVerifiedWitness, validateWitnessRecovery} from './broll-request-witness.mjs';
 const copy = structuredClone;
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const stable = value => JSON.stringify(value, (_k, v) => object(v)
@@ -26,6 +28,8 @@ export function brollPlanSettings(value) {
 
 function boundary(s) {return stable([s.workspaceId, s.projectId, session(s.principal), s.timeline, s.analysis, s.assets,
   s.learning_snapshot_id ?? null]);}
+function witnessSelection(s) {return stable([s.videoReviewSelection ?? null, s.analyses ?? null,
+  s.versions ?? null, s.preview ?? null, s.productionPackage ?? null]);}
 function validateState(s, write = false, now = Date.now()) {
   const p = s.principal, rank = Math.max(...[p?.platform_role, p?.workspace_roles?.['*'], p?.workspace_roles?.[s.workspaceId],
     s.workspaceSlug ? p?.workspace_roles?.['slug:' + s.workspaceSlug] : null].map(v => roles[v] ?? 0));
@@ -66,6 +70,7 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
   onRecoveryRead = async () => true, onRecovered = async () => true, onStatus = () => {}, clock = () => Date.now()}) {
   let context = null, viewCapture = null, busy = false, disposed = false, pending = null, mayResend = false;
   let recoveryView = null;
+  let pendingRecord = null, witnessCapability = null, witnessCapture = null;
   const retained = new Map();
   const digest = async value => [...new Uint8Array(await cryptoImpl.subtle.digest('SHA-256',
     new TextEncoder().encode(typeof value === 'string' ? value : stable(value))))].map(v => v.toString(16).padStart(2, '0')).join('');
@@ -73,11 +78,13 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
   const path = () => `/api/v1/projects/${getState().projectId}/broll-plan-review`;
   const token = () => {const v = getSessionToken(); demand(typeof v === 'string' && v.length >= 8 && v.length <= 2048,
     'Cần thông tin xác thực của phiên.'); return v;};
-  const capture = (write = false) => {validateState(getState(), write, clock());
-    return {boundary: boundary(getState()), token: token(), bucket: bucket(), write};};
+  const capture = (write = false, witnessed = false) => {validateState(getState(), write, clock());
+    return {boundary: boundary(getState()), token: token(), bucket: bucket(), write,
+      witnessed, selection: witnessSelection(getState())};};
   const unchanged = c => {
     validateState(getState(), c.write, clock());
-    demand(!disposed && boundary(getState()) === c.boundary && token() === c.token && bucket() === c.bucket,
+    demand(!disposed && boundary(getState()) === c.boundary && token() === c.token && bucket() === c.bucket
+      && (!c.witnessed || witnessSelection(getState()) === c.selection),
       'Ngữ cảnh hoặc phiên đã đổi; đọc lại trước khi thao tác.');
   };
   async function publicSession(c, write = false) {
@@ -90,41 +97,86 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
     if (recoveryView && (recoveryView.raw !== raw || recoveryView.capture.boundary !== c.boundary || recoveryView.capture.token !== c.token)) recoveryView = null;
     demand(!retained.has(key) || retained.get(key) === raw, 'Yêu cầu B-roll đang giữ đã bị thay đổi hoặc xóa.');
     if (raw) {demand(typeof raw === 'string' && new TextEncoder().encode(raw).length <= 5 * 1024 * 1024,
-      'Bản ghi đang giữ quá lớn hoặc sai kiểu; cần kiểm tra riêng.'); const p = JSON.parse(raw);
+      'Bản ghi đang giữ quá lớn hoặc sai kiểu; cần kiểm tra riêng.'); const parsed = JSON.parse(raw);
+      const decoded = parsed?.schema_version === 'broll-plan-pending.v2' ? decodeWitnessPending(raw, clock()) : null;
+      const p = decoded ? decoded.intent : parsed;
       demand(exact(p, ['schema_version', 'body', 'context', 'boundary', 'session_sha256', 'credential_sha256'])
         && p.schema_version === 'broll-plan-pending.v1' && hash(p.session_sha256) && hash(p.credential_sha256)
         && /^[A-Za-z0-9_-]{8,128}$/.test(p.body?.request_key), 'Yêu cầu B-roll đang giữ không hợp lệ; cần kiểm tra trước.');
-      pending = p; retained.set(key, raw);
-    } else pending = null;
+      pending = p; pendingRecord = decoded?.record ?? null; retained.set(key, raw);
+    } else {pending = null; pendingRecord = null;}
   }
-  async function hold(c, body) {
+  function storedRaw(p) {
+    if (!pendingRecord) return stable(p);
+    demand(pendingRecord.intent_json === stable(p), 'Nội dung gốc trong bằng chứng đã đổi.');
+    return stable(pendingRecord);
+  }
+  async function buildIntent(c, body) {
+    const sessionHash = await digest(session(getState().principal)); unchanged(c);
+    const credentialHash = await digest(c.token); unchanged(c);
+    return {schema_version: 'broll-plan-pending.v1', body, context: copy(context), boundary: c.boundary,
+      session_sha256: sessionHash, credential_sha256: credentialHash};
+  }
+  function emptySlot(c) {
+    const raw = storage?.getItem(c.bucket); unchanged(c);
+    demand(raw === null || raw === undefined, 'Một lần tạo B-roll khác đang chờ trong phiên này.');
+    return raw;
+  }
+  async function hold(c, body, proof = null, candidate = null) {
     const previous = storage?.getItem(c.bucket); unchanged(c);
     demand(previous === null || previous === undefined, 'Một lần tạo B-roll khác đang chờ trong phiên này.');
-    const value = {schema_version: 'broll-plan-pending.v1', body, context: copy(context), boundary: c.boundary,
-      session_sha256: await digest(session(getState().principal)), credential_sha256: await digest(c.token)};
+    const value = candidate ?? await buildIntent(c, body); unchanged(c);
+    let record = null;
+    if (proof) {
+      validateIssuedWitness(proof, value, clock());
+      const intent_json = stable(value), intent_sha256 = await digest(intent_json); unchanged(c); emptySlot(c);
+      record = {schema_version: 'broll-plan-pending.v2', intent_json, intent_sha256,
+        witness: copy(proof.witness), witness_sha256: proof.witness_sha256};
+    }
     unchanged(c); const observed = storage.getItem(c.bucket); unchanged(c);
     demand(observed === previous, 'Một yêu cầu B-roll khác đã vào ô chờ; không ghi đè.');
-    storage.setItem(c.bucket, stable(value)); unchanged(c);
+    const raw = stable(record ?? value);
+    storage.setItem(c.bucket, raw); unchanged(c);
     const stored = storage.getItem(c.bucket); unchanged(c);
-    demand(stored === stable(value), 'Chưa giữ được yêu cầu an toàn trước khi gửi.');
-    pending = value; retained.set(c.bucket, stable(value));
+    demand(stored === raw, 'Chưa giữ được yêu cầu an toàn trước khi gửi.');
+    pending = value; pendingRecord = record; retained.set(c.bucket, raw);
     recoveryView = null;
   }
   async function checkPending(c) {
-    load(c); demand(pending && pending.boundary === c.boundary && pending.session_sha256 === await digest(session(getState().principal))
-      && pending.credential_sha256 === await digest(c.token), 'Lần tạo đang giữ thuộc phiên hoặc bản dựng khác.');
+    load(c); c.witnessed = Boolean(pendingRecord); unchanged(c); const p = pending, raw = retained.get(c.bucket);
+    demand(p && p.boundary === c.boundary, 'Lần tạo đang giữ thuộc phiên hoặc bản dựng khác.');
+    const sessionHash = await digest(session(getState().principal)); heldGuard(c, p, raw);
+    const credentialHash = await digest(c.token); heldGuard(c, p, raw);
+    demand(p.session_sha256 === sessionHash && p.credential_sha256 === credentialHash,
+      'Lần tạo đang giữ thuộc phiên hoặc bản dựng khác.');
     unchanged(c); brollPlanSettings(pending.body.settings);
     demand(pending.body.acknowledged === true && pending.body.context_sha256 === pending.context.context_sha256,
       'Yêu cầu đang giữ đã thay đổi.');
     validateBrollPlanContext(pending.context, getState(), clock());
+    if (pendingRecord) {
+      const record = await proofHashes(c, p, raw, true);
+      heldGuard(c, p, raw);
+      const verified = await api(path() + '/witness/verify', {method: 'POST',
+        body: JSON.stringify({request: copy(p.body), witness: copy(record.witness)})});
+      heldGuard(c, p, raw); validateVerifiedWitness(verified, record, p.context);
+    }
   }
   function heldGuard(c, p, expectedRaw) {
     unchanged(c);
     demand(pending === p && retained.get(c.bucket) === expectedRaw, 'Quyền giữ yêu cầu B-roll đã đổi.');
     const raw = storage.getItem(c.bucket); unchanged(c);
-    demand(typeof expectedRaw === 'string' && expectedRaw === stable(p) && raw === expectedRaw,
+    demand(typeof expectedRaw === 'string' && expectedRaw === storedRaw(p) && raw === expectedRaw,
       'Yêu cầu đang giữ đã bị thay thế; không nhận hoặc xóa nó.');
     return true;
+  }
+  async function proofHashes(c, p, raw, fresh = false) {
+    const record = pendingRecord; demand(record, 'Chưa có bằng chứng ký cho yêu cầu đang giữ.');
+    validateWitnessEnvelope(record.witness, p, clock(), fresh);
+    const intentHash = await digest(record.intent_json); heldGuard(c, p, raw);
+    demand(intentHash === record.intent_sha256, 'Hash ý định gốc đã đổi.');
+    const proofHash = await digest(record.witness); heldGuard(c, p, raw);
+    demand(proofHash === record.witness_sha256, 'Hash bằng chứng ký đã đổi.');
+    return record;
   }
   async function guardedCallback(c, p, raw, callback, ...args) {
     let active = true;
@@ -137,7 +189,7 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
     const expectedRaw = retained.get(c.bucket);
     function retainedRequest() {
       const raw = storage.getItem(c.bucket); unchanged(c);
-      demand(typeof expectedRaw === 'string' && expectedRaw === stable(p) && raw === expectedRaw,
+      demand(typeof expectedRaw === 'string' && expectedRaw === storedRaw(p) && raw === expectedRaw,
         'Yêu cầu đang giữ đã đổi trong lúc đối chiếu.');
     }
     retainedRequest();
@@ -170,7 +222,8 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
       retainedRequest(); await guardedCallback(c, p, expectedRaw, onPrepared, copy(plan), copy(r)); unchanged(c);
     } else demand(value.plan === null && value.error_code === 'BROLL_REVIEW_CONTEXT_CHANGED', 'Lý do dừng chưa xác định.');
     retainedRequest(); storage.removeItem(c.bucket); unchanged(c);
-    retained.delete(c.bucket); pending = null; mayResend = false; context = null; viewCapture = null; recoveryView = null;
+    retained.delete(c.bucket); pending = null; pendingRecord = null; mayResend = false; context = null; viewCapture = null; recoveryView = null;
+    witnessCapability = null; witnessCapture = null;
     onStatus(value.state === 'prepared' ? 'Đã lưu đề xuất; lịch stock chờ xác nhận tìm kiếm riêng.' : 'Nguồn đã đổi. Đọc lại và xem xét lựa chọn mới.');
     return value;
   }
@@ -178,42 +231,73 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
     try {return await fn();} finally {busy = false;}}
   async function reload() {return run(async () => {
     const c = capture(); load(c); demand(!pending, 'Đối chiếu lần tạo đang giữ trước khi lập lựa chọn mới.');
-    await publicSession(c); const value = await api(path(), {cache: 'no-store'}); unchanged(c);
+    await publicSession(c); unchanged(c); const value = await api(path(), {cache: 'no-store'}); unchanged(c);
     validateBrollPlanContext(value, getState(), clock()); const {context_sha256, context_json, ...raw} = value;
     demand(typeof context_json === 'string' && context_json.length <= 65536 && same(JSON.parse(context_json), raw)
       && await digest(context_json) === context_sha256, 'Hash bản đọc B-roll không hợp lệ.'); unchanged(c);
-    context = copy(value); viewCapture = c; onStatus('Đã đọc nguồn. Chọn nguồn bổ trợ, thứ tự và xác nhận tạo bản nháp.'); return copy(value);
+    context = copy(value); viewCapture = c; witnessCapability = null; witnessCapture = null;
+    onStatus('Đã đọc nguồn. Chọn nguồn bổ trợ, thứ tự và xác nhận tạo bản nháp.'); return copy(value);
   });}
-  async function prepare(settings, acknowledged) {return run(async () => {
-    const c = capture(true); load(c); demand(!pending && context && acknowledged === true, 'Đọc và xác nhận rõ lựa chọn trước khi tạo.');
+  async function readWitnessCapability() {return run(async () => {
+    const c = capture(true, true); load(c);
+    demand(!pending && context && viewCapture?.boundary === c.boundary && viewCapture.token === c.token,
+      'Đọc nguồn trước khi chọn bằng chứng ký cho lần chuẩn bị mới.');
+    await publicSession(c, true); unchanged(c); emptySlot(c);
+    const value = await api(path() + '/witness/status', {cache: 'no-store'}); unchanged(c); emptySlot(c);
+    validateWitnessCapability(value, getState());
+    witnessCapability = copy(value); witnessCapture = c; return copy(value);
+  });}
+  async function prepareInternal(settings, acknowledged, witnessed = false) {return run(async () => {
+    const c = capture(true, witnessed); load(c); demand(!pending && context && acknowledged === true, 'Đọc và xác nhận rõ lựa chọn trước khi tạo.');
     demand(viewCapture && viewCapture.boundary === c.boundary && viewCapture.token === c.token,
       'Nguồn, quyền hoặc phiên đã đổi từ lúc đọc đề xuất.');
     validateBrollPlanContext(context, getState(), clock()); settings = brollPlanSettings(settings);
     demand(!settings.allow_stock || context.licensed_stock_enabled, 'Stock chưa được cấu hình hoặc được phép.');
-    await publicSession(c, true); const key = newRequestKey(); demand(typeof key === 'string' && /^[A-Za-z0-9_-]{8,128}$/.test(key), 'Mã yêu cầu không hợp lệ.');
+    if (witnessed) demand(witnessCapability?.status === 'READY' && witnessCapability.issuance_available === true
+      && witnessCapture?.boundary === c.boundary && witnessCapture.token === c.token && witnessCapture.selection === c.selection,
+    'Đọc xác nhận máy chủ sẵn sàng rồi chọn rõ bằng chứng ký; không tự chuyển sang yêu cầu thường.');
+    await publicSession(c, true); unchanged(c); const key = newRequestKey(); demand(typeof key === 'string' && /^[A-Za-z0-9_-]{8,128}$/.test(key), 'Mã yêu cầu không hợp lệ.');
     const learning = getState().learning_snapshot_id ?? null;
     demand(learning === null || typeof learning === 'string' && /^lsn_[A-Za-z0-9_-]{4,60}$/.test(learning), 'Gợi ý học chưa có snapshot hợp lệ.');
-    await hold(c, {request_key: key, context_sha256: context.context_sha256, acknowledged: true, settings, learning_snapshot_id: learning});
+    const body = {request_key: key, context_sha256: context.context_sha256, acknowledged: true, settings, learning_snapshot_id: learning};
+    if (witnessed) {
+      const value = await buildIntent(c, body); unchanged(c); emptySlot(c);
+      const issued = copy(await api(path() + '/witness', {method: 'POST', body: JSON.stringify(body)})); unchanged(c); emptySlot(c);
+      const claims = validateIssuedWitness(issued, value, clock());
+      const envelopeHash = await digest(issued.witness); unchanged(c); emptySlot(c);
+      const bearerHash = await digest('Bearer ' + c.token); unchanged(c); emptySlot(c);
+      demand(envelopeHash === issued.witness_sha256 && claims.original_authority.credential_sha256 === bearerHash,
+        'Bằng chứng ký không khớp thông tin xác thực và nội dung đã chọn.');
+      const verified = await api(path() + '/witness/verify', {method: 'POST',
+        body: JSON.stringify({request: copy(body), witness: copy(issued.witness)})}); unchanged(c); emptySlot(c);
+      validateVerifiedWitness(verified, {intent_json: stable(value), witness_sha256: issued.witness_sha256}, context);
+      await hold(c, body, issued, value);
+    } else await hold(c, body);
+    heldGuard(c, pending, retained.get(c.bucket));
+    if (pendingRecord) validateWitnessEnvelope(pendingRecord.witness, pending, clock(), true);
     unchanged(c); const result = await api(path(), {method: 'POST', body: JSON.stringify(pending.body)}); return accept(result, c);
   });}
   async function reconcile() {return run(async () => {
-    const c = capture(); await publicSession(c); await checkPending(c);
+    const c = capture(); await publicSession(c); unchanged(c); await checkPending(c);
+    heldGuard(c, pending, retained.get(c.bucket));
     mayResend = false;
     try {return await accept(await api(path() + '/requests/' + pending.body.request_key, {cache: 'no-store'}), c);}
     catch (e) {unchanged(c); if (e.status === 404) {mayResend = true; onStatus('Chưa có biên nhận. Có thể gửi lại đúng yêu cầu sau khi xác nhận.'); return null;} throw e;}
   });}
   async function resend(acknowledged) {return run(async () => {
-    const c = capture(true); await publicSession(c, true); await checkPending(c);
+    const c = capture(true); await publicSession(c, true); unchanged(c); await checkPending(c);
+    heldGuard(c, pending, retained.get(c.bucket));
     demand(mayResend && acknowledged === true, 'Đối chiếu chưa có biên nhận và xác nhận trước khi gửi lại.');
     const latest = await api(path(), {cache: 'no-store'}); unchanged(c);
     demand(same(latest, pending.context), 'Nguồn hoặc cấu hình đã đổi; không gửi lại yêu cầu cũ.');
     const raw = storage.getItem(c.bucket); unchanged(c);
-    demand(typeof retained.get(c.bucket) === 'string' && raw === retained.get(c.bucket) && raw === stable(pending),
+    demand(typeof retained.get(c.bucket) === 'string' && raw === retained.get(c.bucket) && raw === storedRaw(pending),
       'Yêu cầu đang giữ đã đổi trước khi gửi lại.');
+    if (pendingRecord) validateWitnessEnvelope(pendingRecord.witness, pending, clock(), true);
     mayResend = false; return accept(await api(path(), {method: 'POST', body: JSON.stringify(pending.body)}), c);
   });}
   async function recoveryHeld(c) {
-    load(c); const p = pending, raw = retained.get(c.bucket);
+    load(c); c.witnessed = Boolean(pendingRecord); unchanged(c); const p = pending, raw = retained.get(c.bucket);
     demand(p && typeof raw === 'string' && hash(p.credential_sha256), 'Chưa có đúng yêu cầu cũ để xác minh trên server.');
     const original = JSON.parse(p.boundary), current = JSON.parse(boundary(getState()));
     demand(Array.isArray(original) && original.length === 7 && exact(original[2], sessionFields)
@@ -224,7 +308,11 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
     demand(sessionHash === p.session_sha256 && p.body.acknowledged === true
       && p.body.context_sha256 === p.context.context_sha256 && p.body.learning_snapshot_id === original[6], 'Metadata yêu cầu cũ chưa khớp.');
     brollPlanSettings(p.body.settings); validateBrollPlanContext(p.context, getState(), clock());
-    const intentHash = await digest(raw); heldGuard(c, p, raw); return {p, raw, intentHash};
+    const record = pendingRecord ? await proofHashes(c, p, raw) : null;
+    heldGuard(c, p, raw);
+    const intentRaw = record ? record.intent_json : raw;
+    const intentHash = await digest(intentRaw); heldGuard(c, p, raw);
+    return {p, raw, intentRaw, intentHash, record};
   }
   async function freshRecoveryContext(c, p, raw) {
     const value = copy(await api(path(), {cache: 'no-store'})); heldGuard(c, p, raw);
@@ -267,13 +355,31 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
     } else demand(value.settlement === null, 'Bản đọc chưa được ghép với tombstone khác.');
     return value;
   }
+  function recoveryBody(intentRaw, intentHash, record, extra = {}) {
+    return {intent_json: intentRaw, intent_sha256: intentHash,
+      ...(record ? {witness: copy(record.witness)} : {}), ...extra};
+  }
+  function recoveryPrefix(record) {return path() + (record ? '/witnessed-recovery' : '/recovery');}
+  function recoveryValue(wire, record) {return record ? validateWitnessRecovery(wire, record) : wire;}
+  async function recoveryCallback(c, p, raw, record, callback, value, wire) {
+    if (!record) return guardedCallback(c, p, raw, callback, copy(value));
+    const proof = {schema_version: 'broll-witness-recovery-proof.v1', stored_raw: raw,
+      intent_json: record.intent_json, intent_sha256: record.intent_sha256,
+      witness: copy(record.witness), witness_sha256: record.witness_sha256, response: copy(wire)};
+    // Existing callback positions stay intact. A future Root adapter must
+    // explicitly authorize the v2 raw/proof/routes before mounting this path.
+    return guardedCallback(c, p, raw, (v, guard) => callback(v, guard, copy(proof)), copy(value));
+  }
   async function inspectRecovery() {return run(async () => {
-    const c = capture(true); await publicSession(c, true); const {p, raw, intentHash} = await recoveryHeld(c);
+    const c = capture(true); await publicSession(c, true); unchanged(c); const {p, raw, intentRaw, intentHash, record} = await recoveryHeld(c);
+    heldGuard(c, p, raw);
     const fresh = await freshRecoveryContext(c, p, raw);
-    const value = copy(await api(path() + '/recovery/inspect', {method: 'POST', body: JSON.stringify({intent_json: raw, intent_sha256: intentHash})}));
+    heldGuard(c, p, raw);
+    const wire = copy(await api(recoveryPrefix(record) + '/inspect', {method: 'POST', body: JSON.stringify(recoveryBody(intentRaw, intentHash, record))}));
+    const value = recoveryValue(wire, record);
     heldGuard(c, p, raw); recoveryResult(value, p, intentHash, fresh);
-    demand(await guardedCallback(c, p, raw, onRecoveryRead, copy(value)) === true, 'Studio chưa nhận đúng bản đối chiếu khôi phục.');
-    heldGuard(c, p, raw); recoveryView = {raw, capture: c, data: copy(value)}; mayResend = false;
+    demand(await recoveryCallback(c, p, raw, record, onRecoveryRead, value, wire) === true, 'Studio chưa nhận đúng bản đối chiếu khôi phục.');
+    heldGuard(c, p, raw); recoveryView = {raw, capture: c, data: copy(value), wire: copy(wire)}; mayResend = false;
     onStatus('Đã đối chiếu với server. Dừng yêu cầu cũ cần xác nhận riêng; Media Plan đã có vẫn được giữ.'); return copy(value);
   });}
   function removeRecovered(c, p, raw) {
@@ -282,25 +388,34 @@ export function initializeBrollPlanReview({api, getState, getSessionToken = sess
     demand(storage.compareAndRemoveItem(c.bucket, raw) === true, 'Yêu cầu khác đã thay thế bản ghi; giữ nguyên.'); unchanged(c);
   }
   async function abandonRecovery(acknowledged) {return run(async () => {
-    const c = capture(true); await publicSession(c, true); const {p, raw, intentHash} = await recoveryHeld(c);
+    const c = capture(true); await publicSession(c, true); unchanged(c); const {p, raw, intentRaw, intentHash, record} = await recoveryHeld(c);
+    heldGuard(c, p, raw);
     demand(acknowledged === true && recoveryView && recoveryView.raw === raw
       && recoveryView.capture.boundary === c.boundary && recoveryView.capture.token === c.token,
     'Đối chiếu server rồi xác nhận rõ dừng đúng yêu cầu cũ trước.');
     const fresh = await freshRecoveryContext(c, p, raw);
+    heldGuard(c, p, raw);
     demand(fresh.context_sha256 === recoveryView.data.current_context_sha256
       && fresh.authority_sha256 === recoveryView.data.current_authority_sha256, 'Nguồn hoặc phiên đã đổi sau khi đối chiếu.');
-    const value = copy(await api(path() + '/recovery/abandon', {method: 'POST', body: JSON.stringify({intent_json: raw,
-      intent_sha256: intentHash, observation_sha256: recoveryView.data.observation_sha256, acknowledged: true})}));
+    const wire = copy(await api(recoveryPrefix(record) + '/abandon', {method: 'POST', body: JSON.stringify(recoveryBody(intentRaw,
+      intentHash, record, {observation_sha256: recoveryView.data.observation_sha256, acknowledged: true}))}));
+    const value = recoveryValue(wire, record);
     heldGuard(c, p, raw); recoveryResult(value, p, intentHash, fresh); demand(value.state === 'settled', 'Yêu cầu chưa được server kết thúc.');
-    const proof = copy(await api(path() + '/recovery/settlements/' + value.settlement.settlement_id, {cache: 'no-store'}));
-    heldGuard(c, p, raw); recoveryResult(proof, p, intentHash, fresh); demand(same(value, proof), 'Bản đọc tombstone chưa khớp lần xác nhận.');
-    demand(await guardedCallback(c, p, raw, onRecovered, copy(proof)) === true, 'Studio chưa xác minh đúng settlement.');
+    const proofWire = copy(await api(recoveryPrefix(record) + '/settlements/' + value.settlement.settlement_id, {cache: 'no-store'}));
+    const proof = recoveryValue(proofWire, record);
+    heldGuard(c, p, raw); recoveryResult(proof, p, intentHash, fresh); demand(same(wire, proofWire), 'Bản đọc tombstone chưa khớp lần xác nhận.');
+    demand(await recoveryCallback(c, p, raw, record, onRecovered, proof, proofWire) === true, 'Studio chưa xác minh đúng settlement.');
     heldGuard(c, p, raw); removeRecovered(c, p, raw);
-    retained.delete(c.bucket); pending = null; mayResend = false; context = null; viewCapture = null; recoveryView = null;
+    retained.delete(c.bucket); pending = null; pendingRecord = null; mayResend = false; context = null; viewCapture = null; recoveryView = null;
+    witnessCapability = null; witnessCapture = null;
     onStatus('Đã ghi nhận dừng yêu cầu cũ. Media Plan và lịch sử giữ nguyên; đọc lại trước khi chuẩn bị lần mới.'); return copy(proof);
   });}
-  return {reload, prepare, reconcile, resend, defaults: defaultBrollPlanSettings,
+  return {reload, prepare: (settings, acknowledged) => prepareInternal(settings, acknowledged, false),
+    prepareWithWitness: (settings, acknowledged) => prepareInternal(settings, acknowledged, true),
+    readWitnessCapability, reconcile, resend, defaults: defaultBrollPlanSettings,
     inspectRecovery, abandonRecovery,
-    state: () => ({busy, context: copy(context), pending: copy(pending), mayResend, recovery: copy(recoveryView?.data ?? null)}),
-    dispose: () => {disposed = true; context = null; recoveryView = null;}};
+    state: () => ({busy, context: copy(context), pending: copy(pending), mayResend, recovery: copy(recoveryView?.data ?? null),
+      ...(pendingRecord || witnessCapability ? {witness: {capability: copy(witnessCapability),
+        pending_record: copy(pendingRecord), retained_raw: pendingRecord ? retained.get(bucket()) ?? null : null}} : {})}),
+    dispose: () => {disposed = true; context = null; recoveryView = null; witnessCapability = null; witnessCapture = null;}};
 }
