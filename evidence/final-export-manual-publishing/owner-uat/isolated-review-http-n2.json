@@ -1,0 +1,21 @@
+{
+  "schema_version": "native-isolated-export-review-http.v1",
+  "url": "http://127.0.0.1:62684/native.html",
+  "pid": 20824,
+  "source_head": "a01dbd6eff8d744ad262949dc0f5ce839fdc96ba",
+  "served_source_sha256": {
+    "native.html": "ae29e1f4ed662eb7b6b1a861cef2590e9b563863f091d9bdeb0cf12683dbf6b5",
+    "native.mjs": "c2923ee20fd2754f57fb63488926c2df8d9de42aad0a245686edca51f8670911",
+    "native-drama.mjs": "37705f9b1c2f4bcfe17a02ddab30d8c6ea14f7d911f97b288ecfa52ceb2a0850"
+  },
+  "manual_delivery_focus": true,
+  "drama_capability": true,
+  "verified_history_exports": 1,
+  "video_bytes": 701375,
+  "video_sha256": "19d7ce9c5d59f55c353d16e5858bd2b3687cb0fbe7bdb02d3939d1cacdb65ed3",
+  "media_is_synthetic_rehearsal": true,
+  "browser_rendered": false,
+  "owner_uat_complete": false,
+  "production_deployed": false,
+  "provider_calls_in_verification": 0
+}

@@ -1,0 +1,29 @@
+{
+  "checkpoint_head": "a01dbd6eff8d744ad262949dc0f5ce839fdc96ba",
+  "branch": "codex/vf-final-export-manual-01",
+  "upstream_divergence": "0\t0",
+  "bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-focus-progress-n6.bundle",
+  "bundle_bytes": 225343,
+  "bundle_sha256": "49f6a4ce90284013c04a0e4666e7c0192bce6863f38730643135a2a2ea49e0e8",
+  "bundle_verify": "PASS",
+  "requires_baseline_commit": "4162bc32260521277737f7c9ee118b5ba55b3f9b",
+  "requires_full_baseline_bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-source-baseline-n1.bundle",
+  "accepted_mp4_rehashed": 15,
+  "accepted_mp4_changed": 0,
+  "protected_live_source_clean": true,
+  "source_preserved": true,
+  "accepted_artifacts_preserved": true,
+  "working_tree_at_checkpoint": [
+    "M apps/api/tests/test_auto_edit_local_cpu.py",
+    " M apps/api/tests/test_human_identity_ingress.py",
+    " M apps/api/tests/test_service_api_flows.py",
+    " M apps/api/tests/test_sql_variant_api.py",
+    " M apps/api/tests/test_sql_variant_uploaded_derivation.py",
+    " M apps/api/tests/test_w1_prompt_provider_path.py",
+    " M docs/FINAL_EXPORT_PROGRESS.md",
+    " M docs/FINAL_EXPORT_REGRESSION_STATUS.md",
+    " M docs/NORTH_STAR_CAPABILITY_MATRIX.md",
+    "?? evidence/final-export-manual-publishing/owner-uat/"
+  ],
+  "note": "Includes committed source through a01dbd6e. Pending API test fixtures and reports are listed separately, not claimed inside this bundle."
+}
