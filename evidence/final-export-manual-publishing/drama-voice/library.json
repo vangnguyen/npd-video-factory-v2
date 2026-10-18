@@ -1,0 +1,23 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "9ce98c02",
+  "component": "Workspace Native Voice Library persistence",
+  "implementation": "real SQLite version records and write receipts",
+  "test_log": "recovery/20261007/final-export-voice-library-Native-n1.log",
+  "tests_passed": 26,
+  "library_tests": 9,
+  "backup_regression_tests": 17,
+  "duration_seconds": 18.718,
+  "verified": ["immutable versions", "CAS and exact replay", "workspace isolation", "hash verification", "revoked writer rollback", "default unknown rights", "reference consent gate", "old voice version blocked for generation", "actual backup restore retains versions and receipts"],
+  "voice_definitions": "explicit fixture provider/model; no real voice acceptance",
+  "external_provider_calls": 0,
+  "tts_inferences": 0,
+  "ui_integrated": false,
+  "project_casting_integrated": false,
+  "per_line_tts_integrated": false,
+  "legacy_render_path_modified": false,
+  "DRAMA_VOICE_CASTING_READY": "NO",
+  "OWNER_VOICE_UAT_REQUIRED": "YES",
+  "production_deployed": false
+}

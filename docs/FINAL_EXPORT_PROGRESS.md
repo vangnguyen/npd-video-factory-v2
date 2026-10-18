@@ -2,7 +2,7 @@
 
 Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-10-18. [Baseline và phục hồi nguồn](FINAL_EXPORT_BASELINE.md).
 
-[Hướng dẫn thao tác cho người dùng](FINAL_EXPORT_USER_GUIDE_VI.md). P0 đã đóng; P1–P5 có chức năng và kiểm thử kỹ thuật đang hoàn thiện chứng nhận; P6 chưa triển khai trong chương trình này và P7 chưa có Owner acceptance. Không dùng phần trăm hoàn thành để thay cho các trạng thái này.
+[Hướng dẫn thao tác cho người dùng](FINAL_EXPORT_USER_GUIDE_VI.md). P0 đã đóng; P1–P5 có chức năng và kiểm thử kỹ thuật đang hoàn thiện chứng nhận; P6 đã bắt đầu ở lớp Voice Library, P7 chưa có Owner acceptance. Không dùng phần trăm hoàn thành để thay cho các trạng thái này.
 
 ## Phần đã triển khai
 
@@ -27,6 +27,7 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 - Bounded local replay trên dữ liệu restore: 4 thread, 40 exact retry, 200 lần đọc file đã kiểm hash, 0 lỗi, vẫn 2 hàng delivery và chỉ 1 ID được trả về. Thời gian 1.828s; không gọi đây là production soak dài hạn.
 - Rehash lại 15 accepted MP4, verify full/incremental Git bundle và CRC backup đều pass. HEAD checkpoint `00631a1388e4ecd27e00e55eb47a604fb0f586b5` khớp upstream; remote main không đổi. [Biên nhận](../evidence/final-export-manual-publishing/baseline/preservation-checkpoint-n2.json) ghi cả WIP test/evidence lúc kiểm.
 - P3/P4 đã bỏ giới hạn truy cập âm thầm 100 bản: phân trang theo cursor cho export và caption, có nút xem thêm, kiểm tra workspace/project, giới hạn query và quyền đọc. Test SQLite 105 bản đi qua đủ một lần kể cả trùng timestamp. Đọc caption cũ không hạ latest version để lưu. Đổi project xóa ngay danh sách caption cũ; phản hồi trang cũ đến trễ bị bỏ, bản nháp đang sửa được giữ khi xem thêm.
+- P6 bắt đầu sau các gate kỹ thuật riêng của Export Core: Voice Library lưu phiên bản bất biến và journal idempotency theo workspace, CAS, hash, lịch sử, actor và khai báo quyền/consent; không gắn nhân vật vĩnh viễn vào giọng. Quyền mặc định unknown; phiên bản cũ hoặc blocked không qua rights gate. `owner_declared` chỉ là khai báo có tham chiếu, không được gọi là quyền đã được xác minh. Backup/restore giữ cả voice versions và write receipts. Component chưa nối UI/casting/per-line TTS; không gọi provider hoặc thay đường render hiện có.
 - Đã lưu [gói kỹ thuật cục bộ và hash](../evidence/final-export-manual-publishing/delivery-package/retained-local-rehearsal.json), cùng [bản backup/restore](../evidence/final-export-manual-publishing/recovery/retained-local-restore.json). Media tổng hợp, approval bằng fixture, không phải 5 case Owner UAT. Lượt rehearsal đầu đặt đường secret vắng mặt bên trong data root nên backup từ chối đúng; n2 sửa riêng config cách ly, không ghi lại video/manifest đã tạo.
 
 ## Kiểm thử đã xác nhận
@@ -62,6 +63,7 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | History pagination Native/HTTP | 9 pass / 107.661s, SQLite + signed HTTP, 105 exports/105 caption versions, scope/query/read-role/CAS | final-export-history-pagination-Native-n2.log |
 | History pagination UI | 31 pass / 161.3651ms; có late response và unsaved draft | final-export-history-pagination-Studio-n2.log |
 | Full Studio sau pagination | 2123 pass, 0 fail/skip / 32767.9766ms | final-export-current-full-Studio-n3.log |
+| Voice Library + backup | 26 pass / 18.718s: 9 library + 17 backup, SQLite/restore thật, không có TTS | final-export-voice-library-Native-n1.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
@@ -78,7 +80,7 @@ Lượt `final-export-narrated-settings-regression-n2.log` có 38 test chạy qu
 | P3 | PARTIAL | Các chức năng cover/copy đã có và được kiểm thử cục bộ; còn UI acceptance thực tế, quyền nội dung và bundle UAT đích |
 | P4 | PARTIAL | History/thumbnail/compare/recreate đã có; còn UI acceptance thực tế và các ca đích |
 | P5 | PARTIAL | Render restart giữa/sau checkpoint, handoff/collision/tamper/disk error/backup-restore và bounded concurrency đã có bằng chứng; còn tổng regression và vận hành/UAT |
-| P6 | NOT_STARTED trong chương trình này | Voice Library + character/casting theo project + per-line TTS + narrator optional + targeted regeneration + UI/QC |
+| P6 | PARTIAL (component) | Voice Library persistence đã có; còn character/casting theo project/series, UI, per-line TTS, narrator optional, targeted regeneration và dialogue QC |
 | P7 | PENDING_OWNER_UAT | 5 case Owner UAT; không tự ghi nhận nghiệm thu |
 
 Các preset 4 hình học có hard validation; gói phải khớp video đã duyệt. Đổi format từ Export Center áp dụng lại cấu hình dự án và cần preview/duyệt mới; video nguồn còn hỗ trợ FPS/quality/burn/audio. Không transcode âm thầm một MP4 đã duyệt thành file khác. Thư mục đầu ra do Native quản lý; chưa có chọn thư mục tùy ý. Không ghi những tùy chọn chưa hỗ trợ thành đã hoàn thành.
