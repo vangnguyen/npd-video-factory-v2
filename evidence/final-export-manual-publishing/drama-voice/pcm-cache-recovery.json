@@ -1,0 +1,20 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "component": "Isolated per-line PCM/cache/assembly/recovery",
+  "source": "services/windows_native/dialogue_audio.py",
+  "log": "recovery/20261007/final-export-dialogue-audio-recovery-Native-n3.log",
+  "cohort_passed": 62,
+  "cohort_duration_seconds": 21.132,
+  "audio_component_tests": 18,
+  "media": "actual PCM16 48 kHz mono WAV; synthetic tones from explicit mock adapter, not speech",
+  "verified": ["measured 1.75-second output despite 45-second requested shots", "speaker-tagged sample positions", "physically verified cache replay", "one-character voice/take change preserves unrelated clip bytes", "immutable old cache entries", "tampered cache rejected", "unknown outcome retains intent without auto replay", "missing approval/script drift/paid adapters rejected before dispatch", "silent/clipped/wrong-rate/broken WAV rejected", "oversized header rejected before frame allocation", "total measured duration over 180 seconds fails rather than truncates", "rights revoked during another speaker blocks assembly", "backup blocks active cache and restores custody", "live lease not recovered", "actual child exit 89 recovered as unknown without provider replay"],
+  "real_voice_inferences": 0,
+  "external_provider_calls": 0,
+  "actual_cost": null,
+  "pipeline_render_integrated": false,
+  "ui_integrated": false,
+  "DRAMA_VOICE_CASTING_READY": "NO",
+  "OWNER_VOICE_UAT_REQUIRED": "YES",
+  "production_deployed": false
+}
