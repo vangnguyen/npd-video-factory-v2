@@ -1,0 +1,19 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "source_head": "00631a1388e4ecd27e00e55eb47a604fb0f586b5",
+  "data_root": "C:\\vfct\\final-export-core-restored-n2",
+  "concurrent_workers": 4,
+  "exact_replays": 40,
+  "verified_member_reads": 200,
+  "duration_seconds": 1.828,
+  "unique_returned_export_ids": 1,
+  "delivery_rows_before": 2,
+  "delivery_rows_after": 2,
+  "project_and_old_zip_unchanged": true,
+  "errors": 0,
+  "synthetic_media": true,
+  "external_provider_calls": 0,
+  "production_soak": false,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

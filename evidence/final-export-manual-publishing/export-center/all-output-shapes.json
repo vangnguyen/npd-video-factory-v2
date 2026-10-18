@@ -1,0 +1,23 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "00631a1388e4ecd27e00e55eb47a604fb0f586b5",
+  "log": "recovery/20261007/final-export-all-shapes-Native-n2.log",
+  "test_source": "services/windows_native/tests/test_export_encoder.py",
+  "test_method": "test_actual_remaining_export_shapes_including_60fps_and_matching_delivery",
+  "tests_passed": 1,
+  "subcases_passed": 3,
+  "duration_seconds": 99.423,
+  "actual_preview_render_qc_delivery": [
+    {"profile": "landscape", "width": 1920, "height": 1080, "fps": 30},
+    {"profile": "square", "width": 1080, "height": 1080, "fps": 60},
+    {"profile": "portrait-feed", "width": 1080, "height": 1350, "fps": 30}
+  ],
+  "vertical_evidence": "recovery/20261007/final-export-presentation-Native-n2.log",
+  "initial_failed_run": "n1 portrait-feed exceeded the fixture 30-second wait; n2 waits up to the existing 180-second renderer limit without changing production timeouts or QC",
+  "media": "synthetic footage, tone and transcript fixtures",
+  "approval": "test fixture only",
+  "external_provider_calls": 0,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

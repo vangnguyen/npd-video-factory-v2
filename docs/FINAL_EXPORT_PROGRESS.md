@@ -2,6 +2,8 @@
 
 Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-10-18. [Baseline và phục hồi nguồn](FINAL_EXPORT_BASELINE.md).
 
+[Hướng dẫn thao tác cho người dùng](FINAL_EXPORT_USER_GUIDE_VI.md). P0 đã đóng; P1–P5 có chức năng và kiểm thử kỹ thuật đang hoàn thiện chứng nhận; P6 chưa triển khai trong chương trình này và P7 chưa có Owner acceptance. Không dùng phần trăm hoàn thành để thay cho các trạng thái này.
+
 ## Phần đã triển khai
 
 - **P0 hoàn thành:** source branch riêng, Git bundle đầy đủ đã verify, archive riêng 11 file sửa dở, rehash 15 video nghiệm thu. Không thay checkout đang dùng hoặc video cũ.
@@ -21,6 +23,9 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 - P2 trên video nguồn và storyboard có giọng đã chuẩn bị: 24/25/30/60 FPS, 3 mức chất lượng allowlist, bật/tắt audio và burn-in. Cài đặt nằm trong canonical metadata, làm mất duyệt/preview cũ; projection không xóa hay sửa clip gốc. SRT riêng vẫn có khi không burn-in. UI chặn gói khi cài đặt chưa áp dụng. Các video chưa chuẩn bị giọng vẫn giữ giới hạn và cần chuẩn bị trước; không giả tạo audio.
 - Bộ kiểm tra mới đã render thật narration 24 FPS/high và 25 FPS/small với âm thanh tắt/phụ đề không burn-in nhưng có SRT. Dùng PCM tổng hợp và approval fixture, không phát sinh suy luận TTS, không phải speech hay Owner UAT. Chỉnh shot giữ cài đặt xuất và làm mất duyệt cũ. UI đổi hình học dùng revision/hash mới trả về rồi mới lưu cài đặt, không dùng CAS cũ.
 - Native có capability chế độ xuất thủ công; UI ẩn các console tài khoản/OAuth/publication/analytics/winner/learning đang hoãn. Adapter, API contract và dữ liệu lịch sử vẫn giữ nguyên.
+- Ba ca render/QC/delivery thật bổ sung đã qua: 1920×1080/30 FPS, 1080×1080/60 FPS và 1080×1350/30 FPS. Ca 4:5 đầu tiên vượt 30s của harness khi chạy cùng hai suite lớn; lượt n2 dùng cùng giới hạn renderer 180s, toàn bộ ba subcase pass trong 99.423s. Không thay timeout production hoặc nới QC.
+- Bounded local replay trên dữ liệu restore: 4 thread, 40 exact retry, 200 lần đọc file đã kiểm hash, 0 lỗi, vẫn 2 hàng delivery và chỉ 1 ID được trả về. Thời gian 1.828s; không gọi đây là production soak dài hạn.
+- Rehash lại 15 accepted MP4, verify full/incremental Git bundle và CRC backup đều pass. HEAD checkpoint `00631a1388e4ecd27e00e55eb47a604fb0f586b5` khớp upstream; remote main không đổi. [Biên nhận](../evidence/final-export-manual-publishing/baseline/preservation-checkpoint-n2.json) ghi cả WIP test/evidence lúc kiểm.
 - Đã lưu [gói kỹ thuật cục bộ và hash](../evidence/final-export-manual-publishing/delivery-package/retained-local-rehearsal.json), cùng [bản backup/restore](../evidence/final-export-manual-publishing/recovery/retained-local-restore.json). Media tổng hợp, approval bằng fixture, không phải 5 case Owner UAT. Lượt rehearsal đầu đặt đường secret vắng mặt bên trong data root nên backup từ chối đúng; n2 sửa riêng config cách ly, không ghi lại video/manifest đã tạo.
 
 ## Kiểm thử đã xác nhận
@@ -50,6 +55,9 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | Frame đen + quality gates | 32 pass / 2.96s, gồm MP4 thật có 1 frame đen bị chặn; tập chứa lại tail/aspect/freeze | final-export-black-qc-n2.log |
 | Canonical + source export regression | 39 pass / 316.667s: shot adapter, source encoder actual media, narrated visual timeline | final-export-canonical-regression-Native-n1.log |
 | Render restart thật | 2 pass / 148.148s: owned child exit 87 giữa render và exit 88 sau checkpoint; giữ đúng job và một delivery | final-export-render-recovery-Native-n1.log |
+| Tất cả hình học, gồm square 60 FPS | 1 test / 3 subcase pass / 99.423s, có preview, final render, QC và delivery thật | final-export-all-shapes-Native-n2.log |
+| Full renderer hiện tại | 7 file / 52 pass / 5.35s; TypeScript typecheck pass | final-export-renderer-full-n2.log; final-export-renderer-typecheck-n2.log |
+| UI nhãn phục hồi | 27 pass / 159.3143ms; history phân biệt đã ngừng và thư mục bị mất | final-export-history-label-Studio-n1.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
@@ -65,7 +73,7 @@ Lượt `final-export-narrated-settings-regression-n2.log` có 38 test chạy qu
 | P2 | PARTIAL | Source và storyboard có prepared narration đã có FPS/quality/burn-in/audio gắn preview/render; còn video watermark khi cấu hình và UI acceptance 1366/1920/2560 |
 | P3 | PARTIAL | Các chức năng cover/copy đã có và được kiểm thử cục bộ; còn UI acceptance thực tế, quyền nội dung và bundle UAT đích |
 | P4 | PARTIAL | History/thumbnail/compare/recreate đã có; còn UI acceptance thực tế và các ca đích |
-| P5 | PARTIAL | Render restart giữa/sau checkpoint, export handoff/restart/collision/tamper/disk error/backup-restore đã có bằng chứng; còn soak và tổng regression |
+| P5 | PARTIAL | Render restart giữa/sau checkpoint, handoff/collision/tamper/disk error/backup-restore và bounded concurrency đã có bằng chứng; còn tổng regression và vận hành/UAT |
 | P6 | NOT_STARTED trong chương trình này | Voice Library + character/casting theo project + per-line TTS + narrator optional + targeted regeneration + UI/QC |
 | P7 | PENDING_OWNER_UAT | 5 case Owner UAT; không tự ghi nhận nghiệm thu |
 

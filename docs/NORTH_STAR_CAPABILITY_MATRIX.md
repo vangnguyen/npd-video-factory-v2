@@ -1,5 +1,7 @@
 # North Star capability matrix
 
+2026-10-18 — Local actual export đã kiểm đủ 4 hình học; lượt bổ sung 3 subcase gồm square 60 FPS PASS, full renderer 52 PASS + typecheck. Bounded replay 40 yêu cầu/200 file reads với 4 thread không tạo bản trùng. Rehash 15 accepted MP4 và verify recovery bundles/backup CRC PASS. P1–P5 vẫn PARTIAL về chứng nhận tổng thể; P6/P7 chưa đóng. [Báo cáo và hướng dẫn](FINAL_EXPORT_PROGRESS.md).
+
 2026-10-18 — Shared QC chặn một frame đen thay vì chỉ tỷ lệ >10%; actual negative MP4 và bộ quality 32 PASS. Render restart bằng child exit giữa/sau render 2 PASS; canonical/encoder regression 39 PASS. Gói restore được tạo thành delivery mới qua QC hiện tại, ZIP cũ giữ hash. Các cohort overlap, không chứng nhận Owner UAT hay full regression; [tiến độ Export](FINAL_EXPORT_PROGRESS.md).
 
 2026-10-18 — Export settings đã mở cho video nguồn và storyboard có measured narration: 24/25/30/60 FPS, quality allowlist, audio/burn-in theo canonical metadata; đổi cài đặt cần preview/approval mới và SRT riêng vẫn có. Local actual narrated variants + HTTP 8 PASS, targeted Node 27 PASS, full Studio 2119 PASS; các tập overlap. UI ẩn console nền tảng đang hoãn, giữ nguyên contracts. [Giới hạn và evidence](FINAL_EXPORT_PROGRESS.md); readiness cuối và Owner UAT vẫn NO.

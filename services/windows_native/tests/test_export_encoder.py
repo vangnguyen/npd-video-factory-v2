@@ -1,6 +1,7 @@
 """Canonical FPS/quality settings, actual local render, no paid/TTS dispatch."""
 import copy
 import json
+import time
 import unittest
 import uuid
 from unittest.mock import patch
@@ -83,3 +84,27 @@ class ExportEncoderTests(unittest.TestCase):
         export=self.service.create(approved['id'],DeliveryCreate(revision=approved['revision'],render_job_id=job['id'],expected_video_sha256=done['result']['qc']['final_sha256'],
             cover=False,separate_subtitle=True,request_key='explicit-silent-separate-srt-key'))
         self.assertIn('subtitle.srt',export['files']);self.assertEqual(file_sha(self.root/'jobs'/self.job_id/'final.mp4'),self.video_hash)
+
+    def test_actual_remaining_export_shapes_including_60fps_and_matching_delivery(self):
+        for aspect,profile,width,height,fps in [('16:9','landscape',1920,1080,30),('1:1','square',1080,1080,60),('4:5','portrait-feed',1080,1350,30)]:
+            with self.subTest(profile=profile):
+                changed=self.apply(aspect_ratio=aspect,fps=fps,quality_preset='standard',preview_mode='final_effects')
+                manager=PreviewManager(self.config,self.store)
+                try:
+                    manager.generate(changed['id'],changed['revision']);deadline=time.monotonic()+180
+                    while time.monotonic()<deadline:
+                        preview=manager.status(changed['id'])
+                        if preview['status'] not in {'QUEUED','RUNNING'}:break
+                        time.sleep(.1)
+                    self.assertEqual(preview['status'],'READY',preview)
+                finally:manager.close()
+                approved=self.store.approve(changed['id'],changed['revision'],'AUTOMATED OUTPUT SHAPE PREVIEW — NOT OWNER UAT',True)
+                job=self.store.enqueue(approved['id'],approved['revision'],'render',uuid.uuid4().hex)
+                self.assertTrue(Runner(self.store,Pipeline(self.config)).run_one());done=self.store.get_job(job['id'])
+                self.assertEqual(done['status'],'succeeded',done.get('error'));qc=done['result']['qc']
+                self.assertEqual((qc['width'],qc['height'],qc['fps']),(width,height,fps))
+                self.store.review_render(job['id'],approved['revision'],'AUTOMATED OUTPUT SHAPE FINAL — NOT OWNER UAT',True,'approve')
+                delivered=self.service.create(approved['id'],DeliveryCreate(revision=approved['revision'],render_job_id=job['id'],profile=profile,
+                    expected_video_sha256=qc['final_sha256'],cover=False,request_key='explicit-format-delivery-'+profile))
+                self.assertEqual((delivered['manifest']['width'],delivered['manifest']['height']),(width,height))
+                self.assertEqual(file_sha(self.root/'jobs'/self.job_id/'final.mp4'),self.video_hash)
