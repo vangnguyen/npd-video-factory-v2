@@ -6,6 +6,10 @@ Open [the isolated local Studio](http://127.0.0.1:62684/native.html) on this PC.
 
 Use [the Vietnamese UI guide](../../../docs/FINAL_EXPORT_USER_GUIDE_VI.md). Normal actions use the Studio; no ID, CLI, database query or evidence-folder navigation is required. Voice/character controls are in **Nhân vật & giọng thoại** for narrated projects, after a script and canonical shots are saved. Source-footage Auto Edit keeps its existing workflow.
 
+Đã chuẩn bị [bản nháp hai nhân vật để chọn giọng](http://127.0.0.1:62684/native.html?project=67f86fb7112d4d26aace281f31b408e1), tên **UAT · Hai nhân vật · Chưa chọn giọng**. An và Bình có hai câu thoại ví dụ viết thủ công; người kể tắt. Chưa có voice được chọn, quyền được khai báo, audio, hình ảnh hoặc approval. Owner có thể dùng UI chọn giọng và tư liệu có quyền rồi duyệt nội dung; không cần nhập ID. Đây là bản nháp chuẩn bị, chưa phải case 5 hoàn tất.
+
+The rehearsal package was downloaded again through authenticated HTTP: every manifest file matches exact byte length/SHA256, ZIP members match those same files and CRC passes, the cover decodes at 1080×1920, and caption/SRT are UTF-8. [Download verification receipt](isolated-package-http-n2.json). The separate [draft receipt](two-character-manual-draft-n1.json) records zero provider calls and zero approvals. No browser layout or human listening verdict is inferred.
+
 | Case | Target | Current technical evidence | Still required |
 |---|---|---|---|
 | 1 | NPD real-estate, portrait 1080×1920, caption/cover/package | Vertical export and package rehearsal; earlier real proper-name sample retained | Real NPD project/version selection, rights/content review, current approval, retained target package and listening |

@@ -136,4 +136,8 @@ Bản Studio kiểm thử riêng đang chạy tại **http://127.0.0.1:62684/nat
 
 Chỉ core worker được khởi động. Publication/OAuth/analytics/provider-sync, scheduler/bridge/trend/generative workers không chạy trong phiên review này; credentials trả phí vắng mặt. Dữ liệu ở `C:/vfct/final-export-review-n1`, PID thực `20824`. Năm ca UAT đích còn phải chuẩn bị/duyệt; [kế hoạch Owner UAT](../evidence/final-export-manual-publishing/owner-uat/README.md).
 
+Đã có bản nháp hai nhân vật An/Bình, người kể tắt, để Owner chọn giọng thủ công. Không chọn giọng/khai báo quyền/tạo audio hoặc approval thay Owner. Gói rehearsal cũ đã được tải lại đủ các file qua HTTP: hash/byte length/manifest/ZIP CRC khớp, bìa 1080×1920 và caption/SRT UTF-8. Đây vẫn là media và approval fixture; không phải nghiệm thu năm ca đích.
+
+Lượt dọn sáu thư mục fixture API đã kết thúc bị tool policy từ chối trước khi chạy lệnh (`blocked by policy`, không có lý do chi tiết). Chưa xóa file nào, chưa chạy bước kiểm tra đường dẫn trong lệnh bị chặn và không thử cách xóa khác. [Biên nhận](../evidence/final-export-manual-publishing/recovery/temporary-fixture-cleanup-denied-n1.json). Việc này không chặn kiểm thử hay phát triển Export.
+
 Nguồn implementation đã push và có incremental bundle n6 tại `C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-focus-progress-n6.bundle`: 225343 byte, SHA256 `49f6a4ce90284013c04a0e4666e7c0192bce6863f38730643135a2a2ea49e0e8`, pin code `a01dbd6e`, cần full baseline bundle và commit `4162bc32260521277737f7c9ee118b5ba55b3f9b`. Fixture/report sau checkpoint được ghi riêng; không ngụ ý nằm trong bundle n6. Cả 15 accepted MP4 được rehash, không đổi; source live `C:/NPD-Video-Factory/source` vẫn sạch tại `2ced7bc81f9402368fb22c9e7aca242e740531af`.

@@ -1,0 +1,21 @@
+{
+  "schema_version": "final-export-disposable-fixture-cleanup.v1",
+  "status": "NOT_EXECUTED_POLICY_REJECTED",
+  "requested_action": "Validate then remove six completed synthetic API pytest scratch directories",
+  "proposed_targets": [
+    "C:/vfct/final-export-api-fixture-storage-n2",
+    "C:/vfct/final-export-api-fixture-rights-n2",
+    "C:/vfct/final-export-api-fixture-auth-n2",
+    "C:/vfct/final-export-api-fixture-prompt-n3",
+    "C:/vfct/final-export-api-fixture-prompt-n4",
+    "C:/vfct/final-export-api-fixture-closure-n5"
+  ],
+  "tool_result": "CreateProcess rejected: blocked by policy",
+  "additional_reason_supplied": false,
+  "command_started": false,
+  "proposed_path_validation_executed": false,
+  "files_deleted": 0,
+  "retry_or_alternative_deletion_attempted": false,
+  "source_or_accepted_artifact_deletion_requested": false,
+  "continues_to_block_export_implementation": false
+}

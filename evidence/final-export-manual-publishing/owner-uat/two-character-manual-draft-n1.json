@@ -1,0 +1,20 @@
+{
+  "project_title": "UAT · Hai nhân vật · Chưa chọn giọng",
+  "project_id": "67f86fb7112d4d26aace281f31b408e1",
+  "project_revision": 4,
+  "url": "http://127.0.0.1:62684/native.html?project=67f86fb7112d4d26aace281f31b408e1",
+  "script_sha256": "c6b9a53a3d0f85e5fc215d68860164e03b53377042f2682f68149cca5528acd7",
+  "characters": [
+    "An",
+    "Bình"
+  ],
+  "narrator_enabled": false,
+  "voices_selected": 0,
+  "voice_rights_declared": false,
+  "script_is_manually_authored_example": true,
+  "visual_assets_selected": false,
+  "provider_calls": 0,
+  "approval_created": false,
+  "owner_acceptance": false,
+  "production_deployed": false
+}

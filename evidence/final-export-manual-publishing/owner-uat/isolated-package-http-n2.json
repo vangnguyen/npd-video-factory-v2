@@ -1,0 +1,98 @@
+{
+  "schema_version": "native-isolated-delivery-download.v1",
+  "source_head": "a01dbd6eff8d744ad262949dc0f5ce839fdc96ba",
+  "video_sha256": "19d7ce9c5d59f55c353d16e5858bd2b3687cb0fbe7bdb02d3939d1cacdb65ed3",
+  "manifest_sha256": "7e50147e1b94bc2f35f6f06d4235533a06b4674eea63e80cf72e2e8c1a472aaf",
+  "zip_sha256": "aed0163d76299c37fa275eb7d30dfee1ec25c44667640031288a8885efa61d2d",
+  "zip_bytes": 825191,
+  "files_verified": {
+    "caption-variants.json": {
+      "bytes": 533,
+      "sha256": "2f8225c3e3d25db6f66a51663417faa6fe4f4c2158a64d861833c121bd9e7998"
+    },
+    "caption.txt": {
+      "bytes": 145,
+      "sha256": "11478eaafc70290584d2fd7f2613c786d2d24f897605463b3f00377821af6c46"
+    },
+    "cover-provenance.json": {
+      "bytes": 567,
+      "sha256": "fa83e02ac9b1980773d6a9aaecb3da648edc7330d0e7a542f48dc7e7e842dfe5"
+    },
+    "cover.jpg": {
+      "bytes": 113786,
+      "sha256": "734d460c40b0c4bb6fc436f6f6379251a602d24391d972413f40d99060f7e7a1"
+    },
+    "cta.txt": {
+      "bytes": 41,
+      "sha256": "0a6ee55c16fe8b8a3bf9abc2d8f9bdecc9620d6b2fb28f609c07e42ef8afece4"
+    },
+    "final-video.mp4": {
+      "bytes": 701375,
+      "sha256": "19d7ce9c5d59f55c353d16e5858bd2b3687cb0fbe7bdb02d3939d1cacdb65ed3"
+    },
+    "hashtags.txt": {
+      "bytes": 25,
+      "sha256": "b72ccef8093a44451f2727bc5641d13a93552f55b99e4ca6413a8014996492a2"
+    },
+    "master-caption.txt": {
+      "bytes": 145,
+      "sha256": "11478eaafc70290584d2fd7f2613c786d2d24f897605463b3f00377821af6c46"
+    },
+    "master-cta.txt": {
+      "bytes": 41,
+      "sha256": "0a6ee55c16fe8b8a3bf9abc2d8f9bdecc9620d6b2fb28f609c07e42ef8afece4"
+    },
+    "master-hashtags.txt": {
+      "bytes": 25,
+      "sha256": "b72ccef8093a44451f2727bc5641d13a93552f55b99e4ca6413a8014996492a2"
+    },
+    "master-title.txt": {
+      "bytes": 38,
+      "sha256": "b766c248c99b17e738270c373c7c85ac08ccc45da136b03aaefab64609075835"
+    },
+    "metadata.json": {
+      "bytes": 171,
+      "sha256": "b1a72250a9ca8279a607ae8688081f98372d49f3daa2aeba2b63cc289534cb44"
+    },
+    "qc-report.json": {
+      "bytes": 1748,
+      "sha256": "87055737b8bfa230f544a834d9e2f6788d9082671bed9fc17a15d77f0d39b26b"
+    },
+    "rights-summary.json": {
+      "bytes": 352,
+      "sha256": "c17e68950b637304dc77adb711889a3bad87cb51b8916c98215e7b56d0049d61"
+    },
+    "subtitle.srt": {
+      "bytes": 100,
+      "sha256": "54265838dc25a1118b16d80dae176c2575bdf53f5a3f962dd70c3013e14639ab"
+    },
+    "title.txt": {
+      "bytes": 38,
+      "sha256": "b766c248c99b17e738270c373c7c85ac08ccc45da136b03aaefab64609075835"
+    },
+    "youtube-shorts-caption.txt": {
+      "bytes": 80,
+      "sha256": "b616d627ef26bee76cf8041205852c6d0f530a5181ad25b5ca7e7af3f934f19a"
+    },
+    "youtube-shorts-title.txt": {
+      "bytes": 32,
+      "sha256": "d7e04863cae29f5b695023f5a214b09ed5ad0d0c2e2f4e75f710e3f0129081ac"
+    }
+  },
+  "zip_members_match_http_files": true,
+  "zip_crc": "PASS",
+  "cover_dimensions": [
+    1080,
+    1920
+  ],
+  "utf8_srt_and_caption": true,
+  "approval_state": "approved_at_export",
+  "current_for_project": true,
+  "synthetic_fixture_approval_not_owner": true,
+  "browser_layout_verified": false,
+  "open_folder_ui_tested_by_owner": false,
+  "provider_calls": 0,
+  "externally_posted": false,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}
