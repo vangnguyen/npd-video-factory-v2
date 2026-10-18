@@ -16,6 +16,8 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 - Caption đã có chọn bản lịch sử và tái tạo riêng variant từ Master/kịch bản bằng thao tác cục bộ; không giả là đã gọi AI hoặc đăng bài. History có thumbnail và so sánh thông số phiên bản.
 - Tạo lại ZIP sinh delivery mới từ các file/hash của bản lịch sử, chạy lại QC, giữ nguyên bản trước kể cả ZIP trước hỏng. Lost response của thao tác này giữ đúng endpoint/key. History có đối chiếu/tiếp tục khi tab browser đã mất receipt; ngừng yêu cầu giữ nguyên file và chặn request-key cũ tự hồi sinh.
 - Backup nhận biết export đang chuẩn bị và đếm các journal/cover/caption mới. Đã restore một export vào thư mục mới và kiểm tra lại manifest/video; đã thử child process thật thoát ngay sau handoff rồi đối chiếu lại cùng một export.
+- P5 đã thử process thật thoát giữa render (sau Remotion, trước mux/QC): cùng job được resume trong attempt mới, giữ nguyên file partial riêng. Thoát sau render nhưng trước lưu kết quả: resume dùng checkpoint đã verify, không gọi renderer lần hai; bản cuối vẫn phải được duyệt rồi mới tạo một delivery. Các ca này là test fixture, không phải Owner UAT.
+- Đã tạo một delivery mới từ bản restore và chạy QC hiện tại gồm gate một frame đen. QC pass; manifest mới, video và ZIP cũ được giữ nguyên. [Biên nhận](../evidence/final-export-manual-publishing/quality-closure/restored-delivery-current-qc.json).
 - P2 trên video nguồn và storyboard có giọng đã chuẩn bị: 24/25/30/60 FPS, 3 mức chất lượng allowlist, bật/tắt audio và burn-in. Cài đặt nằm trong canonical metadata, làm mất duyệt/preview cũ; projection không xóa hay sửa clip gốc. SRT riêng vẫn có khi không burn-in. UI chặn gói khi cài đặt chưa áp dụng. Các video chưa chuẩn bị giọng vẫn giữ giới hạn và cần chuẩn bị trước; không giả tạo audio.
 - Bộ kiểm tra mới đã render thật narration 24 FPS/high và 25 FPS/small với âm thanh tắt/phụ đề không burn-in nhưng có SRT. Dùng PCM tổng hợp và approval fixture, không phát sinh suy luận TTS, không phải speech hay Owner UAT. Chỉnh shot giữ cài đặt xuất và làm mất duyệt cũ. UI đổi hình học dùng revision/hash mới trả về rồi mới lưu cài đặt, không dùng CAS cũ.
 - Native có capability chế độ xuất thủ công; UI ẩn các console tài khoản/OAuth/publication/analytics/winner/learning đang hoãn. Adapter, API contract và dữ liệu lịch sử vẫn giữ nguyên.
@@ -46,10 +48,14 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | Narrated export + HTTP | 8 pass / 105.517s, có preview/render/QC/SRT thật cục bộ; 27 Node pass / 156.0184ms | final-export-narrated-variants-Native-n4.log; final-export-narrated-settings-Studio-n1.log |
 | Full Studio hiện tại | 2119 pass, 0 fail/skip / 34129.3777ms | final-export-current-full-Studio-n2.log |
 | Frame đen + quality gates | 32 pass / 2.96s, gồm MP4 thật có 1 frame đen bị chặn; tập chứa lại tail/aspect/freeze | final-export-black-qc-n2.log |
+| Canonical + source export regression | 39 pass / 316.667s: shot adapter, source encoder actual media, narrated visual timeline | final-export-canonical-regression-Native-n1.log |
+| Render restart thật | 2 pass / 148.148s: owned child exit 87 giữa render và exit 88 sau checkpoint; giữ đúng job và một delivery | final-export-render-recovery-Native-n1.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
 Full API bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL venv, thiếu websockets và Unix `grp`. Không sửa runtime đã khóa hoặc giả module hệ điều hành. Lượt tương thích còn lại đang chạy, đã xuất hiện failures và skip; chưa có tổng hoặc phân loại, không gọi đó là pass. Full Native vẫn đang chạy. Hai lượt rộng được khởi chạy trước phần mở rộng cover/recovery và QC geometry; kết quả sau cùng không tự chứng nhận những phần được thêm sau lúc khởi chạy. Docker/Linux E2E và toàn bộ Phase 8/9/10 acceptance chưa được tái chứng nhận ở chương trình này.
+
+Lượt `final-export-narrated-settings-regression-n2.log` có 38 test chạy qua nhưng gọi nhầm thêm module không tồn tại `test_shot_timeline`, nên toàn lượt không pass. Đã sửa lời gọi bằng module thật `test_shot_adapter` ở cohort canonical 39 pass phía trên; không che lỗi gọi test bằng cách đổi mã production.
 
 ## Phần còn phải hoàn thành trước khi đánh dấu ready
 
@@ -59,7 +65,7 @@ Full API bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL ve
 | P2 | PARTIAL | Source và storyboard có prepared narration đã có FPS/quality/burn-in/audio gắn preview/render; còn video watermark khi cấu hình và UI acceptance 1366/1920/2560 |
 | P3 | PARTIAL | Các chức năng cover/copy đã có và được kiểm thử cục bộ; còn UI acceptance thực tế, quyền nội dung và bundle UAT đích |
 | P4 | PARTIAL | History/thumbnail/compare/recreate đã có; còn UI acceptance thực tế và các ca đích |
-| P5 | PARTIAL | Export handoff/restart/collision/tamper/disk error/backup-restore đã có bằng chứng; còn restart giữa render, soak và tổng regression |
+| P5 | PARTIAL | Render restart giữa/sau checkpoint, export handoff/restart/collision/tamper/disk error/backup-restore đã có bằng chứng; còn soak và tổng regression |
 | P6 | NOT_STARTED trong chương trình này | Voice Library + character/casting theo project + per-line TTS + narrator optional + targeted regeneration + UI/QC |
 | P7 | PENDING_OWNER_UAT | 5 case Owner UAT; không tự ghi nhận nghiệm thu |
 

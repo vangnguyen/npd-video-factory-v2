@@ -1,0 +1,18 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "17959734cc4fefae1592e47db767893feccc87ce",
+  "log": "recovery/20261007/final-export-render-recovery-Native-n1.log",
+  "test_source": "services/windows_native/tests/test_export_render_recovery.py",
+  "passed": 2,
+  "duration_seconds": 148.148,
+  "actual_child_exit_cases": [
+    {"exit_code": 87, "boundary": "Remotion finished, canonical audio mux and QC not yet run", "result": "same job explicitly resumed in a new attempt, old partial bytes unchanged"},
+    {"exit_code": 88, "boundary": "render checkpoint complete, database result response not saved", "result": "same job reconciled using verified checkpoint, renderer calls forbidden during replay"}
+  ],
+  "assertions": ["project document preserved", "partial output not exportable", "final human review still required", "exact retry gives one delivery", "earlier final MP4 hash unchanged"],
+  "fixture_media": "synthetic footage, audio and transcript",
+  "approval": "automated test fixture, not Owner UAT",
+  "external_provider_calls": 0,
+  "production_deployed": false
+}

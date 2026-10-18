@@ -1,0 +1,18 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "source_head": "17959734cc4fefae1592e47db767893feccc87ce",
+  "data_root": "C:\\vfct\\final-export-core-restored-n2",
+  "source_export_id": "nexp_e9130d88491d412a8ceaacb7663af6e9",
+  "new_export_id": "nexp_e37dd4b1df2543c98f8dd9053c6d1379",
+  "new_output": "C:\\vfct\\final-export-core-restored-n2\\deliveries\\d3587b7419014b76a9550931d9008cfa\\nexp_e37dd4b1df2543c98f8dd9053c6d1379",
+  "old_zip_sha256_unchanged": "aed0163d76299c37fa275eb7d30dfee1ec25c44667640031288a8885efa61d2d",
+  "video_sha256": "19d7ce9c5d59f55c353d16e5858bd2b3687cb0fbe7bdb02d3939d1cacdb65ed3",
+  "new_manifest_sha256": "3c8bfadb90d4c7c27023f6c98f5f6e094a7c2101dc4be6d989aaf30c3d4bef1d",
+  "qc_result": "passed",
+  "original_file_unchanged": true,
+  "external_provider_calls": 0,
+  "synthetic_media": true,
+  "approval_is_test_fixture": true,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}
