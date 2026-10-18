@@ -23,6 +23,7 @@ from .contracts import WorkflowError, digest, file_sha
 from .hardening import durable_json, version_components
 from .north_star_quality import PROFILES, validate_render_profile
 from .store import now
+from .delivery_covers import CoverOptions,NativeDeliveryCovers
 
 SCHEMA = 'native-manual-delivery.v1'
 EXPORT_ID = r'nexp_[a-f0-9]{32}'
@@ -60,6 +61,7 @@ class DeliveryCreate(StrictModel):
     separate_subtitle: StrictBool = True
     cover: StrictBool = True
     cover_at_seconds: float = Field(default=0, ge=0, le=3600, allow_inf_nan=False)
+    cover_settings: CoverOptions|None = None
     request_key: str = Field(pattern=r'^[A-Za-z0-9_-]{16,120}$')
 
     @field_validator('filename')
@@ -71,6 +73,11 @@ class DeliveryCreate(StrictModel):
             or re.fullmatch(r'(?i:con|prn|aux|nul|com[0-9]|lpt[0-9])(?:\..*)?', stem)):
             raise ValueError('Use one Windows-safe MP4 filename')
         return value
+
+
+class RecreatePackage(StrictModel):
+    expected_manifest_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    request_key: str = Field(pattern=r'^[A-Za-z0-9_-]{16,120}$')
 
 
 def srt(cues, duration):
@@ -108,6 +115,7 @@ class NativeManualDelivery:
                 request_key TEXT NOT NULL, request_sha256 TEXT NOT NULL, variants_json TEXT NOT NULL,
                 created_at TEXT NOT NULL, PRIMARY KEY(workspace_id,project_id,version),
                 UNIQUE(workspace_id,project_id,request_key));''')
+        self.covers=NativeDeliveryCovers(self)
 
     def scope(self):
         if self._scope != (self.store.root.absolute(), self.config.data_root.absolute(), self.workspace):
@@ -169,8 +177,10 @@ class NativeManualDelivery:
     def directory(self, row):
         return guard(self.store.root/'deliveries'/row['project_id']/row['export_id'])
 
-    def verify(self, row):
-        directory = self.directory(row); path = guard(directory/'delivery-manifest.json', exists=True)
+    def manifest(self, row):
+        directory = self.directory(row)
+        if not directory.is_dir() or not (directory/'delivery-manifest.json').is_file():raise WorkflowError('EXPORT_OUTPUT_UNAVAILABLE',503)
+        path = guard(directory/'delivery-manifest.json', exists=True)
         if path.stat().st_size > 256*1024: raise WorkflowError('EXPORT_MANIFEST_CHANGED')
         manifest = json.loads(path.read_bytes())
         if (manifest.get('schema_version') != SCHEMA or manifest.get('export_id') != row['export_id']
@@ -178,6 +188,10 @@ class NativeManualDelivery:
             or manifest.get('created_at') != row['created_at'] or not isinstance(manifest.get('files'),dict)
             or not row['manifest_sha256'] or file_sha(path) != row['manifest_sha256']):
             raise WorkflowError('EXPORT_MANIFEST_CHANGED')
+        return manifest
+
+    def verify(self, row):
+        directory=self.directory(row);path=directory/'delivery-manifest.json';manifest=self.manifest(row)
         for name, expected in manifest['files'].items():
             if not isinstance(name,str) or Path(name).name != name or name in ('.','..') or '/' in name or '\\' in name:
                 raise WorkflowError('EXPORT_MANIFEST_CHANGED')
@@ -203,13 +217,15 @@ class NativeManualDelivery:
             row = self.row(con,project_id,export_id)
             project = self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())
         manifest = self.verify(row) if row['status']=='ready' and verify else None
-        binding=json.loads(row['binding_json'])
+        binding=json.loads(row['binding_json']);request=json.loads(row['request_json'])
         return {'export_id':export_id,'project_id':project_id,'created_at':row['created_at'],'status':row['status'],
+            'request_key':row['request_key'],
             'binding':binding,'profile':binding['render_profile'],'manifest':manifest,'error_code':row['error_code'],
             'approval_state':'approved_at_export' if row['status']=='ready' else 'pending_delivery',
             'current_for_project':project['revision']==binding['project_revision'] and digest(project['document'])==binding['document_sha256'],
             'integrity_checked':manifest is not None,'output_location':str(self.directory(row)),'externally_posted':False,
-            'filename':json.loads(row['request_json'])['filename'],
+            'filename':request['filename'],'cover_filename':('cover.'+((request.get('cover_settings') or {}).get('format','jpg'))) if request['cover'] else None,
+            'manifest_sha256':row['manifest_sha256'],'availability':'present' if self.directory(row).is_dir() else 'missing',
             'files':list(manifest['files']) if manifest else [],'package_ready':row['status']=='ready'}
 
     def page(self, project_id):
@@ -229,12 +245,16 @@ class NativeManualDelivery:
             return self._create(project_id,payload,authorization_check=authorization_check)
 
     def _create(self, project_id, payload, *, authorization_check):
-        self.scope(); request=payload.model_dump(mode='json'); fingerprint=digest(request)
+        self.scope(); request=payload.model_dump(mode='json',exclude_none=True); fingerprint=digest(request)
         with self.store.transaction() as con:
-            binding, job, measured=self.binding(project_id,payload,con)
             old=con.execute('SELECT * FROM native_manual_exports WHERE workspace_id=? AND project_id=? AND request_key=?',(self.workspace,project_id,payload.request_key)).fetchone()
+            if old and old['request_sha256']!=fingerprint:raise WorkflowError('EXPORT_REQUEST_KEY_CONFLICT')
+            if old and old['status']=='abandoned':raise WorkflowError('EXPORT_REQUEST_ABANDONED')
+            if old and old['status']=='ready':row=dict(old)
+            else:
+                binding,job,measured=self.binding(project_id,payload,con)
             if old:
-                if old['request_sha256']!=fingerprint or json.loads(old['binding_json'])!=binding:raise WorkflowError('EXPORT_REQUEST_KEY_CONFLICT')
+                if old['status']!='ready' and json.loads(old['binding_json'])!=binding:raise WorkflowError('EXPORT_REQUEST_KEY_CONFLICT')
                 row=dict(old)
             else:
                 row={'export_id':'nexp_'+uuid.uuid4().hex,'workspace_id':self.workspace,'project_id':project_id,
@@ -305,10 +325,8 @@ class NativeManualDelivery:
                 (stage/'subtitle.srt').write_text(srt(raw,report['duration_seconds']),encoding='utf-8')
         if payload.cover:
             if payload.cover_at_seconds>=report['duration_seconds']:raise WorkflowError('EXPORT_COVER_TIME_INVALID',400)
-            subprocess.run([str(self.config.ffmpeg_bin/'ffmpeg.exe'),'-v','error','-ss',str(payload.cover_at_seconds),'-i',str(stage/payload.filename),
-                '-frames:v','1','-q:v','2',str(stage/'cover.jpg')],check=True,timeout=60,capture_output=True)
-            durable_json(stage/'cover-provenance.json',{'source_type':'approved_render_frame','video_sha256':payload.expected_video_sha256,
-                'timestamp_seconds':payload.cover_at_seconds,'crop':'original_render_geometry','generated_by_ai':False})
+            self.covers.export(row['project_id'],job,payload.cover_settings,stage/payload.filename,stage,
+                width=report['width'],height=report['height'],timestamp=payload.cover_at_seconds)
         durable_json(stage/'metadata.json',{'project_title':doc['name'],'export_id':row['export_id'],'profile':payload.profile,
             'caption_version':payload.caption_version,'externally_posted':False})
         files={p.name:{'bytes':p.stat().st_size,'sha256':file_sha(p)} for p in stage.iterdir() if p.is_file()}
@@ -321,6 +339,10 @@ class NativeManualDelivery:
         durable_json(stage/'delivery-manifest.json',manifest)
         with zipfile.ZipFile(stage/'delivery-package.zip','x',compression=zipfile.ZIP_STORED) as archive:
             for name in [*files,'delivery-manifest.json']:archive.write(stage/name,name)
+        self.handoff(row,stage)
+
+    def handoff(self,row,stage):
+        target=self.directory(row)
         # Persist exact output custody before the directory handoff. A restart may
         # reconcile these exact bytes; it cannot bless a substituted manifest.
         row.update(manifest_sha256=file_sha(stage/'delivery-manifest.json'),package_sha256=file_sha(stage/'delivery-package.zip'))
@@ -330,9 +352,100 @@ class NativeManualDelivery:
         # No replace: a collision is preserved and reconciled, never overwritten.
         stage.rename(target)
 
+    def resume(self,project_id,export_id,*,authorization_check=lambda:None):
+        self.scope();authorization_check()
+        with self.store.transaction() as con:row=self.row(con,project_id,export_id)
+        if row['status']=='abandoned':raise WorkflowError('EXPORT_REQUEST_ABANDONED')
+        if row['status']=='ready':return self.get(project_id,export_id)
+        request=json.loads(row['request_json'])
+        if request.get('operation')=='recreate-package':
+            return self.recreate(project_id,request['source_export_id'],RecreatePackage(expected_manifest_sha256=request['expected_manifest_sha256'],request_key=row['request_key']),authorization_check=authorization_check)
+        return self.create(project_id,DeliveryCreate.model_validate(request),authorization_check=authorization_check)
+
+    def abandon(self,project_id,export_id,*,authorization_check=lambda:None):
+        self.scope();authorization_check()
+        with self.store.transaction() as con:before=self.row(con,project_id,export_id)
+        from .source_audio_cache import lease
+        lockdir=guard(self.store.root/'.export-locks');lockdir.mkdir(exist_ok=True)
+        with lease(lockdir/(digest([self.workspace,project_id,before['request_key']])+'.lock'),timeout=15):
+            with self.store.transaction() as con:
+                row=self.row(con,project_id,export_id);authorization_check()
+                if row['status']=='ready':raise WorkflowError('EXPORT_APPROVED_DELIVERY_CANNOT_ABANDON')
+                con.execute("UPDATE native_manual_exports SET status='abandoned',error_code='EXPORT_REQUEST_ABANDONED' WHERE export_id=?",(export_id,))
+        return self.get(project_id,export_id)
+
+    def recreate(self,project_id,source_export,payload,*,authorization_check=lambda:None):
+        """Rebuild a ZIP as a NEW delivery, including for an older approved version.
+
+        The source ZIP may be missing; its immutable constituent files and pinned
+        manifest must still verify. This never re-approves a current project.
+        """
+        self.scope();authorization_check()
+        from .source_audio_cache import lease
+        lockdir=guard(self.store.root/'.export-locks');lockdir.mkdir(exist_ok=True)
+        with lease(lockdir/(digest([self.workspace,project_id,payload.request_key])+'.lock'),timeout=15):
+            with self.store.transaction() as con:
+                source=self.row(con,project_id,source_export)
+                if source['status']!='ready' or source['manifest_sha256']!=payload.expected_manifest_sha256:raise WorkflowError('EXPORT_MANIFEST_CHANGED')
+                source_manifest=self.manifest(source)
+                request={**json.loads(source['request_json']),**payload.model_dump(mode='json'),'operation':'recreate-package','source_export_id':source_export}
+                fingerprint=digest(request);binding={**json.loads(source['binding_json']),'recreated_from_export_id':source_export}
+                old=con.execute('SELECT * FROM native_manual_exports WHERE workspace_id=? AND project_id=? AND request_key=?',(self.workspace,project_id,payload.request_key)).fetchone()
+                if old:
+                    if old['request_sha256']!=fingerprint:raise WorkflowError('EXPORT_REQUEST_KEY_CONFLICT')
+                    if old['status']=='abandoned':raise WorkflowError('EXPORT_REQUEST_ABANDONED')
+                    row=dict(old)
+                else:
+                    row={'export_id':'nexp_'+uuid.uuid4().hex,'workspace_id':self.workspace,'project_id':project_id,
+                        'request_key':payload.request_key,'request_sha256':fingerprint,'request_json':json.dumps(request),
+                        'binding_json':json.dumps(binding,ensure_ascii=False),'created_at':now(),'status':'preparing',
+                        'manifest_sha256':None,'package_sha256':None,'error_code':None}
+                    con.execute('INSERT INTO native_manual_exports VALUES('+','.join('?' for _ in row)+')',tuple(row.values()))
+            try:
+                authorization_check()
+                if row['status']=='ready':return {**self.get(project_id,row['export_id']),'idempotent_replay':True}
+                target=self.directory(row)
+                if target.exists():self.verify(row)
+                else:
+                    parent=guard(target.parent);parent.mkdir(parents=True,exist_ok=True)
+                    if shutil.disk_usage(parent).free<sum(f['bytes'] for f in source_manifest['files'].values())*2+16*1024*1024:raise WorkflowError('EXPORT_DISK_SPACE_REQUIRED',503)
+                    stage=guard(parent/('.partial-'+row['export_id']+'-'+uuid.uuid4().hex));stage.mkdir()
+                    for name,facts in source_manifest['files'].items():
+                        path=self.file(project_id,source_export,name);shutil.copyfile(path,stage/name)
+                        if file_sha(stage/name)!=facts['sha256']:raise WorkflowError('EXPORT_FILE_CHANGED')
+                    original_qc=json.loads((stage/'qc-report.json').read_bytes())
+                    fresh_qc=asyncio.run(FullProductionQC(ffmpeg_path=str(self.config.ffmpeg_bin/'ffmpeg.exe'),ffprobe_path=str(self.config.ffmpeg_bin/'ffprobe.exe')).inspect(
+                        stage/request['filename'],expected_duration=source_manifest['duration_seconds'],expected_width=source_manifest['width'],expected_height=source_manifest['height'],expected_fps=source_manifest['fps'],
+                        subtitle_qc=original_qc['subtitle_bounds'],timeline_qc=original_qc['timeline']))
+                    durable_json(stage/'qc-report.json',fresh_qc)
+                    metadata=json.loads((stage/'metadata.json').read_bytes());metadata.update(export_id=row['export_id'],recreated_from_export_id=source_export)
+                    durable_json(stage/'metadata.json',metadata)
+                    files={p.name:{'bytes':p.stat().st_size,'sha256':file_sha(p)} for p in stage.iterdir() if p.is_file()}
+                    manifest={**source_manifest,'export_id':row['export_id'],'created_at':row['created_at'],'request_sha256':fingerprint,'binding':binding,
+                        'files':files,'recreated_from_export_id':source_export,'qc_result':fresh_qc['status']}
+                    durable_json(stage/'delivery-manifest.json',manifest)
+                    with zipfile.ZipFile(stage/'delivery-package.zip','x',compression=zipfile.ZIP_STORED) as archive:
+                        for name in [*files,'delivery-manifest.json']:archive.write(stage/name,name)
+                    authorization_check();self.handoff(row,stage)
+                self.verify(row);authorization_check()
+                with self.store.transaction() as con:
+                    con.execute("UPDATE native_manual_exports SET status='ready',error_code=NULL WHERE export_id=?",(row['export_id'],))
+                return {**self.get(project_id,row['export_id']),'idempotent_replay':old is not None}
+            except (OSError,ValueError,KeyError,zipfile.BadZipFile,WorkflowError,ProductionQCError) as error:
+                code=error.code if isinstance(error,WorkflowError) else 'EXPORT_QC_FAILED' if isinstance(error,ProductionQCError) else 'EXPORT_WRITE_FAILED'
+                with self.store.transaction() as con:con.execute("UPDATE native_manual_exports SET status='failed',error_code=? WHERE export_id=? AND status!='ready'",(code,row['export_id']))
+                raise WorkflowError(code,503 if code=='EXPORT_WRITE_FAILED' else 409) from None
+
     def file(self, project_id, export_id, filename):
         with self.store.transaction() as con:row=self.row(con,project_id,export_id)
         if row['status']!='ready':raise WorkflowError('EXPORT_NOT_READY')
-        manifest=self.verify(row)
+        manifest=self.manifest(row)
         if filename not in {*manifest['files'],'delivery-manifest.json','delivery-package.zip'}:raise WorkflowError('EXPORT_FILE_NOT_FOUND',404)
-        return guard(self.directory(row)/filename,exists=True)
+        if not (self.directory(row)/filename).is_file():raise WorkflowError('EXPORT_OUTPUT_UNAVAILABLE',503)
+        source=guard(self.directory(row)/filename,exists=True)
+        if filename=='delivery-package.zip':
+            if file_sha(source)!=row['package_sha256']:raise WorkflowError('EXPORT_PACKAGE_CHANGED')
+        elif filename!='delivery-manifest.json':
+            expected=manifest['files'][filename]
+            if source.stat().st_size!=expected['bytes'] or file_sha(source)!=expected['sha256']:raise WorkflowError('EXPORT_FILE_CHANGED')
+        return source

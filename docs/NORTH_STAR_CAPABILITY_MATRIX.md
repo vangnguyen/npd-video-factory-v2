@@ -1,5 +1,7 @@
 # North Star capability matrix
 
+2026-10-18 — Export focus tiếp tục: thêm upload/chọn/crop/JPG-PNG/title/logo cho cover, caption history và tạo lại variant cục bộ, history compare/thumbnail/recreate thành delivery mới, resume/abandon local, backup journals và restore. Shared QC đã thêm SAR/rotation và unexplained terminal freeze. [Bằng chứng và khoảng trống](FINAL_EXPORT_PROGRESS.md) phân biệt các cohort 30 API, 31 Native, 13 recovery, 22 HTTP/backup, 1 child-process và 20 Node; các tập overlap. Chưa claim Owner UAT hoặc các ready flags cuối.
+
 2026-10-18 — Owner đổi ưu tiên sang [Final Export / Manual Delivery](FINAL_EXPORT_PROGRESS.md). P0 đã bảo toàn nguồn và 15 accepted artifacts; đóng băng phần mở rộng platform publishing, analytics, winner/learning và Full Trend Radar. Shared QC thêm hard gate trailing silence 2s; Native local delivery/caption/history/recovery và Studio có bản đầu, còn PARTIAL theo bảng gap của chương trình mới. Không chuyển trạng thái North Star tổng thành complete; không tự ghi nhận Owner UAT.
 
 2026-10-15 — [B-roll transport helper](SQL_BROLL_WITNESS_PENDING_REVIEW.md#transport-helper-component--still-not-mounted), product `7d4741e5276a8e3eb8614b7be08a5e4428db938e`: thêm2file cho per-operation route/body/fullraw proof và fencing; own54/primary54/peer5 Node PASS là các tập riêng, không cộng. Source/API/RootUI cũ giữ nguyên; helper chưa mount. FullStudio2038 thuộcsource trướchelper. Optional Root UI đang triển khai; real key NOT_CONFIGURED và browser/Owner/provider/production/full Mode A-B còn mở;59 nhóm lớn chưa đóng.

@@ -12,7 +12,7 @@ class Element {
   click(){}scrollIntoView(){this.scrolled=true;}
 }
 const tick=()=>new Promise(r=>setImmediate(r));
-function harness({handler,canEdit=true,storageFailure=false}={}){
+function harness({handler,canEdit=true,storageFailure=false,uploadCover=null}={}){
   const ids=new Map(),get=id=>{if(!ids.has(id))ids.set(id,new Element(id));return ids.get(id);};
   const doc={getElementById:get,createElement:()=>new Element(),createTextNode:s=>s};
   const state={workspace_id:'wsp_test',canEdit,dirty:false,busy:false,active:false,project:{id:'a'.repeat(32),revision:7,document:{name:'Cần Giờ',proposal:{narration:'Lời đọc'}}}};
@@ -26,7 +26,7 @@ function harness({handler,canEdit=true,storageFailure=false}={}){
     if(body)return structuredClone(value);return{items:[]};};
   const controller=initializeManualDelivery({api,getState:()=>state,getVideo:()=>video,document:doc,
     storage:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>{if(storageFailure)throw Error('storage blocked');memory.set(k,v);},removeItem:k=>memory.delete(k)},
-    clipboard:{writeText:async text=>copied.push(text)},newKey:()=> 'explicit-stable-request-key',onMessage:(...args)=>messages.push(args),onWorking:v=>working.push(v)});
+    clipboard:{writeText:async text=>copied.push(text)},newKey:()=> 'explicit-stable-request-key',onMessage:(...args)=>messages.push(args),onWorking:v=>working.push(v),uploadCoverFile:uploadCover});
   get('delivery-filename').value='final-video.mp4';get('delivery-srt').checked=true;get('delivery-cover').checked=true;get('delivery-cover-time').value='0';
   controller.sync();return{state,video,controller,get,memory,calls,messages,copied,working,value};
 }
@@ -75,4 +75,38 @@ test('project switch cannot display late successful package in a different proje
   let release;const h=harness({handler:(path,body)=>body&&path.endsWith('/exports')?new Promise(r=>release=r):undefined});await tick();
   const pending=h.get('delivery-create').fire();await tick();h.state.project={id:'e'.repeat(32),revision:1,document:{name:'Other'}};h.controller.sync();release(h.value);await pending;
   assert.equal(h.get('delivery-result').innerHTML,'');assert.equal(h.memory.size,1);
+});
+test('cover options persist only in delivery request and do not change approved video',async()=>{
+  const h=harness();await tick();const before=structuredClone(h.video);h.get('delivery-cover-source').value='uploaded_cover:ncov_'+'f'.repeat(32);
+  h.get('delivery-cover-format').value='png';h.get('delivery-cover-x').value='0';h.get('delivery-cover-y').value='75';h.get('delivery-cover-zoom').value='1.5';h.get('delivery-cover-title').value='Vang Nguyễn';
+  await h.get('delivery-create').fire();const request=h.calls.find(c=>c.path.endsWith('/exports')&&c.body);
+  assert.deepEqual(request.body.cover_settings,{source:'uploaded_cover',source_id:'ncov_'+'f'.repeat(32),format:'png',center_x:0,center_y:.75,zoom:1.5,title:'Vang Nguyễn',logo:false});assert.deepEqual(h.video,before);
+});
+test('copy regeneration affects selected variant and history restores as a new draft',async()=>{
+  const h=harness();await tick();h.get('delivery-copy-platform').value='tiktok';await h.get('delivery-copy-platform').fire('change');await h.get('delivery-regenerate-copy').fire();
+  assert.equal(h.get('delivery-copy-caption').value,'Caption đã lưu');await h.get('delivery-save-copy').fire();
+  const saved=h.calls.find(c=>c.path.endsWith('/delivery-copy')&&c.body);assert.equal(saved.body.variants.tiktok.caption,saved.body.variants.master.caption);
+  h.get('delivery-copy-history').value='2';await h.get('delivery-copy-history').fire('change');assert.equal(h.get('delivery-create').disabled,true);
+});
+test('history recreation retains exact endpoint and key through lost-response retry',async()=>{
+  let lost=true;const project='a'.repeat(32),source='nexp_'+'e'.repeat(32),path=`/api/projects/${project}/exports/${source}/recreate-package`;
+  const item={project_id:project,export_id:source,manifest_sha256:'f'.repeat(64),status:'ready',profile:'vertical-short',binding:{project_title:'Old export'},created_at:'2026-10-18T00:00:00Z'};
+  const h=harness({handler:(url,body)=>{if(url.endsWith('/exports')&&!body)return{items:[item]};if(url===path&&body&&lost){lost=false;throw Error('lost response');}}});await tick();
+  const button=h.get('delivery-history').children[0].children.find(n=>n.textContent==='Tạo lại gói thành bản mới');await button.fire();
+  assert.equal(h.memory.size,1);const held=JSON.parse([...h.memory.values()][0]);assert.equal(held.schema_version,'manual-delivery-pending.v2');assert.equal(held.path,path);
+  await h.get('delivery-retry').fire();const posts=h.calls.filter(c=>c.path===path&&c.body);assert.equal(posts.length,2);assert.deepEqual(posts[0].body,posts[1].body);assert.equal(h.memory.size,0);
+});
+test('held recreation path cannot post into a foreign project or arbitrary endpoint',async()=>{
+  const h=harness();await tick();const key='vf-manual-delivery-v1:wsp_test:'+'a'.repeat(32);
+  for(const path of ['/api/projects/'+ 'b'.repeat(32)+'/exports/nexp_'+'d'.repeat(32)+'/recreate-package','/api/connections/private']){
+    h.memory.set(key,JSON.stringify({schema_version:'manual-delivery-pending.v2',path,body:{request_key:'explicit-stable-request-key'}}));await h.get('delivery-retry').fire();
+  }
+  assert.equal(h.calls.filter(c=>c.body).length,0);assert.equal(h.memory.size,1);
+});
+test('failed export resumes from durable history without an old browser receipt',async()=>{
+  const project='a'.repeat(32),source='nexp_'+'e'.repeat(32),path=`/api/projects/${project}/exports/${source}/resume`;
+  const item={project_id:project,export_id:source,request_key:'original-server-request-key',status:'failed',profile:'vertical-short',binding:{project_title:'Interrupted export'},created_at:'2026-10-18T00:00:00Z'};
+  const h=harness({handler:(url,body)=>url.endsWith('/exports')&&!body?{items:[item]}:undefined});await tick();
+  const button=h.get('delivery-history').children[0].children.find(n=>n.textContent==='Đối chiếu / tiếp tục lần xuất');await button.fire();
+  assert.ok(h.calls.some(c=>c.path===path&&c.body&&Object.keys(c.body).length===0));assert.equal(h.memory.size,0);
 });

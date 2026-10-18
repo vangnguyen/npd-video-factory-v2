@@ -31,8 +31,9 @@ def permission_for(method, path):
         return 'manage' if path in ('/api/runtime-status', '/settings/assemblyai') or path.startswith('/api/connections/') or path.startswith('/api/channel-profiles/admin') else 'read'
     if method != 'POST':
         return None
-    if re.fullmatch(r'/api/projects/'+ID+r'/exports(?:/nexp_'+ID+r'/open-folder)?',path):return 'edit'
+    if re.fullmatch(r'/api/projects/'+ID+r'/exports(?:/nexp_'+ID+r'/(open-folder|recreate-package|resume|abandon))?',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/delivery-copy',path):return 'edit'
+    if re.fullmatch(r'/api/projects/'+ID+r'/delivery-covers',path):return 'edit'
     if path == '/api/logout':
         return 'read'
     if path=='/api/channel-profiles/admin':return 'manage'

@@ -33,7 +33,7 @@ class ManualDeliveryHTTPTests(unittest.TestCase):
 
     def http(self,method,path,body=None,headers=None):
         client=http.client.HTTPConnection('127.0.0.1',self.server.server_port,timeout=90)
-        client.request(method,path,body=json.dumps(body) if body is not None else None,
+        client.request(method,path,body=body if isinstance(body,bytes) else json.dumps(body) if body is not None else None,
             headers={'Content-Type':'application/json','Cookie':'vf_native_session='+self.cookie,'X-VF-CSRF':self.csrf,**(headers or {})})
         response=client.getresponse();raw=response.read();head=dict(response.getheaders());status=response.status;client.close()
         return status,json.loads(raw) if head.get('Content-Type','').startswith('application/json') else raw,head
@@ -89,4 +89,31 @@ class ManualDeliveryHTTPTests(unittest.TestCase):
             with patch('services.windows_native.manual_delivery_routes.os.startfile') as opened:
                 code,value,_=self.http('POST',self.base+'/'+value['export_id']+'/open-folder',{})
                 self.assertEqual(code,200,value);self.assertTrue(value['opened']);opened.assert_called_once()
+        self.assertEqual(self.pipeline.calls,0)
+
+    def test_cover_upload_is_binary_magic_checked_private_and_keeps_video_approval(self):
+        import io
+        from PIL import Image
+        image=io.BytesIO();Image.new('RGB',(320,400),'#246b83').save(image,format='PNG');raw=image.getvalue()
+        before=self.store.get(self.project['id']);base='/api/projects/'+self.project['id']+'/delivery-covers'
+        headers={'Content-Type':'image/png','X-VF-Revision':str(self.project['revision']),'X-VF-Filename':'cover.jpg'}
+        code,uploaded,_=self.http('POST',base,raw,headers);self.assertEqual(code,200,uploaded)
+        self.assertEqual(uploaded['content_type'],'image/png');self.assertEqual(uploaded['rights_status'],'unknown')
+        code,data,head=self.http('GET',base+'/'+uploaded['cover_id']+'/image');self.assertEqual(code,200);self.assertEqual(data,raw);self.assertEqual(head['Content-Type'],'image/png')
+        self.assertTrue(self.http('POST',base,raw,headers)[1]['idempotent_replay'])
+        self.assertEqual(self.http('POST',base,b'<svg>not a PNG</svg>',headers)[0],400)
+        self.assertEqual(self.store.get(self.project['id']),before)
+        self.account('viewer');self.assertEqual(self.http('POST',base,raw,headers)[0],403)
+        self.assertEqual(self.http('GET',base)[0],200)
+
+    def test_history_resume_and_abandon_are_scoped_and_never_cancel_ready_export(self):
+        body=self.request(cover=False).model_dump(mode='json');code,done,_=self.http('POST',self.base,body);self.assertEqual(code,200,done)
+        with self.store.transaction() as con:con.execute("UPDATE native_manual_exports SET status='preparing' WHERE export_id=?",(done['export_id'],))
+        code,resumed,_=self.http('POST',self.base+'/'+done['export_id']+'/resume',{});self.assertEqual(code,200,resumed);self.assertEqual(resumed['export_id'],done['export_id'])
+        self.assertEqual(self.http('POST',self.base+'/'+done['export_id']+'/abandon',{})[0],409)
+        with patch('services.windows_native.manual_delivery.shutil.copyfile',side_effect=OSError('owned local disk failure')):
+            self.assertEqual(self.http('POST',self.base,{**body,'request_key':'explicit-http-abandon-failed-key'})[0],503)
+        failed=next(r for r in self.http('GET',self.base)[1]['items'] if r['status']=='failed')
+        self.assertEqual(self.http('POST',self.base+'/'+failed['export_id']+'/abandon',{})[1]['status'],'abandoned')
+        self.assertEqual(self.http('POST',self.base+'/'+failed['export_id']+'/resume',{})[0],409)
         self.assertEqual(self.pipeline.calls,0)

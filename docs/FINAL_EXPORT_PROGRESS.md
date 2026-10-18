@@ -12,6 +12,10 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 - Exact request key + fingerprint, lease giữa thread/process, thư mục staging riêng, ghi hash custody trước handoff, đối chiếu lại approval/quyền trước ready. Retry sau mất phản hồi/restart dùng lại cùng export; không tự ghi đè output lỗi hoặc đã đổi.
 - Caption có CAS/version history, Master/TikTok/Facebook Reels/Instagram Reels/YouTube Shorts; sửa, copy clipboard và tải TXT. Caption không được gửi đến nền tảng.
 - Checklist đăng thủ công chỉ lưu trong phiên browser; không xác minh quyền hay tự đăng.
+- Bìa đã hỗ trợ upload kiểm tra magic/MIME/SHA256, dedupe; chọn frame, ảnh project hoặc thumbnail candidate đã lưu; crop theo tỷ lệ, JPG/PNG, chữ tiếng Việt và logo chỉ khi cấu hình hợp lệ. Bìa tải lên mặc định quyền unknown, không tự nâng thành owned.
+- Caption đã có chọn bản lịch sử và tái tạo riêng variant từ Master/kịch bản bằng thao tác cục bộ; không giả là đã gọi AI hoặc đăng bài. History có thumbnail và so sánh thông số phiên bản.
+- Tạo lại ZIP sinh delivery mới từ các file/hash của bản lịch sử, chạy lại QC, giữ nguyên bản trước kể cả ZIP trước hỏng. Lost response của thao tác này giữ đúng endpoint/key. History có đối chiếu/tiếp tục khi tab browser đã mất receipt; ngừng yêu cầu giữ nguyên file và chặn request-key cũ tự hồi sinh.
+- Backup nhận biết export đang chuẩn bị và đếm các journal/cover/caption mới. Đã restore một export vào thư mục mới và kiểm tra lại manifest/video; đã thử child process thật thoát ngay sau handoff rồi đối chiếu lại cùng một export.
 
 ## Kiểm thử đã xác nhận
 
@@ -28,10 +32,16 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | UI delivery bằng Node/fake DOM | 15 pass / 110.6928ms | final-export-delivery-Studio-n2.log |
 | Full Studio | 2107 pass, 0 fail/skip / 30.597s | final-export-current-full-Studio-n1.log |
 | Renderer | 7 file / 48 pass; TypeScript typecheck pass | final-export-renderer-tests-n1.log; final-export-renderer-typecheck-n1.log |
+| QC geometry/final freeze | 30 pass / 1.52s, bao gồm bộ trailing trước đó | final-export-aspect-n2.log |
+| Cover/recovery/media | 31 pass / 130.477s, có actual images/MP4 và fault injection; tập có overlap với 13/3 trước | final-export-recovery-cover-Native-n2.log |
+| Resume và restore | 13 pass / 72.373s | final-export-history-resume-Native-n1.log |
+| HTTP + backup regression | 22 pass / 46.315s | final-export-http-backup-Native-n1.log |
+| Thoát process thật | 1 pass / 20.475s; owned child exit 86, lease được OS giải phóng, một export được đối chiếu | final-export-process-exit-Native-n1.log |
+| UI mở rộng | 20 pass / 150.0543ms | final-export-history-resume-Studio-n2.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
-Full API bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL venv, thiếu websockets và Unix `grp`. Không sửa runtime đã khóa hoặc giả module hệ điều hành. Đang chạy phần còn lại với 5 module nêu rõ được loại khỏi lượt tương thích; không gọi đó là full API pass. Full Native đang chạy; chưa có kết quả tổng. Docker/Linux E2E và toàn bộ Phase 8/9/10 acceptance chưa được tái chứng nhận ở chương trình này.
+Full API bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL venv, thiếu websockets và Unix `grp`. Không sửa runtime đã khóa hoặc giả module hệ điều hành. Lượt tương thích còn lại đang chạy, đã xuất hiện failures và skip; chưa có tổng hoặc phân loại, không gọi đó là pass. Full Native vẫn đang chạy. Hai lượt rộng được khởi chạy trước phần mở rộng cover/recovery và QC geometry; kết quả sau cùng không tự chứng nhận những phần được thêm sau lúc khởi chạy. Docker/Linux E2E và toàn bộ Phase 8/9/10 acceptance chưa được tái chứng nhận ở chương trình này.
 
 ## Phần còn phải hoàn thành trước khi đánh dấu ready
 
@@ -39,9 +49,9 @@ Full API bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL ve
 |---|---|---|
 | P1 | PARTIAL | Bộ quality/cache-invalidation tổng hợp, các ca đích thật và kiểm tra tên/giọng bằng người |
 | P2 | PARTIAL | Tùy chọn FPS/quality/burn-in/audio/watermark gắn vào preview/render mới; chọn format phải tạo và duyệt bản tương ứng; UI acceptance 1366/1920/2560 |
-| P3 | PARTIAL | Cover upload/candidate/crop/overlay, tái tạo riêng copy variant, duyệt lịch sử caption qua UI |
-| P4 | PARTIAL | Thumbnail trong history, xem manifest và so sánh phiên bản qua UI hoàn chỉnh, recreate-package UX |
-| P5 | PARTIAL | Chaos/restart thật trong render, mất output folder, staging/collision/tamper giữa handoff và restart; soak và tổng regression |
+| P3 | PARTIAL | Các chức năng cover/copy đã có và được kiểm thử cục bộ; còn UI acceptance thực tế, quyền nội dung và bundle UAT đích |
+| P4 | PARTIAL | History/thumbnail/compare/recreate đã có; còn UI acceptance thực tế và các ca đích |
+| P5 | PARTIAL | Export handoff/restart/collision/tamper/disk error/backup-restore đã có bằng chứng; còn restart giữa render, soak và tổng regression |
 | P6 | NOT_STARTED trong chương trình này | Voice Library + character/casting theo project + per-line TTS + narrator optional + targeted regeneration + UI/QC |
 | P7 | PENDING_OWNER_UAT | 5 case Owner UAT; không tự ghi nhận nghiệm thu |
 

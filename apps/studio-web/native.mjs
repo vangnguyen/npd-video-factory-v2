@@ -426,7 +426,8 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_manual_delivery===true){
       const delivery=await import('./native-manual-delivery.mjs');
       deliveryUI=delivery.initializeManualDelivery({api,getState:()=>({project,dirty,busy,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),getVideo:()=>currentVideo(project),
-        openFolder:session.capabilities?.native_open_output_folder===true,onMessage:message,onWorking:value=>{busy=value;controls();},onOpen:()=>shotStudio?.showStage('video')});
+        openFolder:session.capabilities?.native_open_output_folder===true,onMessage:message,onWorking:value=>{busy=value;controls();},onOpen:()=>shotStudio?.showStage('video'),
+        uploadCoverFile:async(file,id,revision)=>{const response=await fetch(`/api/projects/${id}/delivery-covers`,{method:'POST',credentials:'same-origin',headers:{'Content-Type':file.type||'application/octet-stream','X-VF-CSRF':csrf,'X-VF-Revision':String(revision),'X-VF-Filename':encodeURIComponent(file.name)},body:file});const value=await response.json();if(!response.ok)throw Error(value.code);return value;}});
     }
     if(session.capabilities?.native_source_media_tracks===true){
       const tracks=await import('./native-source-media-tracks.mjs');

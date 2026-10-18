@@ -787,6 +787,9 @@ class Handler(BaseHTTPRequestHandler):
             if self.path.partition('?')[2]:raise WorkflowError('EXPORT_QUERY_INVALID',400)
             from .manual_delivery_routes import captions
             return self.reply(captions(self,copy_route[1]),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/delivery-covers(?:/ncov_[a-f0-9]{32}/image)?',path):
+            from .manual_delivery_routes import covers
+            return covers(self,path)
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails(?:/ast_rthumb_[a-f0-9]{32})?',path):
             from .render_thumbnail_routes import get
             return self.reply(get(self,path))
@@ -1144,13 +1147,16 @@ class Handler(BaseHTTPRequestHandler):
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-vision(?:/nrvi_[a-f0-9]{32}/(?:process|cancel))?',self.path):
             from .render_vision_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
-        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/exports(?:/nexp_[a-f0-9]{32}/open-folder)?',self.path):
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/exports(?:/nexp_[a-f0-9]{32}/(?:open-folder|recreate-package|resume|abandon))?',self.path):
             from .manual_delivery_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)),headers={'Cache-Control':'no-store'})
         copy_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/delivery-copy',self.path)
         if copy_route:
             from .manual_delivery_routes import captions
             return self.reply(captions(self,copy_route[1],self.read_body(max_bytes=180000)),headers={'Cache-Control':'no-store'})
+        if re.fullmatch(r'/api/projects/[a-f0-9]{32}/delivery-covers',self.path):
+            from .manual_delivery_routes import covers
+            return covers(self,self.path,write=True)
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/render-thumbnails',self.path):
             from .render_thumbnail_routes import post
             return self.reply(post(self,self.path,self.read_body(max_bytes=16000)))
