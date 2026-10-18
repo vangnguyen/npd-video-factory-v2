@@ -1,0 +1,17 @@
+{
+  "milestone": "M1",
+  "state": "IMPLEMENTED_CONTRACT_TESTED_PENDING_BROWSER",
+  "creation_choices": ["standard", "drama", "source"],
+  "drama_steps": ["script", "voices", "scenes", "preview", "export"],
+  "canonical_timeline_reused": true,
+  "legacy_projects_auto_migrated": false,
+  "narrator_default": false,
+  "default_resolution": "1080x1920",
+  "default_aspect_ratio": "9:16",
+  "native_tests": {"passed": 9, "log": "recovery/20261018/drama-usability-03/m1-native-n4.log"},
+  "studio_tests": {"passed": 12, "log": "recovery/20261018/drama-usability-03/m1-studio-n1.log"},
+  "provider_calls": 0,
+  "browser_walkthrough_complete": false,
+  "owner_uat_complete": false,
+  "full_regression": "PENDING_NEW_CANDIDATE; prior open failures retained in FINAL_EXPORT_REGRESSION_STATUS.md"
+}

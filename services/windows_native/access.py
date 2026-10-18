@@ -33,6 +33,7 @@ def permission_for(method, path):
         return None
     if re.fullmatch(r'/api/voice-library(?:/nvoice_'+ID+r')?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/drama-casting(?:/(compile|takes|series-save|series-apply))?',path):return 'edit'
+    if re.fullmatch(r'/api/projects/'+ID+r'/drama-script',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/exports(?:/nexp_'+ID+r'/(open-folder|recreate-package|resume|abandon))?',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/delivery-copy',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/delivery-covers',path):return 'edit'

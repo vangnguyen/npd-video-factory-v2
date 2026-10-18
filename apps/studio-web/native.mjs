@@ -148,7 +148,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null,dramaUI=null;
+  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null,dramaUI=null,dramaFlowUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   let asrLanguageEnabled=false;
   let localAsrEnabled=false;
@@ -257,6 +257,7 @@ if (typeof document !== "undefined") {
     mediaPlannerUI?.controls();
     narrationUI?.controls();
     dramaUI?.controls();
+    dramaFlowUI?.controls();
     rightsOverrideUI?.controls();
     narrationRightsUI?.controls();
     variantsUI?.controls();
@@ -394,6 +395,7 @@ if (typeof document !== "undefined") {
     shotStudio?.refresh(reset);
     nativeAnalysis?.refresh(reset);
     mediaFrames?.refresh();
+    dramaFlowUI?.sync();
     controls();
   }
   async function projects() {
@@ -672,6 +674,12 @@ if (typeof document !== "undefined") {
     document.querySelectorAll('.stage-navigation,.studio-header-actions,.skip-link,.sidebar [data-stage],.sidebar a[href^="/production"]').forEach(el=>el.hidden=false);
     const sourceUI=session.capabilities?.native_source_timeline===true?await import('./native-source-editor.mjs'):null;
     shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,onDraftsCreated:projects,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
+    if(session.capabilities?.native_drama_workflow===true&&shotStudio){
+      const flow=await import('./drama-workflow.mjs');const css=document.createElement('link');css.rel='stylesheet';css.href='/drama-workflow.css';document.head.append(css);
+      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+        onCreated:async value=>{project=value;localStorage.setItem('vf-native-project',value.id);const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.delete('view');url.searchParams.set('project',value.id);history.replaceState(null,'',url);$('media-illustration').checked=false;renderProject(true);await projects();if(value.document.production_workflow.kind==='source')shotStudio.showStage('assets');},
+        onSaved:async()=>{await reload(true);},onDirty:value=>{if(value)markDirty('drama-script');else if(dirtyPart==='drama-script'){dirty=false;dirtyPart=null;controls();}},onWorking:value=>{busy=value;controls();},onMessage:message,showStage:value=>shotStudio.showStage(value),drama:dramaUI,narration:narrationUI});
+    }
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
     const creating=!project;

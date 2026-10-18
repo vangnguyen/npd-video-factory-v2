@@ -17,6 +17,9 @@ class CompileRequest(StrictModel):
     request_key:StrictStr=Field(pattern=KEY)
 
 def inputs(document):
+    from .production_workflows import is_drama
+    if is_drama(document) and document.get('drama_script',{}).get('characters_confirmed') is not True:
+        raise WorkflowError('DRAMA_CHARACTER_CONFIRMATION_REQUIRED',400)
     from .shot_adapter import shots
     from .voice_quality import resolve_policy
     from .north_star_quality import resolve_policy as quality

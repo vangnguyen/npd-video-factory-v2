@@ -46,10 +46,10 @@ function fixture(){
 }
 
 test('Shared navigation is stable across page contexts and New starts an explicit fresh project',()=>{
-  assert.deepEqual(studioNavigation.map(g=>g.id),['create','work','library','system']);
+  assert.deepEqual(studioNavigation.map(g=>g.id),['create','work','library','system','advanced']);
   const items=studioNavigation.flatMap(g=>g.items);
   assert.equal(items.find(i=>i.id==='create').href,'/?new=1');
-  for(const [id,href] of [['dashboard','/production?view=dashboard'],['projects','/production?view=projects'],['assets','/?view=assets'],['brands','/?view=brands'],['settings','/settings/assemblyai']])assert.equal(items.find(i=>i.id===id).href,href);
+  for(const [id,href] of [['projects','/production?view=projects'],['assets','/?view=assets'],['voices','/?view=voices'],['brands','/?view=brands'],['settings','/?view=settings']])assert.equal(items.find(i=>i.id===id).href,href);
   assert.equal(studioPage('project','http://studio.local/?view=assets'),'assets');
   assert.equal(studioPage('project','http://studio.local/?project=kept'),'projects');
   assert.equal(studioPage('queue'),'dashboard');

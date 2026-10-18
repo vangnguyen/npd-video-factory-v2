@@ -157,21 +157,32 @@ class Store:
                 "step": step, "provider": provider or ("assemblyai" if step in {"asr_upload", "asr_create_transcript", "asr_observe_known_transcript"} else "ffmpeg" if step in {"asr_local_media_analysis", "asr_extract_audio"} else "openai" if "content" in step else "local_vieneu" if "tts" in step else "ffmpeg" if "render" in step else "local_io"),
                 "duration": round(duration, 6), "retry_count": runtime[0] if runtime else 0, "error_code": error_code})
 
-    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False,channel_profile=None,narrated_workflow=False):
+    def create(self, name, prompt, input_kind="prompt", *, content_profile=None, production_quality=False,channel_profile=None,narrated_workflow=False,workflow_kind=None,output_format='9:16'):
         with self.transaction() as con:
             identifier=self.create_in_transaction(con,name,prompt,input_kind,content_profile=content_profile,
-                production_quality=production_quality,channel_profile=channel_profile,narrated_workflow=narrated_workflow)
+                production_quality=production_quality,channel_profile=channel_profile,narrated_workflow=narrated_workflow,workflow_kind=workflow_kind,output_format=output_format)
         return self.get(identifier)
 
-    def create_in_transaction(self,con,name,prompt,input_kind='prompt',*,content_profile=None,production_quality=False,channel_profile=None,niche=None,narrated_workflow=False):
+    def create_in_transaction(self,con,name,prompt,input_kind='prompt',*,content_profile=None,production_quality=False,channel_profile=None,niche=None,narrated_workflow=False,workflow_kind=None,output_format='9:16'):
         """Shared initial draft path; caller commits draft and dispatch receipt atomically."""
         if not isinstance(name, str) or not 1 <= len(name.strip()) <= 150:
             raise WorkflowError("PROJECT_NAME_REQUIRED", 400)
-        prompt = validate_text(input_kind, prompt)
+        if workflow_kind is not None and workflow_kind not in ('standard','drama','source'):
+            raise WorkflowError('PRODUCTION_WORKFLOW_INVALID',400)
+        if workflow_kind=='drama':
+            if content_profile is not None or channel_profile is not None or input_kind not in ('script','idea','prompt'):
+                raise WorkflowError('DRAMA_WORKFLOW_PROFILE_CONFLICT',400)
+            if prompt is None:prompt=''
+            if not isinstance(prompt,str) or len(prompt)>20000:raise WorkflowError('PROMPT_REQUIRED_MAX_20000',400)
+            production_quality=narrated_workflow=True
+        else:prompt = validate_text(input_kind, prompt)
         identifier = uuid.uuid4().hex
         doc = {"name": name.strip(), "prompt": prompt, "input_kind": input_kind, "proposal": None, "asset": None, "assets": [], "scene_media": [], "documents": []}
         from .narrated_workflow import selections
         doc.update(selections(production_quality=production_quality,narrated_workflow=narrated_workflow))
+        if workflow_kind is not None:
+            from .production_workflows import initial_selection
+            doc.update(initial_selection(workflow_kind,output_format))
         if content_profile is not None:
             if not isinstance(content_profile,dict) or not all(isinstance(content_profile.get(k),str) and content_profile[k].strip() for k in ('id','name')):
                 raise WorkflowError('CONTENT_PROFILE_INVALID',400)

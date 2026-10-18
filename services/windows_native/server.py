@@ -697,6 +697,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch_get(self):
         path = self.path.split("?", 1)[0]
+        from .production_workflow_routes import handles as workflow_handles,dispatch as workflow_dispatch
+        if workflow_handles(path):return workflow_dispatch(self)
         from .transcript_word_routes import handles as word_handles,dispatch as word_dispatch
         if word_handles(path):
             if self.path!=path:raise WorkflowError('TRANSCRIPT_WORD_REVIEW_QUERY_INVALID',400)
@@ -932,7 +934,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "native_manual_delivery":True, "native_manual_delivery_focus":True, "native_drama_voice_casting":True, "native_open_output_folder":os.name=='nt', "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "native_drama_workflow":True, "native_manual_delivery":True, "native_manual_delivery_focus":True, "native_drama_voice_casting":True, "native_open_output_folder":os.name=='nt', "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_source_broll_resolution":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
                 "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
@@ -1045,6 +1047,8 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-manual-delivery.mjs'] = 'native-manual-delivery.mjs'
         static['/native-export-settings.mjs'] = 'native-export-settings.mjs'
         static['/native-drama.mjs'] = 'native-drama.mjs'
+        static['/drama-workflow.mjs']='drama-workflow.mjs'
+        static['/drama-workflow.css']='drama-workflow.css'
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-source-broll-resolution.mjs'] = 'native-source-broll-resolution.mjs'
@@ -1138,6 +1142,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        from .production_workflow_routes import handles as workflow_handles,dispatch as workflow_dispatch
+        if workflow_handles(self.path):return workflow_dispatch(self,write=True)
         from .drama_routes import handles as drama_handles,dispatch as drama_dispatch
         if drama_handles(self.path):return drama_dispatch(self,write=True)
         from .transcript_word_routes import handles as word_handles,dispatch as word_dispatch
@@ -1406,7 +1412,7 @@ class Handler(BaseHTTPRequestHandler):
                 keys=('id','name','related_project','target_audience','preferred_formats','channel','tone','duration_seconds','keywords','project_references')
                 profile={k:configured[k] for k in keys if k in configured}
                 profile['configuration_sha256']=digest(configured)
-            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile,production_quality=body.get('production_quality',False),channel_profile=channel,narrated_workflow=body.get('narrated_workflow',False)), 201)
+            return self.reply(self.server.store.create(body.get("name"), body.get("prompt"), body.get("input_kind", "prompt"),content_profile=profile,production_quality=body.get('production_quality',False),channel_profile=channel,narrated_workflow=body.get('narrated_workflow',False),workflow_kind=body.get('workflow_kind'),output_format=body.get('output_format','9:16')), 201)
         match = re.fullmatch(r"/api/projects/([0-9a-f]{32})/(draft|image|approve|reject|jobs|auto-plan|duplicate|archive|brand-template|voice-quality|cost-policy)", self.path)
         if not match:
             raise WorkflowError("ROUTE_NOT_FOUND", 404)

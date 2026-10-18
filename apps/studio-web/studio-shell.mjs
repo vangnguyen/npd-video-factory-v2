@@ -1,25 +1,24 @@
 // Optional UX shell. Call only after the runtime advertises native_studio_ux.
 export const supportsStudioUX = session => session?.capabilities?.native_studio_ux === true;
 export const studioNavigation = [
-  {id:'create',label:'TẠO NỘI DUNG',items:[{id:'create',label:'Video mới',href:'/?new=1',icon:'plus'}]},
+  {id:'create',label:'TẠO VIDEO',items:[{id:'create',label:'Tạo video',href:'/?new=1',icon:'plus'}]},
   {id:'work',label:'CÔNG VIỆC',items:[
-    {id:'dashboard',label:'Sản xuất',href:'/production?view=dashboard',icon:'grid'},
-    {id:'projects',label:'Dự án',href:'/production?view=projects',icon:'folder'},
-    {id:'trends',label:'Trend Radar',href:'/trends',icon:'idea'},
-    {id:'intelligence',label:'Nghiên cứu & ý tưởng',href:'/intelligence',icon:'idea'},
-    {id:'calendar',label:'Lịch nội dung',href:'/production?view=calendar',icon:'calendar'}]},
+    {id:'projects',label:'Dự án của tôi',href:'/production?view=projects',icon:'folder'}]},
   {id:'library',label:'THƯ VIỆN',items:[
-    {id:'assets',label:'Tư liệu',href:'/?view=assets',icon:'image'},
-    {id:'library',label:'Video hoàn chỉnh',href:'/production?view=library',icon:'video'},
-    {id:'brands',label:'Thương hiệu & mẫu',href:'/?view=brands',icon:'palette'}]},
+    {id:'assets',label:'Thư viện tư liệu',href:'/?view=assets',icon:'image'},
+    {id:'voices',label:'Thư viện giọng',href:'/?view=voices',icon:'profile'},
+    {id:'library',label:'Video đã xuất',href:'/production?view=library',icon:'video'}]},
   {id:'system',label:'HỆ THỐNG',items:[
-    {id:'profiles',label:'Hồ sơ nội dung',href:'/production?view=profiles',icon:'profile'},
-    {id:'settings',label:'Cài đặt',href:'/settings/assemblyai',icon:'settings'}]}
+    {id:'settings',label:'Cài đặt',href:'/?view=settings',icon:'settings'}]},
+  {id:'advanced',label:'NÂNG CAO',items:[
+    {id:'intelligence',label:'Nghiên cứu & ý tưởng',href:'/intelligence',icon:'idea'},
+    {id:'brands',label:'Thương hiệu & mẫu',href:'/?view=brands',icon:'palette'},
+    {id:'profiles',label:'Hồ sơ nội dung',href:'/production?view=profiles',icon:'profile'}]}
 ];
 export function studioPage(page, href = '') {
   const url = new URL(href || '/', 'http://studio.local');
   const view = url.searchParams.get('view');
-  if (page === 'project') return url.searchParams.get('new') === '1' ? 'create' : ['assets','brands'].includes(view) ? view : 'projects';
+  if (page === 'project') return url.searchParams.get('new') === '1' ? 'create' : ['assets','brands','voices','settings'].includes(view) ? view : 'projects';
   return page === 'queue' ? 'dashboard' : page;
 }
 const paths = {
@@ -67,7 +66,7 @@ export function mountStudioShell({page='project',context='Không gian sản xu�
       node.className='studio-nav-item'+(item.id==='create'?' studio-create':'')+(item.id===current?' active':'');
       node.dataset.studioPage=item.id;
       if(item.id===current)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');
-      node.replaceChildren(icon(doc,item.icon),element(doc,'span','',item.id==='create'&&newProject?'Dự án mới':item.label));
+      node.replaceChildren(icon(doc,item.icon),element(doc,'span','',item.label));
       section.append(node);
     }
     nav.append(section);

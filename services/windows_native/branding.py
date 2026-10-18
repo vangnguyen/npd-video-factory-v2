@@ -61,26 +61,28 @@ class BrandProfile(Strict):
     fonts: Fonts=Field(default_factory=Fonts)
     palette: Palette
     subtitle_style: SubtitleStyle=Field(default_factory=SubtitleStyle)
-    primary_cta: str=Field(min_length=1,max_length=180)
-    intro: str=Field(min_length=1,max_length=100)
-    intro_seconds: float=Field(default=1.1,ge=.5,le=2,allow_inf_nan=False)
-    outro_seconds: float=Field(default=1.,ge=.5,le=3,allow_inf_nan=False)
+    primary_cta: str=Field(min_length=0,max_length=180)
+    intro: str=Field(min_length=0,max_length=100)
+    intro_seconds: float=Field(default=1.1,ge=0,le=2,allow_inf_nan=False)
+    outro_seconds: float=Field(default=1.,ge=0,le=3,allow_inf_nan=False)
     voice_profile_sha256: str
     music_profile: MusicProfile=Field(default_factory=MusicProfile)
     safe_areas: SafeAreas=Field(default_factory=SafeAreas)
-    project_disclaimers: list[str]=Field(min_length=1,max_length=3)
+    project_disclaimers: list[str]=Field(min_length=0,max_length=3)
 
     @model_validator(mode="after")
     def preserve_voice(self):
         if self.voice_profile_sha256!=PROFILE_SHA or any(not 1<=len(s)<=180 for s in self.project_disclaimers):
             raise ValueError("Locked voice or disclaimer invalid")
+        if self.id!='drama-neutral' and (not self.primary_cta or not self.intro or self.intro_seconds<.5 or self.outro_seconds<.5 or not self.project_disclaimers):
+            raise ValueError('Existing brand requirements remain unchanged')
         return self
 
 
 class VideoTemplate(Strict):
     id: str=Field(pattern=r"^[a-z][a-z0-9-]{2,59}$")
     name: str=Field(min_length=1,max_length=120)
-    purpose: Literal["property_presentation","news_update","personal_brand","event_promo","education"]
+    purpose: Literal["property_presentation","news_update","personal_brand","event_promo","education","drama"]
     scene_label: str=Field(min_length=1,max_length=40)
     duration_seconds: Literal[30,45,60]
     width: Literal[1080,1920]=1080
@@ -126,6 +128,9 @@ def catalog(include_landscape=False,include_all_formats=False):
 
 
 def choose(brand_id, template_id, duration_mode=None):
+    if brand_id=='drama-neutral':
+        from .production_workflows import drama_selection
+        return drama_selection(template_id=template_id,duration_mode=duration_mode)
     values=catalog(include_all_formats=True)
     brand=next((b for b in values["brands"] if b["id"]==brand_id),None)
     template=next((t for t in values["templates"] if t["id"]==template_id),None)
