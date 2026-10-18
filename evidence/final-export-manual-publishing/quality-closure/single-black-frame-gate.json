@@ -1,0 +1,24 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "scope": "Shared final-output quality gate, including delivered-copy QC",
+  "log": "recovery/20261007/final-export-black-qc-n2.log",
+  "tests_passed": 32,
+  "tests_failed": 0,
+  "duration_seconds": 2.96,
+  "actual_negative_media": {
+    "path": "C:/vfct/final-export-black-qc-n2/test_actual_single_black_frame0/one-black-frame.mp4",
+    "bytes": 277835,
+    "sha256": "bb5b272fe3f2c989ebd9fec621975b807e7a345006e6b935a0ee0517564b7c33",
+    "duration_seconds": 2,
+    "fps": 30,
+    "black_frames_inserted": 1,
+    "expected_qc": "failed_qc",
+    "observed_gate": "unexpected black-frame detected"
+  },
+  "minimum_black_duration_seconds": 0,
+  "scope_limit": "FFmpeg blackdetect pixel classification; does not assert semantic Vision or human visual acceptance",
+  "accepted_historical_files_modified": false,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

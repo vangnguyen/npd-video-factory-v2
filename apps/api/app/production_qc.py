@@ -148,8 +148,8 @@ class FullProductionQC:
             self._vision_samples(path),
             self._decode(path),
         )
-        if black["black_frame_ratio"] > 0.10:
-            failures.append("black-frame ratio exceeds 10 percent")
+        if black.get("black_intervals") or black["black_frame_ratio"] > 0:
+            failures.append("unexpected black-frame detected")
         # Only discount measured freeze time inside explicitly planned image holds.
         # Video freezes remain failures; this is not a blanket slideshow exemption.
         expected_stills = timeline_qc.get("intentional_still_intervals", [])
@@ -240,11 +240,13 @@ class FullProductionQC:
 
     async def _black(self, path: Path, duration: float) -> dict[str, Any]:
         _stdout, stderr = await _run(
-            [self.ffmpeg_path, "-hide_banner", "-i", str(path), "-vf", "blackdetect=d=0.20:pix_th=0.10", "-an", "-f", "null", "-"],
+            [self.ffmpeg_path, "-hide_banner", "-i", str(path), "-vf", "blackdetect=d=0:pix_th=0.10", "-an", "-f", "null", "-"],
             "black-frame inspection",
         )
-        total = sum(float(item) for item in re.findall(r"black_duration:([0-9.]+)", stderr))
-        return {"black_frame_seconds": round(total, 3), "black_frame_ratio": round(total / max(duration, 0.001), 4)}
+        intervals=[(max(0,float(start)),min(duration,float(end))) for start,end in re.findall(r"black_start:\s*([0-9.]+)\s+black_end:\s*([0-9.]+)",stderr)]
+        total=sum(max(0,end-start) for start,end in intervals)
+        return {"black_frame_seconds":round(total,3),"black_frame_ratio":round(total/max(duration,0.001),4),
+            "black_intervals":intervals,"black_interval_count":len(intervals),"minimum_black_duration_seconds":0}
 
     async def _freeze(self, path: Path, duration: float) -> dict[str, Any]:
         _stdout, stderr = await _run(

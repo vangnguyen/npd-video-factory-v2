@@ -78,6 +78,35 @@ async def test_actual_encoded_aac_three_second_tail_fails_full_qc(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_actual_single_black_frame_cannot_hide_in_low_whole_video_ratio(tmp_path):
+    executable=shutil.which('ffmpeg')
+    if executable is None:
+        from services.windows_native.pipeline import Config
+        executable=str(Config().ffmpeg_bin/'ffmpeg.exe')
+    if not Path(executable).is_file():pytest.skip('FFmpeg unavailable')
+    probe=str(Path(executable).with_name('ffprobe.exe' if executable.endswith('.exe') else 'ffprobe'))
+    path=tmp_path/'one-black-frame.mp4'
+    process=await asyncio.create_subprocess_exec(executable,'-v','error','-f','lavfi','-i','testsrc2=size=320x240:rate=30',
+        '-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=2','-vf',r'drawbox=x=0:y=0:w=iw:h=ih:color=black:t=fill:enable=eq(n\,15)',
+        '-t','2','-c:v','libx264','-preset','ultrafast','-crf','18','-pix_fmt','yuv420p','-c:a','aac',str(path))
+    assert await process.wait()==0
+    with pytest.raises(module.ProductionQCError,match='black-frame detected') as error:
+        await module.FullProductionQC(ffmpeg_path=executable,ffprobe_path=probe).inspect(path,
+            expected_duration=2,expected_width=320,expected_height=240,expected_fps=30,
+            subtitle_qc={'status':'passed'},timeline_qc={'status':'passed'})
+    assert error.value.report['black_interval_count']==1
+    assert 0<error.value.report['black_frame_ratio']<.02
+
+
+@pytest.mark.asyncio
+async def test_terminal_black_observation_with_zero_rounded_duration_is_retained(monkeypatch,tmp_path):
+    monkeypatch.setattr(module,'_run',AsyncMock(return_value=('', 'black_start:1.96667 black_end:1.96667 black_duration:0')))
+    result=await module.FullProductionQC()._black(tmp_path/'contract-only.mp4',2)
+    assert result['black_interval_count']==1
+    assert result['black_frame_seconds']==0
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize('video_fields,freeze,stills,failure',[
     ({'sample_aspect_ratio':'2:1'},False,[], 'aspect-ratio distortion'),
     ({'sample_aspect_ratio':None},False,[], 'aspect-ratio distortion'),

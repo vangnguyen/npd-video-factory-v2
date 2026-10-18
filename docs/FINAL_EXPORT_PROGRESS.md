@@ -5,7 +5,7 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 ## Phần đã triển khai
 
 - **P0 hoàn thành:** source branch riêng, Git bundle đầy đủ đã verify, archive riêng 11 file sửa dở, rehash 15 video nghiệm thu. Không thay checkout đang dùng hoặc video cũ.
-- **P1 đang đóng:** QC dùng chung đo đoạn im lặng cuối, mặc định quá 2 giây là fail; thiếu phép đo cũng fail. Policy Native, binding thời lượng thực, tên riêng, phụ đề và source-render hiện có được tái kiểm thử. Chưa có Owner listening/UAT mới.
+- **P1 đang đóng:** QC dùng chung đo đoạn im lặng cuối, mặc định quá 2 giây là fail; thiếu phép đo cũng fail. Frame đen bất kỳ đã phát hiện cũng fail, kể cả chỉ một frame hoặc đoạn cuối được làm tròn duration về 0. Giữ hard gates SAR/rotation và đứng hình cuối ngoài intentional image hold. Policy Native, binding thời lượng thực, tên riêng, phụ đề và source-render hiện có được tái kiểm thử. Chưa có Owner listening/UAT mới.
 - **P2–P5 bản đầu trên Windows Native:** mục **Xuất video**, caption theo nền tảng, gói MP4/cover/SRT/copy/QC/rights/manifest/ZIP, lịch sử, download, mở thư mục Windows. Export chỉ sao chép đúng byte MP4 đã qua duyệt cuối và chạy lại FullProductionQC trên file giao thực tế.
 - Manifest giữ version của dự án/timeline/script/audio/subtitle, profile, hash preview/final, hash approvals, metadata media, caption version và hash từng file. Không có post ID hoặc trạng thái đã đăng.
 - Thay đổi project làm bản xuất cũ mang nhãn phiên bản cũ; vẫn tải được bản lịch sử đã bàn giao sau kiểm tra toàn vẹn. Tạo bản mới không thay tệp cũ.
@@ -45,6 +45,7 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | Source export settings | 5 pass / 62.517s, có hai ca render thật 24/25 FPS; 21 Node / 234.3394ms; 9 renderer; typecheck pass | final-export-presentation-Native-n2.log; final-export-presentation-Studio-n2.log; final-export-encoder-renderer-n1.log |
 | Narrated export + HTTP | 8 pass / 105.517s, có preview/render/QC/SRT thật cục bộ; 27 Node pass / 156.0184ms | final-export-narrated-variants-Native-n4.log; final-export-narrated-settings-Studio-n1.log |
 | Full Studio hiện tại | 2119 pass, 0 fail/skip / 34129.3777ms | final-export-current-full-Studio-n2.log |
+| Frame đen + quality gates | 32 pass / 2.96s, gồm MP4 thật có 1 frame đen bị chặn; tập chứa lại tail/aspect/freeze | final-export-black-qc-n2.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
