@@ -102,18 +102,29 @@ def save_script(store,project_id,payload,*,actor_ref,workspace_id='wsp_native_lo
                 if not character:raise WorkflowError('DRAMA_SPEAKER_SELECTION_REQUIRED',400)
                 line.update(character_id=character['character_id'],speaker_name=character['name'],role=character['role'],needs_speaker=False)
         parsed['needs_speaker']=[v['line_id'] for v in parsed['lines'] if v['needs_speaker']]
-        record={'schema_version':'native-drama-script.v1','raw_text':body['text'],'input_mode':body['input_mode'],'parsed':parsed,'characters_confirmed':body['confirm_characters'],
+        previous=doc.get('drama_script')
+        same_content=bool(previous and previous['raw_text']==body['text'] and previous.get('input_mode','script')==body['input_mode']
+            and previous.get('narrator_enabled',False)==body['narrator_enabled'] and previous['parsed']==parsed)
+        confirmation_preserved=bool(same_content and previous['characters_confirmed'] and not body['confirm_characters'])
+        confirmed=body['confirm_characters'] or confirmation_preserved
+        record={'schema_version':'native-drama-script.v1','raw_text':body['text'],'input_mode':body['input_mode'],'parsed':parsed,'characters_confirmed':confirmed,
             'character_notes':body['character_notes'],'narrator_enabled':body['narrator_enabled']}
         if any(len(k)>100 or len(v)>500 for k,v in body['character_notes'].items()):raise WorkflowError('DRAMA_CHARACTER_NOTES_INVALID',400)
         if body['confirm_characters']:
             if parsed['needs_speaker']:raise WorkflowError('DRAMA_SPEAKER_SELECTION_REQUIRED',400)
-            materialize(doc,parsed,project_id,body['narrator_enabled'])
+            existing=doc.get('drama_casting',{}).get('configuration')
+            from .north_star_quality import canonical_names
+            compatible=bool(existing and existing['narrator_enabled']==body['narrator_enabled'] and existing['characters']==parsed['characters'] and
+                [(v['line_id'],v['character_id'],v['text'],v['shot_id']) for v in existing['lines']]==
+                [(v['line_id'],v['character_id'],canonical_names(v['text']),'shot_'+v['scene_key'][6:]) for v in parsed['lines']])
+            if not (same_content and previous['characters_confirmed'] and existing) and not compatible:
+                materialize(doc,parsed,project_id,body['narrator_enabled'])
         doc['drama_script']=record;doc['prompt']=body['text'];doc['input_kind']=body['input_mode']
         doc['production_workflow'].update(series=body['series'],episode=body['episode'])
         authorization_check();revision=project['revision']+1
         con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(revision,json.dumps(doc,ensure_ascii=False),now(),project_id))
-        store.version(con,project_id);store.event(con,project_id,'drama_script_saved',{'revision':revision,'characters_confirmed':body['confirm_characters'],'provider_calls':0,'actor_ref':actor_ref,'approval_invalidated':True})
-        response={'project_id':project_id,'revision':revision,'characters_confirmed':body['confirm_characters'],'needs_speaker':parsed['needs_speaker'],'provider_calls':0,'human_approval_granted':False,'idempotent_replay':False,**receipt}
+        store.version(con,project_id);store.event(con,project_id,'drama_script_saved',{'revision':revision,'characters_confirmed':confirmed,'confirmation_preserved':confirmation_preserved,'provider_calls':0,'actor_ref':actor_ref,'approval_invalidated':True})
+        response={'project_id':project_id,'revision':revision,'characters_confirmed':confirmed,'confirmation_preserved':confirmation_preserved,'needs_speaker':parsed['needs_speaker'],'provider_calls':0,'human_approval_granted':False,'idempotent_replay':False,**receipt}
         con.execute('INSERT INTO native_drama_script_writes VALUES(?,?,?,?)',(project_id,body['request_key'],fingerprint,json.dumps(response)))
     return response
 

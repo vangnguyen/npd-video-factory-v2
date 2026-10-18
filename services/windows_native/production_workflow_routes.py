@@ -15,7 +15,7 @@ def app_info():
         try:return subprocess.check_output(['git','-C',str(root),*args],text=True,timeout=3,stderr=subprocess.DEVNULL).strip()
         except (OSError,subprocess.SubprocessError):return None
     return {'application':'NPD Video Studio','application_source':str(root),'branch':git('branch','--show-current'),'commit':git('rev-parse','HEAD'),
-        'build':'drama-save-fix-05','platform_api_publishing':'DEFERRED','analytics':'DEFERRED','full_trend_radar':'DEFERRED','production_deployed':False}
+        'build':'drama-casting-next-06','platform_api_publishing':'DEFERRED','analytics':'DEFERRED','full_trend_radar':'DEFERRED','production_deployed':False}
 
 def dispatch(handler,*,write=False):
     path=handler.path

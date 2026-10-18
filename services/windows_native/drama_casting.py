@@ -92,6 +92,7 @@ class NativeDramaCasting:
         try:body=CastingSave.model_validate(payload).model_dump(mode='json')
         except (TypeError,ValidationError):raise WorkflowError('DRAMA_REQUEST_INVALID',400) from None
         fingerprint=digest(body);workspace=self.library.workspace
+        receipt={'workspace_id':workspace,'request_key':body['request_key'],'request_sha256':digest(payload),'normalized_request_sha256':fingerprint,'human_approval_granted':False}
         with self.store.transaction() as con:
             old=con.execute('SELECT * FROM native_drama_writes WHERE workspace_id=? AND project_id=? AND request_key=?',(workspace,project_id,body['request_key'])).fetchone()
             if old:
@@ -99,7 +100,7 @@ class NativeDramaCasting:
                 current=self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())
                 frozen=json.loads(old['casting_json']);saved({'drama_casting':frozen})
                 return {'project_id':project_id,'project_revision_at_write':old['project_revision'],'casting':frozen,'idempotent_replay':True,
-                    'current_for_project':current['revision']==old['project_revision'] and saved(current['document'])==frozen,'per_line_tts_ready':False,'provider_calls':0}
+                    'current_for_project':current['revision']==old['project_revision'] and saved(current['document'])==frozen,'per_line_tts_ready':False,'provider_calls':0,**receipt}
             project=self.store.editable(con,project_id,body['revision']);document=copy.deepcopy(project['document'])
             from .auto_edit_timeline import is_auto_edit
             if is_auto_edit(document):raise WorkflowError('DRAMA_NARRATED_PROJECT_REQUIRED',400)
@@ -144,4 +145,4 @@ class NativeDramaCasting:
             self.store.version(con,project_id)
             con.execute('INSERT INTO native_drama_writes VALUES(?,?,?,?,?,?,?,?)',(workspace,project_id,body['request_key'],fingerprint,json.dumps(record,ensure_ascii=False),revision,actor_ref.strip(),stamp))
             self.store.event(con,project_id,'drama_casting_saved',{'revision':revision,'casting_version':record['version'],'approval_invalidated':True,'preview_invalidated':True,'final_export_invalidated':True,'provider_calls':0})
-        return {'project_id':project_id,'project_revision_at_write':revision,'casting':record,'idempotent_replay':False,'current_for_project':True,'per_line_tts_ready':False,'provider_calls':0}
+        return {'project_id':project_id,'project_revision_at_write':revision,'casting':record,'idempotent_replay':False,'current_for_project':True,'per_line_tts_ready':False,'provider_calls':0,**receipt}

@@ -1,6 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {initializeNativeDrama,validateDramaPage,dramaRequest,splitDialogueLine,validateDramaWrite} from '../native-drama.mjs';
-import {currentVideo,canRender} from '../native.mjs';
+import {currentVideo,canRender,createNativeProjectReload,nativeDramaCastingCallback} from '../native.mjs';
+import {dramaRequestHash} from '../drama-script-save.mjs';
 import {currentStudioRender,boundPreview,previewTimingLabel} from '../shot-studio.mjs';
 const P='a'.repeat(32),C='chr_'+'b'.repeat(32),L='line_'+'c'.repeat(32),S='shot_'+'d'.repeat(32),V='nvoice_'+'e'.repeat(32),H='f'.repeat(64);
 const config=()=>({narrator_enabled:false,characters:[{character_id:C,name:'An <script>literal</script>',role:'character'}],casting:[{character_id:C,voice_id:V,voice_version:1,voice_sha256:H}],
@@ -14,14 +15,17 @@ function harness(){
     addEventListener(name,fn){this.listeners[name]=fn;}pause(){this.paused=true;}play(){this.paused=false;return Promise.resolve();}querySelectorAll(selector){const names=selector.split(',');return this.children.flatMap(n=>[...(names.includes(n.tagName.toLowerCase())?[n]:[]),...n.querySelectorAll(selector)]);}}
   const root=new Node('details'),dom={getElementById:()=>root,createElement:t=>new Node(t)},current=state(),calls=[],messages=[],saved=[];let serial=1,override=null,controller;
   const voice={voice_id:V,version:1,definition_sha256:H,definition:{display_name:'Giọng <img src=x>',provider:'vieneu-local',model:'vieneu-v3-turbo',provider_voice_id:'Preset A',rights_status:'unknown',source_type:'provider_preset'}};
-  const base=`/api/projects/${P}/drama-casting`;
-  async function answer(path,options){if(options){const body=JSON.parse(options.body);saved.push(body);return path.startsWith('/api/voice-library')?{voice_id:V,version:1,definition_sha256:H}:{project_id:P,project_revision_at_write:body.revision+1};}if(path.endsWith('/drama-casting'))return page(current);
+  const base=`/api/projects/${P}/drama-casting`;let serverProject=structuredClone(current.project);serverProject.document.drama_casting=page(current).casting;
+  async function answer(path,options){if(options){const body=JSON.parse(options.body);saved.push(body);if(path===base){const casting={version:body.expected_version+1,sha256:await dramaRequestHash(body.configuration),configuration:structuredClone(body.configuration)};
+      serverProject={...serverProject,revision:body.revision+1,document:{...serverProject.document,drama_casting:casting}};
+      return {project_id:P,project_revision_at_write:serverProject.revision,casting,workspace_id:current.workspace_id,request_key:body.request_key,request_sha256:await dramaRequestHash(body),human_approval_granted:false,provider_calls:0};}
+    return path.startsWith('/api/voice-library')?{voice_id:V,version:1,definition_sha256:H}:{project_id:P,project_revision_at_write:body.revision+1};}if(path===`/api/projects/${P}`)return structuredClone(serverProject);if(path.endsWith('/drama-casting'))return {...page(current),casting:structuredClone(serverProject.document.drama_casting)};
     if(path==='/api/voice-library')return {items:[voice]};if(path==='/api/voice-library/presets')return {provider:'vieneu-local',status:'METADATA_AVAILABLE',model:'vieneu-v3-turbo',voices:[{provider_voice_id:'Preset A',display_name:'Preset A'}]};
     if(path==='/api/drama-series')return {items:[]};if(path==='/api/voice-auditions')return {items:[],inference_dispatched:false};throw Error('Unexpected route');}
   controller=initializeNativeDrama({dom,getState:()=>current,newKey:()=>`${String(serial++).padStart(8,'0')}-1111-4111-8111-111111111111`,
     api:async(...args)=>{calls.push(args);return override?override(...args):answer(...args);},onMessage:(...v)=>messages.push(v),onWorking:v=>{current.busy=v;},
     onDirty:v=>{if(v){current.dirty=true;current.dirtyPart='drama';}else if(current.dirtyPart==='drama'){current.dirty=false;current.dirtyPart=null;}},
-    onSaved:async()=>{current.project.revision++;controller.sync();}});
+    onSaved:nativeDramaCastingCallback(createNativeProjectReload({api:(...args)=>{calls.push(args);return override?override(...args):answer(...args);},getState:()=>current,onProject:value=>current.project=value,renderProject:()=>controller.sync(),projects:async()=>{},schedule(){}}))});
   return {root,current,calls,messages,saved,controller,base,override:fn=>override=fn,answer,action:name=>root.querySelectorAll('button').find(n=>n.getAttribute('data-drama-action')===name),
     label:text=>root.querySelectorAll('label').find(n=>n.textContent===text),editName:async()=>{const input=root.querySelectorAll('label').find(n=>n.textContent==='Tên nhân vật').children[0];input.value='An mới';await input.listeners.input();}};
 }
@@ -82,7 +86,7 @@ test('revoked edit permission blocks explicit replay before dispatch',async()=>{
 test('late foreign response never installs data or changes current project',async()=>{
   const h=harness();let release;const original=page(h.current);h.override((path)=>path.endsWith('/drama-casting')?new Promise(r=>release=r):h.answer(path));
   const loading=h.controller.load();h.current.project={...h.current.project,id:'9'.repeat(32)};h.controller.sync();release(original);await loading;
-  assert.equal(h.root.querySelectorAll('textarea').length,0);assert.equal(h.controller.isDirty(),false);assert.equal(h.saved.length,0);
+  const areas=h.root.querySelectorAll('textarea');assert.equal(areas.length,1);assert.equal(areas[0].getAttribute('readonly'),'');assert.equal(areas[0].value,'');assert.equal(h.controller.isDirty(),false);assert.equal(h.saved.length,0);
 });
 test('viewer can load safely and management action cannot write library',async()=>{
   const h=harness();h.current.canEdit=false;h.current.canManage=false;await h.controller.load();assert.equal(h.action('load').disabled,false);assert.equal(h.action('compile').disabled,true);

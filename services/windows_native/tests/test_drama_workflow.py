@@ -54,6 +54,27 @@ class DramaWorkflowTests(unittest.TestCase):
         from services.windows_native.dialogue_binding import inputs
         self.save(confirm=True);self.project=self.store.get(self.project['id']);self.save(SCRIPT+'\nAn: Mình về trước nhé.',key='changed-drama-draft-0001')
         with self.assertRaisesRegex(WorkflowError,'CHARACTER_CONFIRMATION_REQUIRED'):inputs(self.store.get(self.project['id'])['document'])
+
+    def test_notes_only_preserve_confirmed_casting_timeline_and_audio_references(self):
+        self.save(confirm=True);self.project=self.store.get(self.project['id'])
+        with self.store.transaction() as con:
+            doc=copy.deepcopy(self.project['document']);doc['compiled_dialogue']={'fixture':'existing dialogue binding'};doc['prepared_narration']={'fixture':'existing audio binding'}
+            con.execute('UPDATE projects SET document=? WHERE id=?',(json.dumps(doc),self.project['id']))
+        before=self.store.get(self.project['id'])['document'];character=before['drama_casting']['configuration']['characters'][0]['character_id']
+        result=self.save(key='notes-only-preserve-0001',character_notes={character:'Điềm tĩnh'},series='Tập thử',episode='1')
+        after=self.store.get(self.project['id'])['document'];self.assertTrue(result['characters_confirmed']);self.assertTrue(result['confirmation_preserved'])
+        for field in ('drama_casting','canonical_timeline','compiled_dialogue','prepared_narration'):self.assertEqual(after[field],before[field])
+        self.assertIsNone(self.store.get(self.project['id'])['approval'])
+
+    def test_real_text_and_speaker_change_requires_explicit_confirmation(self):
+        self.save(confirm=True);self.project=self.store.get(self.project['id']);before=copy.deepcopy(self.project['document']['drama_casting'])
+        result=self.save(text=SCRIPT.replace('Bình:','An:'),key='speaker-change-review-0001')
+        self.assertFalse(result['characters_confirmed']);self.assertFalse(result['confirmation_preserved']);self.assertEqual(self.store.get(self.project['id'])['document']['drama_casting'],before)
+
+    def test_compatible_explicit_reconfirmation_preserves_line_scene_and_casting_versions(self):
+        self.save(confirm=True);self.project=self.store.get(self.project['id']);before=copy.deepcopy(self.project['document'])
+        self.save(confirm=True,key='compatible-reconfirm-0001');after=self.store.get(self.project['id'])['document']
+        self.assertEqual(after['drama_casting'],before['drama_casting']);self.assertEqual(after['canonical_timeline'],before['canonical_timeline'])
     def test_script_replay_retains_m1_receipt_from_before_optional_idea_mode(self):
         from services.windows_native.production_workflows import ScriptSave
         from services.windows_native.contracts import digest

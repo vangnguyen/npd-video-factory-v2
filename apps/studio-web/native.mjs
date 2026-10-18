@@ -1,23 +1,38 @@
 import {newProjectQuality,narratedWorkflowGuide,usesNarratedWorkflow} from './project-quality.mjs';
 import {asrLanguageSelection,asrLanguageHint} from './native-asr-language.mjs';
-import {verifyDramaSaveReceipt,matchesSavedDramaProject,stableDramaJSON} from './drama-script-save.mjs';
+import {verifyDramaSaveReceipt,verifyDramaCastingReceipt,matchesSavedDramaProject,stableDramaJSON} from './drama-script-save.mjs';
+export const nativeDramaDirtyPart=({script,casting},part)=>part&&!['drama','drama-script','drama-both'].includes(part)?part:script&&casting?'drama-both':script?'drama-script':casting?'drama':null;
 export function createNativeProjectReload({api,getState,onProject,renderProject,projects,schedule}){
-  return async function reload(reset=false,{dramaSave}={}){
+  return async function reload(reset=false,{dramaSave,castingSave}={}){
     const before=getState(),identifier=before.project?.id,workspace=before.workspace_id;
     const sameSelection=()=>getState().project?.id===identifier&&getState().workspace_id===workspace;
     if(identifier){
       const latest=await api(`/api/projects/${identifier}`);
       if(!sameSelection())return {status:'stale-selection'};
+      if(castingSave){
+        if(castingSave.project_id!==identifier||castingSave.workspace_id!==workspace)return {status:'stale-selection'};
+        if(castingSave.kind==='saved-casting'){
+          await verifyDramaCastingReceipt(castingSave.result,castingSave);if(!sameSelection())return {status:'stale-selection'};
+          if(latest.revision>castingSave.result.project_revision_at_write)return {status:'newer',project:latest};
+          if(latest.id!==identifier||latest.revision!==castingSave.result.project_revision_at_write||stableDramaJSON(latest.document.drama_casting)!==stableDramaJSON(castingSave.result.casting))throw Error('Chưa đối chiếu được phân vai đã lưu. Giữ bản đang chọn và kiểm tra lại.');
+        }else if(castingSave.kind==='current-casting'){
+          if(latest.id!==identifier||latest.revision!==castingSave.revision||stableDramaJSON(latest.document.drama_casting)!==stableDramaJSON(castingSave.casting))return {status:'newer',project:latest};
+        }else if(castingSave.kind==='reviewed-casting'){
+          if(latest.id!==identifier||latest.revision!==castingSave.snapshot.revision||stableDramaJSON(latest.document)!==stableDramaJSON(castingSave.snapshot.document))return {status:'newer',project:latest};
+        }else throw Error('Yêu cầu đối chiếu phân vai chưa hợp lệ.');
+        if(getState().dirty&&getState().dirtyPart!=='drama')throw Error('Lưu ghi chú hoặc thay đổi khác trước khi tiếp tục phân vai.');
+        onProject(latest);renderProject(false);try{await projects();}catch{}if(sameSelection())schedule();return {status:castingSave.kind==='reviewed-casting'?'rebased':'saved',project:latest};
+      }
       if(dramaSave){
         if(dramaSave.project_id!==identifier||dramaSave.workspace_id!==workspace)return {status:'stale-selection'};
         if(dramaSave.kind==='saved'){
           await verifyDramaSaveReceipt(dramaSave.result,dramaSave);
           if(!sameSelection())return {status:'stale-selection'};
           if(latest.revision>dramaSave.result.revision)return {status:'newer',project:latest};
-          if(latest.id!==identifier||latest.revision!==dramaSave.result.revision||!matchesSavedDramaProject(latest,dramaSave.request))
+          if(latest.id!==identifier||latest.revision!==dramaSave.result.revision||!matchesSavedDramaProject(latest,dramaSave.request,dramaSave.result))
             throw Error('Chưa đối chiếu được bản đã lưu. Giữ nội dung đang nhập và kiểm tra lại trạng thái.');
           const now=getState();
-          if(now.dirty&&now.dirtyPart!=='drama-script')throw Error('Còn chỉnh sửa khác chưa lưu. Bản kịch bản đã gửi được giữ để đối chiếu.');
+          if(now.dirty&&!['drama-script','drama-both'].includes(now.dirtyPart)&&!(now.dirtyPart==='drama'&&dramaSave.request.confirm_characters===true))throw Error('Còn chỉnh sửa khác chưa lưu. Bản kịch bản đã gửi được giữ để đối chiếu.');
           if(![dramaSave.request.revision,dramaSave.result.revision].includes(now.project.revision))return {status:'newer',project:latest};
         }else if(dramaSave.kind==='reviewed-server'){
           if(latest.id!==identifier||latest.revision!==dramaSave.snapshot.revision||stableDramaJSON(latest.document)!==stableDramaJSON(dramaSave.snapshot.document))return {status:'newer',project:latest};
@@ -36,6 +51,7 @@ export function createNativeProjectReload({api,getState,onProject,renderProject,
   };
 }
 export const nativeDramaSaveCallback=reload=>value=>reload(false,{dramaSave:value});
+export const nativeDramaCastingCallback=reload=>value=>value?reload(false,{castingSave:value}):reload(true);
 export {newProjectQuality} from './project-quality.mjs';
 export const supportsNativeCosts = session => session?.capabilities?.native_cost_ledger===true;
 export function nativeRequestBody(value){
@@ -197,7 +213,8 @@ if (typeof document !== "undefined") {
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
   let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null,dramaUI=null,dramaFlowUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
-  let asrLanguageEnabled=false,workspaceId='wsp_native_local';
+  let asrLanguageEnabled=false,workspaceId='wsp_native_local',dramaScriptDirty=false,dramaCastingDirty=false;
+  function markDramaDirty(kind,value){if(kind==='script')dramaScriptDirty=value;else dramaCastingDirty=value;dirtyPart=nativeDramaDirtyPart({script:dramaScriptDirty,casting:dramaCastingDirty},dirtyPart);dirty=Boolean(dirtyPart);if(dirty)$("review-check").checked=false;controls();}
   let localAsrEnabled=false;
   let localSmallAsrEnabled=false;
   let localPhoAsrEnabled=false;
@@ -609,9 +626,9 @@ if (typeof document !== "undefined") {
     }
     if(session.capabilities?.native_drama_voice_casting===true){
       const drama=await import('./native-drama.mjs');
-      dramaUI=drama.initializeNativeDrama({api,getState:()=>({project,dirty,dirtyPart,busy,workspace_id:session.access?.workspace_id??'wsp_native_local',active:jobActive(project),canManage,
+      dramaUI=drama.initializeNativeDrama({api,getState:()=>({project,dirty,dirtyPart,busy,dramaScriptDirty,dramaCastingDirty,workspace_id:session.access?.workspace_id??'wsp_native_local',active:jobActive(project),canManage,
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message,onWorking:value=>{busy=value;controls();},
-        onDirty:value=>{if(value)markDirty('drama');else if(dirtyPart==='drama'){dirty=false;dirtyPart=null;controls();}},onSaved:async()=>{await reload(true);}});
+        onDirty:value=>markDramaDirty('casting',value),onSaved:nativeDramaCastingCallback(reload)});
     }
     if(session.capabilities?.native_narration_preparation===true){
       const narration=await import('./native-narration.mjs');
@@ -721,9 +738,9 @@ if (typeof document !== "undefined") {
     shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,onDraftsCreated:projects,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
     if(session.capabilities?.native_drama_workflow===true&&shotStudio){
       const flow=await import('./drama-workflow.mjs');const css=document.createElement('link');css.rel='stylesheet';css.href='/drama-workflow.css';document.head.append(css);
-      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,workspace_id:workspaceId,canManage,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,workspace_id:workspaceId,dramaScriptDirty,dramaCastingDirty,canManage,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
         onCreated:async value=>{project=value;localStorage.setItem('vf-native-project',value.id);const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.delete('view');url.searchParams.set('project',value.id);history.replaceState(null,'',url);$('media-illustration').checked=false;renderProject(true);await projects();if(value.document.production_workflow.kind==='source')shotStudio.showStage('assets');},
-        onSaved:nativeDramaSaveCallback(reload),onDirty:value=>{if(value)markDirty('drama-script');else if(dirtyPart==='drama-script'){dirty=false;dirtyPart=null;controls();}},onWorking:value=>{busy=value;controls();},onMessage:message,showStage:value=>shotStudio.showStage(value),drama:dramaUI,narration:narrationUI});
+        onSaved:nativeDramaSaveCallback(reload),onDirty:value=>markDramaDirty('script',value),onWorking:value=>{busy=value;controls();},onMessage:message,showStage:value=>shotStudio.showStage(value),drama:dramaUI,narration:narrationUI});
     }
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{
