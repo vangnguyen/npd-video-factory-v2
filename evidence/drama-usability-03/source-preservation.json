@@ -1,6 +1,6 @@
 {
   "schema": "drama-source-preservation.v1",
-  "functional_source_head": "9d401cb136dea61277110684959f3370b305ea63",
+  "functional_source_head": "24498c9585e68d4f44119e79d222e609b9c21b0a",
   "branch": "codex/vf-drama-usability-03",
   "remote_branch_pushed": true,
   "remote_main_head": "fa81c59fbe6b745cba8fed979e30e52a13199afa",
@@ -12,11 +12,11 @@
     "bytes": 204634353
   },
   "delta_bundle": {
-    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-usability-03\\drama-source-from-final-export-baseline-n1.bundle",
-    "sha256": "4d105edbbff57360be913b4c83de99f121e3178ac5105b747ee73f54150fff10",
-    "bytes": 350385,
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-usability-03\\drama-source-from-final-export-baseline-n2.bundle",
+    "sha256": "01913a566071c12b145918cb40e9181a49fb32393c3f8b8c3d1e07adec0b863a",
+    "bytes": 387356,
     "requires_commit": "4162bc32260521277737f7c9ee118b5ba55b3f9b",
-    "tip": "9d401cb136dea61277110684959f3370b305ea63",
+    "tip": "24498c9585e68d4f44119e79d222e609b9c21b0a",
     "git_bundle_verify": "PASS"
   },
   "review_data_backup": {

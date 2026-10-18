@@ -1,6 +1,6 @@
 # Drama: điểm vào, giọng thật và luồng xuất video
 
-Phạm vi: `VF-DRAMA-ENTRY-VOICE-CHOICES-USABILITY-03`. Bản ứng viên chức năng: `9d401cb136dea61277110684959f3370b305ea63`, nhánh `codex/vf-drama-usability-03`. Studio phục vụ từ `C:\vfdr03`, URL **http://127.0.0.1:62684/?new=1**. Đây là môi trường review Native riêng, giữ dữ liệu review cũ; không phải triển khai production.
+Phạm vi: `VF-DRAMA-ENTRY-VOICE-CHOICES-USABILITY-03`. Bản ứng viên chức năng: `24498c9585e68d4f44119e79d222e609b9c21b0a`, nhánh `codex/vf-drama-usability-03`. Studio phục vụ từ `C:\vfdr03`, URL **http://127.0.0.1:62684/?new=1**. Đây là môi trường review Native riêng, giữ dữ liệu review cũ; không phải triển khai production.
 
 Đường mở: **Tạo video → Phim Drama → nhập tên phim → Tạo phim Drama**. Có thể mở [bản nháp nguyên bản đã chuẩn bị](http://127.0.0.1:62684/?project=4a492a1795ae4b83b393a20db6f623a7). Bản nháp này chưa được Owner xác nhận nhân vật, chưa chọn giọng, chưa có tư liệu, job hoặc approval. [Thư viện giọng](http://127.0.0.1:62684/?view=voices) cho phép nghe mẫu trước khi phân vai.
 
@@ -54,7 +54,7 @@ Hàng đợi mẫu: một worker, tối đa 10 yêu cầu đang chờ/chạy; kh
 
 ## Kiểm thử và chứng cứ
 
-- Full Studio ứng viên: **2.158 PASS, 0 FAIL/SKIP**, log `m4-studio-full-n3.log`.
+- Full Studio ứng viên: **2.160 PASS, 0 FAIL/SKIP**, log `m4-studio-full-n5.log`.
 - Renderer: **52/52 PASS**, typecheck PASS; source renderer không đổi từ snapshot kiểm `cb04dfd8` đến ứng viên.
 - API liên quan: **141 PASS, 3 SKIP**, log `api-related-n2.log`; ba trường hợp cần PostgreSQL contention thật. Lượt đầu có 29 PASS/115 setup error vì TEMP dùng chung bị WinError 5; giữ log và chạy lại bằng thư mục tạm riêng, không sửa quyền thư mục hệ thống.
 - Native liên quan: **182/182 PASS**, nguyên bộ mới, 345,051 giây (`native-related-candidate-n2.log`). Lượt trước 181 PASS/1 FAIL do kỳ vọng capability session cũ thiếu cờ Drama; đã sửa fixture và chạy lại nguyên bộ, không cộng replay. Lượt Native rộng bổ sung ở snapshot `21063783` được ngắt sau khi bộ liên quan của ứng viên hoàn tất; **không tính full PASS**. Chi tiết trong `regression-status.json`. Không cộng các replay thành full regression PASS. Lượt 110 test ban đầu có một lỗi thứ tự báo quyền; đã sửa và kiểm lại, không coi lượt đầu là PASS.
@@ -76,4 +76,4 @@ Các lỗi/qualification full regression cũ giữ tại [FINAL_EXPORT_REGRESSIO
 
 `OWNER_VOICE_UAT_REQUIRED=YES`; `OWNER_UAT_COMPLETE=NO`; `TECHNICAL_PASS=PARTIAL` vì browser walkthrough còn mở. `PLATFORM_API_PUBLISHING=DEFERRED`; `ANALYTICS=DEFERRED`; `FULL_TREND_RADAR=DEFERRED`; `PRODUCTION_DEPLOYED=NO`. Không merge main, không upload mạng xã hội, không thử xóa lại các thư mục đã bị policy chặn.
 
-Source code đã push trên nhánh riêng. Delta Git bundle đã verify từ baseline export `4162bc32` đến commit chức năng `9d401cb1`; checksum baseline và delta, đường recovery đầy đủ ở [source-preservation.json](../evidence/drama-usability-03/source-preservation.json). Commit chứng cứ sau đó không đổi code đã kiểm. HEAD khởi động Studio/bytes HTTP cuối được ghi tại `recovery/20261018/drama-usability-03/final-serving-receipt.json`.
+Source code đã push trên nhánh riêng. Delta Git bundle đã verify từ baseline export `4162bc32` đến commit chức năng `24498c95`; checksum baseline và delta, đường recovery đầy đủ ở [source-preservation.json](../evidence/drama-usability-03/source-preservation.json). Commit chứng cứ sau đó không đổi code đã kiểm. HEAD khởi động Studio/bytes HTTP cuối được ghi tại `recovery/20261018/drama-usability-03/final-serving-receipt.json`.

@@ -1,14 +1,14 @@
 {
-  "source_feature_head": "9d401cb136dea61277110684959f3370b305ea63",
+  "source_feature_head": "24498c9585e68d4f44119e79d222e609b9c21b0a",
   "native_source_head_at_fresh_run": "63eef96b",
   "native_code_and_tests_unchanged_since_fresh_run": true,
   "full_studio": {
     "status": "PASS",
-    "tests": 2158,
+    "tests": 2160,
     "failures": 0,
-    "log": "m4-studio-full-n3.log",
-    "sha256": "b4152bd78f8c16d6c0a1ecc3ed79a3704d28abe38abc36e24807d5e06d7c7e87",
-    "bytes": 212902
+    "log": "m4-studio-full-n5.log",
+    "sha256": "00bfce553c3763cd158dabc85cb15c91fa2543261df555c90b8373df80c21199",
+    "bytes": 213136
   },
   "full_renderer": {
     "status": "PASS",
@@ -71,5 +71,12 @@
   "prior_wide_failures_and_qualifications_retained_in": "docs/FINAL_EXPORT_REGRESSION_STATUS.md",
   "browser_walkthrough": "BLOCKED_TOOL_INITIALIZATION",
   "owner_uat_complete": false,
-  "production_deployed": false
+  "production_deployed": false,
+  "studio_permission_fixture_initial": {
+    "tests": 2160,
+    "passed": 2159,
+    "failed": 1,
+    "log": "m4-studio-full-n4.log",
+    "reason": "New UI fixture initially searched only the Choose label; existing selected voice correctly uses Already selected; corrected test selector then reran whole suite"
+  }
 }
