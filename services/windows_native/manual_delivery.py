@@ -317,8 +317,16 @@ class NativeManualDelivery:
         rights=[]
         for asset in canonical_assets(doc):
             rights.append({key:asset.get(key) for key in ('id','sha256','kind','source_type','rights_status','license','provider')})
+        if doc.get('drama_casting') is not None:
+            from .dialogue_runtime import library_for
+            from .dialogue_binding import validate
+            library=library_for(self.store);spec=validate(doc,library,project_id=row['project_id'])
+            for ref in spec['voice_bindings']:
+                voice=library.get(ref['voice_id'],version=ref['voice_version']);definition=voice['definition']
+                rights.append({'id':voice['voice_id'],'version':voice['version'],'sha256':voice['definition_sha256'],'kind':'dialogue_voice',
+                    **{k:definition[k] for k in ('source_type','rights_status','license','provider','source_reference','permission_reference')},'independently_verified':False})
         durable_json(stage/'rights-summary.json',{'items':rights,'independently_verified':False,'manual_posting_review_required':True,
-            'unknown_rights_count':sum(a.get('rights_status') not in ('owned','licensed') for a in rights),'external_publishing_authorized':False})
+            'unknown_rights_count':sum(a.get('rights_status') not in ('owned','licensed','owner_declared') for a in rights),'external_publishing_authorized':False})
         with self.store.transaction() as con:
             copyrow=con.execute('SELECT * FROM native_delivery_copy WHERE workspace_id=? AND project_id=? AND version=?',(self.workspace,row['project_id'],payload.caption_version)).fetchone()
         if payload.caption_version and not copyrow:raise WorkflowError('EXPORT_CAPTION_VERSION_CHANGED')
@@ -332,7 +340,8 @@ class NativeManualDelivery:
                 if value:(stage/f'{key}.txt').write_text(value+'\n',encoding='utf-8')
         if payload.separate_subtitle:
             raw=None
-            if (source/'subtitles.json').is_file():raw=json.loads((source/'subtitles.json').read_bytes()).get('cues')
+            if (source/'subtitles.json').is_file():
+                subtitle_data=json.loads((source/'subtitles.json').read_bytes());raw=subtitle_data.get('delivery_cues',subtitle_data.get('cues'))
             if raw is None and (source/'render-manifest.json').is_file():raw=json.loads((source/'render-manifest.json').read_bytes()).get('captions')
             if raw:
                 (stage/'subtitle.srt').write_text(srt(raw,report['duration_seconds']),encoding='utf-8')

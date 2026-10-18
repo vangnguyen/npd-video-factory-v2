@@ -612,7 +612,7 @@ class Store:
             doc = project["document"]
             if doc.get('drama_casting') is not None:
                 from .drama_casting import require_execution_ready
-                require_execution_ready(doc)
+                require_execution_ready(doc,store=self,con=con,project_id=identifier,purpose=purpose)
             from .auto_edit_timeline import is_auto_edit
             preview_binding=None;render_mode=None;approval_scope='narration_only' if purpose=='narration' else None
             if is_auto_edit(doc):
@@ -722,6 +722,9 @@ class Store:
                 raise WorkflowError('AUTO_EDIT_HUMAN_APPROVAL_REQUIRED_BEFORE_RENDER' if is_auto_edit(doc) else 'HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
             if kind=='render' and approval.get('approval_scope')=='narration_only':raise WorkflowError('NARRATION_AUDIBLE_PREVIEW_APPROVAL_REQUIRED',400)
             if kind in {"render","narration"}:
+                if doc.get('drama_casting') is not None:
+                    from .drama_casting import require_execution_ready
+                    require_execution_ready(doc,store=self,con=con,project_id=identifier,purpose='narration' if kind=='narration' else 'production')
                 if is_auto_edit(doc):
                     from .source_approval import validate_render_approval, reviewed_preview
                     validate_render_approval({'snapshot':{'document':doc,'approval':approval},'revision':revision,'project_id':identifier})

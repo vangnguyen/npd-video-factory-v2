@@ -64,11 +64,10 @@ def saved(document):
     except (TypeError,ValueError,ValidationError):raise WorkflowError('DRAMA_CASTING_CHANGED') from None
     return copy.deepcopy(record)
 
-def require_execution_ready(document):
+def require_execution_ready(document,**context):
     if saved(document) is not None:
-        # Removed only when validated per-line PCM/plan/rights integration exists.
-        # A saved casting must never silently invoke the locked legacy narrator.
-        raise WorkflowError('DRAMA_DIALOGUE_AUDIO_REQUIRED',400)
+        from .dialogue_runtime import require_ready
+        return require_ready(document,**context)
 
 class NativeDramaCasting:
     def __init__(self,store,library):

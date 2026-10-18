@@ -1,0 +1,23 @@
+{
+  "status": "IMPLEMENTED_MOCK_AND_LOCAL_MEDIA_TESTED_NOT_OWNER_ACCEPTED",
+  "cohorts_overlap": true,
+  "tests": [
+    {"passed": 68, "failed": 0, "seconds": 63.617, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-runtime-Native-n2.log"},
+    {"passed": 40, "failed": 0, "seconds": 111.933, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-legacy-regression-Native-n1.log"},
+    {"passed": 11, "failed": 0, "seconds": 3.331, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-binding-Native-n3.log"}
+  ],
+  "actual_media_operations": ["PCM measurement and assembly", "FFmpeg audible preview", "H264 AAC final MP4", "full QC", "speaker-aware ASS and SRT", "cover and ZIP delivery"],
+  "tts_evidence_mode": "explicit-mock",
+  "speech": "Synthetic tones for two actors, never real speech",
+  "human_approvals": "Automated fixtures labelled NOT OWNER ACCEPTANCE",
+  "real_provider_inferences": 0,
+  "public_casting_ui": false,
+  "legacy_profile_modified": false,
+  "regeneration": "Three fixture adapter calls across initial two lines and one character voice change; unaffected line reuses its verified cache and prior PCM remains unchanged",
+  "recovery": "A complete private attempt is recovered after simulated parent stop before TTS checkpoint without repeating inference",
+  "first_attempt": "One direct-worker test attempted an edit while its failed job still had running state. The harness now records the failure as the real Runner does. PROJECT_BUSY was preserved.",
+  "owner_voice_uat_required": true,
+  "owner_export_uat_complete": false,
+  "platform_api_publishing": "DEFERRED",
+  "production_deployed": false
+}

@@ -84,6 +84,13 @@ class DialogueBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(WorkflowError,'FIT_NARRATION_TEMPLATE_REQUIRED'):self.compiler().compile(self.project['id'],self.body(),actor_ref='FIXTURE')
         self.assertNotIn('compiled_dialogue',self.store.get(self.project['id'])['document']);self.assertEqual(self.adapter.calls,[])
 
+    def test_disabled_shot_keeps_its_draft_text_without_synthesizing_it(self):
+        project=self.store.shot_view(self.project['id']);shot=project['shot_timeline']['shots'][0]
+        self.store.mutate_shots(project['id'],project['revision'],{'type':'update','shot_id':shot['shot_id'],'values':{'narration_enabled':False}})
+        configuration=copy.deepcopy(self.configuration);configuration['lines'][0]['enabled']=False;self.save_cast(configuration)
+        result=self.compile();self.assertEqual(len(result['specification']['voice_bindings']),1)
+        self.assertEqual(result['specification']['voice_bindings'][0]['voice_id'],self.voices[1]['voice_id']);self.assertEqual(self.adapter.calls,[])
+
     def test_manifest_tamper_and_approval_race_rejected(self):
         self.compile();document=copy.deepcopy(self.store.get(self.project['id'])['document']);document['compiled_dialogue']['profile_sha256']=PROFILE_SHA
         with self.assertRaisesRegex(WorkflowError,'SPECIFICATION_CHANGED'):specification(document)

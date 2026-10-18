@@ -58,8 +58,18 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         if line:lines.append(line)
         if len(lines)>style.max_lines:raise WorkflowError('SOURCE_MEDIA_TRACK_CAPTION_LAYOUT_INVALID',400)
         return lines
+    speaker_mapping=[];delivery_cues=[]
     for cue in cues:
-        pieces=lines_for(cue.text);height_estimate=len(pieces)*style.font_size*1.45
+        speaker=None;display_text=cue.text
+        if document.get('drama_casting') is not None:
+            matches=[c for t in snapshot.tracks if t.kind=='subtitles' and not t.disabled for c in t.clips if not c.disabled
+                and c.timeline_start-.002<=cue.start_seconds and c.timeline_start+c.duration+.002>=cue.end_seconds]
+            if len(matches)!=1 or not all(matches[0].metadata.get(k) for k in ('speaker_id','speaker_name','dialogue_line_id')):
+                raise WorkflowError('DRAMA_SUBTITLE_SPEAKER_MAPPING_REQUIRED',400)
+            source=matches[0].metadata;speaker={k:source[k] for k in ('speaker_id','speaker_name','dialogue_line_id','voice_id','voice_version')}
+            speaker_mapping.append({'cue_id':cue.cue_id,**speaker});display_text=source['speaker_name']+': '+cue.text
+            if style.animation in {'word_by_word','word_highlight','karaoke'}:raise WorkflowError('DRAMA_SPEAKER_WORD_ALIGNMENT_UNAVAILABLE',400)
+        pieces=lines_for(display_text);height_estimate=len(pieces)*style.font_size*1.45
         if style.position=='top':y=top+height_estimate/2+20
         elif style.position=='center':y=(top+bottom)/2
         else:y=bottom-height_estimate/2-20
@@ -100,10 +110,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 parts.append(ass_escape(text[cursor:]));return ''.join(parts)
             text='\\N'.join(plain(' '.join(line)) for line in pieces)
         events.append(f"Dialogue: 0,{ass_time(cue.start_seconds)},{ass_time(cue.end_seconds)},Subtitle,,0,0,0,,{prefix}{text}")
-        captions.append({'start':cue.start_seconds,'end':cue.end_seconds,'text':cue.text,'cue_id':cue.cue_id,
+        captions.append({'start':cue.start_seconds,'end':cue.end_seconds,'text':display_text,'cue_id':cue.cue_id,
+            **(speaker or {}),
             'style_ref':style.template_ref,'animation':style.animation,'words':[w.model_dump(mode='json') for w in cue.words],
             'timing_source':'canonical_caption_bounds_words_only_when_source_evidence_exists'})
+        if speaker:delivery_cues.append({'start':cue.start_seconds,'end':cue.end_seconds,'text':display_text,**speaker})
     (directory/'subtitles.ass').write_text(header+'\n'.join(events)+'\n',encoding='utf-8')
     write_json(directory/'subtitles.json',{'cues':[c.model_dump(mode='json') for c in cues],'style':style.model_dump(mode='json'),
-        'actual_renderer':'local-ffmpeg-libass','font_sha256':FONT_SHA,'word_alignment_inferred':False,'source_media_mutated':False})
+        'actual_renderer':'local-ffmpeg-libass','font_sha256':FONT_SHA,'word_alignment_inferred':False,'source_media_mutated':False,
+        **({'speaker_mapping':speaker_mapping,'delivery_cues':delivery_cues} if speaker_mapping else {})})
     return captions

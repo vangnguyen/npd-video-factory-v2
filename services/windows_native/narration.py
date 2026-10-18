@@ -13,6 +13,10 @@ from .backup import guard
 SCHEMA='native-scene-narration-plan-v1'
 
 def identity(document):
+    if document.get('drama_casting') is not None:
+        from .dialogue_binding import specification
+        spec=specification(document)
+        return digest({'schema_version':SCHEMA,'dialogue_specification_sha256':spec['sha256'],'input_sha256':spec['input_sha256'],'profile_sha256':spec['profile_sha256']})
     from .shot_adapter import shots
     proposal=Proposal.model_validate(document['proposal']);values=shots(document)
     if not values:raise WorkflowError('NARRATION_CANONICAL_SHOTS_REQUIRED',400)
@@ -28,7 +32,9 @@ def prepare(config,job,out,artifacts):
     document=job['snapshot']['document'];approval=job['snapshot'].get('approval')
     if not approval or approval.get('revision')!=job['revision'] or approval.get('snapshot_sha256')!=digest(document):raise WorkflowError('HUMAN_APPROVAL_REQUIRED_BEFORE_TTS')
     meta=json.loads((out/'voice.json').read_bytes());groups=measured_scene_units(Proposal.model_validate(document['proposal']),meta)
-    if meta['profile_sha256']!=PROFILE_SHA or meta['audio_sha256']!=file_sha(out/'voice.wav'):raise WorkflowError('VOICE_ARTIFACT_BINDING_MISMATCH')
+    from .dialogue_runtime import expected_profile,voice_metadata
+    if meta['profile_sha256']!=expected_profile(document) or meta['audio_sha256']!=file_sha(out/'voice.wav'):raise WorkflowError('VOICE_ARTIFACT_BINDING_MISMATCH')
+    voice_metadata(config,document,out,meta)
     with wave.open(str(out/'voice.wav'),'rb') as audio:
         if (audio.getnchannels(),audio.getsampwidth(),audio.getframerate())!=(1,2,48000) or abs(audio.getnframes()/48000-meta['duration_seconds'])>1/48000:raise WorkflowError('NARRATION_WAVE_FORMAT_OR_DURATION_CHANGED')
     brand,template=resolve(document);values=shots(document);items=[];cursor=0.
@@ -45,7 +51,7 @@ def prepare(config,job,out,artifacts):
     plan={'schema_version':SCHEMA,'version':1,'project_id':job['project_id'],'job_id':job['id'],'source_revision':job['revision'],
         'source_document_sha256':digest(document),'source_approval_sha256':digest(approval),'source_canonical_timeline':{'version':document['canonical_timeline']['version'],'sha256':document['canonical_timeline']['sha256']},
         'voice_input_sha256':identity(document),'voice_audio_sha256':meta['audio_sha256'],'voice_metadata_sha256':file_sha(out/'voice.json'),
-        'tts_plan_sha256':file_sha(out/'tts-plan.json'),'profile_sha256':PROFILE_SHA,'source_duration_seconds':meta['duration_seconds'],
+        'tts_plan_sha256':file_sha(out/'tts-plan.json'),'profile_sha256':meta['profile_sha256'],'source_duration_seconds':meta['duration_seconds'],
         'recommended_duration_seconds':cursor,'items':items,'brand_template_sha256':digest(document.get('brand_template')),
         'fit_narration_template':template is not None and template.duration_policy==FIT_NARRATION_POLICY,'timing_basis':'measured_pcm_scene_units_not_word_alignment',
         'confidence':None,'speech_quality_accepted':False,'word_alignment_claimed':False,'canonical_timeline_mutated':False,'human_final_video_accepted':False,'render_dispatched':False}
@@ -113,6 +119,11 @@ def apply(store,project_id,job_id,payload):
         canvas=rebind_canvas(state['snapshot'],result['plan_sha256'],plan['items'])
         timeline=snapshot_from_shots(values,updated,canvas=canvas)
         updated['canonical_timeline']={'version':state['version']+1,'snapshot':timeline,'sha256':digest(timeline)}
+        if updated.get('drama_casting') is not None:
+            from .narrated_media_timeline import seed
+            from app.timeline_models import TimelineSnapshot
+            timeline=seed(store,con,{**project,'document':updated},TimelineSnapshot.model_validate(timeline)).model_dump(mode='json')
+            updated['canonical_timeline'].update(snapshot=timeline,sha256=digest(timeline))
         validate_document(updated)
         con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(project['revision']+1,json.dumps(updated,ensure_ascii=False),now(),project_id));store.version(con,project_id)
         store.event(con,project_id,'narration_measured_timing_applied_approval_invalidated',{'job_id':job_id,'plan_sha256':result['plan_sha256'],'revision':project['revision']+1,
@@ -131,7 +142,9 @@ def reuse(config,job,artifacts,stage):
     plan=result['plan']
     if result['plan_sha256']!=reference.get('plan_sha256') or plan['voice_audio_sha256']!=reference.get('voice_audio_sha256') or plan['voice_input_sha256']!=identity(job['snapshot']['document']):raise WorkflowError('PREPARED_NARRATION_BINDING_CHANGED')
     attempt=Pipeline.attempt(artifacts.out,'voice-reuse');copy_artifacts=Artifacts(attempt,job)
-    for name in ('voice.wav','voice.json','tts-plan.json'):copy_artifacts.publish(source_out/name,name)
+    names=('voice.wav','voice.json','tts-plan.json')
+    if job['snapshot']['document'].get('drama_casting') is not None:names+=('dialogue-audio.json',)
+    for name in names:copy_artifacts.publish(source_out/name,name)
     receipt={'schema_version':'native-prepared-narration-reuse-v1',
         'source_job_id':source['id'],'source_revision':source['revision'],'source_snapshot_sha256':digest(source['snapshot']),'source_plan_sha256':result['plan_sha256'],
         'voice_input_sha256':plan['voice_input_sha256'],'source_voice_sha256':plan['voice_audio_sha256'],'new_inference_calls':0,'sample_preserving':True}
@@ -139,4 +152,5 @@ def reuse(config,job,artifacts,stage):
         'derivation':copy.deepcopy(reference['derivation']),'derivation_sha256':digest(reference['derivation']),
         'approval_inherited':False,'rights_authority_inherited':False})
     write_json(attempt/'input.json',job['snapshot']);write_json(attempt/'voice-reuse.json',receipt)
-    Pipeline.publish_voice(artifacts,attempt,job,stage,extra_names=('voice-reuse.json',));return True
+    extra=('voice-reuse.json','dialogue-audio.json') if job['snapshot']['document'].get('drama_casting') is not None else ('voice-reuse.json',)
+    Pipeline.publish_voice(artifacts,attempt,job,stage,extra_names=extra,dialogue_config=config);return True

@@ -33,7 +33,8 @@ def inputs(document):
     if sequence!=sorted(sequence):raise WorkflowError('DRAMA_DIALOGUE_SHOT_ORDER_INVALID')
     for shot in values:
         lines=[v for v in active if v['shot_id']==shot['shot_id']]
-        if normalize(' '.join(v['text'] for v in lines))!=normalize(shot['narration']) or bool(lines)!=bool(shot['narration_enabled'] and normalize(shot['narration'])):
+        expected=normalize(shot['narration']) if shot['narration_enabled'] else ''
+        if normalize(' '.join(v['text'] for v in lines))!=expected or bool(lines)!=bool(expected):
             raise WorkflowError('DRAMA_CANONICAL_SCRIPT_BINDING_CHANGED')
     if normalize(' '.join(v['text'] for v in active))!=normalize(document['proposal']['narration']):raise WorkflowError('DRAMA_CANONICAL_SCRIPT_BINDING_CHANGED')
     return {'configuration':config,'delivery_takes':copy.deepcopy(takes),'narration':document['proposal']['narration'],
@@ -52,7 +53,7 @@ def specification(document):
         for field in ('input_sha256','profile_sha256','delivery_plan_sha256'):
             if not re.fullmatch(r'[a-f0-9]{64}',record[field]):raise ValueError()
         signatures=record['provider_signatures'];modes=record['provider_evidence_modes'];voices=record['voice_bindings']
-        if (not isinstance(signatures,dict) or not signatures or set(signatures)!=set(modes)
+        if (not isinstance(signatures,dict) or not signatures or not isinstance(modes,dict) or set(signatures)!=set(modes)
             or any(not re.fullmatch(r'[a-z][a-z0-9-]{0,63}',k) or not re.fullmatch(r'[a-f0-9]{64}',v) for k,v in signatures.items())
             or any(v not in {'explicit-mock','local-real','real-provider'} for v in modes.values()) or not isinstance(voices,list) or not voices):raise ValueError()
         for voice in voices:
@@ -68,11 +69,15 @@ def specification(document):
     if digest(inputs(document))!=record['input_sha256']:raise WorkflowError('DRAMA_DIALOGUE_SPECIFICATION_STALE')
     return copy.deepcopy(record)
 
-def validate(document,library,*,con=None,providers=None,project_id=None):
+def validate(document,library,*,con=None,providers=None,project_id=None,require_receipt=True):
     library.scope();record=specification(document)
     if record['workspace_id']!=library.workspace or project_id is not None and record['project_id']!=project_id:raise WorkflowError('DRAMA_DIALOGUE_SCOPE_CHANGED')
     if con is None:
-        with library.store.transaction() as current:return validate(document,library,con=current,providers=providers,project_id=project_id)
+        with library.store.transaction() as current:return validate(document,library,con=current,providers=providers,project_id=project_id,require_receipt=require_receipt)
+    if require_receipt:
+        rows=con.execute("SELECT specification_json FROM native_dialogue_compiles WHERE workspace_id=? AND project_id=? AND json_extract(specification_json,'$.sha256')=?",
+            (library.workspace,record['project_id'],record['sha256'])).fetchall()
+        if len(rows)!=1 or json.loads(rows[0][0])!=record:raise WorkflowError('DRAMA_DIALOGUE_COMPILATION_RECEIPT_CHANGED')
     for ref in record['voice_bindings']:
         voice=library._record(con,ref['voice_id'],ref['voice_version']);definition=voice['definition']
         if not voice['current'] or voice['definition_sha256']!=ref['voice_sha256'] or definition['provider']!=ref['provider']:raise WorkflowError('DRAMA_VOICE_BINDING_CHANGED')
@@ -112,6 +117,7 @@ class NativeDialogueCompiler:
         from .branding import resolve,FIT_NARRATION_POLICY
         _,template=resolve(document)
         if template is None or template.duration_policy!=FIT_NARRATION_POLICY:raise WorkflowError('DRAMA_FIT_NARRATION_TEMPLATE_REQUIRED',400)
+        if stable['voice_quality'] is not None:raise WorkflowError('DRAMA_LEGACY_NARRATOR_POLICY_CONFLICT',400)
         signatures={k:v.configuration_sha256 for k,v in self.providers.items()}
         plan=build(stable['configuration'],self.library,provider_signatures=signatures)
         if plan['needs_attention']:raise WorkflowError('DRAMA_DELIVERY_PLAN_NOT_READY',400)
@@ -131,7 +137,7 @@ class NativeDialogueCompiler:
         with self.store.transaction() as con:
             project=self.store.editable(con,project_id,body['revision']);document=copy.deepcopy(project['document']);previous=document.get('compiled_dialogue')
             if (previous['version'] if previous else 0)!=body['expected_version']:raise WorkflowError('DRAMA_DIALOGUE_SPECIFICATION_VERSION_CHANGED')
-            document['compiled_dialogue']=record;validate(document,self.library,con=con,providers=self.providers,project_id=project_id);authorization_check()
+            document['compiled_dialogue']=record;validate(document,self.library,con=con,providers=self.providers,project_id=project_id,require_receipt=False);authorization_check()
             revision=project['revision']+1;stamp=now()
             con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(revision,json.dumps(document,ensure_ascii=False),stamp,project_id));self.store.version(con,project_id)
             con.execute('INSERT INTO native_dialogue_compiles VALUES(?,?,?,?,?,?,?,?)',(workspace,project_id,body['request_key'],fingerprint,json.dumps(record,ensure_ascii=False),revision,actor_ref.strip(),stamp))

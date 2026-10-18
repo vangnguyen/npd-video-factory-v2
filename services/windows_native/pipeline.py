@@ -438,8 +438,10 @@ def render(config, snapshot, out, *, preview_only=False):
     edit_plan=validate_plan(doc)
     edit_options={s["scene"]:s for s in edit_plan["scenes"]} if edit_plan else {}
     meta = json.loads((out / "voice.json").read_bytes())
-    if meta["profile_sha256"] != PROFILE_SHA or file_sha(out / "voice.wav") != meta["audio_sha256"]:
+    from .dialogue_runtime import expected_profile,voice_metadata
+    if meta["profile_sha256"] != expected_profile(doc) or file_sha(out / "voice.wav") != meta["audio_sha256"]:
         raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
+    voice_metadata(config,doc,out,meta)
     if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
         raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
     from .shot_render_timing import retime_voice, voice_placement_diagnostics
@@ -678,7 +680,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         "subtitle_layout":{"schema_version":"native-ass-render-layout-v1","width":width,"height":height,
             "safe_rectangle":[safe_left,safe_top,width-safe_right,height-safe_bottom],"ass_sha256":file_sha(out/'subtitles.ass'),
             "font_family":brand.fonts.subtitle_family,"geometry_basis":"actual_libass_pixels_required_by_full_qc"},
-        "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
+        "profile_sha256": meta['profile_sha256'], "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
         **({'audio_balance_inputs':{'reference_role':'narrated_voice' if export_options['audio_included'] else 'no_reference','reference_sha256':file_sha(out/'audio-reference.f32le') if export_options['audio_included'] else None,
             'music_sha256':file_sha(out/'audio-music.f32le') if music else None,
@@ -758,7 +760,9 @@ class Pipeline:
     def run(self, job, stage):
         if job['kind'] in {'render','narration'} and job['snapshot']['document'].get('drama_casting') is not None:
             from .drama_casting import require_execution_ready
-            require_execution_ready(job['snapshot']['document'])
+            if job['snapshot']['document'].get('compiled_dialogue') is None:require_execution_ready(job['snapshot']['document'])
+            from .dialogue_runtime import authorize_job,providers_for
+            authorize_job(self.config,job,providers_for(self.config))
         from .auto_edit_timeline import is_auto_edit
         source_mode=is_auto_edit(job['snapshot']['document'])
         if source_mode and job['kind']=='narration':
@@ -866,6 +870,9 @@ class Pipeline:
             reuse(self.config,job,artifacts,stage)
         if artifacts.load("tts"):
             stage("resuming_verified_tts")
+        elif job['snapshot']['document'].get('drama_casting') is not None:
+            from .dialogue_runtime import prepare_job
+            prepare_job(self.config,job,artifacts,stage)
         else:
             stage("locked_thuy_dung_tts")
             def tts_attempt():
@@ -901,7 +908,9 @@ class Pipeline:
             stage("ffmpeg_render_and_qc")
             def render_attempt():
                 attempt = self.attempt(out, "render")
-                for name in ("voice.wav", "voice.json"):
+                names=("voice.wav", "voice.json")
+                if job['snapshot']['document'].get('drama_casting') is not None:names+=('tts-plan.json','dialogue-audio.json')
+                for name in names:
                     Artifacts(attempt, job).publish(out / name, name)
                 return render(self.config, job["snapshot"], attempt), attempt
             try:
@@ -949,20 +958,25 @@ class Pipeline:
         return result
 
     @staticmethod
-    def publish_voice(artifacts, attempt, job, stage, *, extra_names=()):
+    def publish_voice(artifacts, attempt, job, stage, *, extra_names=(),dialogue_config=None):
         if json.loads((attempt / "input.json").read_bytes()) != job["snapshot"]:
             raise WorkflowError("TTS_RECOVERY_SNAPSHOT_MISMATCH")
         meta = json.loads((attempt / "voice.json").read_bytes())
         proposal = Proposal.model_validate(job["snapshot"]["document"]["proposal"])
-        if meta["profile_sha256"] != PROFILE_SHA or meta["audio_sha256"] != file_sha(attempt / "voice.wav"):
+        from .dialogue_runtime import expected_profile,voice_metadata
+        document=job['snapshot']['document']
+        if meta["profile_sha256"] != expected_profile(document) or meta["audio_sha256"] != file_sha(attempt / "voice.wav"):
             raise WorkflowError("VOICE_ARTIFACT_BINDING_MISMATCH")
+        if document.get('drama_casting') is not None:
+            if dialogue_config is None:raise WorkflowError('DRAMA_PROVIDER_CONFIGURATION_REQUIRED')
+            voice_metadata(dialogue_config,document,attempt,meta)
         quality = resolve_policy(job["snapshot"]["document"])
         if quality and (meta.get("quality_policy") != quality or meta.get("quality_policy_sha256") != digest(quality)):
             raise WorkflowError("VOICE_QUALITY_POLICY_BINDING_MISMATCH")
         if normalize(" ".join(u["text"] for u in meta["units"])) != normalize(proposal.narration):
             raise WorkflowError("VOICE_NARRATION_BINDING_MISMATCH")
         measured_scene_units(proposal, meta)
-        if extra_names not in ((),('voice-reuse.json',)):raise WorkflowError('VOICE_EXTRA_ARTIFACT_INVALID')
+        if extra_names not in ((),('voice-reuse.json',),('dialogue-audio.json',),('voice-reuse.json','dialogue-audio.json')):raise WorkflowError('VOICE_EXTRA_ARTIFACT_INVALID')
         paths = retry_io(lambda: [artifacts.publish(attempt / name, name) for name in ("voice.wav", "voice.json", "tts-plan.json",*extra_names)], stage, "storage_tts_publish")
         retry_io(lambda: artifacts.commit("tts", paths), stage, "storage_tts_checkpoint")
 

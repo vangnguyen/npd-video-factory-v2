@@ -54,7 +54,9 @@ def render(config,store,project,folder,event):
     value=snapshot(store,project);validate_context(config,value);_,source,_=prepared(store,project)
     job={'id':folder.name[:32],'project_id':project['id'],'revision':project['revision'],'snapshot':value}
     attempt=Pipeline.attempt(folder,'narration-preview');target=Artifacts(attempt,job)
-    for name in ('voice.wav','voice.json','tts-plan.json'):target.publish(source/name,name)
+    names=('voice.wav','voice.json','tts-plan.json')
+    if project['document'].get('drama_casting') is not None:names+=('dialogue-audio.json',)
+    for name in names:target.publish(source/name,name)
     durable_json(attempt/'input.json',value)
     qc=render_storyboard(config,value,attempt,preview_only=True)
     if event.is_set():raise WorkflowError('PREVIEW_CANCELLED')

@@ -160,7 +160,10 @@ def caption_track(items,shots,snapshot,ref):
         lead=item['intro_seconds'];offset=cursor+lead-item['source_start_seconds']
         units=item['units'];custom=normalize(shot['subtitle'])!=normalize(shot['narration'])
         if custom and units:
-            units=[{'text':shot['subtitle'],'activity_start_seconds':units[0]['activity_start_seconds'],'activity_end_seconds':units[-1]['activity_end_seconds']}]
+            speakers={(u.get('character_id'),u.get('speaker_name')) for u in units if u.get('character_id')}
+            if len(speakers)>1:raise WorkflowError('DRAMA_MULTI_SPEAKER_SUBTITLE_USE_LINE_EDITOR',400)
+            speaker={k:units[0][k] for k in ('character_id','speaker_name','line_id','voice_id','voice_version') if k in units[0]}
+            units=[{'text':shot['subtitle'],'activity_start_seconds':units[0]['activity_start_seconds'],'activity_end_seconds':units[-1]['activity_end_seconds'],**speaker}]
         if not normalize(shot['subtitle']):units=[]
         for unit_index,unit in enumerate(units):
             a=offset+unit['activity_start_seconds'];b=offset+unit['activity_end_seconds']
@@ -176,6 +179,8 @@ def caption_track(items,shots,snapshot,ref):
                 end=point+(b-a)*len(phrase)/total
                 cue=_caption(phrase,point,end,unit['activity_start_seconds'],unit['activity_end_seconds'],{
                     'narrated_generated_caption':True,'source_voice_reference':copy.deepcopy(ref),'subtitle_text':phrase,
+                    **({'speaker_id':unit['character_id'],'speaker_name':unit['speaker_name'],'dialogue_line_id':unit['line_id'],
+                        'voice_id':unit['voice_id'],'voice_version':unit['voice_version']} if unit.get('character_id') else {}),
                     'generated_shot_id':shot['shot_id'],'shot_custom_subtitle':custom,
                     'timing_source':'canonical_custom_subtitle_estimate_with_measured_scene_bounds_no_word_alignment' if custom else 'measured_TTS_unit_with_estimated_phrase_bounds_no_word_alignment','source_media_mutated':False})
                 cue.clip_id='clip_'+digest([ref['prepared_reference_sha256'],shot['shot_id'],unit_index,phrase_index])[:24]
