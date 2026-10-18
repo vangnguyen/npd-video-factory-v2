@@ -1,0 +1,75 @@
+{
+  "source_feature_head": "9d401cb136dea61277110684959f3370b305ea63",
+  "native_source_head_at_fresh_run": "63eef96b",
+  "native_code_and_tests_unchanged_since_fresh_run": true,
+  "full_studio": {
+    "status": "PASS",
+    "tests": 2158,
+    "failures": 0,
+    "log": "m4-studio-full-n3.log",
+    "sha256": "b4152bd78f8c16d6c0a1ecc3ed79a3704d28abe38abc36e24807d5e06d7c7e87",
+    "bytes": 212902
+  },
+  "full_renderer": {
+    "status": "PASS",
+    "tests": 52,
+    "typecheck": "PASS",
+    "source_unchanged": true,
+    "log": "renderer-full-n1.log",
+    "sha256": "18838d41a68a95e0cbb138dd1a38e793e4248b72b6989cfff09ee10c01bb24b6",
+    "bytes": 1162
+  },
+  "native_related": {
+    "status": "PASS",
+    "tests": 182,
+    "failures": 0,
+    "seconds": 345.051,
+    "fresh_whole_cohort_not_sum_of_replays": true,
+    "log": "native-related-candidate-n2.log",
+    "sha256": "57e8702f5de591323707b93041270ed8549af23f2e17a4f791571554166926c5",
+    "bytes": 40196
+  },
+  "native_related_initial": {
+    "status": "FAILED",
+    "tests": 182,
+    "passed": 181,
+    "failures": 1,
+    "reason": "Exact session capability fixture omitted additive native_drama_workflow; fixture expectation updated without dropping existing guards",
+    "log": "native-related-candidate-n1.log",
+    "sha256": "0902a31ebcb03a0bd5d825cf0fd0d8849fe01d484efdbc9e6107d5675e7db5e6",
+    "bytes": 41182
+  },
+  "api_related": {
+    "status": "QUALIFIED_PASS_WITH_3_EXTERNAL_CASES_SKIPPED",
+    "passed": 141,
+    "skipped": 3,
+    "skip_reason": "Real isolated PostgreSQL contention/transaction-barrier cases unconfigured",
+    "source_unchanged": true,
+    "log": "api-related-n2.log",
+    "sha256": "5bc2b56ee171307d88ab4227ec5a6a0d9555e674b41fa33df956f3d6c0f6e057",
+    "bytes": 206
+  },
+  "api_related_initial": {
+    "status": "SETUP_ERRORS",
+    "passed": 29,
+    "errors": 115,
+    "reason": "WinError 5 on shared pytest TEMP root; fresh owned basetemp rerun used, global permissions unchanged",
+    "log": "api-related-n1.log",
+    "sha256": "fe2793b58d56863001544345211bd26731385fbbff6bea4841180d5825bbd55b",
+    "bytes": 884602
+  },
+  "native_wide_extra": {
+    "status": "INTERRUPTED_NOT_CERTIFIED",
+    "source_head": "21063783682449ba9c5e7bdca24ac23656b9e4f6",
+    "full_pass": false,
+    "reason": "Stopped supplemental older-snapshot run after current focused Native cohort completed, releasing CPU; no aggregate full pass claimed",
+    "source_was_frozen": true,
+    "log": "native-full-candidate-n1.log",
+    "sha256": "7ef328e3d77e2c9c093578f5958aa1ea82fbb8a83ba350f4ab885190bab33194",
+    "bytes": 169365
+  },
+  "prior_wide_failures_and_qualifications_retained_in": "docs/FINAL_EXPORT_REGRESSION_STATUS.md",
+  "browser_walkthrough": "BLOCKED_TOOL_INITIALIZATION",
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

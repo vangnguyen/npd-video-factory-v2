@@ -1,0 +1,16 @@
+{
+  "schema": "drama-browser-qa.v1",
+  "status": "BLOCKED_TOOL_INITIALIZATION",
+  "error": "failed to write kernel assets: The system cannot find the path specified. (os error 3)",
+  "cua_reset_recovery_attempted": true,
+  "real_browser_dom_observed": false,
+  "screenshots_created": 0,
+  "viewports": {
+    "1366x768": "NOT_RUN",
+    "1920x1080": "NOT_RUN",
+    "2560x1440": "NOT_RUN"
+  },
+  "http_and_dom_contracts_are_not_browser_acceptance": true,
+  "owner_uat_complete": false,
+  "alternate_cdp_or_browser_bypass_used": false
+}

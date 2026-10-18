@@ -1,0 +1,2370 @@
+{
+  "schema": "drama-local-real-technical-rehearsal.v1",
+  "data_root": "C:\\vfct\\drama-uat-real-n1",
+  "project_id": "6b13c09d9f19411a82d2a47898481325",
+  "render_job_id": "e08164c85a664b11a009c3d6514ca58c",
+  "package": {
+    "export_id": "nexp_126a11f5f80944efaa480a44270bed34",
+    "project_id": "6b13c09d9f19411a82d2a47898481325",
+    "created_at": "2026-10-18T08:46:34.598802+00:00",
+    "status": "ready",
+    "request_key": "original-drama-real-package-0001",
+    "binding": {
+      "project_id": "6b13c09d9f19411a82d2a47898481325",
+      "project_revision": 12,
+      "project_title": "UAT kỹ thuật · Chiếc ô · Không phải Owner duyệt",
+      "render_job_id": "e08164c85a664b11a009c3d6514ca58c",
+      "snapshot_sha256": "c17363fc00153b84c0be723c5b6b8f270cd7c275f8fb036b396e145eb8080078",
+      "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+      "timeline_version": 7,
+      "timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+      "input_version": "e4100ddb46ab8a7dd1c4a02962af609bccc325dbd5e5e94f5dc8a3f271d16a12",
+      "script_version": "3b679a5004700748bb99660e8135fafe8aa3b73d1dcc0551915ab652a6a0cc7a",
+      "storyboard_version": "519705bee8310833a101bc7ee8f427284434d8cf76092d982f47649bac394794",
+      "audio_version": "c13ce6dec8e08d8048517836e9a6ebcd43c72a49ba330d1ac1ce3f033ef893b3",
+      "subtitle_version": "02c1fdc8b3aad7e87afbcfa2f2d38565283fc06c7f506a1d9b30b1e2acbecd84",
+      "render_profile": "vertical-short",
+      "final_preview_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+      "video_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+      "duration_seconds": 7.37,
+      "width": 1080,
+      "height": 1920,
+      "fps": 30.0,
+      "final_review_sha256": "5488c0cae851eec6c5f0661b9139bdd44d69cd6929a041b163953db11fad482a",
+      "production_approval_sha256": "56906e62af4c6c1bf1796295c26aea6baec639ad5de9a3036632047314203f24",
+      "dialogue_qc_schema": "native-dialogue-qc.v1",
+      "dialogue_qc_sha256": "e9cad265e214e7ac1758350e6c93dd826108f28f9dc79d7803f1607f3a8bee09"
+    },
+    "profile": "vertical-short",
+    "manifest": {
+      "aspect_ratio": "9:16",
+      "audio_codec": "aac",
+      "binding": {
+        "audio_version": "c13ce6dec8e08d8048517836e9a6ebcd43c72a49ba330d1ac1ce3f033ef893b3",
+        "dialogue_qc_schema": "native-dialogue-qc.v1",
+        "dialogue_qc_sha256": "e9cad265e214e7ac1758350e6c93dd826108f28f9dc79d7803f1607f3a8bee09",
+        "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+        "duration_seconds": 7.37,
+        "final_preview_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+        "final_review_sha256": "5488c0cae851eec6c5f0661b9139bdd44d69cd6929a041b163953db11fad482a",
+        "fps": 30.0,
+        "height": 1920,
+        "input_version": "e4100ddb46ab8a7dd1c4a02962af609bccc325dbd5e5e94f5dc8a3f271d16a12",
+        "production_approval_sha256": "56906e62af4c6c1bf1796295c26aea6baec639ad5de9a3036632047314203f24",
+        "project_id": "6b13c09d9f19411a82d2a47898481325",
+        "project_revision": 12,
+        "project_title": "UAT kỹ thuật · Chiếc ô · Không phải Owner duyệt",
+        "render_job_id": "e08164c85a664b11a009c3d6514ca58c",
+        "render_profile": "vertical-short",
+        "script_version": "3b679a5004700748bb99660e8135fafe8aa3b73d1dcc0551915ab652a6a0cc7a",
+        "snapshot_sha256": "c17363fc00153b84c0be723c5b6b8f270cd7c275f8fb036b396e145eb8080078",
+        "storyboard_version": "519705bee8310833a101bc7ee8f427284434d8cf76092d982f47649bac394794",
+        "subtitle_version": "02c1fdc8b3aad7e87afbcfa2f2d38565283fc06c7f506a1d9b30b1e2acbecd84",
+        "timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+        "timeline_version": 7,
+        "video_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+        "width": 1080
+      },
+      "caption_version": 1,
+      "created_at": "2026-10-18T08:46:34.598802+00:00",
+      "duration_seconds": 7.37,
+      "export_id": "nexp_126a11f5f80944efaa480a44270bed34",
+      "externally_posted": false,
+      "files": {
+        "caption-variants.json": {
+          "bytes": 296,
+          "sha256": "079ae7bc0e35acc10ab5af727cb942066eb11b26301e9392c2e262716c5b4bcb"
+        },
+        "caption.txt": {
+          "bytes": 136,
+          "sha256": "91257e08baa6113a8e43d0f0c50c80d5e7ad3677674d72e2eb3053b5d9ab54db"
+        },
+        "cover-provenance.json": {
+          "bytes": 489,
+          "sha256": "63fe62cb0d370ed4c068816408ec3fa31d3a37b631f43fc6cfecb44ca0fb329b"
+        },
+        "cover.jpg": {
+          "bytes": 175468,
+          "sha256": "9bbbec1c4585ee023679f25454380927f121a2328765152fbff72181895a585c"
+        },
+        "dialogue-qc.json": {
+          "bytes": 1723,
+          "sha256": "e9cad265e214e7ac1758350e6c93dd826108f28f9dc79d7803f1607f3a8bee09"
+        },
+        "final-video.mp4": {
+          "bytes": 797132,
+          "sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c"
+        },
+        "hashtags.txt": {
+          "bytes": 18,
+          "sha256": "99fca23365706346fb5a41805dfee7c3f6bb5053d747fa90ce41a1b4dd8564eb"
+        },
+        "master-caption.txt": {
+          "bytes": 136,
+          "sha256": "91257e08baa6113a8e43d0f0c50c80d5e7ad3677674d72e2eb3053b5d9ab54db"
+        },
+        "master-hashtags.txt": {
+          "bytes": 18,
+          "sha256": "99fca23365706346fb5a41805dfee7c3f6bb5053d747fa90ce41a1b4dd8564eb"
+        },
+        "master-title.txt": {
+          "bytes": 47,
+          "sha256": "397c8e10f262bdc1f27e42c6249343f6acb8fa5d90b2c8fe3bb75adc3d5aa12c"
+        },
+        "metadata.json": {
+          "bytes": 206,
+          "sha256": "85ada8b9f488d095d30b186f0177b185a716c8ddaee8996b0617cb1d86345520"
+        },
+        "qc-report.json": {
+          "bytes": 5390,
+          "sha256": "3ab8c893afdc8ce50c0571caa9f35a3e9e89fd263906cef842caacd87a3fb0ea"
+        },
+        "rights-summary.json": {
+          "bytes": 1934,
+          "sha256": "1769ac99d0eb547e6252b4a9a60ee527f474e8be4002e61b480dbfd814b8cb70"
+        },
+        "subtitle.srt": {
+          "bytes": 360,
+          "sha256": "ccfb01d1177e37c64f22ea6140768289c8f109984c4666de21f91371f4d8bcb3"
+        },
+        "title.txt": {
+          "bytes": 47,
+          "sha256": "397c8e10f262bdc1f27e42c6249343f6acb8fa5d90b2c8fe3bb75adc3d5aa12c"
+        }
+      },
+      "fps": 30.0,
+      "height": 1920,
+      "qc_result": "passed",
+      "request_sha256": "df02755df6e7650a698033f77af70265e59aeb35f7a7423e745c61355fc40170",
+      "rights_summary_reference": "rights-summary.json",
+      "schema_version": "native-manual-delivery.v1",
+      "video_codec": "h264",
+      "video_filename": "final-video.mp4",
+      "video_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+      "width": 1080
+    },
+    "error_code": null,
+    "approval_state": "approved_at_export",
+    "current_for_project": true,
+    "integrity_checked": true,
+    "output_location": "C:\\vfct\\drama-uat-real-n1\\deliveries\\6b13c09d9f19411a82d2a47898481325\\nexp_126a11f5f80944efaa480a44270bed34",
+    "externally_posted": false,
+    "filename": "final-video.mp4",
+    "cover_filename": "cover.jpg",
+    "manifest_sha256": "126edfee460741a4f15135783f7b05945aa2c39d16d291f56d38f5f7572c44d9",
+    "availability": "present",
+    "files": [
+      "caption-variants.json",
+      "caption.txt",
+      "cover-provenance.json",
+      "cover.jpg",
+      "dialogue-qc.json",
+      "final-video.mp4",
+      "hashtags.txt",
+      "master-caption.txt",
+      "master-hashtags.txt",
+      "master-title.txt",
+      "metadata.json",
+      "qc-report.json",
+      "rights-summary.json",
+      "subtitle.srt",
+      "title.txt"
+    ],
+    "package_ready": true,
+    "idempotent_replay": false
+  },
+  "real_local_tts": true,
+  "preset_voices_initial": [
+    "Trúc Ly",
+    "Thiện Minh"
+  ],
+  "preset_voices_final": [
+    "Trúc Ly",
+    "Hải Đăng"
+  ],
+  "narrator_enabled": false,
+  "first_audio": {
+    "actual_cost": null,
+    "audio_sha256": "454d6841399336dd37ebb5d899e597039ce210187b10f5cefec57b130576324b",
+    "compiled_specification_sha256": "5b4b3951d58c8de134b4759e6086cdd101e94da1eec5f5707c22f43dab036fcd",
+    "duration_seconds": 7.68,
+    "evidence_modes": [
+      "local-real"
+    ],
+    "human_voice_uat_complete": false,
+    "profile_sha256": "827f3dbb42595f6e1c98b94daf83637c3c93e03b0a7c59036b5ebce0d7e2a422",
+    "provider_adapter_calls": 4,
+    "reused_line_clips": 0,
+    "schema_version": "native-dialogue-audio.v1",
+    "snapshot_sha256": "d620f03ed52862f45b36efe841ed5693ba6b99effadda8d2b574f2543411b475",
+    "speech_detected": false,
+    "speed": 1,
+    "units": [
+      {
+        "activity_end_seconds": 1.56,
+        "activity_start_seconds": 0.08,
+        "cache_key": "86eb1a0addc7004dff7ffc516eede4eb8b35d30bf7aaee7701ba17ade82e3612",
+        "character_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+        "end_seconds": 1.68,
+        "index": 0,
+        "line_id": "line_e689dddbf18c54439520011b7a20cd92",
+        "reused": false,
+        "scene": 1,
+        "speaker_name": "An",
+        "start_seconds": 0.0,
+        "text": "Chiếc ô này có phải của bạn không?",
+        "voice_id": "nvoice_1bfb5759fa9d42b1acd2009e49c5d8a0",
+        "voice_version": 1
+      },
+      {
+        "activity_end_seconds": 3.4400000000000004,
+        "activity_start_seconds": 1.76,
+        "cache_key": "0908ee42d93ec58107526c5e7622dd9c9eaf6471396ef97857ddc6bbb94f47af",
+        "character_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+        "end_seconds": 3.6,
+        "index": 1,
+        "line_id": "line_aee8184f7e5653578e67eb3de7236b91",
+        "reused": false,
+        "scene": 1,
+        "speaker_name": "Bình",
+        "start_seconds": 1.68,
+        "text": "Đúng rồi, mình đã tìm nó cả buổi.",
+        "voice_id": "nvoice_22322f2dcb1d413fb827f9f8141397e8",
+        "voice_version": 1
+      },
+      {
+        "activity_end_seconds": 5.359999999999999,
+        "activity_start_seconds": 3.66,
+        "cache_key": "34e72bd43fbc8f6e2c78f98f28c3b443b558d049ae8b24e8524fa28c20f2eb76",
+        "character_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+        "end_seconds": 5.6,
+        "index": 2,
+        "line_id": "line_74cb7800330450b083c9504d2f9a895b",
+        "reused": false,
+        "scene": 2,
+        "speaker_name": "An",
+        "start_seconds": 3.6,
+        "text": "Lần sau, mình ghi tên để khỏi nhầm nhé.",
+        "voice_id": "nvoice_1bfb5759fa9d42b1acd2009e49c5d8a0",
+        "voice_version": 1
+      },
+      {
+        "activity_end_seconds": 7.359999999999999,
+        "activity_start_seconds": 5.659999999999999,
+        "cache_key": "d1bfa56201bd53dec4e0ad971f08060e9f72f7075313426c30542cd311ba3839",
+        "character_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+        "end_seconds": 7.68,
+        "index": 3,
+        "line_id": "line_1d0b2e26720554078f3874b572943f85",
+        "reused": false,
+        "scene": 2,
+        "speaker_name": "Bình",
+        "start_seconds": 5.6,
+        "text": "Cảm ơn bạn. Hẹn gặp lại ngày mai.",
+        "voice_id": "nvoice_22322f2dcb1d413fb827f9f8141397e8",
+        "voice_version": 1
+      }
+    ],
+    "voice": "project-dialogue",
+    "word_alignment": "none"
+  },
+  "targeted_regeneration_audio": {
+    "actual_cost": null,
+    "audio_sha256": "24da57798ba02172f1d057317366943f0c65c3128d153e1d31e64665ef7ebdd1",
+    "compiled_specification_sha256": "b7f8e738800f247ed82bcbc3fe5d7682161eceaf6d6e83f0893a3f70db7fcab1",
+    "duration_seconds": 7.12,
+    "evidence_modes": [
+      "local-real"
+    ],
+    "human_voice_uat_complete": false,
+    "profile_sha256": "1f6d1ce11cce05a317399455cee0c16dba6a92211448b5dbde2aeb138dfb6593",
+    "provider_adapter_calls": 2,
+    "reused_line_clips": 2,
+    "schema_version": "native-dialogue-audio.v1",
+    "snapshot_sha256": "599b670fc856bd0809b88d6b09f6d8d6c8e1038f7f4fe95db1556c44495ac8c2",
+    "speech_detected": false,
+    "speed": 1,
+    "units": [
+      {
+        "activity_end_seconds": 1.56,
+        "activity_start_seconds": 0.08,
+        "cache_key": "86eb1a0addc7004dff7ffc516eede4eb8b35d30bf7aaee7701ba17ade82e3612",
+        "character_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+        "end_seconds": 1.68,
+        "index": 0,
+        "line_id": "line_e689dddbf18c54439520011b7a20cd92",
+        "reused": true,
+        "scene": 1,
+        "speaker_name": "An",
+        "start_seconds": 0.0,
+        "text": "Chiếc ô này có phải của bạn không?",
+        "voice_id": "nvoice_1bfb5759fa9d42b1acd2009e49c5d8a0",
+        "voice_version": 1
+      },
+      {
+        "activity_end_seconds": 3.0999999999999996,
+        "activity_start_seconds": 1.78,
+        "cache_key": "d8f2a1e788ca03666bba31476e5fad78a72386f42d7fe6db9c18e12a256f2f81",
+        "character_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+        "end_seconds": 3.28,
+        "index": 1,
+        "line_id": "line_aee8184f7e5653578e67eb3de7236b91",
+        "reused": false,
+        "scene": 1,
+        "speaker_name": "Bình",
+        "start_seconds": 1.68,
+        "text": "Đúng rồi, mình đã tìm nó cả buổi.",
+        "voice_id": "nvoice_24e3d3d0d00d42d3ae267644dbdcd324",
+        "voice_version": 1
+      },
+      {
+        "activity_end_seconds": 5.04,
+        "activity_start_seconds": 3.34,
+        "cache_key": "34e72bd43fbc8f6e2c78f98f28c3b443b558d049ae8b24e8524fa28c20f2eb76",
+        "character_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+        "end_seconds": 5.28,
+        "index": 2,
+        "line_id": "line_74cb7800330450b083c9504d2f9a895b",
+        "reused": true,
+        "scene": 2,
+        "speaker_name": "An",
+        "start_seconds": 3.28,
+        "text": "Lần sau, mình ghi tên để khỏi nhầm nhé.",
+        "voice_id": "nvoice_1bfb5759fa9d42b1acd2009e49c5d8a0",
+        "voice_version": 1
+      },
+      {
+        "activity_end_seconds": 6.96,
+        "activity_start_seconds": 5.36,
+        "cache_key": "4ce581d941e71f280e44a185c24c8b2b389a2441fa6eba03c2438945686ceba9",
+        "character_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+        "end_seconds": 7.12,
+        "index": 3,
+        "line_id": "line_1d0b2e26720554078f3874b572943f85",
+        "reused": false,
+        "scene": 2,
+        "speaker_name": "Bình",
+        "start_seconds": 5.28,
+        "text": "Cảm ơn bạn. Hẹn gặp lại ngày mai.",
+        "voice_id": "nvoice_24e3d3d0d00d42d3ae267644dbdcd324",
+        "voice_version": 1
+      }
+    ],
+    "voice": "project-dialogue",
+    "word_alignment": "none"
+  },
+  "unrelated_actor_lines_reused": 2,
+  "unrelated_visual_hashes": [
+    "6626f5f24ee33f6dbf554e08f86a7b9552f3ef743bf2b7331546fe157b87be2b",
+    "b7f3a8e7d38cf4155f8756927a5ee904636f810e9fc54133cc6e9eb2d5c28dfc"
+  ],
+  "preview": {
+    "audio_mode": "measured_scene_narration_full_effects_preview",
+    "cached_shots": 0,
+    "completed_shots": 2,
+    "final_approval_eligible": true,
+    "id": "8b04b751f4453390041804394efbfaa862e7a76edebfcad39cfeaaa608ba64b1",
+    "manifest": {
+      "artifacts": [
+        {
+          "bytes": 8407,
+          "modified_at": "2026-10-18T08:46:10.570635+00:00",
+          "path": "render-manifest.json",
+          "sha256": "2b548344ac15b7c9f925379d5aa075a26d930e852d08ba917e2671b9f263939c"
+        },
+        {
+          "bytes": 22902,
+          "modified_at": "2026-10-18T08:46:10.590774+00:00",
+          "path": "qc-report.json",
+          "sha256": "2927f287c382f49e5095b93ddb1728956cd6fd1a529bdb77b565e296905a7154"
+        },
+        {
+          "bytes": 21701,
+          "modified_at": "2026-10-18T08:46:10.609507+00:00",
+          "path": "full-qc-report.json",
+          "sha256": "7d169d842324960392389147c8f35707f981baf9154f07c2da600aca38ebf7fb"
+        },
+        {
+          "bytes": 1159,
+          "modified_at": "2026-10-18T08:46:10.628693+00:00",
+          "path": "transport-qc-report.json",
+          "sha256": "8679c8e8b15592a6861b8efeac5f5f3ba89b5cd8b577659012497fb90c425c96"
+        },
+        {
+          "bytes": 1055,
+          "modified_at": "2026-10-18T08:46:10.646266+00:00",
+          "path": "subtitles.ass",
+          "sha256": "a637d26011efad8b3ca7d81f63c33c1cc93096cbb2e3e3c804429df155d61f23"
+        },
+        {
+          "bytes": 5874,
+          "modified_at": "2026-10-18T08:46:10.671464+00:00",
+          "path": "timeline.json",
+          "sha256": "d338c2a5c9552b5fe30850a38ae49c586a7f696f06c78618bf7510b8346b5962"
+        },
+        {
+          "bytes": 2528,
+          "modified_at": "2026-10-18T08:46:10.677459+00:00",
+          "path": "voice.json",
+          "sha256": "a319349438b5b00962a4af0d1620c0cea25658d1aefbc1df9dcf6309758ae3d1"
+        },
+        {
+          "bytes": 36155,
+          "modified_at": "2026-10-18T08:46:10.682459+00:00",
+          "path": "narrated-media-mix.json",
+          "sha256": "4161f37ac4698ad55e4c1a01d47cc78954d311cc291de2673e06347c9a7f5bb0"
+        },
+        {
+          "bytes": 1415118,
+          "modified_at": "2026-10-18T08:46:10.698635+00:00",
+          "path": "narrated-mix.wav",
+          "sha256": "0beffc3808f827684292270c492871506e54264f20f35ab0a6da613165bcc88c"
+        },
+        {
+          "bytes": 36022,
+          "modified_at": "2026-10-18T08:46:10.778374+00:00",
+          "path": "timeline-render.json",
+          "sha256": "6878249fb172d91e6ecf33da82833bcc3e1401944f793ec0af0039f6735c4e74"
+        },
+        {
+          "bytes": 613,
+          "modified_at": "2026-10-18T08:46:10.798313+00:00",
+          "path": "source-media-imports.json",
+          "sha256": "89783ef18145db5b6ff897e50f52a4f19f37419474d5f651fe9481017aae8dab"
+        },
+        {
+          "bytes": 589,
+          "modified_at": "2026-10-18T08:46:10.815496+00:00",
+          "path": "narrated-audio-filter.txt",
+          "sha256": "7ae8f0c468b89c5810909e8b9de2ec3951db4da05f6258af5c9a23a05a90d3b9"
+        },
+        {
+          "bytes": 33373,
+          "modified_at": "2026-10-18T08:46:10.835671+00:00",
+          "path": "source-audio-clocks.json",
+          "sha256": "31f6638f4b0c7d9142ff65d05830d313e760e8ae98712b911fab6d1943bffebf"
+        },
+        {
+          "bytes": 3355,
+          "modified_at": "2026-10-18T08:46:10.969351+00:00",
+          "path": "subtitles.json",
+          "sha256": "f4c0854f42934194821d7fa18b0c61b8af94658aa755ca6bf323fd93c87f6dbd"
+        },
+        {
+          "bytes": 2049096,
+          "modified_at": "2026-10-18T08:46:10.975800+00:00",
+          "path": "fonts/NotoSans.ttf",
+          "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d"
+        },
+        {
+          "bytes": 1544512,
+          "modified_at": "2026-10-18T08:46:11.055367+00:00",
+          "path": "fonts/NotoSansDisplay.ttf",
+          "sha256": "deaa68141fa5ad21bd17d7c11fa79183ceda19b32e40ff5c33874d42f3636dde"
+        },
+        {
+          "bytes": 3978,
+          "modified_at": "2026-10-18T08:46:11.104519+00:00",
+          "path": "render-voice.json",
+          "sha256": "97e815fdbdd6a1079a48ad01a048c0b7d58a06900a95c59feb695f7c4c0314f2"
+        },
+        {
+          "bytes": 1723,
+          "modified_at": "2026-10-18T08:46:11.117679+00:00",
+          "path": "dialogue-qc.json",
+          "sha256": "8be67915220181ded710e8b27e5d29b634766dda3e089d0fb22e93495fd614d0"
+        },
+        {
+          "bytes": 27640,
+          "modified_at": "2026-10-18T08:46:11.122680+00:00",
+          "path": "subtitle-qc/000.png",
+          "sha256": "ca3f9dc8526b45b9b27c7dd59267a4f71a3f8735e520cf4da9b3294676404e07"
+        },
+        {
+          "bytes": 26061,
+          "modified_at": "2026-10-18T08:46:11.140608+00:00",
+          "path": "subtitle-qc/001.png",
+          "sha256": "b1bd1b0099407c4197ac00d3d6100638f9dc24743df13abd7f6674870c752c14"
+        },
+        {
+          "bytes": 27898,
+          "modified_at": "2026-10-18T08:46:11.152795+00:00",
+          "path": "subtitle-qc/002.png",
+          "sha256": "2c2271d058a7f02ea9f8012d0a46c7ee0b4b388453245ebd6f1603ce1cd4606b"
+        },
+        {
+          "bytes": 26677,
+          "modified_at": "2026-10-18T08:46:11.170907+00:00",
+          "path": "subtitle-qc/003.png",
+          "sha256": "a7a086c60b8856a65e18da05622cd7b21fabb76bbdee28f1637f5b27f53bc40c"
+        },
+        {
+          "bytes": 2204,
+          "modified_at": "2026-10-18T08:46:11.188182+00:00",
+          "path": "audio-balance.json",
+          "sha256": "f955b2e91e68a34a3646b3ebcc223b26adca40d2b8a3eb7c1fd069eb48f26fb1"
+        },
+        {
+          "bytes": 2830080,
+          "modified_at": "2026-10-18T08:46:11.195182+00:00",
+          "path": "audio-reference.f32le",
+          "sha256": "41cebc5dcaf040e875b50e927b03d9e4c01ffd53de2ee071d64321785a6c4186"
+        },
+        {
+          "bytes": 2830080,
+          "modified_at": "2026-10-18T08:46:11.337141+00:00",
+          "path": "audio-final.f32le",
+          "sha256": "0f47055891d36f7b87d665efe99177e3661113f3f29c171c5e5f79de03949060"
+        },
+        {
+          "bytes": 1333,
+          "modified_at": "2026-10-18T08:46:11.438877+00:00",
+          "path": "audio-stem-manifest.json",
+          "sha256": "fc1a1f35513e450a2927efcde82226a668987a6c648cb76a25174be66f37f003"
+        },
+        {
+          "bytes": 443,
+          "modified_at": "2026-10-18T08:46:11.443875+00:00",
+          "path": "audio-reference-filter.txt",
+          "sha256": "a2c7af81bdd3a015dc24a48636c7f5332facfd3d2eaab9ef6f6c1fa26ec038e6"
+        },
+        {
+          "bytes": 10675,
+          "modified_at": "2026-10-18T08:46:11.449985+00:00",
+          "path": "render-frame-qc.json",
+          "sha256": "59e020f18aabd56363076447abcebfe3100c6c3061175ed4f5a07180947a62bc"
+        },
+        {
+          "bytes": 6646,
+          "modified_at": "2026-10-18T08:46:11.466197+00:00",
+          "path": "render-frame-qc.log",
+          "sha256": "1ca346947e47eeb92704f2f25feedb7b9ccf2d0fc6ba762e21c26855379ea01c"
+        },
+        {
+          "bytes": 150160,
+          "modified_at": "2026-10-18T08:46:11.471198+00:00",
+          "path": "render-frame-qc/0.png",
+          "sha256": "e65cfe1d4fcb2ac126c83940bdadb17cc7fbc608d16515494fbaec2a243b4362"
+        },
+        {
+          "bytes": 171626,
+          "modified_at": "2026-10-18T08:46:11.491100+00:00",
+          "path": "render-frame-qc/1.png",
+          "sha256": "440363f92c31642a3f18fd17429f29afb24936b89ef118a63d368e981c227c36"
+        },
+        {
+          "bytes": 176812,
+          "modified_at": "2026-10-18T08:46:11.506060+00:00",
+          "path": "render-frame-qc/2.png",
+          "sha256": "02469fef5162c2382da61cb62b15495d1ad3558e2368c4a472890b04cd3e05a8"
+        },
+        {
+          "bytes": 181845,
+          "modified_at": "2026-10-18T08:46:11.525332+00:00",
+          "path": "render-frame-qc/3.png",
+          "sha256": "02b8b56140f1c077cc581ff5c79264d25ddd72537c8f72f2f5e773b8a3b0c1db"
+        },
+        {
+          "bytes": 174301,
+          "modified_at": "2026-10-18T08:46:11.551710+00:00",
+          "path": "render-frame-qc/4.png",
+          "sha256": "38a290cd91798d2e5005c3e7406fe867d610e680bf84a19df6f1385586d07009"
+        },
+        {
+          "bytes": 176348,
+          "modified_at": "2026-10-18T08:46:11.578270+00:00",
+          "path": "render-frame-qc/5.png",
+          "sha256": "edfd6d87c66b7ae380e91681a74eb9744e6b26cf0eccb87e2d606eb4cafff959"
+        },
+        {
+          "bytes": 178264,
+          "modified_at": "2026-10-18T08:46:11.602467+00:00",
+          "path": "render-frame-qc/6.png",
+          "sha256": "9992dd4370ff7a0983b760c7673e55d1705be146dd2df66aa84201fd94875c5b"
+        },
+        {
+          "bytes": 179221,
+          "modified_at": "2026-10-18T08:46:11.623133+00:00",
+          "path": "render-frame-qc/7.png",
+          "sha256": "3f1df81ad9c305dc3e43329f1b6fbbd2935aa3091132a66533abd92d7b6ba8be"
+        }
+      ],
+      "audio_mode": "measured_scene_narration_full_effects_preview",
+      "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+      "external_provider_calls": 0,
+      "final_render_authorized": false,
+      "final_render_parity": false,
+      "human_final_video_accepted": false,
+      "new_inference_calls": 0,
+      "output_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+      "playable": true,
+      "preview_authorization": {
+        "canonical_timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+        "canonical_timeline_version": 7,
+        "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+        "final_render_authorized": false,
+        "new_inference_authorized": false,
+        "prepared_reference_sha256": "c207219a0ebe8f69b4c75d6026e330e04764ac69d80f19157c759b19081bd5b0",
+        "project_id": "6b13c09d9f19411a82d2a47898481325",
+        "publishing_authorized": false,
+        "revision": 12,
+        "schema_version": "native-narrated-storyboard-preview-v1",
+        "source_approval_sha256": "4386bae473b281943363f5aa63b544a772d68849091a9bb8bfcbada6728e50a2",
+        "source_narration_job_id": "69bd77b902ac43cea0a4922d794caebf",
+        "source_plan_sha256": "28b5259bcab57810c314b975361e3362fcac748b994c5ca5ed618febc14ab535",
+        "voice_audio_sha256": "24da57798ba02172f1d057317366943f0c65c3128d153e1d31e64665ef7ebdd1",
+        "voice_input_sha256": "7ae132111c5e26600c0b6ceee248444f18493f9ece0b1cebdc60f06c4f13ce70"
+      },
+      "project_id": "6b13c09d9f19411a82d2a47898481325",
+      "publishing_authorized": false,
+      "qc": {
+        "checks": {
+          "audio_48khz": true,
+          "av_duration_match": true,
+          "duration_complete": true,
+          "finite_audible_audio": true,
+          "fps_30": true,
+          "full_decode": true,
+          "full_production_qc": true,
+          "h264_aac": true,
+          "no_black_intervals": true,
+          "no_hard_clipping": true,
+          "no_trailing_audio_silence": true,
+          "portrait_1080x1920": true,
+          "yuv420p": true
+        },
+        "decoded_audio_activity": {
+          "activity_end_seconds": 6.96,
+          "activity_start_seconds": 0.08,
+          "audio_activity_detected": true,
+          "duration_seconds": 7.37,
+          "leading_silence_seconds": 0.08,
+          "source": "decoded_pcm_rms",
+          "speech_detected": false,
+          "threshold_db": -45.0,
+          "trailing_silence_seconds": 0.41000000000000014,
+          "window_seconds": 0.02
+        },
+        "duration_seconds": 7.37,
+        "final_bytes": 797132,
+        "final_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+        "full_quality": {
+          "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+          "external_provider_calls": 0,
+          "final_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+          "full_production_qc": {
+            "audio_clipping": false,
+            "audio_codec": "aac",
+            "audio_mean_db": -22.0,
+            "audio_peak_db": -5.0,
+            "av_sync_delta_seconds": 0.003,
+            "black_frame_ratio": 0.0,
+            "black_frame_seconds": 0,
+            "black_interval_count": 0,
+            "black_intervals": [],
+            "broken_frames": 0,
+            "canonical_audio_stem_manifest_sha256": "fc1a1f35513e450a2927efcde82226a668987a6c648cb76a25174be66f37f003",
+            "checksum_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+            "decode_errors": [],
+            "dialogue_caption_qc": {
+              "captions_sha256": "62ee9ad5f61196e0e1cb0b456069a95be6bd1bdf06ff46689b84652aab85eb4e",
+              "cue_windows": [
+                {
+                  "audio_activity_end_seconds": 1.56,
+                  "audio_activity_start_seconds": 0.08,
+                  "cue_id": "sub_8eacfedf717f4d2cb4ef",
+                  "end_seconds": 1.56,
+                  "line_id": "line_e689dddbf18c54439520011b7a20cd92",
+                  "speaker_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+                  "start_seconds": 0.08
+                },
+                {
+                  "audio_activity_end_seconds": 3.1,
+                  "audio_activity_start_seconds": 1.78,
+                  "cue_id": "sub_c8548a24f13440319746",
+                  "end_seconds": 3.1,
+                  "line_id": "line_aee8184f7e5653578e67eb3de7236b91",
+                  "speaker_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+                  "start_seconds": 1.78
+                },
+                {
+                  "audio_activity_end_seconds": 5.04,
+                  "audio_activity_start_seconds": 3.34,
+                  "cue_id": "sub_b37ebf6d32b0413eb48e",
+                  "end_seconds": 5.04,
+                  "line_id": "line_74cb7800330450b083c9504d2f9a895b",
+                  "speaker_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+                  "start_seconds": 3.34
+                },
+                {
+                  "audio_activity_end_seconds": 6.96,
+                  "audio_activity_start_seconds": 5.36,
+                  "cue_id": "sub_e7a1dac29898463d91ed",
+                  "end_seconds": 6.96,
+                  "line_id": "line_1d0b2e26720554078f3874b572943f85",
+                  "speaker_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+                  "start_seconds": 5.36
+                }
+              ],
+              "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+              "human_voice_uat_complete": false,
+              "placed_voice_metadata_sha256": "97e815fdbdd6a1079a48ad01a048c0b7d58a06900a95c59feb695f7c4c0314f2",
+              "reasons": [],
+              "schema_version": "native-dialogue-qc.v1",
+              "source_voice_sha256": "24da57798ba02172f1d057317366943f0c65c3128d153e1d31e64665ef7ebdd1",
+              "speech_semantics_verified": false,
+              "status": "passed",
+              "timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+              "timing_basis": "measured_dialogue_activity_windows_no_word_alignment",
+              "tolerance_seconds": 0.003,
+              "word_alignment_claimed": false
+            },
+            "display_aspect_ratio": "9:16",
+            "duration_seconds": 7.37,
+            "expected": {
+              "duration_seconds": 7.369999999999999,
+              "fps": 30,
+              "height": 1920,
+              "width": 1080
+            },
+            "failures": [],
+            "fps": 30.0,
+            "freeze_frame_ratio": 0.0724,
+            "freeze_frame_seconds": 0.533,
+            "freeze_intervals": [
+              [
+                0.3,
+                0.833333
+              ]
+            ],
+            "height": 1920,
+            "intentional_audio_silence": false,
+            "intentional_still_seconds": 0.533,
+            "max_trailing_silence_seconds": 2.0,
+            "measured_audio_balance": {
+              "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+              "external_provider_calls": 0,
+              "failures": [],
+              "final_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+              "human_listening_accepted": false,
+              "manifest_sha256": "fc1a1f35513e450a2927efcde82226a668987a6c648cb76a25174be66f37f003",
+              "minimum_reference_to_music_db": null,
+              "missing_final_audio_seconds": 0.0,
+              "missing_mix_fraction": 0.0,
+              "music_overpowering_seconds": 0.0,
+              "overall_rms_dbfs": {
+                "final": -22.020144,
+                "reference": -22.0103
+              },
+              "overpowering_fraction": 0.0,
+              "paid_operations": 0,
+              "policy": {
+                "activity_threshold_dbfs": -40.0,
+                "maximum_missing_mix_fraction": 0.02,
+                "maximum_overpowering_fraction": 0.1,
+                "minimum_mix_to_reference_db": -18.0,
+                "minimum_reference_seconds": 0.08,
+                "minimum_reference_to_music_db": 6.0,
+                "missing_mix_floor_dbfs": -55.0,
+                "schema_version": "native-measured-audio-balance-policy-v1"
+              },
+              "policy_sha256": "ff6f8b8dedaaf660a078e61c1feee64403c03b783d33854fc4c3cf02183490ad",
+              "publishing_authorized": false,
+              "reference_active_seconds": 5.7,
+              "reference_measurement_mode": "independent_single_output_audio_only_replay_of_physical_sources_and_canonical_dsp",
+              "reference_role": "canonical_original_audio",
+              "reference_sample_basis": "post_editorial_gain_fades_normalization_and_music_ducking_before_shared_limiter",
+              "rights_independently_verified": false,
+              "sample_peak_dbfs": {
+                "final": -5.047951,
+                "reference": -5.050286
+              },
+              "samples": {
+                "final": {
+                  "analyzed_frames": 353760,
+                  "bytes": 2830080,
+                  "channels": 2,
+                  "encoding": "f32le",
+                  "encoding_padding_frames": 0,
+                  "frames": 353760,
+                  "reference": "audio-final.f32le",
+                  "sample_rate": 48000,
+                  "sha256": "0f47055891d36f7b87d665efe99177e3661113f3f29c171c5e5f79de03949060"
+                },
+                "reference": {
+                  "analyzed_frames": 353760,
+                  "bytes": 2830080,
+                  "channels": 2,
+                  "encoding": "f32le",
+                  "encoding_padding_frames": 0,
+                  "frames": 353760,
+                  "reference": "audio-reference.f32le",
+                  "sample_rate": 48000,
+                  "sha256": "41cebc5dcaf040e875b50e927b03d9e4c01ffd53de2ee071d64321785a6c4186"
+                }
+              },
+              "schema_version": "native-measured-audio-balance-v1",
+              "source_voice_separated": false,
+              "speech_detection_performed": false,
+              "speech_intelligibility_accepted": false,
+              "status": "passed",
+              "stereo_energy_preserved": true,
+              "thresholds_calibrated_for_speech": false,
+              "window_seconds": 0.05,
+              "worst_windows": []
+            },
+            "measured_audio_loudness": {
+              "audio_modified": false,
+              "external_provider_calls": 0,
+              "input_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+              "integrated_lufs": -19.17,
+              "loudness_range_lu": 1.6,
+              "measurement_state": "measured",
+              "normalization_target_achieved_claimed": false,
+              "provider": "local-ffmpeg-loudnorm-input-measurement",
+              "relative_threshold_lufs": -29.48,
+              "schema_version": "native-measured-audio-loudness-v1",
+              "speech_detection_performed": false,
+              "true_peak_dbfs": -5.05,
+              "voice_music_balance_accepted": false
+            },
+            "measurement": "ffmpeg-silencedetect-45db-0.5s",
+            "minimum_black_duration_seconds": 0,
+            "orientation_rotation_verified": true,
+            "publishing_blocked": true,
+            "rendered_frame_evidence": {
+              "observation": {
+                "confidence": null,
+                "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+                "external_provider_calls": 0,
+                "frames": [
+                  {
+                    "decoded_pixels_sha256": "7c1c4f1e24d41483273cd998a90c08c6f526fb0200b38072168236b05721bedb",
+                    "decoded_render_pts": 0,
+                    "decoded_render_pts_seconds": 0.0,
+                    "evidence_frame_reference": "render-frame-qc/0.png",
+                    "frame_id": "rqf_43b5289749bb9782f1731895",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.778348,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1085.0605212956716,
+                      "low_luma_fraction": 0.06884765625,
+                      "luma_mean": 56.848388671875,
+                      "luma_stddev": 47.67253013255704,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "df062792e9d02826b74dd3fec3083fd189dcadc8a9d9f0e37e7bbeae31dae633",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "e65cfe1d4fcb2ac126c83940bdadb17cc7fbc608d16515494fbaec2a243b4362",
+                    "size_bytes": 150160,
+                    "timestamp_seconds": 0.0,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "86388ba065c947b033c6d6a8c31a90ad49405052dce328e049c4a26d2c523438",
+                    "decoded_render_pts": 14336,
+                    "decoded_render_pts_seconds": 0.9333333333333333,
+                    "evidence_frame_reference": "render-frame-qc/1.png",
+                    "frame_id": "rqf_75cfa186ebddde70252364b3",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.780538,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1140.5117550115262,
+                      "low_luma_fraction": 0.053955078125,
+                      "luma_mean": 57.546630859375,
+                      "luma_stddev": 47.791879472685565,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "ecf69dd08b6a4777cc0feaa1e7ed4ba259528ab4f7f1773a5cf863967ba5ac26",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "440363f92c31642a3f18fd17429f29afb24936b89ef118a63d368e981c227c36",
+                    "size_bytes": 171626,
+                    "timestamp_seconds": 0.9333333333333333,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "65bb4a02ce77cdc90c269342fbadaf594693486b0198ba4beb985fc15c3d2e46",
+                    "decoded_render_pts": 28672,
+                    "decoded_render_pts_seconds": 1.8666666666666667,
+                    "evidence_frame_reference": "render-frame-qc/2.png",
+                    "frame_id": "rqf_9b99f0f90138d026c8a507a1",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.781795,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1145.5451139578852,
+                      "low_luma_fraction": 0.053466796875,
+                      "luma_mean": 57.947265625,
+                      "luma_stddev": 48.06497527297755,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "e90caf046d383be047811cf5a56fb6a10f8bb0ad2330972786f43c61bd453b7f",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "02469fef5162c2382da61cb62b15495d1ad3558e2368c4a472890b04cd3e05a8",
+                    "size_bytes": 176812,
+                    "timestamp_seconds": 1.8666666666666667,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "3f1de5d0eaa2bb8781357e31d7290db2baed2bb95b03c9ef37b409db872bb4c7",
+                    "decoded_render_pts": 43008,
+                    "decoded_render_pts_seconds": 2.8,
+                    "evidence_frame_reference": "render-frame-qc/3.png",
+                    "frame_id": "rqf_b926138255226777dcf8a778",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.783018,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1155.5814326366158,
+                      "low_luma_fraction": 0.053466796875,
+                      "luma_mean": 58.3369140625,
+                      "luma_stddev": 48.31459472181506,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "ecd7d0638438a48820393e1e334317fa11cae54478d1c31c43584d8d7da01e08",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "02b8b56140f1c077cc581ff5c79264d25ddd72537c8f72f2f5e773b8a3b0c1db",
+                    "size_bytes": 181845,
+                    "timestamp_seconds": 2.8,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "de8e5365e3b0d3198577a53ced59ec7747eec65593f31a924613ee9a70322055",
+                    "decoded_render_pts": 57344,
+                    "decoded_render_pts_seconds": 3.7333333333333334,
+                    "evidence_frame_reference": "render-frame-qc/4.png",
+                    "frame_id": "rqf_29dda29919f10552031bf05f",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.788829,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1095.1906867845994,
+                      "low_luma_fraction": 0.051025390625,
+                      "luma_mean": 60.189208984375,
+                      "luma_stddev": 49.883375616039224,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "05199e8c17970a6501a4b1670095cf9f1d3e2c896292b6af1f2e6e550b1c39c2",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "38a290cd91798d2e5005c3e7406fe867d610e680bf84a19df6f1385586d07009",
+                    "size_bytes": 174301,
+                    "timestamp_seconds": 3.7333333333333334,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "0e9caa2ba3f0bf9ff81340d3c4081ea88b3a520e28454b30cbd16335a6943dd1",
+                    "decoded_render_pts": 71680,
+                    "decoded_render_pts_seconds": 4.666666666666667,
+                    "evidence_frame_reference": "render-frame-qc/5.png",
+                    "frame_id": "rqf_6bc37fbc7a9a479ab8942ed6",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.790163,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1098.9901929679995,
+                      "low_luma_fraction": 0.051025390625,
+                      "luma_mean": 60.614501953125,
+                      "luma_stddev": 50.14961574743351,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "2d213b57a0845a8ddd5fd36b58495ea07bd53b4bb0c45d1dd120c9f4b935ca54",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "edfd6d87c66b7ae380e91681a74eb9744e6b26cf0eccb87e2d606eb4cafff959",
+                    "size_bytes": 176348,
+                    "timestamp_seconds": 4.666666666666667,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "044481166dde873df98e243741159c318fe084b35023a90df12aa0586d677418",
+                    "decoded_render_pts": 86016,
+                    "decoded_render_pts_seconds": 5.6,
+                    "evidence_frame_reference": "render-frame-qc/6.png",
+                    "frame_id": "rqf_5ca436de063e9014ac8d0863",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.791352,
+                      "high_luma_fraction": 0.00390625,
+                      "laplacian_variance": 1119.4179718165585,
+                      "low_luma_fraction": 0.052734375,
+                      "luma_mean": 60.993408203125,
+                      "luma_stddev": 50.41197179150593,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "64a343f7785f82a19d74f009d596cc014ae373c74e1b28901dcdfb27952fd920",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "9992dd4370ff7a0983b760c7673e55d1705be146dd2df66aa84201fd94875c5b",
+                    "size_bytes": 178264,
+                    "timestamp_seconds": 5.6,
+                    "width": 540
+                  },
+                  {
+                    "decoded_pixels_sha256": "7411510ffd1a5176760e8cd54ab041f196b4b0e729be9d0152e950fd9f9d1bea",
+                    "decoded_render_pts": 100352,
+                    "decoded_render_pts_seconds": 6.533333333333333,
+                    "evidence_frame_reference": "render-frame-qc/7.png",
+                    "frame_id": "rqf_27b3f95f7d80c66197fb6551",
+                    "height": 960,
+                    "pixel_facts": {
+                      "action": null,
+                      "algorithm": "pixel-quality-facts-v1",
+                      "black_sample": false,
+                      "blur_score": null,
+                      "broll_relevance": null,
+                      "calibration": null,
+                      "confidence": null,
+                      "environment": null,
+                      "frame_caption": null,
+                      "headroom": null,
+                      "heuristic_quality_score": 0.792593,
+                      "high_luma_fraction": 0.0,
+                      "laplacian_variance": 1149.737111216204,
+                      "low_luma_fraction": 0.052734375,
+                      "luma_mean": 61.38916015625,
+                      "luma_stddev": 50.713261406635915,
+                      "object_detections": null,
+                      "ocr": null,
+                      "overexposed": null,
+                      "person_detections": null,
+                      "safe_crop": null,
+                      "saliency": null,
+                      "sample_height": 64,
+                      "sample_pixels_sha256": "c9acc8151258311384e5b9b418e19c2ccb6b5ef6851efeb61b549096fa53b7a2",
+                      "sample_width": 64,
+                      "scene_description": null,
+                      "semantic_inference_performed": false,
+                      "subject_position": null,
+                      "underexposed": null,
+                      "watermark_or_logo_evidence": null
+                    },
+                    "sha256": "3f1df81ad9c305dc3e43329f1b6fbbd2935aa3091132a66533abd92d7b6ba8be",
+                    "size_bytes": 179221,
+                    "timestamp_seconds": 6.533333333333333,
+                    "width": 540
+                  }
+                ],
+                "full_video_tracking_performed": false,
+                "model": "pixel-quality-facts-v1",
+                "owner_uat_accepted": false,
+                "paid_operations": 0,
+                "provider": "local_ffmpeg_pillow_pixels",
+                "publishing_authorized": false,
+                "render_duration_seconds": 7.366667,
+                "render_manifest_reference": "render-manifest.json",
+                "render_manifest_sha256": "2b548344ac15b7c9f925379d5aa075a26d930e852d08ba917e2671b9f263939c",
+                "render_stream_start_seconds": 0.0,
+                "render_stream_time_base": "1/15360",
+                "rendered_video_reference": "final.mp4",
+                "rendered_video_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+                "sampling_interval_seconds": 0.920833375,
+                "schema_version": "native-render-frame-qc-v1",
+                "semantic_inference_performed": false,
+                "semantic_provider_status": "NOT_REQUESTED",
+                "timestamp_basis": "decoded_render_pts_before_scaling_with_copyts"
+              },
+              "sha256": "cbf6271270fc1f8706cf271a1eaddc38111a32f1cfa302f5edaef0ffe8b543bf"
+            },
+            "sample_aspect_ratio": "1:1",
+            "sample_rate": 48000,
+            "sampled_vision_qc": {
+              "basis": "measured_center_region_luma_not_semantic_vision",
+              "confidence": null,
+              "dark_visual_sample_ratio": 0.0,
+              "external_vision_call": false,
+              "luma_max": 113.385,
+              "luma_min": 107.653,
+              "provider": "ffmpeg-signalstats",
+              "sample_count": 7,
+              "semantic_inference_performed": false,
+              "status": "passed"
+            },
+            "silence_intervals": [],
+            "silence_ratio": 0.0,
+            "silence_seconds": 0,
+            "size_bytes": 797132,
+            "square_pixels_verified": true,
+            "status": "passed",
+            "subtitle_bounds": {
+              "ass_sha256": "a637d26011efad8b3ca7d81f63c33c1cc93096cbb2e3e3c804429df155d61f23",
+              "confidence": null,
+              "cue_count": 4,
+              "external_provider_calls": 0,
+              "failures": [],
+              "model": null,
+              "provider": "local-ffmpeg-libass-alpha-mask",
+              "safe_rectangle": [
+                90,
+                160,
+                900,
+                1560
+              ],
+              "sample_count": 4,
+              "samples": [
+                {
+                  "actual_libass_pixels": true,
+                  "bounds": [
+                    253,
+                    1414,
+                    737,
+                    1526
+                  ],
+                  "cue_index": 0,
+                  "evidence_frame_reference": "subtitle-qc/000.png",
+                  "inside_safe_area": true,
+                  "sha256": "ca3f9dc8526b45b9b27c7dd59267a4f71a3f8735e520cf4da9b3294676404e07",
+                  "timestamp_seconds": 0.8
+                },
+                {
+                  "actual_libass_pixels": true,
+                  "bounds": [
+                    258,
+                    1414,
+                    732,
+                    1526
+                  ],
+                  "cue_index": 1,
+                  "evidence_frame_reference": "subtitle-qc/001.png",
+                  "inside_safe_area": true,
+                  "sha256": "b1bd1b0099407c4197ac00d3d6100638f9dc24743df13abd7f6674870c752c14",
+                  "timestamp_seconds": 2.433333333333333
+                },
+                {
+                  "actual_libass_pixels": true,
+                  "bounds": [
+                    276,
+                    1414,
+                    714,
+                    1526
+                  ],
+                  "cue_index": 2,
+                  "evidence_frame_reference": "subtitle-qc/002.png",
+                  "inside_safe_area": true,
+                  "sha256": "2c2271d058a7f02ea9f8012d0a46c7ee0b4b388453245ebd6f1603ce1cd4606b",
+                  "timestamp_seconds": 4.2
+                },
+                {
+                  "actual_libass_pixels": true,
+                  "bounds": [
+                    263,
+                    1414,
+                    727,
+                    1526
+                  ],
+                  "cue_index": 3,
+                  "evidence_frame_reference": "subtitle-qc/003.png",
+                  "inside_safe_area": true,
+                  "sha256": "a7a086c60b8856a65e18da05622cd7b21fabb76bbdee28f1637f5b27f53bc40c",
+                  "timestamp_seconds": 6.133333333333334
+                }
+              ],
+              "status": "passed",
+              "word_alignment_claimed": false
+            },
+            "timeline": {
+              "basis": "actual_native_render_manifest_and_registered_source_hashes",
+              "canonical_timeline": {
+                "sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+                "version": 7
+              },
+              "duration_seconds": 7.369999999999999,
+              "intentional_audio_silence": false,
+              "intentional_still_intervals": [
+                {
+                  "asset_id": "f173a1d7ad0b4516b98f8a3895a7b47e.jpg",
+                  "end": 3.2666666666666666,
+                  "start": 0.0
+                },
+                {
+                  "asset_id": "904b22fbcfa440648e45c2fee33803aa.jpg",
+                  "end": 7.366666666666666,
+                  "start": 3.2666666666666666
+                }
+              ],
+              "missing_assets": [],
+              "scene_count": 2,
+              "semantic_vision_used": false,
+              "source_sha256": {
+                "904b22fbcfa440648e45c2fee33803aa.jpg": "b7f3a8e7d38cf4155f8756927a5ee904636f810e9fc54133cc6e9eb2d5c28dfc",
+                "f173a1d7ad0b4516b98f8a3895a7b47e.jpg": "6626f5f24ee33f6dbf554e08f86a7b9552f3ef743bf2b7331546fe157b87be2b"
+              },
+              "status": "passed",
+              "word_alignment_claimed": false
+            },
+            "trailing_silence_seconds": 0.0,
+            "unexplained_final_freeze_seconds": 0.0,
+            "unexplained_freeze_ratio": 0.0,
+            "video_codec": "h264",
+            "width": 1080
+          },
+          "human_final_video_accepted": false,
+          "paid_operations": 0,
+          "published": false,
+          "render_manifest_sha256": "2b548344ac15b7c9f925379d5aa075a26d930e852d08ba917e2671b9f263939c",
+          "render_purpose": "narration_preview",
+          "rights_independently_verified": false,
+          "schema_version": "native-storyboard-full-qc-v1",
+          "semantic_vision_used": false,
+          "status": "passed",
+          "subtitle_bounds": {
+            "ass_sha256": "a637d26011efad8b3ca7d81f63c33c1cc93096cbb2e3e3c804429df155d61f23",
+            "confidence": null,
+            "cue_count": 4,
+            "external_provider_calls": 0,
+            "failures": [],
+            "model": null,
+            "provider": "local-ffmpeg-libass-alpha-mask",
+            "safe_rectangle": [
+              90,
+              160,
+              900,
+              1560
+            ],
+            "sample_count": 4,
+            "samples": [
+              {
+                "actual_libass_pixels": true,
+                "bounds": [
+                  253,
+                  1414,
+                  737,
+                  1526
+                ],
+                "cue_index": 0,
+                "evidence_frame_reference": "subtitle-qc/000.png",
+                "inside_safe_area": true,
+                "sha256": "ca3f9dc8526b45b9b27c7dd59267a4f71a3f8735e520cf4da9b3294676404e07",
+                "timestamp_seconds": 0.8
+              },
+              {
+                "actual_libass_pixels": true,
+                "bounds": [
+                  258,
+                  1414,
+                  732,
+                  1526
+                ],
+                "cue_index": 1,
+                "evidence_frame_reference": "subtitle-qc/001.png",
+                "inside_safe_area": true,
+                "sha256": "b1bd1b0099407c4197ac00d3d6100638f9dc24743df13abd7f6674870c752c14",
+                "timestamp_seconds": 2.433333333333333
+              },
+              {
+                "actual_libass_pixels": true,
+                "bounds": [
+                  276,
+                  1414,
+                  714,
+                  1526
+                ],
+                "cue_index": 2,
+                "evidence_frame_reference": "subtitle-qc/002.png",
+                "inside_safe_area": true,
+                "sha256": "2c2271d058a7f02ea9f8012d0a46c7ee0b4b388453245ebd6f1603ce1cd4606b",
+                "timestamp_seconds": 4.2
+              },
+              {
+                "actual_libass_pixels": true,
+                "bounds": [
+                  263,
+                  1414,
+                  727,
+                  1526
+                ],
+                "cue_index": 3,
+                "evidence_frame_reference": "subtitle-qc/003.png",
+                "inside_safe_area": true,
+                "sha256": "a7a086c60b8856a65e18da05622cd7b21fabb76bbdee28f1637f5b27f53bc40c",
+                "timestamp_seconds": 6.133333333333334
+              }
+            ],
+            "status": "passed",
+            "word_alignment_claimed": false
+          },
+          "timeline": {
+            "basis": "actual_native_render_manifest_and_registered_source_hashes",
+            "canonical_timeline": {
+              "sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+              "version": 7
+            },
+            "duration_seconds": 7.369999999999999,
+            "intentional_audio_silence": false,
+            "intentional_still_intervals": [
+              {
+                "asset_id": "f173a1d7ad0b4516b98f8a3895a7b47e.jpg",
+                "end": 3.2666666666666666,
+                "start": 0.0
+              },
+              {
+                "asset_id": "904b22fbcfa440648e45c2fee33803aa.jpg",
+                "end": 7.366666666666666,
+                "start": 3.2666666666666666
+              }
+            ],
+            "missing_assets": [],
+            "scene_count": 2,
+            "semantic_vision_used": false,
+            "source_sha256": {
+              "904b22fbcfa440648e45c2fee33803aa.jpg": "b7f3a8e7d38cf4155f8756927a5ee904636f810e9fc54133cc6e9eb2d5c28dfc",
+              "f173a1d7ad0b4516b98f8a3895a7b47e.jpg": "6626f5f24ee33f6dbf554e08f86a7b9552f3ef743bf2b7331546fe157b87be2b"
+            },
+            "status": "passed",
+            "word_alignment_claimed": false
+          }
+        },
+        "human_final_video_accepted": false,
+        "passed": true,
+        "production_quality_policy": {
+          "activity_window_seconds": 0.02,
+          "human_listening_required": true,
+          "id": "north-star-production-quality-v1",
+          "max_between_unit_gap_seconds": 2.0,
+          "max_final_audio_tail_seconds": 2.0,
+          "max_narration_tail_seconds": 2.0,
+          "proper_names": [
+            "Vinhomes Green Paradise Cần Giờ",
+            "Vinhomes Saigon Park",
+            "Vang Nguyễn"
+          ],
+          "silence_threshold_db": -45.0,
+          "version": 1
+        },
+        "published": false
+      },
+      "rendering_effects_parity": true,
+      "revision": 12,
+      "schema_version": "native-narrated-storyboard-preview-v1",
+      "source_voice_sha256": "24da57798ba02172f1d057317366943f0c65c3128d153e1d31e64665ef7ebdd1",
+      "timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+      "timeline_version": 7,
+      "voice_input_sha256": "7ae132111c5e26600c0b6ceee248444f18493f9ece0b1cebdc60f06c4f13ce70"
+    },
+    "manifest_sha256": "0052040500ec48b5b271a295de4184dbe3b7572fd6d782c493eb87b088628be6",
+    "new_proxy_shots": 2,
+    "preview_profile": "native-narrated-storyboard-preview-v1",
+    "project_id": "6b13c09d9f19411a82d2a47898481325",
+    "provider_calls": 0,
+    "revision": 12,
+    "sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+    "status": "READY",
+    "timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+    "timeline_version": 7,
+    "total_shots": 2,
+    "tts_calls": 0,
+    "video_url": "/api/projects/6b13c09d9f19411a82d2a47898481325/preview/video?version=7"
+  },
+  "render_qc": {
+    "checks": {
+      "portrait_1080x1920": true,
+      "h264_aac": true,
+      "fps_30": true,
+      "yuv420p": true,
+      "audio_48khz": true,
+      "full_decode": true,
+      "duration_complete": true,
+      "av_duration_match": true,
+      "finite_audible_audio": true,
+      "no_hard_clipping": true,
+      "no_black_intervals": true,
+      "no_trailing_audio_silence": true,
+      "full_production_qc": true
+    },
+    "passed": true,
+    "final_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+    "duration_seconds": 7.37,
+    "final_bytes": 797132,
+    "human_final_video_accepted": false,
+    "published": false,
+    "decoded_audio_activity": {
+      "duration_seconds": 7.37,
+      "activity_start_seconds": 0.08,
+      "activity_end_seconds": 6.96,
+      "leading_silence_seconds": 0.08,
+      "trailing_silence_seconds": 0.41000000000000014,
+      "speech_detected": false,
+      "audio_activity_detected": true,
+      "threshold_db": -45.0,
+      "window_seconds": 0.02,
+      "source": "decoded_pcm_rms"
+    },
+    "production_quality_policy": {
+      "id": "north-star-production-quality-v1",
+      "version": 1,
+      "max_narration_tail_seconds": 2.0,
+      "max_between_unit_gap_seconds": 2.0,
+      "max_final_audio_tail_seconds": 2.0,
+      "silence_threshold_db": -45.0,
+      "activity_window_seconds": 0.02,
+      "proper_names": [
+        "Vinhomes Green Paradise Cần Giờ",
+        "Vinhomes Saigon Park",
+        "Vang Nguyễn"
+      ],
+      "human_listening_required": true
+    },
+    "full_quality": {
+      "schema_version": "native-storyboard-full-qc-v1",
+      "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+      "render_manifest_sha256": "6f60d62dd1e19d6d913497b5241f9ab78358b75c634f0a2edd955fbd853f7025",
+      "final_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+      "human_final_video_accepted": false,
+      "published": false,
+      "external_provider_calls": 0,
+      "paid_operations": 0,
+      "semantic_vision_used": false,
+      "rights_independently_verified": false,
+      "status": "passed",
+      "full_production_qc": {
+        "status": "passed",
+        "expected": {
+          "duration_seconds": 7.369999999999999,
+          "width": 1080,
+          "height": 1920,
+          "fps": 30
+        },
+        "subtitle_bounds": {
+          "status": "passed",
+          "provider": "local-ffmpeg-libass-alpha-mask",
+          "model": null,
+          "confidence": null,
+          "cue_count": 4,
+          "sample_count": 4,
+          "safe_rectangle": [
+            90,
+            160,
+            900,
+            1560
+          ],
+          "ass_sha256": "a637d26011efad8b3ca7d81f63c33c1cc93096cbb2e3e3c804429df155d61f23",
+          "samples": [
+            {
+              "cue_index": 0,
+              "timestamp_seconds": 0.8,
+              "bounds": [
+                253,
+                1414,
+                737,
+                1526
+              ],
+              "inside_safe_area": true,
+              "evidence_frame_reference": "subtitle-qc/000.png",
+              "sha256": "ca3f9dc8526b45b9b27c7dd59267a4f71a3f8735e520cf4da9b3294676404e07",
+              "actual_libass_pixels": true
+            },
+            {
+              "cue_index": 1,
+              "timestamp_seconds": 2.433333333333333,
+              "bounds": [
+                258,
+                1414,
+                732,
+                1526
+              ],
+              "inside_safe_area": true,
+              "evidence_frame_reference": "subtitle-qc/001.png",
+              "sha256": "b1bd1b0099407c4197ac00d3d6100638f9dc24743df13abd7f6674870c752c14",
+              "actual_libass_pixels": true
+            },
+            {
+              "cue_index": 2,
+              "timestamp_seconds": 4.2,
+              "bounds": [
+                276,
+                1414,
+                714,
+                1526
+              ],
+              "inside_safe_area": true,
+              "evidence_frame_reference": "subtitle-qc/002.png",
+              "sha256": "2c2271d058a7f02ea9f8012d0a46c7ee0b4b388453245ebd6f1603ce1cd4606b",
+              "actual_libass_pixels": true
+            },
+            {
+              "cue_index": 3,
+              "timestamp_seconds": 6.133333333333334,
+              "bounds": [
+                263,
+                1414,
+                727,
+                1526
+              ],
+              "inside_safe_area": true,
+              "evidence_frame_reference": "subtitle-qc/003.png",
+              "sha256": "a7a086c60b8856a65e18da05622cd7b21fabb76bbdee28f1637f5b27f53bc40c",
+              "actual_libass_pixels": true
+            }
+          ],
+          "failures": [],
+          "external_provider_calls": 0,
+          "word_alignment_claimed": false
+        },
+        "timeline": {
+          "status": "passed",
+          "basis": "actual_native_render_manifest_and_registered_source_hashes",
+          "duration_seconds": 7.369999999999999,
+          "scene_count": 2,
+          "missing_assets": [],
+          "source_sha256": {
+            "f173a1d7ad0b4516b98f8a3895a7b47e.jpg": "6626f5f24ee33f6dbf554e08f86a7b9552f3ef743bf2b7331546fe157b87be2b",
+            "904b22fbcfa440648e45c2fee33803aa.jpg": "b7f3a8e7d38cf4155f8756927a5ee904636f810e9fc54133cc6e9eb2d5c28dfc"
+          },
+          "intentional_still_intervals": [
+            {
+              "start": 0.0,
+              "end": 3.2666666666666666,
+              "asset_id": "f173a1d7ad0b4516b98f8a3895a7b47e.jpg"
+            },
+            {
+              "start": 3.2666666666666666,
+              "end": 7.366666666666666,
+              "asset_id": "904b22fbcfa440648e45c2fee33803aa.jpg"
+            }
+          ],
+          "intentional_audio_silence": false,
+          "canonical_timeline": {
+            "sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+            "version": 7
+          },
+          "word_alignment_claimed": false,
+          "semantic_vision_used": false
+        },
+        "publishing_blocked": true,
+        "duration_seconds": 7.37,
+        "width": 1080,
+        "height": 1920,
+        "fps": 30.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "sample_rate": 48000,
+        "av_sync_delta_seconds": 0.003,
+        "size_bytes": 797132,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "9:16",
+        "square_pixels_verified": true,
+        "orientation_rotation_verified": true,
+        "black_frame_seconds": 0,
+        "black_frame_ratio": 0.0,
+        "black_intervals": [],
+        "black_interval_count": 0,
+        "minimum_black_duration_seconds": 0,
+        "freeze_frame_seconds": 0.533,
+        "freeze_frame_ratio": 0.0724,
+        "freeze_intervals": [
+          [
+            0.3,
+            0.833333
+          ]
+        ],
+        "intentional_still_seconds": 0.533,
+        "unexplained_freeze_ratio": 0.0,
+        "unexplained_final_freeze_seconds": 0.0,
+        "audio_mean_db": -22.0,
+        "audio_peak_db": -5.0,
+        "audio_clipping": false,
+        "silence_seconds": 0,
+        "silence_ratio": 0.0,
+        "trailing_silence_seconds": 0.0,
+        "silence_intervals": [],
+        "measurement": "ffmpeg-silencedetect-45db-0.5s",
+        "broken_frames": 0,
+        "decode_errors": [],
+        "sampled_vision_qc": {
+          "status": "passed",
+          "provider": "ffmpeg-signalstats",
+          "sample_count": 7,
+          "dark_visual_sample_ratio": 0.0,
+          "luma_min": 107.653,
+          "luma_max": 113.385,
+          "external_vision_call": false,
+          "semantic_inference_performed": false,
+          "confidence": null,
+          "basis": "measured_center_region_luma_not_semantic_vision"
+        },
+        "checksum_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+        "failures": [],
+        "intentional_audio_silence": false,
+        "max_trailing_silence_seconds": 2.0,
+        "rendered_frame_evidence": {
+          "observation": {
+            "schema_version": "native-render-frame-qc-v1",
+            "rendered_video_reference": "final.mp4",
+            "rendered_video_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+            "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+            "render_manifest_reference": "render-manifest.json",
+            "render_manifest_sha256": "6f60d62dd1e19d6d913497b5241f9ab78358b75c634f0a2edd955fbd853f7025",
+            "render_stream_time_base": "1/15360",
+            "render_stream_start_seconds": 0.0,
+            "render_duration_seconds": 7.366667,
+            "sampling_interval_seconds": 0.920833375,
+            "provider": "local_ffmpeg_pillow_pixels",
+            "model": "pixel-quality-facts-v1",
+            "timestamp_basis": "decoded_render_pts_before_scaling_with_copyts",
+            "frames": [
+              {
+                "frame_id": "rqf_43b5289749bb9782f1731895",
+                "evidence_frame_reference": "render-frame-qc/0.png",
+                "sha256": "e65cfe1d4fcb2ac126c83940bdadb17cc7fbc608d16515494fbaec2a243b4362",
+                "decoded_pixels_sha256": "7c1c4f1e24d41483273cd998a90c08c6f526fb0200b38072168236b05721bedb",
+                "decoded_render_pts": 0,
+                "decoded_render_pts_seconds": 0.0,
+                "timestamp_seconds": 0.0,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 150160,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 56.848388671875,
+                  "luma_stddev": 47.67253013255704,
+                  "low_luma_fraction": 0.06884765625,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1085.0605212956716,
+                  "sample_pixels_sha256": "df062792e9d02826b74dd3fec3083fd189dcadc8a9d9f0e37e7bbeae31dae633",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.778348,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_75cfa186ebddde70252364b3",
+                "evidence_frame_reference": "render-frame-qc/1.png",
+                "sha256": "440363f92c31642a3f18fd17429f29afb24936b89ef118a63d368e981c227c36",
+                "decoded_pixels_sha256": "86388ba065c947b033c6d6a8c31a90ad49405052dce328e049c4a26d2c523438",
+                "decoded_render_pts": 14336,
+                "decoded_render_pts_seconds": 0.9333333333333333,
+                "timestamp_seconds": 0.9333333333333333,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 171626,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 57.546630859375,
+                  "luma_stddev": 47.791879472685565,
+                  "low_luma_fraction": 0.053955078125,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1140.5117550115262,
+                  "sample_pixels_sha256": "ecf69dd08b6a4777cc0feaa1e7ed4ba259528ab4f7f1773a5cf863967ba5ac26",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.780538,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_9b99f0f90138d026c8a507a1",
+                "evidence_frame_reference": "render-frame-qc/2.png",
+                "sha256": "02469fef5162c2382da61cb62b15495d1ad3558e2368c4a472890b04cd3e05a8",
+                "decoded_pixels_sha256": "65bb4a02ce77cdc90c269342fbadaf594693486b0198ba4beb985fc15c3d2e46",
+                "decoded_render_pts": 28672,
+                "decoded_render_pts_seconds": 1.8666666666666667,
+                "timestamp_seconds": 1.8666666666666667,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 176812,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 57.947265625,
+                  "luma_stddev": 48.06497527297755,
+                  "low_luma_fraction": 0.053466796875,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1145.5451139578852,
+                  "sample_pixels_sha256": "e90caf046d383be047811cf5a56fb6a10f8bb0ad2330972786f43c61bd453b7f",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.781795,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_b926138255226777dcf8a778",
+                "evidence_frame_reference": "render-frame-qc/3.png",
+                "sha256": "02b8b56140f1c077cc581ff5c79264d25ddd72537c8f72f2f5e773b8a3b0c1db",
+                "decoded_pixels_sha256": "3f1de5d0eaa2bb8781357e31d7290db2baed2bb95b03c9ef37b409db872bb4c7",
+                "decoded_render_pts": 43008,
+                "decoded_render_pts_seconds": 2.8,
+                "timestamp_seconds": 2.8,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 181845,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 58.3369140625,
+                  "luma_stddev": 48.31459472181506,
+                  "low_luma_fraction": 0.053466796875,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1155.5814326366158,
+                  "sample_pixels_sha256": "ecd7d0638438a48820393e1e334317fa11cae54478d1c31c43584d8d7da01e08",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.783018,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_29dda29919f10552031bf05f",
+                "evidence_frame_reference": "render-frame-qc/4.png",
+                "sha256": "38a290cd91798d2e5005c3e7406fe867d610e680bf84a19df6f1385586d07009",
+                "decoded_pixels_sha256": "de8e5365e3b0d3198577a53ced59ec7747eec65593f31a924613ee9a70322055",
+                "decoded_render_pts": 57344,
+                "decoded_render_pts_seconds": 3.7333333333333334,
+                "timestamp_seconds": 3.7333333333333334,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 174301,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 60.189208984375,
+                  "luma_stddev": 49.883375616039224,
+                  "low_luma_fraction": 0.051025390625,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1095.1906867845994,
+                  "sample_pixels_sha256": "05199e8c17970a6501a4b1670095cf9f1d3e2c896292b6af1f2e6e550b1c39c2",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.788829,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_6bc37fbc7a9a479ab8942ed6",
+                "evidence_frame_reference": "render-frame-qc/5.png",
+                "sha256": "edfd6d87c66b7ae380e91681a74eb9744e6b26cf0eccb87e2d606eb4cafff959",
+                "decoded_pixels_sha256": "0e9caa2ba3f0bf9ff81340d3c4081ea88b3a520e28454b30cbd16335a6943dd1",
+                "decoded_render_pts": 71680,
+                "decoded_render_pts_seconds": 4.666666666666667,
+                "timestamp_seconds": 4.666666666666667,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 176348,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 60.614501953125,
+                  "luma_stddev": 50.14961574743351,
+                  "low_luma_fraction": 0.051025390625,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1098.9901929679995,
+                  "sample_pixels_sha256": "2d213b57a0845a8ddd5fd36b58495ea07bd53b4bb0c45d1dd120c9f4b935ca54",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.790163,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_5ca436de063e9014ac8d0863",
+                "evidence_frame_reference": "render-frame-qc/6.png",
+                "sha256": "9992dd4370ff7a0983b760c7673e55d1705be146dd2df66aa84201fd94875c5b",
+                "decoded_pixels_sha256": "044481166dde873df98e243741159c318fe084b35023a90df12aa0586d677418",
+                "decoded_render_pts": 86016,
+                "decoded_render_pts_seconds": 5.6,
+                "timestamp_seconds": 5.6,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 178264,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 60.993408203125,
+                  "luma_stddev": 50.41197179150593,
+                  "low_luma_fraction": 0.052734375,
+                  "high_luma_fraction": 0.00390625,
+                  "laplacian_variance": 1119.4179718165585,
+                  "sample_pixels_sha256": "64a343f7785f82a19d74f009d596cc014ae373c74e1b28901dcdfb27952fd920",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.791352,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              },
+              {
+                "frame_id": "rqf_27b3f95f7d80c66197fb6551",
+                "evidence_frame_reference": "render-frame-qc/7.png",
+                "sha256": "3f1df81ad9c305dc3e43329f1b6fbbd2935aa3091132a66533abd92d7b6ba8be",
+                "decoded_pixels_sha256": "7411510ffd1a5176760e8cd54ab041f196b4b0e729be9d0152e950fd9f9d1bea",
+                "decoded_render_pts": 100352,
+                "decoded_render_pts_seconds": 6.533333333333333,
+                "timestamp_seconds": 6.533333333333333,
+                "width": 540,
+                "height": 960,
+                "size_bytes": 179221,
+                "pixel_facts": {
+                  "algorithm": "pixel-quality-facts-v1",
+                  "sample_width": 64,
+                  "sample_height": 64,
+                  "luma_mean": 61.38916015625,
+                  "luma_stddev": 50.713261406635915,
+                  "low_luma_fraction": 0.052734375,
+                  "high_luma_fraction": 0.0,
+                  "laplacian_variance": 1149.737111216204,
+                  "sample_pixels_sha256": "c9acc8151258311384e5b9b418e19c2ccb6b5ef6851efeb61b549096fa53b7a2",
+                  "black_sample": false,
+                  "heuristic_quality_score": 0.792593,
+                  "confidence": null,
+                  "calibration": null,
+                  "semantic_inference_performed": false,
+                  "frame_caption": null,
+                  "scene_description": null,
+                  "object_detections": null,
+                  "person_detections": null,
+                  "ocr": null,
+                  "environment": null,
+                  "action": null,
+                  "subject_position": null,
+                  "safe_crop": null,
+                  "saliency": null,
+                  "headroom": null,
+                  "blur_score": null,
+                  "overexposed": null,
+                  "underexposed": null,
+                  "watermark_or_logo_evidence": null,
+                  "broll_relevance": null
+                }
+              }
+            ],
+            "confidence": null,
+            "semantic_provider_status": "NOT_REQUESTED",
+            "semantic_inference_performed": false,
+            "full_video_tracking_performed": false,
+            "external_provider_calls": 0,
+            "paid_operations": 0,
+            "publishing_authorized": false,
+            "owner_uat_accepted": false
+          },
+          "sha256": "2e01940a8193d563f229a9d2c9b721beb41e90aae361b1eba6523a930ba26789"
+        },
+        "measured_audio_loudness": {
+          "schema_version": "native-measured-audio-loudness-v1",
+          "provider": "local-ffmpeg-loudnorm-input-measurement",
+          "input_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+          "measurement_state": "measured",
+          "integrated_lufs": -19.17,
+          "true_peak_dbfs": -5.05,
+          "loudness_range_lu": 1.6,
+          "relative_threshold_lufs": -29.48,
+          "audio_modified": false,
+          "normalization_target_achieved_claimed": false,
+          "speech_detection_performed": false,
+          "voice_music_balance_accepted": false,
+          "external_provider_calls": 0
+        },
+        "dialogue_caption_qc": {
+          "schema_version": "native-dialogue-qc.v1",
+          "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+          "timeline_sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+          "status": "passed",
+          "reasons": [],
+          "cue_windows": [
+            {
+              "cue_id": "sub_b6d74eb5244d46a48d40",
+              "line_id": "line_e689dddbf18c54439520011b7a20cd92",
+              "speaker_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+              "start_seconds": 0.08,
+              "end_seconds": 1.56,
+              "audio_activity_start_seconds": 0.08,
+              "audio_activity_end_seconds": 1.56
+            },
+            {
+              "cue_id": "sub_4728abe2bdbf49f287ca",
+              "line_id": "line_aee8184f7e5653578e67eb3de7236b91",
+              "speaker_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+              "start_seconds": 1.78,
+              "end_seconds": 3.1,
+              "audio_activity_start_seconds": 1.78,
+              "audio_activity_end_seconds": 3.1
+            },
+            {
+              "cue_id": "sub_de8c599a1db24159b3f3",
+              "line_id": "line_74cb7800330450b083c9504d2f9a895b",
+              "speaker_id": "chr_1bcbba5eb48d5286a1b51958e4e22440",
+              "start_seconds": 3.34,
+              "end_seconds": 5.04,
+              "audio_activity_start_seconds": 3.34,
+              "audio_activity_end_seconds": 5.04
+            },
+            {
+              "cue_id": "sub_f988e331c18d435eb166",
+              "line_id": "line_1d0b2e26720554078f3874b572943f85",
+              "speaker_id": "chr_5ff32fe95bc959e9966ee1f7bdada19b",
+              "start_seconds": 5.36,
+              "end_seconds": 6.96,
+              "audio_activity_start_seconds": 5.36,
+              "audio_activity_end_seconds": 6.96
+            }
+          ],
+          "timing_basis": "measured_dialogue_activity_windows_no_word_alignment",
+          "tolerance_seconds": 0.003,
+          "speech_semantics_verified": false,
+          "human_voice_uat_complete": false,
+          "word_alignment_claimed": false,
+          "placed_voice_metadata_sha256": "97e815fdbdd6a1079a48ad01a048c0b7d58a06900a95c59feb695f7c4c0314f2",
+          "source_voice_sha256": "24da57798ba02172f1d057317366943f0c65c3128d153e1d31e64665ef7ebdd1",
+          "captions_sha256": "270538fbdafd9c0df40bf88003acffaa54a1ed95e83854531bd3e15bed099016"
+        },
+        "measured_audio_balance": {
+          "schema_version": "native-measured-audio-balance-v1",
+          "status": "passed",
+          "final_sha256": "6584273d0c468e79dfd4231039af1fe536fd6ec2b09ce1500ad618ff024a977c",
+          "document_sha256": "371fd77eeab67005a36d3dee0f634075d4a0bf73d75a3aea0f7f665443696ee1",
+          "manifest_sha256": "96cbe1702e71b18ccf37ebbb0d09c2b82c633f9cdacd65eff2152ef9eeef5f16",
+          "policy": {
+            "schema_version": "native-measured-audio-balance-policy-v1",
+            "activity_threshold_dbfs": -40.0,
+            "minimum_reference_seconds": 0.08,
+            "minimum_reference_to_music_db": 6.0,
+            "maximum_overpowering_fraction": 0.1,
+            "maximum_missing_mix_fraction": 0.02,
+            "missing_mix_floor_dbfs": -55.0,
+            "minimum_mix_to_reference_db": -18.0
+          },
+          "policy_sha256": "ff6f8b8dedaaf660a078e61c1feee64403c03b783d33854fc4c3cf02183490ad",
+          "reference_role": "canonical_original_audio",
+          "samples": {
+            "final": {
+              "reference": "audio-final.f32le",
+              "sha256": "0f47055891d36f7b87d665efe99177e3661113f3f29c171c5e5f79de03949060",
+              "bytes": 2830080,
+              "frames": 353760,
+              "sample_rate": 48000,
+              "channels": 2,
+              "encoding": "f32le",
+              "analyzed_frames": 353760,
+              "encoding_padding_frames": 0
+            },
+            "reference": {
+              "reference": "audio-reference.f32le",
+              "sha256": "41cebc5dcaf040e875b50e927b03d9e4c01ffd53de2ee071d64321785a6c4186",
+              "bytes": 2830080,
+              "frames": 353760,
+              "sample_rate": 48000,
+              "channels": 2,
+              "encoding": "f32le",
+              "analyzed_frames": 353760,
+              "encoding_padding_frames": 0
+            }
+          },
+          "window_seconds": 0.05,
+          "reference_active_seconds": 5.7,
+          "music_overpowering_seconds": 0.0,
+          "missing_final_audio_seconds": 0.0,
+          "overpowering_fraction": 0.0,
+          "missing_mix_fraction": 0.0,
+          "minimum_reference_to_music_db": null,
+          "overall_rms_dbfs": {
+            "final": -22.020144,
+            "reference": -22.0103
+          },
+          "sample_peak_dbfs": {
+            "final": -5.047951,
+            "reference": -5.050286
+          },
+          "worst_windows": [],
+          "failures": [],
+          "reference_sample_basis": "post_editorial_gain_fades_normalization_and_music_ducking_before_shared_limiter",
+          "reference_measurement_mode": "independent_single_output_audio_only_replay_of_physical_sources_and_canonical_dsp",
+          "thresholds_calibrated_for_speech": false,
+          "stereo_energy_preserved": true,
+          "speech_detection_performed": false,
+          "source_voice_separated": false,
+          "speech_intelligibility_accepted": false,
+          "human_listening_accepted": false,
+          "rights_independently_verified": false,
+          "publishing_authorized": false,
+          "external_provider_calls": 0,
+          "paid_operations": 0
+        },
+        "canonical_audio_stem_manifest_sha256": "96cbe1702e71b18ccf37ebbb0d09c2b82c633f9cdacd65eff2152ef9eeef5f16"
+      },
+      "subtitle_bounds": {
+        "status": "passed",
+        "provider": "local-ffmpeg-libass-alpha-mask",
+        "model": null,
+        "confidence": null,
+        "cue_count": 4,
+        "sample_count": 4,
+        "safe_rectangle": [
+          90,
+          160,
+          900,
+          1560
+        ],
+        "ass_sha256": "a637d26011efad8b3ca7d81f63c33c1cc93096cbb2e3e3c804429df155d61f23",
+        "samples": [
+          {
+            "cue_index": 0,
+            "timestamp_seconds": 0.8,
+            "bounds": [
+              253,
+              1414,
+              737,
+              1526
+            ],
+            "inside_safe_area": true,
+            "evidence_frame_reference": "subtitle-qc/000.png",
+            "sha256": "ca3f9dc8526b45b9b27c7dd59267a4f71a3f8735e520cf4da9b3294676404e07",
+            "actual_libass_pixels": true
+          },
+          {
+            "cue_index": 1,
+            "timestamp_seconds": 2.433333333333333,
+            "bounds": [
+              258,
+              1414,
+              732,
+              1526
+            ],
+            "inside_safe_area": true,
+            "evidence_frame_reference": "subtitle-qc/001.png",
+            "sha256": "b1bd1b0099407c4197ac00d3d6100638f9dc24743df13abd7f6674870c752c14",
+            "actual_libass_pixels": true
+          },
+          {
+            "cue_index": 2,
+            "timestamp_seconds": 4.2,
+            "bounds": [
+              276,
+              1414,
+              714,
+              1526
+            ],
+            "inside_safe_area": true,
+            "evidence_frame_reference": "subtitle-qc/002.png",
+            "sha256": "2c2271d058a7f02ea9f8012d0a46c7ee0b4b388453245ebd6f1603ce1cd4606b",
+            "actual_libass_pixels": true
+          },
+          {
+            "cue_index": 3,
+            "timestamp_seconds": 6.133333333333334,
+            "bounds": [
+              263,
+              1414,
+              727,
+              1526
+            ],
+            "inside_safe_area": true,
+            "evidence_frame_reference": "subtitle-qc/003.png",
+            "sha256": "a7a086c60b8856a65e18da05622cd7b21fabb76bbdee28f1637f5b27f53bc40c",
+            "actual_libass_pixels": true
+          }
+        ],
+        "failures": [],
+        "external_provider_calls": 0,
+        "word_alignment_claimed": false
+      },
+      "timeline": {
+        "status": "passed",
+        "basis": "actual_native_render_manifest_and_registered_source_hashes",
+        "duration_seconds": 7.369999999999999,
+        "scene_count": 2,
+        "missing_assets": [],
+        "source_sha256": {
+          "f173a1d7ad0b4516b98f8a3895a7b47e.jpg": "6626f5f24ee33f6dbf554e08f86a7b9552f3ef743bf2b7331546fe157b87be2b",
+          "904b22fbcfa440648e45c2fee33803aa.jpg": "b7f3a8e7d38cf4155f8756927a5ee904636f810e9fc54133cc6e9eb2d5c28dfc"
+        },
+        "intentional_still_intervals": [
+          {
+            "start": 0.0,
+            "end": 3.2666666666666666,
+            "asset_id": "f173a1d7ad0b4516b98f8a3895a7b47e.jpg"
+          },
+          {
+            "start": 3.2666666666666666,
+            "end": 7.366666666666666,
+            "asset_id": "904b22fbcfa440648e45c2fee33803aa.jpg"
+          }
+        ],
+        "intentional_audio_silence": false,
+        "canonical_timeline": {
+          "sha256": "f8d7773244c44f7fb39fc070d8a6cd39bcd71cffed3a2c0a92995fbb8b2c3879",
+          "version": 7
+        },
+        "word_alignment_claimed": false,
+        "semantic_vision_used": false
+      }
+    }
+  },
+  "approvals_are_explicit_automated_fixtures": true,
+  "owner_uat_complete": false,
+  "browser_walkthrough_complete": false,
+  "production_deployed": false,
+  "externally_published": false
+}
