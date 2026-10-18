@@ -53,6 +53,8 @@ class CastingSave(StrictModel):
     expected_version:StrictInt=Field(ge=0)
     request_key:StrictStr=Field(pattern=KEY)
     configuration:DramaConfiguration
+    sync_canonical_script:StrictBool=False
+    clear_legacy_voice_policy:StrictBool=False
 
 def saved(document):
     record=document.get('drama_casting')
@@ -104,6 +106,9 @@ class NativeDramaCasting:
             previous=saved(document)
             if (previous['version'] if previous else 0)!=body['expected_version']:raise WorkflowError('DRAMA_CASTING_VERSION_CHANGED')
             config=body['configuration']
+            if body['clear_legacy_voice_policy'] and 'voice_quality' in document:
+                before_policy=copy.deepcopy(document);document.pop('voice_quality')
+                if not body['sync_canonical_script']:document=self.store.sync_shot_document(document,before_policy,project_id)
             for cast in config['casting']:
                 voice=self.library._record(con,cast['voice_id'],cast['voice_version'])
                 if not voice['current'] or voice['definition_sha256']!=cast['voice_sha256']:raise WorkflowError('DRAMA_VOICE_BINDING_CHANGED')
@@ -111,12 +116,30 @@ class NativeDramaCasting:
                 from .shot_adapter import shots
                 known={s['shot_id'] for s in shots(document)}
                 if any(line['shot_id'] is not None and line['shot_id'] not in known for line in config['lines']):raise WorkflowError('DRAMA_SHOT_BINDING_CHANGED')
+            if body['sync_canonical_script']:
+                from .shot_adapter import _state,shots_from_snapshot,project_projection,snapshot_from_shots,validate_document
+                from .contracts import normalize
+                state,_=_state(project);values=shots_from_snapshot(state['snapshot']);characters={v['character_id']:v for v in config['characters']}
+                active=[v for v in config['lines'] if v['enabled'] and (characters[v['character_id']]['role']!='narrator' or config['narrator_enabled'])]
+                if not active or any(v['shot_id'] is None for v in active):raise WorkflowError('DRAMA_ACTIVE_DIALOGUE_SHOTS_REQUIRED',400)
+                for shot in values:
+                    text=normalize(' '.join(v['text'] for v in active if v['shot_id']==shot['shot_id']))
+                    if text:shot['narration']=text
+                    shot['narration_enabled']=bool(text);shot['subtitle']=text
+                document=project_projection(document,values)
+                timeline=snapshot_from_shots(values,document,canvas=state['snapshot'])
+                document['canonical_timeline']={'version':state['version']+1,'snapshot':timeline,'sha256':digest(timeline)}
+                validate_document(document)
             record={'schema_version':SCHEMA,'version':body['expected_version']+1,'configuration':config,'sha256':digest(config)}
             if 'dialogue_delivery_takes' in document:
                 characters={v['character_id']:v for v in config['characters']}
                 active={v['line_id'] for v in config['lines'] if v['enabled'] and (characters[v['character_id']]['role']!='narrator' or config['narrator_enabled'])}
                 document['dialogue_delivery_takes']={k:v for k,v in document['dialogue_delivery_takes'].items() if k in active}
-            document['drama_casting']=record;revision=project['revision']+1;stamp=now();authorization_check()
+            document['drama_casting']=record
+            if document.get('canonical_timeline'):
+                from .shot_adapter import validate_document
+                validate_document(document)
+            revision=project['revision']+1;stamp=now();authorization_check()
             con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(revision,json.dumps(document,ensure_ascii=False),stamp,project_id))
             self.store.version(con,project_id)
             con.execute('INSERT INTO native_drama_writes VALUES(?,?,?,?,?,?,?,?)',(workspace,project_id,body['request_key'],fingerprint,json.dumps(record,ensure_ascii=False),revision,actor_ref.strip(),stamp))

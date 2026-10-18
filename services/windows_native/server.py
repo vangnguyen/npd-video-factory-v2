@@ -529,6 +529,14 @@ class LocalServer(ThreadingHTTPServer):
         self.render_thumbnails=NativeRenderThumbnails(self.store,config,workspace_id=self.publications.workspace_id,render_vision=self.render_vision)
         from .manual_delivery import NativeManualDelivery
         self.manual_delivery=NativeManualDelivery(self.store,config,workspace_id=self.publications.workspace_id)
+        from .voice_library import NativeVoiceLibrary
+        from .drama_casting import NativeDramaCasting
+        from .dialogue_takes import NativeDialogueTakes
+        from .drama_series import NativeDramaSeries
+        self.voice_library=NativeVoiceLibrary(self.store,workspace_id=self.publications.workspace_id)
+        self.drama_casting=NativeDramaCasting(self.store,self.voice_library)
+        self.dialogue_takes=NativeDialogueTakes(self.store,self.voice_library)
+        self.drama_series=NativeDramaSeries(self.store,self.voice_library)
         from .render_thumbnail_rights import NativeRenderThumbnailRights
         self.render_thumbnail_rights=NativeRenderThumbnailRights(self.render_thumbnails,enabled=render_thumbnail_rights_enabled,identity_provider=self.official_publish_identity)
         self.publications.bind_render_thumbnail_rights(self.render_thumbnail_rights)
@@ -721,6 +729,8 @@ class Handler(BaseHTTPRequestHandler):
                     else:_,out,_=load(self.server.store,con,project_id,job_id)
                 return self.file(out/'voice.wav',headers={'Cache-Control':'no-store'})
             return self.reply(page(self.server.store,project_id),headers={'Cache-Control':'no-store'})
+        from .drama_routes import handles as drama_handles,dispatch as drama_dispatch
+        if drama_handles(path):return drama_dispatch(self,write=False)
         if path=='/api/narrated/variant-profiles' or re.fullmatch(r'/api/projects/[a-f0-9]{32}/narrated-variants',path):
             from .narrated_variant_routes import get
             return self.reply(get(self,path),headers={'Cache-Control':'no-store'})
@@ -922,7 +932,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "native_manual_delivery":True, "native_manual_delivery_focus":True, "native_open_output_folder":os.name=='nt', "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "native_manual_delivery":True, "native_manual_delivery_focus":True, "native_drama_voice_casting":True, "native_open_output_folder":os.name=='nt', "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_source_broll_resolution":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
                 "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
@@ -1034,6 +1044,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-render-thumbnail.mjs'] = 'native-render-thumbnail.mjs'
         static['/native-manual-delivery.mjs'] = 'native-manual-delivery.mjs'
         static['/native-export-settings.mjs'] = 'native-export-settings.mjs'
+        static['/native-drama.mjs'] = 'native-drama.mjs'
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-source-broll-resolution.mjs'] = 'native-source-broll-resolution.mjs'
@@ -1127,6 +1138,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply({'csrf': session.csrf, 'access': self.server.access.public(session)}, headers={
                 'Set-Cookie': f'vf_native_session={cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={self.server.access.session_ttl}'})
         self.boundary(write=True)
+        from .drama_routes import handles as drama_handles,dispatch as drama_dispatch
+        if drama_handles(self.path):return drama_dispatch(self,write=True)
         from .transcript_word_routes import handles as word_handles,dispatch as word_dispatch
         if word_handles(self.path):return word_dispatch(self,write=True)
         from .multipart_routes import handles as upload_handles,dispatch as upload_dispatch

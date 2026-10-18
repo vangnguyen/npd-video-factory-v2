@@ -164,6 +164,10 @@ class NativeManualDelivery:
             raise WorkflowError('EXPORT_MEASURED_QC_REQUIRED')
         validate_render_profile(payload.profile, full.get('width'), full.get('height'))
         doc = job['snapshot']['document']; timeline = doc.get('canonical_timeline') or {}
+        if doc.get('drama_casting') is not None:
+            from .dialogue_runtime import library_for
+            from .dialogue_binding import validate
+            validate(doc,library_for(self.store),con=con,project_id=project_id)
         return {'project_id':project_id,'project_revision':job['revision'],'project_title':doc['name'],
             'render_job_id':job['id'],'snapshot_sha256':digest(job['snapshot']),'document_sha256':digest(doc),
             'timeline_version':timeline.get('version'),'timeline_sha256':timeline.get('sha256'),
@@ -223,11 +227,17 @@ class NativeManualDelivery:
             project = self.store.project(con.execute('SELECT * FROM projects WHERE id=?',(project_id,)).fetchone())
         manifest = self.verify(row) if row['status']=='ready' and verify else None
         binding=json.loads(row['binding_json']);request=json.loads(row['request_json'])
+        current=project['revision']==binding['project_revision'] and digest(project['document'])==binding['document_sha256']
+        if current and project['document'].get('drama_casting') is not None:
+            from .dialogue_runtime import library_for
+            from .dialogue_binding import validate
+            try:validate(project['document'],library_for(self.store),project_id=project_id)
+            except WorkflowError:current=False
         return {'export_id':export_id,'project_id':project_id,'created_at':row['created_at'],'status':row['status'],
             'request_key':row['request_key'],
             'binding':binding,'profile':binding['render_profile'],'manifest':manifest,'error_code':row['error_code'],
             'approval_state':'approved_at_export' if row['status']=='ready' else 'pending_delivery',
-            'current_for_project':project['revision']==binding['project_revision'] and digest(project['document'])==binding['document_sha256'],
+            'current_for_project':current,
             'integrity_checked':manifest is not None,'output_location':str(self.directory(row)),'externally_posted':False,
             'filename':request['filename'],'cover_filename':('cover.'+((request.get('cover_settings') or {}).get('format','jpg'))) if request['cover'] else None,
             'manifest_sha256':row['manifest_sha256'],'availability':'present' if self.directory(row).is_dir() else 'missing',

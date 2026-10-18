@@ -201,6 +201,13 @@ class Store:
                 "SELECT * FROM jobs WHERE project_id=? ORDER BY created_at DESC", (identifier,))]
             if project['document'].get('content_intelligence'):
                 project['script_review'] = self.current_script_review(con, project)
+            if project['document'].get('drama_casting') is not None:
+                from .dialogue_runtime import library_for
+                from .dialogue_binding import validate
+                error=None
+                try:validate(project['document'],library_for(self),con=con,project_id=identifier)
+                except WorkflowError as reason:error=reason.code
+                project['drama_voice_binding']={'current':error is None,'error_code':error,'human_voice_uat_complete':False}
             return project
 
     @staticmethod

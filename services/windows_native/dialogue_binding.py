@@ -1,5 +1,5 @@
 """Server-compiled dialogue inputs. Compilation grants neither inference nor render approval."""
-import copy,json,re
+import copy,json,re,sqlite3
 from pydantic import Field,StrictInt,StrictStr,ValidationError
 from app.models import StrictModel
 from .contracts import WorkflowError,digest,normalize
@@ -75,8 +75,9 @@ def validate(document,library,*,con=None,providers=None,project_id=None,require_
     if con is None:
         with library.store.transaction() as current:return validate(document,library,con=current,providers=providers,project_id=project_id,require_receipt=require_receipt)
     if require_receipt:
-        rows=con.execute("SELECT specification_json FROM native_dialogue_compiles WHERE workspace_id=? AND project_id=? AND json_extract(specification_json,'$.sha256')=?",
+        try:rows=con.execute("SELECT specification_json FROM native_dialogue_compiles WHERE workspace_id=? AND project_id=? AND json_extract(specification_json,'$.sha256')=?",
             (library.workspace,record['project_id'],record['sha256'])).fetchall()
+        except sqlite3.DatabaseError:raise WorkflowError('DRAMA_DIALOGUE_COMPILATION_RECEIPT_CHANGED') from None
         if len(rows)!=1 or json.loads(rows[0][0])!=record:raise WorkflowError('DRAMA_DIALOGUE_COMPILATION_RECEIPT_CHANGED')
     for ref in record['voice_bindings']:
         voice=library._record(con,ref['voice_id'],ref['voice_version']);definition=voice['definition']

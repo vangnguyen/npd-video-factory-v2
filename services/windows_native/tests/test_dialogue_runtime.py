@@ -116,3 +116,13 @@ class DialogueRuntimeTests(unittest.TestCase):
         self.assertIn('An: Xin chào.',(directory/'subtitle.srt').read_text(encoding='utf-8'));self.assertIn('Bình: Cảm ơn.',(directory/'subtitle.srt').read_text(encoding='utf-8'))
         rights=json.loads((directory/'rights-summary.json').read_bytes());self.assertEqual(len([v for v in rights['items'] if v['kind']=='dialogue_voice']),2)
         self.assertFalse(rights['independently_verified']);self.assertEqual(file_sha(directory/'final-video.mp4'),rendered['qc']['final_sha256'])
+        # A library revocation closes fresh/current delivery even though the
+        # document revision is unchanged. Historical approved bytes remain usable.
+        voice=self.voices[0];self.library.update(voice['voice_id'],{'expected_version':1,'request_key':'explicit-post-export-voice-revoke',
+            'definition':{**voice['definition'],'rights_status':'blocked'}},actor_ref='EXPLICIT FIXTURE')
+        current=self.store.get(project['id']);self.assertFalse(current['drama_voice_binding']['current'])
+        old=service.get(project['id'],delivery['export_id']);self.assertEqual(old['approval_state'],'approved_at_export');self.assertFalse(old['current_for_project'])
+        self.assertEqual(file_sha(service.file(project['id'],delivery['export_id'],'final-video.mp4')),rendered['qc']['final_sha256'])
+        with self.assertRaisesRegex(WorkflowError,'VOICE_BINDING_CHANGED'):service.create(project['id'],DeliveryCreate(revision=project['revision'],render_job_id=job['id'],
+            expected_video_sha256=rendered['qc']['final_sha256'],request_key='explicit-new-export-after-revoke'))
+        self.assertEqual(len(service.page(project['id'])['items']),1)
