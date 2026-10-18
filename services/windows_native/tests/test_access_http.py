@@ -34,11 +34,16 @@ class NativeAccessHTTPTests(unittest.TestCase):
         self.cookie, session = access.login(self.raw); self.csrf = session.csrf
 
     def request(self, method, path, body=None, headers=None):
-        connection = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=5)
-        connection.request(method, path, body=json.dumps(body) if body is not None else None,
-            headers={'Content-Type': 'application/json', 'Cookie': 'vf_native_session=' + self.cookie,
-                'X-VF-CSRF': self.csrf, **(headers or {})})
-        response = connection.getresponse(); metadata = dict(response.getheaders()); raw = response.read(); connection.close()
+        # Media HTTP fixtures perform real local probing/checksumming on Windows.
+        # Their bounded client wait is not a five-second product latency assertion.
+        connection = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=30)
+        try:
+            connection.request(method, path, body=json.dumps(body) if body is not None else None,
+                headers={'Content-Type': 'application/json', 'Cookie': 'vf_native_session=' + self.cookie,
+                    'X-VF-CSRF': self.csrf, **(headers or {})})
+            response = connection.getresponse(); metadata = dict(response.getheaders()); raw = response.read()
+        finally:
+            connection.close()
         value = json.loads(raw) if metadata.get('Content-Type', '').startswith('application/json') else raw
         return response.status, value, metadata
 
