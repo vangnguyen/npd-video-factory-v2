@@ -176,7 +176,7 @@ export function initializeSourceEditor({api,getProject,getGuards,getReviewedVisi
     const p=getProject(),source=isSourceProject(p),key=source?`${p.id}:${p.revision}:${selectedId}`:null;
     host.hidden=!source;reviewHome.hidden=!source;toolbar.hidden=!source;
     if(source){reviewHome.append(review);reviewLabel.lastChild.textContent=' Tôi đã xem preview hiện tại, kiểm tra điểm cắt, âm thanh nguồn, lời nói và quyền sử dụng. Tôi duyệt bản dựng này để render; video cuối vẫn cần xem, nghe và duyệt riêng.';}
-    else{marker.after(review);reviewLabel.lastChild.textContent=originalReviewText;shownKey=null;disclosureProject=null;return;}
+    else{if(review.parentNode===reviewHome){marker.after(review);reviewLabel.lastChild.textContent=originalReviewText;}shownKey=null;disclosureProject=null;return;}
     if(!force&&(dirty||shownKey===key)){controls();return;}shownKey=key;
     const opened=disclosureProject===p.id?new Set([...host.querySelectorAll('details[open]')].map(el=>el.querySelector('summary')?.textContent.trim()).filter(Boolean)):new Set();
     disclosureProject=p.id;
