@@ -1,0 +1,116 @@
+{
+  "recorded_at": "2026-10-18T14:59:30.212945+00:00",
+  "application": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdr05",
+    "branch": "codex/vf-drama-save-self-conflict-05",
+    "commit": "758466ed97cdd6c204bed3f6d1e7fd06a6db807c",
+    "build": "drama-save-fix-05",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "projects": [
+    {
+      "project_id": "410d8fb90ed747e6a099a1e72e3f05b5",
+      "revision": 8,
+      "document_sha256": "b5d8c81fd42726e27fdb4d7f8f69993b62b85978a42e64e640a3b94831a4c77f",
+      "archived": false,
+      "casting_version": 4,
+      "casting_sha256": "db134b99f68490020d3c57ff59d756f2e16fdeef09f229cc1c807aa55c190e53",
+      "characters_confirmed": true,
+      "approval_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "active_jobs": 0,
+      "choices": [
+        {
+          "character": "Bình",
+          "voice": "Minh Đức"
+        },
+        {
+          "character": "An",
+          "voice": "Thái Sơn"
+        }
+      ]
+    },
+    {
+      "project_id": "f12e3bfc39d84b389ea969b6b2d4c8e9",
+      "revision": 2,
+      "document_sha256": "a36c59bb980d0e665b047a5b72e728ae30f748609bb2f9d8377be054df314bcb",
+      "archived": true,
+      "casting_version": null,
+      "casting_sha256": null,
+      "characters_confirmed": false,
+      "approval_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "active_jobs": 0,
+      "choices": []
+    },
+    {
+      "project_id": "ac4d188a77ae423fa1df49f0104b6750",
+      "revision": 3,
+      "document_sha256": "b06745ff513dd54ac99f8b29e5255b6fc11a2a8ff6fae644de737370d6df4684",
+      "archived": false,
+      "casting_version": null,
+      "casting_sha256": null,
+      "characters_confirmed": false,
+      "approval_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "active_jobs": 0,
+      "choices": []
+    },
+    {
+      "project_id": "1c768012f9624de494a9fadab63c1a31",
+      "revision": 5,
+      "document_sha256": "b26118b5b10338f7405e2175e728f804f5aeffb19b393053acc741e22dffebc1",
+      "archived": false,
+      "casting_version": 1,
+      "casting_sha256": "6570b11a495a7ac6f91ce6243fcb1a8bcf22e555fd42bd693f79cbb80b60d214",
+      "characters_confirmed": true,
+      "approval_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "active_jobs": 0,
+      "choices": []
+    },
+    {
+      "project_id": "4a492a1795ae4b83b393a20db6f623a7",
+      "revision": 2,
+      "document_sha256": "765ddd6fdfcd07969117acf2768e5139e40fd35153ee4bb7329f153e740c041b",
+      "archived": false,
+      "casting_version": null,
+      "casting_sha256": null,
+      "characters_confirmed": false,
+      "approval_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "active_jobs": 0,
+      "choices": []
+    },
+    {
+      "project_id": "67f86fb7112d4d26aace281f31b408e1",
+      "revision": 4,
+      "document_sha256": "710b5bf52efd44ce98822b42f3cccfa3c04da30e2462b982e6abf127d289f401",
+      "archived": false,
+      "casting_version": 1,
+      "casting_sha256": "772f6bed55ddc7ca4e49c9ddca7f3f9ee7c7180b1130aa1aa3859fe8cf12e629",
+      "characters_confirmed": null,
+      "approval_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "active_jobs": 0,
+      "choices": []
+    },
+    {
+      "project_id": "d3587b7419014b76a9550931d9008cfa",
+      "revision": 6,
+      "document_sha256": "d7b1baf95ffa6c5ede51e6c4608ec5872586e66a0c83afe5abe6fa3f51cf3d5a",
+      "archived": false,
+      "casting_version": null,
+      "casting_sha256": null,
+      "characters_confirmed": null,
+      "approval_sha256": "c05b5290fc8fd04de50ef2356af178b793efee6f114d44fd48944e30e0993377",
+      "active_jobs": 0,
+      "choices": []
+    }
+  ],
+  "accepted_videos": 15,
+  "registered_voices": 25,
+  "real_samples": 10,
+  "active_auditions": 0,
+  "voice_versions_sha256": "c50c992edddafe95e0fcdaa0588cb06e362181f82909d03307fc2b43b066d3fd",
+  "auditions_metadata_sha256": "0bff7794a2470229940f10ef05df988738eb80b19d36a0dc2678a58928db7a4f",
+  "active_jobs": 0
+}

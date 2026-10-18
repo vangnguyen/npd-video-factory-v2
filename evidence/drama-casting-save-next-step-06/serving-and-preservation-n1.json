@@ -1,0 +1,56 @@
+{
+  "application": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdr06",
+    "branch": "codex/vf-drama-casting-next-step-06",
+    "commit": "2b8ff625cfcb299642367b8ac2bfa2f07f94c0bd",
+    "build": "drama-casting-next-06",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "same_port": 62684,
+  "all_preexisting_project_snapshots_preserved": 7,
+  "owner_project_revision": 8,
+  "accepted_videos": 15,
+  "registered_voices": 25,
+  "real_samples": 10,
+  "voice_and_sample_metadata_unchanged": true,
+  "owner_project_writes": 0,
+  "owner_tts_or_render_started": false,
+  "approval_granted": false,
+  "source_pushed": true,
+  "source_bundle": "source-casting-next-06.bundle",
+  "source_bundle_sha256": "4f2c7367072d7301eaae432e6f07d4c2977cbf9385350a6355559d2755ee36cd",
+  "requires_commit": "d056c3f57a5d98f13beecefe463e54e491d40bd2",
+  "bundle_verified": true,
+  "backup_sha256": "230e65bfe2e4206a30c57c5f62a6b75792ee1e45ae91febf78b97641886f377b",
+  "backup_restored_verified": true,
+  "frontend": [
+    {
+      "file": "native.mjs",
+      "sha256": "ce63765e9dcc13f8217381ea6ec9cdeba688ef5cc3acf29fc6df623c632d380e",
+      "cache_control": "no-store"
+    },
+    {
+      "file": "drama-workflow.mjs",
+      "sha256": "2542ac8e4c828c286094842b1e284b777a28ed3088f3353a35ac0b30b18f147b",
+      "cache_control": "no-store"
+    },
+    {
+      "file": "native-drama.mjs",
+      "sha256": "37dad59e49fce5b35f6621b3843fac28e046b4e71fae24caabe06e48f7b13259",
+      "cache_control": "no-store"
+    },
+    {
+      "file": "drama-script-save.mjs",
+      "sha256": "efcf0f8447d25e319be95c109a73e249b300038d9be1c1e205b1a860275ed23c",
+      "cache_control": "no-store"
+    }
+  ],
+  "browser_qa": "BLOCKED",
+  "owner_uat_complete": false,
+  "main_merged": false,
+  "production_deployed": false
+}

@@ -1,0 +1,143 @@
+{
+  "recorded_at": "2026-10-18T14:35:51.608654+00:00",
+  "application": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdr05",
+    "branch": "codex/vf-drama-save-self-conflict-05",
+    "commit": "758466ed97cdd6c204bed3f6d1e7fd06a6db807c",
+    "build": "drama-save-fix-05",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "repo_head": "d056c3f57a5d98f13beecefe463e54e491d40bd2",
+  "projects": [
+    {
+      "project_id": "410d8fb90ed747e6a099a1e72e3f05b5",
+      "revision": 8,
+      "archived": false,
+      "workflow": "drama",
+      "document_sha256": "0a7452833ce7deff2bfba7688fd240a7651441a45b341f12270570a43ee100f7",
+      "characters_confirmed": true,
+      "casting_version": 4,
+      "casting_sha256": "db134b99f68490020d3c57ff59d756f2e16fdeef09f229cc1c807aa55c190e53",
+      "speaking_characters": 2,
+      "uncast_names": [],
+      "saved_choices": [
+        {
+          "character": "Bình",
+          "voice": "Minh Đức",
+          "voice_version": 1
+        },
+        {
+          "character": "An",
+          "voice": "Thái Sơn",
+          "voice_version": 1
+        }
+      ],
+      "active_jobs": 0,
+      "approval_present": false
+    },
+    {
+      "project_id": "f12e3bfc39d84b389ea969b6b2d4c8e9",
+      "revision": 2,
+      "archived": true,
+      "workflow": "drama",
+      "document_sha256": "39d830acc75679f1b8583d71f598c83e5b23a2bd1f9e29e8e9dd6e05b262a781",
+      "characters_confirmed": false,
+      "casting_version": null,
+      "casting_sha256": null,
+      "speaking_characters": 0,
+      "uncast_names": [],
+      "saved_choices": [],
+      "active_jobs": 0,
+      "approval_present": false
+    },
+    {
+      "project_id": "ac4d188a77ae423fa1df49f0104b6750",
+      "revision": 3,
+      "archived": false,
+      "workflow": "drama",
+      "document_sha256": "8298ed1427f3480aca36c9708bb84e4d45ecf5e7db8e336b143cda78d4ba53c1",
+      "characters_confirmed": false,
+      "casting_version": null,
+      "casting_sha256": null,
+      "speaking_characters": 0,
+      "uncast_names": [],
+      "saved_choices": [],
+      "active_jobs": 0,
+      "approval_present": false
+    },
+    {
+      "project_id": "1c768012f9624de494a9fadab63c1a31",
+      "revision": 5,
+      "archived": false,
+      "workflow": "drama",
+      "document_sha256": "1e27205afc27eb15cd4a9c67a79e9835786834d3411ed2eeb3b8de053a3ed49a",
+      "characters_confirmed": true,
+      "casting_version": 1,
+      "casting_sha256": "6570b11a495a7ac6f91ce6243fcb1a8bcf22e555fd42bd693f79cbb80b60d214",
+      "speaking_characters": 2,
+      "uncast_names": [
+        "An",
+        "Bình"
+      ],
+      "saved_choices": [],
+      "active_jobs": 0,
+      "approval_present": false
+    },
+    {
+      "project_id": "4a492a1795ae4b83b393a20db6f623a7",
+      "revision": 2,
+      "archived": false,
+      "workflow": "drama",
+      "document_sha256": "38c4b75022d391118ccff18c3b44ac9a22b2e767b1b6cc7b0ff5ccb4a4b7ba3c",
+      "characters_confirmed": false,
+      "casting_version": null,
+      "casting_sha256": null,
+      "speaking_characters": 0,
+      "uncast_names": [],
+      "saved_choices": [],
+      "active_jobs": 0,
+      "approval_present": false
+    },
+    {
+      "project_id": "67f86fb7112d4d26aace281f31b408e1",
+      "revision": 4,
+      "archived": false,
+      "workflow": null,
+      "document_sha256": "296cb40201f93fe0070b00c8bbc84c60efad1ec60913d9462030a309a1617c62",
+      "characters_confirmed": null,
+      "casting_version": 1,
+      "casting_sha256": "772f6bed55ddc7ca4e49c9ddca7f3f9ee7c7180b1130aa1aa3859fe8cf12e629",
+      "speaking_characters": 2,
+      "uncast_names": [
+        "An",
+        "Bình"
+      ],
+      "saved_choices": [],
+      "active_jobs": 0,
+      "approval_present": false
+    },
+    {
+      "project_id": "d3587b7419014b76a9550931d9008cfa",
+      "revision": 6,
+      "archived": false,
+      "workflow": null,
+      "document_sha256": "ea34fae58f34d1360dace378ed347308663a0535ffd5ccb6766cca0269eca041",
+      "characters_confirmed": null,
+      "casting_version": null,
+      "casting_sha256": null,
+      "speaking_characters": 0,
+      "uncast_names": [],
+      "saved_choices": [],
+      "active_jobs": 0,
+      "approval_present": true
+    }
+  ],
+  "form_state": "NOT_OBSERVED: browser tool bootstrap unavailable; no inference from server to unsaved form",
+  "form_dirty_pending_working": "NOT_OBSERVED",
+  "owner_mutations": 0,
+  "owner_reload_or_restart": false
+}

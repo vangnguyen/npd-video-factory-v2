@@ -1,0 +1,28 @@
+{
+  "suite": "native-related",
+  "head": "2b8ff625cfcb299642367b8ac2bfa2f07f94c0bd",
+  "source": "C:\\vfdr06",
+  "command": [
+    "C:/NPD-Video-Factory/runtime/venv/Scripts/python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "services.windows_native.tests.test_drama_workflow",
+    "services.windows_native.tests.test_drama_workflow_http",
+    "services.windows_native.tests.test_drama_save_studio_integration",
+    "services.windows_native.tests.test_drama_casting_studio_integration",
+    "services.windows_native.tests.test_drama_casting",
+    "services.windows_native.tests.test_drama_http",
+    "services.windows_native.tests.test_dialogue_binding",
+    "services.windows_native.tests.test_dialogue_plan",
+    "services.windows_native.tests.test_access",
+    "services.windows_native.tests.test_access_http",
+    "-v"
+  ],
+  "state": "COMPLETE",
+  "started_at": "2026-10-18T14:57:09.507556+00:00",
+  "exit_code": 0,
+  "seconds": 102.297,
+  "source_unchanged": true
+}

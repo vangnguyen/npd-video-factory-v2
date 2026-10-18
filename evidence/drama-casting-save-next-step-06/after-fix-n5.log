@@ -1,0 +1,32 @@
+{"case":"casting-save","revision":3,"confirmed":true,"uncast":[],"dirty":false,"dirtyPart":null,"casting_version":2}
+✔ two selected voices can be saved and opened in scenes without media or audio (521.6215ms)
+{"case":"note-save","confirmed":true,"casting_version":2,"dirty":false,"dirtyPart":null}
+✔ personality note after confirmation preserves confirmation casting line IDs and scene IDs (2275.8789ms)
+✔ primary action saves once then continues; saved casting continues without another revision (449.8522ms)
+✔ real voice picker callbacks select two voices and continue without generating samples (327.0739ms)
+✔ missing Bình is named and focused; one optional silent role and disabled narrator never require voices (338.0139ms)
+✔ intentional shared voice is advisory and does not block scenes (371.209ms)
+✔ response lost after server commit replays only the exact casting request without duplicate version (396.2136ms)
+test_http_casting_to_scenes_with_production_callback (services.windows_native.tests.test_drama_casting_studio_integration.DramaCastingStudioIntegrationTests.test_http_casting_to_scenes_with_production_callback) ... ok
+✔ verified POST with unavailable project read keeps its receipt and retries only the GET (438.0695ms)
+✔ manual save and continue while response pending cannot create competing casting writes (342.6735ms)
+✔ true two-tab conflict preserves local selections and server casting until explicit comparison (765.6484ms)
+✔ reopening restores the exact pending request; saved voices and last step survive restart (1126.2782ms)
+✔ late response from film A cannot install casting in film B (281.2656ms)
+✔ validation rejection retains form and permits a corrected request without a stale pending write (300.024ms)
+✔ real script edit requires explicit speaker confirmation while retaining compatible voices and IDs (661.1346ms)
+✔ later server revision is separated from this tab own successful write without overwriting its form (390.4263ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9103.7361
+
+
+----------------------------------------------------------------------
+Ran 1 test in 11.393s
+
+OK

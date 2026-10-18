@@ -1,0 +1,15 @@
+{
+  "suite": "renderer",
+  "head": "2b8ff625cfcb299642367b8ac2bfa2f07f94c0bd",
+  "source": "C:\\vfdr06",
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run"
+  ],
+  "state": "COMPLETE",
+  "started_at": "2026-10-18T14:57:30.504752+00:00",
+  "exit_code": 0,
+  "seconds": 2.953,
+  "source_unchanged": true
+}

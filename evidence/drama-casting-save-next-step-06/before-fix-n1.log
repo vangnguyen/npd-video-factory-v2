@@ -1,0 +1,47 @@
+test_http_casting_to_scenes_with_production_callback (services.windows_native.tests.test_drama_casting_studio_integration.DramaCastingStudioIntegrationTests.test_http_casting_to_scenes_with_production_callback) ... FAIL
+
+======================================================================
+FAIL: test_http_casting_to_scenes_with_production_callback (services.windows_native.tests.test_drama_casting_studio_integration.DramaCastingStudioIntegrationTests.test_http_casting_to_scenes_with_production_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\vfdr06\services\windows_native\tests\test_drama_casting_studio_integration.py", line 18, in test_http_casting_to_scenes_with_production_callback
+    self.assertEqual(result.returncode,0,result.stdout+'\n'+result.stderr);print(result.stdout)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : {"case":"casting-save","revision":3,"confirmed":true,"uncast":[],"dirty":false,"dirtyPart":null,"next_disabled":false,"casting_version":2}
+✔ two selected voices can be saved and opened in scenes without media or audio (530.7064ms)
+{"case":"note-save","confirmed":false,"casting_version":2,"dirty":false,"dirtyPart":null}
+✖ personality note after confirmation preserves confirmation casting line IDs and scene IDs (2613.344ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3259.3536
+
+✖ failing tests:
+
+test at apps\studio-web\tests\drama-casting-next.integration.mjs:49:1
+✖ personality note after confirmation preserves confirmation casting line IDs and scene IDs (2613.344ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/vfdr06/apps/studio-web/tests/drama-casting-next.integration.mjs:54:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+
+----------------------------------------------------------------------
+Ran 1 test in 6.618s
+
+FAILED (failures=1)

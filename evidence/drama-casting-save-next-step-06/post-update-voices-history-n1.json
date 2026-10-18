@@ -1,0 +1,223 @@
+{
+  "detected": 25,
+  "eligible_registered": 25,
+  "real_samples": 10,
+  "unique_audio_hashes": 10,
+  "samples": [
+    {
+      "preset": "Ngọc Trân",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_d4e38c069a6e4fa588e1d12907ee1d12",
+      "audio_url": "/api/voice-auditions/nsample_d4e38c069a6e4fa588e1d12907ee1d12/audio",
+      "audio_sha256": "479a556825066768d5a2f4cc6c682a2739a723723554afe8b633375fcca02b25",
+      "duration_seconds": 4.48,
+      "voice_sha256": "1f89c022edcbd7a81d771fdea72fb26d12cfc1f0b220714a680048eeebb24de1",
+      "manifest_sha256": "e2760785de1b18acc444e2cf9c95e72d731f27560c9d5540bf18ee4bd0c2c7cf",
+      "provider_receipt": {
+        "generation_seconds": 5.312000000034459,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:dc49dbef171036c81316a44402603e47cfa3d26eb7709abd93fb21627731eea3",
+        "seed": 3695827951
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Quang Sơn",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_f67cf0a2e8a941feb1194629f88a9c05",
+      "audio_url": "/api/voice-auditions/nsample_f67cf0a2e8a941feb1194629f88a9c05/audio",
+      "audio_sha256": "2558d19dd17a8f0d546a491f9bb121440553688e878708100b8cc28dc234895b",
+      "duration_seconds": 4.88,
+      "voice_sha256": "fd5e9a093d346385d4253ba50ad847abd2fdded532ae8a70ffbfcae0c33599ee",
+      "manifest_sha256": "cc76a253865679d794ed23c78d8d3865d8cbed287551a59191c03f7ff686569d",
+      "provider_receipt": {
+        "generation_seconds": 5.592999999993481,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:7947dac8b636a72d2771b9726db061cb650af7fcb391fc98ea5ecb02a3d57201",
+        "seed": 2034752200
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Ngọc Huyền",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_649b7dbd48a7469986e528af151fbb0e",
+      "audio_url": "/api/voice-auditions/nsample_649b7dbd48a7469986e528af151fbb0e/audio",
+      "audio_sha256": "431ef86c9e5ca38561e691a0a7f77712c00de393d7161f08d6ccefd53ecfff32",
+      "duration_seconds": 4.4,
+      "voice_sha256": "53dec0a7f952c30d62f959bd2bfdfeb56d7531dacbf3a1d91e34f1ea6a104b1d",
+      "manifest_sha256": "13bd83f72c139ab904fac52f9a641c5eeb4dbe99941d1ebd63ec2ed23ebd1de0",
+      "provider_receipt": {
+        "generation_seconds": 5.438000000081956,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:ddc302e05b17bfb2d44daaaffef158491f447d70c1feef069858cf13d3069e98",
+        "seed": 3720544992
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Thiền Tâm Đức",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_4f2932e9bb604cc59d02ec95ba0b1da4",
+      "audio_url": "/api/voice-auditions/nsample_4f2932e9bb604cc59d02ec95ba0b1da4/audio",
+      "audio_sha256": "f07141276f0395ed518ecf50c5e653cbfd77accd10ffa25659f13199882788fd",
+      "duration_seconds": 5.76,
+      "voice_sha256": "bdb6b9e3c52ba4a6bd979730f60bff3923c9272f176d95938ae3a651de9d9a98",
+      "manifest_sha256": "d4451e07142c24afe9ed40ae5868149ece5801c02997b18d6ae4c8e7bd367a9e",
+      "provider_receipt": {
+        "generation_seconds": 6.530999999959022,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:13875b9ea4173f93ca4c59218b681452ae0a477e01078a7dca7f90e0e7c4dbe8",
+        "seed": 327637918
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Thùy Dung",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_64d0d083b39447b89bf8d308d2337d16",
+      "audio_url": "/api/voice-auditions/nsample_64d0d083b39447b89bf8d308d2337d16/audio",
+      "audio_sha256": "c4c6ef7f3794f5fb8a631417814b1d2cdf0cb564d9b8c9955ffa438e0c054d74",
+      "duration_seconds": 3.36,
+      "voice_sha256": "e83df4c64e7022adaedb8f219c19fc35b2d9aa6eb3c5ecd15f6dae70ed01e9ca",
+      "manifest_sha256": "d88bfb2a3ccdf0a17e552509acda0c4e834e54a4061ca075e9bd87b85d2f38fb",
+      "provider_receipt": {
+        "generation_seconds": 4.797000000020489,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:c35cb5822f7b33e14756c5866ce2ccd7d845b1d231caf12f6508023b56815cce",
+        "seed": 3277632898
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Hải Đăng",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_215d0485f8234a5c9878ac4cfaa68cd9",
+      "audio_url": "/api/voice-auditions/nsample_215d0485f8234a5c9878ac4cfaa68cd9/audio",
+      "audio_sha256": "5cc808209187de720e81a493a6e9d15fb6b79f4787dc176c00add728eca27ee0",
+      "duration_seconds": 3.68,
+      "voice_sha256": "d2b30d5c8b1c45a025a2a4fba79bcef1edd2c991478bf2e8fe3bc52e580e9cba",
+      "manifest_sha256": "b95d4c2b49c84ed7aebd6e6b54b6c150917fe0c86a7ffcd3c3da21ce81235e19",
+      "provider_receipt": {
+        "generation_seconds": 4.891000000061467,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 0.892967697142526,
+        "operation_id": "local-vieneu:cb320be0835684e2532f0c60e8710eaab1c72329a1cef58e04486a867f73999b",
+        "seed": 3409054688
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Mai Anh",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_2f4149a2359a48b68145e97e737c7e6e",
+      "audio_url": "/api/voice-auditions/nsample_2f4149a2359a48b68145e97e737c7e6e/audio",
+      "audio_sha256": "cf77700e2e93c63f457749605641c5b0053999b826530c30e6d7e5b80610f4ae",
+      "duration_seconds": 4.24,
+      "voice_sha256": "951bd83d6631f84d39b7488ebe20dfc066da726609f03a85231abc3cf85789d6",
+      "manifest_sha256": "c2a738d1b2fef3c50eb74b1df9ac9d075c8bd3b59f4f3c80f326e6bf23564cce",
+      "provider_receipt": {
+        "generation_seconds": 5.375,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:26ab962fbc3fc158aada3d40d66e483e011968dfc0fafc1c372857ec0d8a7012",
+        "seed": 648779311
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Thiện Minh",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_9fc2ac72ba1b4126bf76ed34d5bb4368",
+      "audio_url": "/api/voice-auditions/nsample_9fc2ac72ba1b4126bf76ed34d5bb4368/audio",
+      "audio_sha256": "095c124728305ed8314cc793685d298c0b4e6a07c55c5879a40355605bb3f14c",
+      "duration_seconds": 3.84,
+      "voice_sha256": "6753fa94956368ade926674f1d2fba568efd7aad9b36804299297e39a45cba32",
+      "manifest_sha256": "0651fc2c42e6a8fd3193117f51c73ff3a48937dd6ac9fff850a0fd36cf14fa0c",
+      "provider_receipt": {
+        "generation_seconds": 5.327999999979511,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:19588932998fbc65a650a4b11024349d359536e404290d9b683159c2c09803e2",
+        "seed": 425232690
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Trúc Ly",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_66b0d7e2b0654d42a50c8dfb9fba90e6",
+      "audio_url": "/api/voice-auditions/nsample_66b0d7e2b0654d42a50c8dfb9fba90e6/audio",
+      "audio_sha256": "2f2e08253ef6568c1f05e6c28d324c5e7c17d7d0b41bd949986369af74ea52d0",
+      "duration_seconds": 3.44,
+      "voice_sha256": "1c02c31d5599d2d7b4d1dfba035d9438a859889d413ec786f0c4fd745589c823",
+      "manifest_sha256": "e87c0a2fa20db392c0a32bc2aa11a75fdac38947592c40db9870e29c998ecf65",
+      "provider_receipt": {
+        "generation_seconds": 5.140999999945052,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:efb22158cb2fdc1baac1042621d3c35e8149845b27089131a37db38c99fbe3d8",
+        "seed": 4021428568
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    },
+    {
+      "preset": "Adam bựa",
+      "model": "vieneu-v3-turbo",
+      "sample_id": "nsample_4d457b24ae84477a89a0aacffedd4d44",
+      "audio_url": "/api/voice-auditions/nsample_4d457b24ae84477a89a0aacffedd4d44/audio",
+      "audio_sha256": "ced76cf867c0ef8c10be62f14428a5d657b303a9158c39b6ee00963358b19f56",
+      "duration_seconds": 4.4,
+      "voice_sha256": "ae1a43301baeff961f2212b688f79e987c101fdedcdcba5fed9c99d9294cda48",
+      "manifest_sha256": "bf6cfdc58436b45edd60a28d32578a6ab9095843050de7eef6b3bf8c80affe81",
+      "provider_receipt": {
+        "generation_seconds": 6.01500000001397,
+        "inference_calls": 1,
+        "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+        "normalization_gain": 1.0,
+        "operation_id": "local-vieneu:3da9a4145fc984373fcdca6fc73aeb6d299f4b4cb2f47db7966ea7ef2e9d8981",
+        "seed": 1034527764
+      },
+      "rights_status": "source_licensed",
+      "evidence_mode": "local-real",
+      "owner_listening_accepted": false
+    }
+  ],
+  "accepted_artifacts_unchanged": 15,
+  "old_castings_auto_changed": false,
+  "owner_voice_uat_complete": false,
+  "browser_qa_complete": false,
+  "production_deployed": false
+}

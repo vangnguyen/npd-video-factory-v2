@@ -1,0 +1,23 @@
+{
+  "suite": "api-related",
+  "head": "2b8ff625cfcb299642367b8ac2bfa2f07f94c0bd",
+  "source": "C:\\vfdr06",
+  "command": [
+    "C:/vfns-sql-win-ci-c1/venv/Scripts/python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "pytest",
+    "apps/api/tests/test_final_export_quality.py",
+    "apps/api/tests/test_verified_artifact_delivery.py",
+    "apps/api/tests/test_source_asset_delivery.py",
+    "-q",
+    "--basetemp",
+    "C:\\vfct\\drama-casting06-related-n1\\api-owned"
+  ],
+  "state": "COMPLETE",
+  "started_at": "2026-10-18T14:57:09.507556+00:00",
+  "exit_code": 0,
+  "seconds": 20.86,
+  "source_unchanged": true
+}
