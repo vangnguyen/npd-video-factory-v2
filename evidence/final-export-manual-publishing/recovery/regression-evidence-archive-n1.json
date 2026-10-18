@@ -1,0 +1,13 @@
+{
+  "archive": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-regression-evidence-n1.zip",
+  "bytes": 435990,
+  "sha256": "519881368b6138d6b241fbb98d63368be150357f4c2a2caf824428c17b4d0d12",
+  "files": 69,
+  "zip_crc": "PASS",
+  "entry_hashes": "PASS",
+  "source_head_at_archive": "9cb3bdb24dafa8104e61626adef504ed0aad53be",
+  "archive_is_source_bundle": false,
+  "source_recovery_uses_verified_git_bundles": true,
+  "production_deployed": false,
+  "owner_uat_complete": false
+}

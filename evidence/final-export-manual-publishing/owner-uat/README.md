@@ -2,7 +2,7 @@
 
 **NOT ACCEPTED.** This is the consolidated entry point and case plan, not five completed real-content acceptance bundles. All Owner decisions remain unrecorded.
 
-Open [the isolated local Studio](http://127.0.0.1:62684/native.html) on this PC. It runs code `a01dbd6eff8d744ad262949dc0f5ce839fdc96ba` with an independent restored **synthetic rehearsal** project. Its Export History contains one verified MP4/cover/caption/SRT/ZIP package for exercising downloads and Open Folder. No production project, social account, external upload or Owner acceptance is implied. The URL lasts while this review process runs. The earlier n1 server was stopped before code changes; its data/history remain intact.
+Open [the isolated local Studio](http://127.0.0.1:62684/native.html) on this PC. It runs code `1cf600f737c1a52aa05e4a7a9619d361197148cf` with an independent restored **synthetic rehearsal** project. Its Export History contains one verified MP4/cover/caption/SRT/ZIP package for exercising downloads and Open Folder. No production project, social account, external upload or Owner acceptance is implied. The URL lasts while this review process runs. The earlier n1/n2 servers were stopped before code changes; their data/history remain intact.
 
 Use [the Vietnamese UI guide](../../../docs/FINAL_EXPORT_USER_GUIDE_VI.md). Normal actions use the Studio; no ID, CLI, database query or evidence-folder navigation is required. Voice/character controls are in **Nhân vật & giọng thoại** for narrated projects, after a script and canonical shots are saved. Source-footage Auto Edit keeps its existing workflow.
 
@@ -23,3 +23,9 @@ For each case record explicit Owner checks: playable video; correct orientation/
 The earlier 9.4-second real proper-name sample remains available at `C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/native-guided-real-narration-n2/final.mp4`; listening was deferred by the Owner. No new listening verdict is inferred here.
 
 `OWNER_EXPORT_UAT_COMPLETE=NO`, `OWNER_VOICE_UAT_REQUIRED=YES`, `PLATFORM_API_PUBLISHING=DEFERRED`, `ANALYTICS=DEFERRED`, `FULL_TREND_RADAR=DEFERRED`, `PRODUCTION_DEPLOYED=NO`.
+
+The review server was restarted as n3 on the same URL after verifying zero active core jobs. Current PID 9264; n2/PID 20824 is stopped. Source change only improves the incomplete-casting guidance; no project approval or media bytes changed. [Current HTTP verification](isolated-review-http-n3.json), [readiness-negative check](readiness-negative-http-n3.json).
+
+The automated API run has ended; tool/OS/UID replays and the three remaining PostgreSQL concurrency cases are recorded in [the consolidated priority report](../../../docs/FINAL_EXPORT_PRIORITY_REPORT.md). Eight finished isolated Linux CI scratch roots were removed after archiving verified logs; the review server/data, both review backups, voice models and accepted media were retained. This cleanup is unrelated to the denied Windows roots and does not change any approval.
+
+Post-cleanup [read-only HTTP check](isolated-review-http-n4.json): Studio/source files and rehearsal MP4 remain exact; the draft is still revision 4, zero selected voices, narrator disabled and no approval. No provider or browser was invoked.

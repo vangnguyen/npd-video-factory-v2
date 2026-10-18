@@ -1,0 +1,63 @@
+{
+  "scope": "Eight completed owned Linux CI scratch directories only; no Windows paths, production data, accepted media, models, venv or portable tools",
+  "roots": [
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/execution-n4",
+      "logical_bytes": 4324944888,
+      "files": 9583,
+      "links": 1311
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/variant-media-replay-n1",
+      "logical_bytes": 42683628,
+      "files": 76,
+      "links": 14
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/media-skips-replay-n1",
+      "logical_bytes": 69679894,
+      "files": 196,
+      "links": 16
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/media-closure-n2",
+      "logical_bytes": 37975116,
+      "files": 112,
+      "links": 15
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/storyboard-media-replay-n1",
+      "logical_bytes": 18078686,
+      "files": 58,
+      "links": 7
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/storyboard-media-replay-n2",
+      "logical_bytes": 18100313,
+      "files": 60,
+      "links": 7
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/uploaded-consumers-media-replay-n1",
+      "logical_bytes": 13276442,
+      "files": 40,
+      "links": 9
+    },
+    {
+      "path": "/var/tmp/vf-final-export-ci-20261018-n3/visual-scene-media-replay-n1",
+      "logical_bytes": 75556,
+      "files": 1,
+      "links": 1
+    }
+  ],
+  "logical_bytes": 4524814523,
+  "other_ci_processes": [],
+  "archive_sha256": "519881368b6138d6b241fbb98d63368be150357f4c2a2caf824428c17b4d0d12",
+  "symlink_safe_rmtree": true,
+  "windows_denied_roots_retried": false,
+  "host_physical_space_reclaimed_claimed": false,
+  "production_services_changed": false,
+  "production_deployed": false,
+  "status": "REMOVED",
+  "accepted_artifacts_touched": false
+}

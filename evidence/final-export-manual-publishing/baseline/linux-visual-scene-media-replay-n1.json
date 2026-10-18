@@ -1,0 +1,26 @@
+{
+  "returncode": 0,
+  "seconds": 3.663,
+  "selected": [
+    "tests/test_visual_scene_signals.py"
+  ],
+  "portable_media_tools": true,
+  "portable_node": true,
+  "source_files_modified": false,
+  "provider_credentials_inherited": false,
+  "real_provider_acceptance": false,
+  "production_services_changed": false,
+  "production_deployed": false,
+  "junit_counts": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "5",
+    "time": "2.199",
+    "timestamp": "2026-10-18T07:12:10.565650+00:00",
+    "hostname": "DESKTOP-S5UVMA3"
+  },
+  "log": "recovery/20261007/final-export-WSL-visual-scene-media-replay-n1.log",
+  "qualification": "Actual owned local decoded scene boundary and bounded motion measurement; no semantic Vision provider or production acceptance."
+}

@@ -1,0 +1,27 @@
+{
+  "returncode": 0,
+  "seconds": 117.865,
+  "selected": [
+    "tests/test_sql_variant_uploaded_consumers.py",
+    "tests/test_silence_word_safety.py"
+  ],
+  "portable_media_tools": true,
+  "portable_node": true,
+  "source_files_modified": false,
+  "provider_credentials_inherited": false,
+  "real_provider_acceptance": false,
+  "production_services_changed": false,
+  "production_deployed": false,
+  "junit_counts": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "14",
+    "time": "115.363",
+    "timestamp": "2026-10-18T07:05:20.793082+00:00",
+    "hostname": "DESKTOP-S5UVMA3"
+  },
+  "log": "recovery/20261007/final-export-WSL-uploaded-consumers-media-replay-n1.log",
+  "qualification": "Full uploaded-consumer and silence/word-safety files with portable FFmpeg and Node. Actual owned MP4/FLAC/PCM, storage and HTTP range bytes; saved or explicit mock ASR. No external provider or Owner UAT."
+}

@@ -1,0 +1,89 @@
+{
+  "schema_version": "final-export-api-qualification.v1",
+  "full_run_receipt": "api-full-linux-n4.json",
+  "wide_counts": {
+    "tests": 4376,
+    "failures": 26,
+    "errors": 0,
+    "skipped": 40,
+    "passed": 4310
+  },
+  "wide_failure_classification": {
+    "missing_FFmpeg_assertion": 24,
+    "unconfigured_FFprobe": 1,
+    "shutil_which_FFmpeg_None_passed_to_subprocess": 1
+  },
+  "original_failures_passed_in_unchanged_source_replays": 26,
+  "original_skips_passed_in_portable_linux_replays": 27,
+  "original_skips_passed_in_os_or_uid_replays": [
+    {
+      "node": "tests/test_executor_plane.py::test_read_only_evidence_blocks",
+      "method": "Real Linux UID/GID 65534, supplementary groups empty; 2 pass, final-export-WSL-nonroot-n4.log"
+    },
+    {
+      "node": "tests/test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0]",
+      "method": "Actual Windows FFmpeg MP4 + explicit mock ASR; 5 pass, owned-windows-media-replay-n1.json"
+    },
+    {
+      "node": "tests/test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0.35]",
+      "method": "Actual Windows FFmpeg MP4 + explicit mock ASR; 5 pass, owned-windows-media-replay-n1.json"
+    },
+    {
+      "node": "tests/test_auto_edit_local_cpu.py::test_actual_trusted_mp4_sql_analysis_preserves_measured_source_and_mock_label",
+      "method": "Actual Windows FFmpeg MP4 + explicit mock ASR; 5 pass, owned-windows-media-replay-n1.json"
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[once]",
+      "method": "Actual Windows Python/OS; 3 pass, windows-rename-replay-n1.json"
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[persistent]",
+      "method": "Actual Windows Python/OS; 3 pass, windows-rename-replay-n1.json"
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[tampered]",
+      "method": "Actual Windows Python/OS; 3 pass, windows-rename-replay-n1.json"
+    },
+    {
+      "node": "tests/test_mvp1_provider_admission.py::test_nonroot_cannot_admit_self_owned_public_authority",
+      "method": "Real Linux UID/GID 65534, supplementary groups empty; 2 pass, final-export-WSL-nonroot-n4.log"
+    },
+    {
+      "node": "tests/test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0]",
+      "method": "Actual Windows FFmpeg MP4 + explicit mock ASR; 5 pass, owned-windows-media-replay-n1.json"
+    },
+    {
+      "node": "tests/test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0.35]",
+      "method": "Actual Windows FFmpeg MP4 + explicit mock ASR; 5 pass, owned-windows-media-replay-n1.json"
+    }
+  ],
+  "remaining_unqualified": [
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_two_saves_contend_real_row_lock_no_lost_update",
+      "state": "skipped",
+      "reason": "real PostgreSQL contention test; separate non-PG tests remain C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:141: real PostgreSQL contention test; separate non-PG tests remain",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[edit]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[cancel]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    }
+  ],
+  "postgres_database_configured": false,
+  "production_database_contacted": false,
+  "production_services_changed": false,
+  "source_physical_files_pinned": 630,
+  "source_unchanged": true,
+  "new_clean_full_run_claimed": false,
+  "owner_uat_complete": false,
+  "production_deployed": false,
+  "note": "Replays cover original case IDs under explicitly qualified environments. Counts overlap and are not summed into a fresh passing full run. Three real PostgreSQL concurrency cases remain unqualified; SQLite tests do not certify them."
+}

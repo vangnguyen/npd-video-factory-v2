@@ -1,0 +1,654 @@
+{
+  "schema_version": "final-export-api-regression.v4",
+  "wide_run": {
+    "status": "TESTS_FAILED",
+    "root": "/var/tmp/vf-final-export-ci-20261018-n3/execution-n4",
+    "python": "3.12.3",
+    "production_services_changed": false,
+    "production_deployed": false,
+    "host_qualification_claimed": false,
+    "docker_e2e_claimed": false,
+    "git_metadata_rewritten": false,
+    "source_physical_files_pinned": 630,
+    "provider_credentials_inherited": false,
+    "source_head_at_start": "b49b0a9a6c7dee77c7324ec7d6666d7693f94da3",
+    "source_trees": {
+      "apps/api": "144b86f41f2e051fdcca125f1d5807868dfaa810",
+      "services/worker": "e7ab9985eb6851fc0fbca24ed70b114a77cf5338"
+    },
+    "versions": {
+      "pytest": "8.4.2",
+      "fastapi": "0.143.3",
+      "sqlalchemy": "2.1.5",
+      "numpy": "2.5.3",
+      "Pillow": "12.3.0",
+      "websockets": "15.0.1",
+      "PyYAML": "6.0.1"
+    },
+    "nonroot_uid": 65534,
+    "nonroot_returncode": 0,
+    "shards": [
+      {
+        "shard": 0,
+        "returncode": 1,
+        "counts": {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "30",
+          "tests": "2188",
+          "time": "7610.397",
+          "timestamp": "2026-10-18T05:04:20.123099+00:00",
+          "hostname": "DESKTOP-S5UVMA3"
+        }
+      },
+      {
+        "shard": 1,
+        "returncode": 1,
+        "counts": {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "25",
+          "skipped": "10",
+          "tests": "2188",
+          "time": "7747.803",
+          "timestamp": "2026-10-18T05:04:20.138073+00:00",
+          "hostname": "DESKTOP-S5UVMA3"
+        }
+      }
+    ],
+    "source_trees_unchanged": true,
+    "collected": 4376,
+    "returncode": 1,
+    "seconds": 7823.726
+  },
+  "counts": {
+    "tests": 4376,
+    "failures": 26,
+    "errors": 0,
+    "skipped": 40,
+    "passed": 4310
+  },
+  "failures": [
+    {
+      "node": "tests/test_storyboard_rebuild_context.py::test_mixed_import_keeps_exact_historic_origin_and_old_audio_receipt_verification",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x70a81ce70a90>, factory=async_sessionmaker(clas...4851f0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-0/test_mixed_import_keeps_exact_0'))\ntmp_path = PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-0/test_mixed_import_keeps_exact_0')\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_storyboard_rebuild_context.py:245: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x70a81ce70a90>, factory=async_sessionmaker(clas...4851f0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-0/test_mixed_import_keeps_exact_0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_api.py::test_uploaded_disabled_is_configuration_gap_and_saved_read_has_no_copy",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196a91350>, factory=async_sessionmaker(clas...831340>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_uploaded_disabled_is_conf0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_api.py:352: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196a91350>, factory=async_sessionmaker(clas...831340>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_uploaded_disabled_is_conf0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_api.py::test_current_bound_graph_dispatch_imports_actual_child_without_new_provider_calls[video]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196cdb350>, factory=async_sessionmaker(clas...b0d9a0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_current_bound_graph_dispa0'))\nlane = 'video'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_api.py:385: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196cdb350>, factory=async_sessionmaker(clas...b0d9a0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_current_bound_graph_dispa0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_api.py::test_current_bound_graph_dispatch_imports_actual_child_without_new_provider_calls[mixed]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196cda690>, factory=async_sessionmaker(clas...c34d10>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_current_bound_graph_dispa1'))\nlane = 'mixed'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_api.py:385: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196cda690>, factory=async_sessionmaker(clas...c34d10>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_current_bound_graph_dispa1'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_api.py::test_current_bound_graph_dispatch_imports_actual_child_without_new_provider_calls[storyboard_audio]",
+      "state": "failure",
+      "reason": "app.auto_edit_providers.MediaProbeError: ffprobe is not configured env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae196b3e910>, factory=async_sessionmaker(clas...c37b60>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_current_bound_graph_dispa2'))\nlane = 'storyboard_audio'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_api.py:380: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:127: in saved_audio\n    ???\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:49: in ingest\n    ???\napp/auto_edit_service.py:288: in complete\n    media_metadata = await self.media_probe.probe(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <app.auto_edit_providers.FFprobeMediaProbe object at 0x7ae19676a0f0>\npath = PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_current_bound_graph_dispa2/upload-stage/upl_f08ea028c585427bbc245eb6/assembled.bin')\n\n    async def probe(self, path: Path, *, detected_content_type: str, media_kind: str) -> MediaMetadata:\n        if media_kind == \"subtitle\":\n            return MediaMetadata(media_kind=\"subtitle\", detected_content_type=detected_content_type)\n        if shutil.which(self.executable) is None and not Path(self.executable).is_file():\n>           raise MediaProbeError(\"ffprobe is not configured\")\nE           app.auto_edit_providers.MediaProbeError: ffprobe is not configured\n\napp/auto_edit_providers.py:187: MediaP",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_api.py::test_unanalysed_video_core_gate_and_empty_graph_contract_never_fall_back",
+      "state": "failure",
+      "reason": "TypeError: expected str, bytes or os.PathLike object, not NoneType env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a78abbd0>, factory=async_sessionmaker(clas...22de20>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_unanalysed_video_core_gat0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_api.py:412: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/usr/lib/python3.12/subprocess.py:548: in run\n    with Popen(*popenargs, **kwargs) as process:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/lib/python3.12/subprocess.py:1026: in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n/usr/lib/python3.12/subprocess.py:1826: in _execute_child\n    and os.path.dirname(executable)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\np = None\n\n>   ???\nE   TypeError: expected str, bytes or os.PathLike object, not NoneType\n\n<frozen posixpath>:181: TypeError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_real_owned_video_derives_six_exact_independent_graphs_and_canonical_reviews",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4e33f10>, factory=async_sessionmaker(clas...8e6780>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_real_owned_video_derives_0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:181: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4e33f10>, factory=async_sessionmaker(clas...8e6780>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_real_owned_video_derives_0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_saved_uploaded_audio_has_independent_parent_history_and_zero_dispatch_audit",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4cc1a90>, factory=async_sessionmaker(clas...230680>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_saved_uploaded_audio_has_0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:221: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4cc1a90>, factory=async_sessionmaker(clas...230680>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_saved_uploaded_audio_has_0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_child_word_review_uses_existing_canonical_engine_and_preserves_originals",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4dda1d0>, factory=async_sessionmaker(clas...231430>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_child_word_review_uses_ex0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:245: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4dda1d0>, factory=async_sessionmaker(clas...231430>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_child_word_review_uses_ex0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_rehashed_or_foreign_import_metadata_cannot_launder_ready_receipt[word]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a44eb690>, factory=async_sessionmaker(clas...3b3aa0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor0'))\nchange = 'word'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:266: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a44eb690>, factory=async_sessionmaker(clas...3b3aa0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_rehashed_or_foreign_import_metadata_cannot_launder_ready_receipt[asset_key]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4f13250>, factory=async_sessionmaker(clas...315c40>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor1'))\nchange = 'asset_key'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:266: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4f13250>, factory=async_sessionmaker(clas...315c40>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor1'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_rehashed_or_foreign_import_metadata_cannot_launder_ready_receipt[origin_scan]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a41a1190>, factory=async_sessionmaker(clas...2aa990>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor2'))\nchange = 'origin_scan'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:266: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a41a1190>, factory=async_sessionmaker(clas...2aa990>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor2'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_rehashed_or_foreign_import_metadata_cannot_launder_ready_receipt[raw_audio]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4de2610>, factory=async_sessionmaker(clas...3e4110>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor3'))\nchange = 'raw_audio'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:266: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4de2610>, factory=async_sessionmaker(clas...3e4110>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor3'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_rehashed_or_foreign_import_metadata_cannot_launder_ready_receipt[audit_job]",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4f72610>, factory=async_sessionmaker(clas...4b5a00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor4'))\nchange = 'audit_job'\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:266: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4f72610>, factory=async_sessionmaker(clas...4b5a00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_rehashed_or_foreign_impor4'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_raw_boundary_points_and_separate_positive_projection_are_not_rewritten",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a745b690>, factory=async_sessionmaker(clas...3e43e0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_raw_boundary_points_and_s0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:298: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a745b690>, factory=async_sessionmaker(clas...3e43e0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_raw_boundary_points_and_s0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_mixed_storyboard_child_keeps_content_draft_and_analysis_clocks_independent",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4effa10>, factory=async_sessionmaker(clas...99a930>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_mixed_storyboard_child_ke0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:319: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4effa10>, factory=async_sessionmaker(clas...99a930>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_mixed_storyboard_child_ke0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_reviewed_audio_history_maps_keys_values_and_selected_snapshot_without_raw_changes",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae19fe51710>, factory=async_sessionmaker(clas...124e00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_reviewed_audio_history_ma0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:333: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae19fe51710>, factory=async_sessionmaker(clas...124e00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_reviewed_audio_history_ma0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_concurrent_replay_and_family_cancel_never_create_child_or_dispatch_again",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1afbe60d0>, factory=async_sessionmaker(clas...88f890>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_concurrent_replay_and_fam0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:356: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1afbe60d0>, factory=async_sessionmaker(clas...88f890>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_concurrent_replay_and_fam0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_expired_actual_child_flush_rolls_back_entire_import_and_holds_orphans",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae19ffaa250>, factory=async_sessionmaker(clas...999a00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_expired_actual_child_flus0'))\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ae1a7439820>\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:376: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae19ffaa250>, factory=async_sessionmaker(clas...999a00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_expired_actual_child_flus0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_derivation.py::test_late_bytes_after_terminal_sql_flush_roll_back_ready_events_and_graph",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a702e3d0>, factory=async_sessionmaker(clas...99bb00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_late_bytes_after_terminal0'))\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ae1a7406480>\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:399: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1a702e3d0>, factory=async_sessionmaker(clas...99bb00>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_late_bytes_after_terminal0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_consumers.py::test_actual_audio_getter_word_review_and_source_http_range_use_child_namespace_without_asr",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4811390>, factory=async_sessionmaker(clas...6043b0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_actual_audio_getter_word_0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_consumers.py:47: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4811390>, factory=async_sessionmaker(clas...6043b0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_actual_audio_getter_word_0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_consumers.py::test_video_staging_and_actual_queued_review_asset_admission_bind_exact_child_scope",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1aeaba610>, factory=async_sessionmaker(clas...744500>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_video_staging_and_actual_0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_consumers.py:98: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1aeaba610>, factory=async_sessionmaker(clas...744500>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_video_staging_and_actual_0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_consumers.py::test_source_job_mutation_during_copy_fails_closed_and_records_unknown_without_replay",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b484f790>, factory=async_sessionmaker(clas...4c0fb0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_source_job_mutation_durin0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_consumers.py:126: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b484f790>, factory=async_sessionmaker(clas...4c0fb0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_source_job_mutation_durin0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_consumers.py::test_actual_async_video_relation_is_archived_exactly_and_never_aliased_into_child",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b462a610>, factory=async_sessionmaker(clas...bb8f80>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_actual_async_video_relati0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_consumers.py:147: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b462a610>, factory=async_sessionmaker(clas...bb8f80>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_actual_async_video_relati0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_consumers.py::test_derivative_video_metadata_version_drift_after_bounded_download_is_rejected",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1afc0ef90>, factory=async_sessionmaker(clas...9290a0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_derivative_video_metadata0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_consumers.py:164: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1afc0ef90>, factory=async_sessionmaker(clas...9290a0>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_derivative_video_metadata0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_sql_variant_uploaded_consumers.py::test_real_flac_ingest_import_and_staging_preserves_pcm_source_metadata_without_asr",
+      "state": "failure",
+      "reason": "AssertionError: Owned real media test requires FFmpeg\nassert None env = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4848b90>, factory=async_sessionmaker(clas...691430>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_real_flac_ingest_import_a0'))\n\n>   ???\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_consumers.py:178: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nenv = namespace(engine=<sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7ae1b4848b90>, factory=async_sessionmaker(clas...691430>, tmp=PosixPath('/var/tmp/vf-final-export-ci-20261018-n3/execution-n4/shard-1/test_real_flac_ingest_import_a0'))\n\n>   ???\nE   AssertionError: Owned real media test requires FFmpeg\nE   assert None\n\nC:\\vfns01\\apps\\api\\tests\\test_sql_variant_uploaded_derivation.py:53: AssertionError",
+      "passed_in_portable_linux_replay": true
+    }
+  ],
+  "skipped": [
+    {
+      "node": "tests/test_executor_plane.py::test_read_only_evidence_blocks",
+      "state": "skipped",
+      "reason": "root bypasses DAC C:\\vfns01\\apps\\api\\tests\\test_executor_plane.py:505: root bypasses DAC",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0]",
+      "state": "skipped",
+      "reason": "Held FFmpeg unavailable; measured source acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_auto_edit_jobs.py:445: Held FFmpeg unavailable; measured source acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0.35]",
+      "state": "skipped",
+      "reason": "Held FFmpeg unavailable; measured source acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_auto_edit_jobs.py:445: Held FFmpeg unavailable; measured source acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_actual_pcm_matches_canonical_trim_tempo_gain_fades_and_source_receipt",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_actual_normalization_keeps_gain_and_ducking_uses_voice_energy",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_review_final_reuses_approved_canonical_pcm_without_tts_dsp_or_phantom_cost",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_canonical_voice_preserves_explicit_legacy_music_mix_and_separate_narration",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_old_or_changed_canonical_proof_requires_fresh_review_without_final_dsp[missing_receipt]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_old_or_changed_canonical_proof_requires_fresh_review_without_final_dsp[source_custody]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_terminal_writer_rechecks_after_flush_and_rolls_back_completion[source]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_terminal_writer_rechecks_after_flush_and_rolls_back_completion[cancel]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_terminal_writer_rechecks_after_flush_and_rolls_back_completion[legacy_music]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_other_sql_instance_wins_after_service_check_before_writer_lock[source]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_other_sql_instance_wins_after_service_check_before_writer_lock[cancel]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_late_qc_exception_preserves_other_worker_terminal_decision",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_actual_pcm_terminal_limiter_matches_saved_config_and_receipt[False--3]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_actual_pcm_terminal_limiter_matches_saved_config_and_receipt[False--0.1]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_actual_pcm_terminal_limiter_matches_saved_config_and_receipt[True--3]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_production_canonical_audio_parity.py::test_actual_pcm_terminal_limiter_matches_saved_config_and_receipt[True--0.1]",
+      "state": "skipped",
+      "reason": "Owned local FFmpeg/FFprobe not configured C:\\vfns01\\apps\\api\\tests\\test_production_canonical_audio_parity.py:43: Owned local FFmpeg/FFprobe not configured",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_auto_edit_local_cpu.py::test_actual_trusted_mp4_sql_analysis_preserves_measured_source_and_mock_label",
+      "state": "skipped",
+      "reason": "Owned Windows FFmpeg unavailable; physical SQL acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_auto_edit_local_cpu.py:280: Owned Windows FFmpeg unavailable; physical SQL acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_two_saves_contend_real_row_lock_no_lost_update",
+      "state": "skipped",
+      "reason": "real PostgreSQL contention test; separate non-PG tests remain C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:141: real PostgreSQL contention test; separate non-PG tests remain",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[edit]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[cancel]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_timeline_audio_preview.py::test_real_preview_audio_trim_rate_placement_gain_mute_and_bounds",
+      "state": "skipped",
+      "reason": "real local FFmpeg/FFprobe unavailable C:\\vfns01\\apps\\api\\tests\\test_timeline_audio_preview.py:106: real local FFmpeg/FFprobe unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_timeline_audio_preview.py::test_real_overlap_fades_and_limiter_without_autogain",
+      "state": "skipped",
+      "reason": "real local FFmpeg/FFprobe unavailable C:\\vfns01\\apps\\api\\tests\\test_timeline_audio_preview.py:189: real local FFmpeg/FFprobe unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_canonical_audio_processing.py::test_independent_stem_outputs_keep_production_graph_and_actual_mixed_pcm_unchanged[processing0]",
+      "state": "skipped",
+      "reason": "Real local FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_canonical_audio_processing.py:74: Real local FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_canonical_audio_processing.py::test_independent_stem_outputs_keep_production_graph_and_actual_mixed_pcm_unchanged[processing1]",
+      "state": "skipped",
+      "reason": "Real local FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_canonical_audio_processing.py:74: Real local FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_canonical_audio_processing.py::test_independent_stem_outputs_keep_production_graph_and_actual_mixed_pcm_unchanged[processing2]",
+      "state": "skipped",
+      "reason": "Real local FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_canonical_audio_processing.py:74: Real local FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_canonical_audio_processing.py::test_real_ducking_reduces_only_music_during_actual_original_audio_energy",
+      "state": "skipped",
+      "reason": "Real local FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_canonical_audio_processing.py:41: Real local FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_canonical_audio_processing.py::test_real_normalization_retains_editorial_gain_and_exact_pcm_duration",
+      "state": "skipped",
+      "reason": "Real local FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_canonical_audio_processing.py:41: Real local FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[once]",
+      "state": "skipped",
+      "reason": "Windows sharing-error policy only; other OS permission errors fail closed C:\\vfns01\\apps\\api\\tests\\test_bounded_storage_download.py:505: Windows sharing-error policy only; other OS permission errors fail closed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[persistent]",
+      "state": "skipped",
+      "reason": "Windows sharing-error policy only; other OS permission errors fail closed C:\\vfns01\\apps\\api\\tests\\test_bounded_storage_download.py:505: Windows sharing-error policy only; other OS permission errors fail closed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[tampered]",
+      "state": "skipped",
+      "reason": "Windows sharing-error policy only; other OS permission errors fail closed C:\\vfns01\\apps\\api\\tests\\test_bounded_storage_download.py:505: Windows sharing-error policy only; other OS permission errors fail closed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_provider_admission.py::test_nonroot_cannot_admit_self_owned_public_authority",
+      "state": "skipped",
+      "reason": "root custody rejection requires non-root execution C:\\vfns01\\apps\\api\\tests\\test_mvp1_provider_admission.py:282: root custody rejection requires non-root execution",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_final_export_quality.py::test_actual_encoded_aac_three_second_tail_fails_full_qc",
+      "state": "skipped",
+      "reason": "FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_final_export_quality.py:63: FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_final_export_quality.py::test_actual_single_black_frame_cannot_hide_in_low_whole_video_ratio",
+      "state": "skipped",
+      "reason": "FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_final_export_quality.py:86: FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0]",
+      "state": "skipped",
+      "reason": "Owned Windows FFmpeg unavailable; physical decode acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_local_video_transcription_provider.py:113: Owned Windows FFmpeg unavailable; physical decode acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0.35]",
+      "state": "skipped",
+      "reason": "Owned Windows FFmpeg unavailable; physical decode acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_local_video_transcription_provider.py:113: Owned Windows FFmpeg unavailable; physical decode acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_silence_word_safety.py::test_real_ffmpeg_detector_does_not_report_threshold_as_measured_energy",
+      "state": "skipped",
+      "reason": "FFmpeg absent; real local test remains required C:\\vfns01\\apps\\api\\tests\\test_silence_word_safety.py:108: FFmpeg absent; real local test remains required",
+      "passed_in_portable_linux_replay": true
+    },
+    {
+      "node": "tests/test_visual_scene_signals.py::test_local_decoder_finds_real_cut_and_bounds_measurement_without_audio",
+      "state": "skipped",
+      "reason": "local FFmpeg unavailable C:\\vfns01\\apps\\api\\tests\\test_visual_scene_signals.py:41: local FFmpeg unavailable",
+      "passed_in_portable_linux_replay": true
+    }
+  ],
+  "replays": {
+    "final-export-WSL-variant-media-replay-n1": {
+      "counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "30",
+        "time": "359.509",
+        "timestamp": "2026-10-18T06:17:42.124426+00:00",
+        "hostname": "DESKTOP-S5UVMA3"
+      },
+      "log": "recovery/20261007/test_capture_actual_asgi_contracts_for_independent_studio_fixture.log"
+    },
+    "final-export-WSL-media-skips-replay-n1": {
+      "counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "5",
+        "tests": "25",
+        "time": "235.337",
+        "timestamp": "2026-10-18T06:39:09.203165+00:00",
+        "hostname": "DESKTOP-S5UVMA3"
+      },
+      "log": "recovery/20261007/test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0.35].log"
+    },
+    "final-export-WSL-media-closure-n2": {
+      "counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "26",
+        "time": "152.865",
+        "timestamp": "2026-10-18T06:51:12.588820+00:00",
+        "hostname": "DESKTOP-S5UVMA3"
+      },
+      "log": "recovery/20261007/test_real_normalization_retains_editorial_gain_and_exact_pcm_duration.log"
+    },
+    "final-export-WSL-storyboard-media-replay-n2": {
+      "counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "11",
+        "time": "126.872",
+        "timestamp": "2026-10-18T06:57:56.299859+00:00",
+        "hostname": "DESKTOP-S5UVMA3"
+      },
+      "log": "recovery/20261007/test_mixed_import_keeps_exact_historic_origin_and_old_audio_receipt_verification.log"
+    },
+    "final-export-WSL-uploaded-consumers-media-replay-n1": {
+      "counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "14",
+        "time": "115.363",
+        "timestamp": "2026-10-18T07:05:20.793082+00:00",
+        "hostname": "DESKTOP-S5UVMA3"
+      },
+      "log": "recovery/20261007/test_http_silence_review_is_editor_scoped_with_identity_and_conflict.log"
+    },
+    "final-export-WSL-visual-scene-media-replay-n1": {
+      "counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "5",
+        "time": "2.199",
+        "timestamp": "2026-10-18T07:12:10.565650+00:00",
+        "hostname": "DESKTOP-S5UVMA3"
+      },
+      "log": "recovery/20261007/test_placeholder_text_does_not_become_semantic_highlight_evidence.log"
+    }
+  },
+  "unresolved_linux_failures": [],
+  "remaining_skips_after_linux_replays": [
+    {
+      "node": "tests/test_executor_plane.py::test_read_only_evidence_blocks",
+      "state": "skipped",
+      "reason": "root bypasses DAC C:\\vfns01\\apps\\api\\tests\\test_executor_plane.py:505: root bypasses DAC",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0]",
+      "state": "skipped",
+      "reason": "Held FFmpeg unavailable; measured source acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_auto_edit_jobs.py:445: Held FFmpeg unavailable; measured source acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0.35]",
+      "state": "skipped",
+      "reason": "Held FFmpeg unavailable; measured source acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_auto_edit_jobs.py:445: Held FFmpeg unavailable; measured source acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_auto_edit_local_cpu.py::test_actual_trusted_mp4_sql_analysis_preserves_measured_source_and_mock_label",
+      "state": "skipped",
+      "reason": "Owned Windows FFmpeg unavailable; physical SQL acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_auto_edit_local_cpu.py:280: Owned Windows FFmpeg unavailable; physical SQL acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_two_saves_contend_real_row_lock_no_lost_update",
+      "state": "skipped",
+      "reason": "real PostgreSQL contention test; separate non-PG tests remain C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:141: real PostgreSQL contention test; separate non-PG tests remain",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[edit]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[cancel]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[once]",
+      "state": "skipped",
+      "reason": "Windows sharing-error policy only; other OS permission errors fail closed C:\\vfns01\\apps\\api\\tests\\test_bounded_storage_download.py:505: Windows sharing-error policy only; other OS permission errors fail closed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[persistent]",
+      "state": "skipped",
+      "reason": "Windows sharing-error policy only; other OS permission errors fail closed C:\\vfns01\\apps\\api\\tests\\test_bounded_storage_download.py:505: Windows sharing-error policy only; other OS permission errors fail closed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_bounded_storage_download.py::test_windows_rename_retry_is_bounded_reverifies_bytes_and_never_reopens_sdk[tampered]",
+      "state": "skipped",
+      "reason": "Windows sharing-error policy only; other OS permission errors fail closed C:\\vfns01\\apps\\api\\tests\\test_bounded_storage_download.py:505: Windows sharing-error policy only; other OS permission errors fail closed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_provider_admission.py::test_nonroot_cannot_admit_self_owned_public_authority",
+      "state": "skipped",
+      "reason": "root custody rejection requires non-root execution C:\\vfns01\\apps\\api\\tests\\test_mvp1_provider_admission.py:282: root custody rejection requires non-root execution",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0]",
+      "state": "skipped",
+      "reason": "Owned Windows FFmpeg unavailable; physical decode acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_local_video_transcription_provider.py:113: Owned Windows FFmpeg unavailable; physical decode acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0.35]",
+      "state": "skipped",
+      "reason": "Owned Windows FFmpeg unavailable; physical decode acceptance not claimed C:\\vfns01\\apps\\api\\tests\\test_local_video_transcription_provider.py:113: Owned Windows FFmpeg unavailable; physical decode acceptance not claimed",
+      "passed_in_portable_linux_replay": false
+    }
+  ],
+  "additional_qualified_os_replays": {
+    "nonroot": {
+      "passed": 2,
+      "log": "recovery/20261007/final-export-WSL-nonroot-n4.log"
+    },
+    "windows_owned_mp4": {
+      "passed": 5,
+      "seconds": 73.42,
+      "receipt": "owned-windows-media-replay-n1.json"
+    },
+    "windows_rename": {
+      "passed": 3,
+      "seconds": 10.64,
+      "receipt": "windows-rename-replay-n1.json"
+    }
+  },
+  "new_clean_full_run_claimed": false,
+  "production_deployed": false,
+  "docker_e2e_claimed": false,
+  "owner_uat_complete": false,
+  "qualification": "Wide failures/skips remain reported. Replays use isolated portable tools and unchanged API source; overlapping cohorts are not added. Root/Windows/PostgreSQL conditions are reported separately."
+}
