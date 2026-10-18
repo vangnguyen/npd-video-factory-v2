@@ -29,7 +29,7 @@ function harness({failFirstScript=false}={}){const dom=new Doc(),add=(tag,id,cls
       if(path==='/api/projects')return {id:'a'.repeat(32),revision:1,document:{name:body.name,production_workflow:{kind:body.workflow_kind},brand_template:{template:{aspect_ratio:body.output_format}}},jobs:[]};
       if(path.endsWith('/drama-script')){if(scriptReceipt?.key!==body.request_key){serverProject={...project,revision:body.revision+1,document:{...project.document,drama_script:{raw_text:body.text,input_mode:body.input_mode,characters_confirmed:body.confirm_characters,character_notes:body.character_notes,parsed:{characters:[],lines:[]}}}};scriptReceipt={key:body.request_key,project_id:project.id,revision:body.revision+1,provider_calls:0,human_approval_granted:false};}if(scriptWrites++===0&&failFirstScript)throw Error('Explicit lost response fixture');return scriptReceipt;}
       throw Error('Unexpected fixture API');}});
-  return {dom,controller,calls,messages,stages,project:()=>project,switchStandard:()=>{project={id:'b'.repeat(32),revision:1,document:{name:'Legacy standard',proposal:{}},jobs:[]};controller.sync();},button:text=>dom.querySelectorAll('button').find(n=>n.textContent===text)};
+  return {dom,controller,calls,messages,stages,project:()=>project,setPrepared:()=>{project={...project,revision:project.revision+1,document:{...project.document,prepared_narration:{plan_sha256:'pinned-measured-fixture'}},drama_voice_binding:{current:true}};controller.sync();},switchStandard:()=>{project={id:'b'.repeat(32),revision:1,document:{name:'Legacy standard',proposal:{}},jobs:[]};controller.sync();},button:text=>dom.querySelectorAll('button').find(n=>n.textContent===text)};
 }
 test('actual workflow module mounts all three entry cards and creates Drama before script/media',async()=>{
   const h=harness();await tick();assert.ok(h.button('Bắt đầu Phim Drama'));await h.button('Bắt đầu Phim Drama').listeners.click();
@@ -56,4 +56,9 @@ test('lost save response replays the exact request and retains text edited after
   input.value='An: Bản mới đang sửa.';input.listeners.input();h.button('Đối chiếu lần lưu trước').listeners.click();await tick();
   const writes=h.calls.filter(v=>v.path.endsWith('/drama-script'));assert.deepEqual(writes[1].body,original);assert.equal(input.value,'An: Bản mới đang sửa.');assert.equal(h.controller.isDirty(),true);assert.equal(h.project().document.drama_script.raw_text,'An: Bản thứ nhất.');
   h.button('Lưu nháp').listeners.click();await tick();assert.equal(h.project().document.drama_script.raw_text,'An: Bản mới đang sửa.');assert.equal(h.controller.isDirty(),false);
+});
+test('applying audio brings the player forward and later refreshes respect a manually opened or closed audio panel',async()=>{
+  const h=harness();await tick();await h.button('Bắt đầu Phim Drama').listeners.click();h.dom.querySelectorAll('label').find(n=>n.textContent==='Tên phim / video').children[0].value='Phim';h.button('Tạo phim Drama').listeners.click();await tick();
+  h.controller.showStep('preview');const audio=h.dom.getElementById('native-narration-panel');assert.equal(audio.open,true);h.setPrepared();assert.equal(audio.open,false);
+  audio.open=true;h.controller.sync();assert.equal(audio.open,true);audio.open=false;h.controller.sync();assert.equal(audio.open,false);
 });

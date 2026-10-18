@@ -30,3 +30,6 @@ test('only one cached audition plays and choosing a role does not record listeni
   const buttons=f.root.querySelectorAll('button').filter(v=>v.textContent==='Nghe mẫu'),audios=f.root.querySelectorAll('audio');await buttons[0].listeners.click();assert.equal(audios[0].paused,false);await buttons[1].listeners.click();assert.equal(audios[0].paused,true);assert.equal(audios[1].paused,false);
   f.root.querySelectorAll('button').find(v=>v.textContent==='Chọn cho An').listeners.click();assert.deepEqual(chosen,[[f.voices[0].voice_id,'An']]);assert.ok(items.every(v=>v.human_listening_accepted===false));assert.equal(calls.filter(v=>v[1]).length,0);
 });
+test('card order follows the installed catalog order so real featured presets are easy to find',async t=>{
+  const f=voiceFixture();f.voices.reverse();const controller=initializeVoiceBrowser({...f,api:async()=>({items:[],inference_dispatched:false})});t.after(()=>controller.dispose());await tick();assert.equal(f.root.querySelectorAll('h3')[0].textContent,'Explicit DOM fixture 0');
+});

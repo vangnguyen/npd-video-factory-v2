@@ -59,6 +59,11 @@ test('panel makes no startup requests and shows voice rights and text literally'
   assert.equal(h.label('Tên nhân vật').children[0].value,'An <script>literal</script>');assert.equal(h.label('Có người kể'),undefined);
   assert.ok(h.root.querySelectorAll('input').some(n=>n.type==='checkbox'&&!n.checked));
 });
+test('checking an already current cast never recompiles or invalidates prepared audio',async()=>{
+  const h=harness();await h.controller.load();const before=h.current.project.revision;
+  assert.equal(await h.controller.check(),true);assert.equal(await h.controller.check(),true);
+  assert.equal(h.current.project.revision,before);assert.equal(h.calls.filter(v=>v[1]).length,0);assert.equal(h.action('compile').disabled,true);
+});
 test('narrator starts off and new draft requires manually choosing speaker and voice',async()=>{
   const h=harness();h.override(async(path,options)=>{const value=await h.answer(path,options);if(path.endsWith('/drama-casting')&&!options)value.casting=null;return value;});
   await h.controller.load();await h.action('start').listeners.click();assert.equal(h.controller.isDirty(),true);

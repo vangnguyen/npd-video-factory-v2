@@ -22,7 +22,9 @@ export function initializeVoiceBrowser({root,api,voices=[],catalog={},dom=global
       card.corrupt=false;items=[result,...items.filter(v=>v.sample_id!==result.sample_id)];if(result.state==='ready')play(card,result);clearTimeout(timer);await load();
     }catch(error){say(error);}finally{pending.delete(voice.voice_id+kind);refresh();}}
   function play(card,item){const url=auditionUrl(item.audio_url);if(!url){say(Error('Nguồn mẫu nghe chưa hợp lệ.'));return;}stopOtherAudio(card.audio);card.audio.src=url;card.audio.hidden=false;card.audio.play().catch(()=>{card.state.textContent='Mẫu sẵn sàng. Bấm phát để nghe.';});}
-  for(const voice of voices){const preset=catalog.voices?.find(v=>v.provider_voice_id===voice.definition.provider_voice_id),card=node('article',null,list,{class:'voice-card'});
+  const order=new Map((catalog.voices??[]).map((v,i)=>[v.provider_voice_id,i]));
+  const ordered=[...voices].sort((a,b)=>(order.get(a.definition.provider_voice_id)??999)-(order.get(b.definition.provider_voice_id)??999));
+  for(const voice of ordered){const preset=catalog.voices?.find(v=>v.provider_voice_id===voice.definition.provider_voice_id),card=node('article',null,list,{class:'voice-card'});
     node('h3',voice.definition.display_name,card);node('p',voiceDescription(preset),card);node('p',[preset?.locale??voice.definition.locale,preset?.metadata?.region].filter(Boolean).join(' · '),card,{class:'hint'});
     node('p',`Nguồn local · ${preset?.installed?'Đã cài':'Chưa xác minh cài đặt'} · ${usableVoice(voice)?'Có căn cứ quyền':'Cần kiểm tra quyền'}`,card,{class:'hint'});
     const state=node('p','',card,{role:'status','aria-live':'polite'}),actions=node('div',null,card,{class:'actions'}),sample=node('button','Nghe mẫu',actions,{type:'button'}),trial=node('button','Nghe thử câu thoại',actions,{type:'button'});

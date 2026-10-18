@@ -94,7 +94,7 @@ export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>
     for(const button of list.querySelectorAll('button'))button.disabled=button._narrationItem?working||blocked(state)||!button._narrationItem.timing_apply_current||!button._narrationItem.result?.plan.fit_narration_template||!button._narrationAck.checked:working||state.busy||state.canEdit===false;
     for(const input of list.querySelectorAll('input'))input.disabled=working||blocked(state);
   }
-  function sync(){const key=context();if(binding!==key){binding=key;serial++;page=null;pending=null;draw();}controls();}
+  function sync(){const key=context();if(binding!==key){binding=key;serial++;page=null;pending=null;reviewAck.checked=false;draw();}controls();}
   refresh.addEventListener('click',load);prepare.addEventListener('click',async()=>{try{const state=getState();pending=pending??narrationRequest(state,page,'prepare',{requestKey:newKey()});await execute(pending,false);}catch(error){onMessage(error.message,true);}});
   reviewer.addEventListener('input',controls);reviewAck.addEventListener('change',controls);approve.addEventListener('click',async()=>{try{await execute(narrationRequest(getState(),page,'approve',{reviewer:reviewer.value,acknowledged:reviewAck.checked}),false);}catch(error){onMessage(error.message,true);}});
   function ensureLoaded(){const s=getState(),key=context()+':'+(s.project?.jobs??[]).filter(v=>v.kind==='narration').map(v=>v.id+':'+v.status).join(',');if(root.open&&!working&&!s.busy&&s.project&&!source(s.project)&&autoReadKey!==key){autoReadKey=key;queueMicrotask(()=>void load());}}

@@ -48,3 +48,6 @@ test('review permission and explicit acknowledgment grant narration-only approva
   assert.deepEqual(narrationRequest(s,page(),'approve',{reviewer:' Fixture ',acknowledged:true}).body,{revision:5,reviewer:'Fixture',acknowledged:true,purpose:'narration'});
   assert.throws(()=>narrationRequest({...s,canReview:false},page(),'approve',{reviewer:'Fixture',acknowledged:true}));
 });
+test('a changed project version clears the old narration consent without granting approval or dispatching',()=>{
+  const h=harness(),ack=h.root.querySelectorAll('input').find(v=>v.type==='checkbox');ack.checked=true;h.current.project.revision++;h.controller.sync();assert.equal(ack.checked,false);assert.equal(h.calls.length,0);assert.equal(h.button('Duyệt để tạo lời đọc').disabled,true);
+});

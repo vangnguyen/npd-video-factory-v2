@@ -156,6 +156,7 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
     start.disabled=edit||!page||Boolean(draft)||Boolean(pending);save.disabled=edit||!draft||!dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='save');
     sortLines.disabled=edit||!draft||voiceDirty||!page?.shots?.length||Boolean(pending);
     compile.disabled=edit||!page?.casting||dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='compile');addLine.disabled=addCharacter.disabled=narrator.disabled=edit||!draft||voiceDirty||Boolean(pending);
+    compile.disabled||=page?.compiled_current===true&&!pending;compile.title=page?.compiled_current?'Phân vai hiện tại đã kiểm tra. Chỉ kiểm tra lại sau khi thay đổi.':'';
     voiceSave.disabled=manage||unsupported||dialogueDirty||!catalog?.model||!preset.value||!voiceName.value?.trim()||Boolean(pending&&pending.action!=='voice-save');
     seriesSave.disabled=edit||!page?.casting||dialogueDirty||voiceDirty||!seriesName.value?.trim()||Boolean(pending&&pending.action!=='series-save');seriesApply.disabled=edit||!seriesChoice.value||dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='series-apply');
     voiceBrowser?.refresh();
@@ -179,5 +180,6 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
       await execute({path:'/api/voice-library'+(editVoice?'/'+editVoice.voice_id:''),body:{request_key:newKey(),...(editVoice?{expected_version:editVoice.version}:{}),definition}},'voice-save');
     }catch(error){onMessage(error.message,true);}});
   function ensureLoaded(){if(root.open&&autoLoadContext!==context()&&!working&&!blocked(getState())){autoLoadContext=context();queueMicrotask(()=>void load());}}
-  sync();return {sync,controls,load,ensureLoaded,check:()=>submit('compile'),focusLine:id=>{if(/^line_[a-f0-9]{32}$/.test(id)){const row=root.querySelector(`[data-drama-line="${id}"]`);row?.scrollIntoView?.({block:'center',behavior:'smooth'});row?.querySelector('textarea')?.focus();}},isWorking:()=>working,isDirty:()=>dialogueDirty||voiceDirty};
+  async function check(){if(!page||page.revision!==getState().project?.revision)await load();if(!page)return false;if(page.compiled_current)return true;await submit('compile');return page?.compiled_current===true;}
+  sync();return {sync,controls,load,ensureLoaded,check,focusLine:id=>{if(/^line_[a-f0-9]{32}$/.test(id)){const row=root.querySelector(`[data-drama-line="${id}"]`);row?.scrollIntoView?.({block:'center',behavior:'smooth'});row?.querySelector('textarea')?.focus();}},isWorking:()=>working,isDirty:()=>dialogueDirty||voiceDirty};
 }
