@@ -756,6 +756,9 @@ class Pipeline:
         self.config = config
 
     def run(self, job, stage):
+        if job['kind'] in {'render','narration'} and job['snapshot']['document'].get('drama_casting') is not None:
+            from .drama_casting import require_execution_ready
+            require_execution_ready(job['snapshot']['document'])
         from .auto_edit_timeline import is_auto_edit
         source_mode=is_auto_edit(job['snapshot']['document'])
         if source_mode and job['kind']=='narration':

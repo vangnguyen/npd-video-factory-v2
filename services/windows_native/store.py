@@ -610,6 +610,9 @@ class Store:
         with self.transaction() as con:
             project = self.editable(con, identifier, revision)
             doc = project["document"]
+            if doc.get('drama_casting') is not None:
+                from .drama_casting import require_execution_ready
+                require_execution_ready(doc)
             from .auto_edit_timeline import is_auto_edit
             preview_binding=None;render_mode=None;approval_scope='narration_only' if purpose=='narration' else None
             if is_auto_edit(doc):

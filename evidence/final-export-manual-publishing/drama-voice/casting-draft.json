@@ -1,0 +1,20 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "507cafd9a3a08b9e1e660613c3765f31e3f18ea6",
+  "component": "Native project casting draft persistence and execution fence",
+  "source": "services/windows_native/drama_casting.py",
+  "test_log": "recovery/20261007/final-export-drama-casting-plan-Native-n3.log",
+  "cohort_tests_passed": 57,
+  "cohort_duration_seconds": 57.894,
+  "casting_tests": 9,
+  "verified": ["project-specific characters and manual voice version/hash selection", "global voice reused in another film", "narrator defaults false", "draft may remain unassigned without automatic selection", "CAS and exact replay do not rewind later edits", "voice version drift rejected", "revoked writer rollback", "backup restore retains separate global voices and project casts", "incomplete drama cannot invoke legacy single-voice narration or render"],
+  "audio_generated": false,
+  "ui_integrated": false,
+  "series_casting_integrated": false,
+  "per_line_tts_integrated": false,
+  "external_provider_calls": 0,
+  "DRAMA_VOICE_CASTING_READY": "NO",
+  "OWNER_VOICE_UAT_REQUIRED": "YES",
+  "production_deployed": false
+}
