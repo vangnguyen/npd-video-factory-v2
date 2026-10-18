@@ -23,9 +23,9 @@ MAX_FILES = 50000
 MAX_TOTAL = 10 * 1024**3
 MAX_FILE = 2 * 1024**3
 MAX_MANIFEST = 8 * 1024**2
-DATABASES = ('workflow.sqlite3', 'intelligence.sqlite3')
+DATABASES = ('workflow.sqlite3', 'intelligence.sqlite3', 'localplanning.sqlite3')
 EXCLUDED = {'.server.lock', 'workflow.sqlite3-wal', 'workflow.sqlite3-shm',
-            'intelligence.sqlite3-wal', 'intelligence.sqlite3-shm'}
+            'intelligence.sqlite3-wal', 'intelligence.sqlite3-shm','localplanning.sqlite3-wal','localplanning.sqlite3-shm'}
 
 
 def io_path(path):
@@ -98,7 +98,8 @@ def database_status(path):
         if con.execute('PRAGMA quick_check').fetchall() != [('ok',)]:
             raise WorkflowError('BACKUP_DATABASE_INTEGRITY_FAILED')
         tables = {row[0] for row in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        expected = {'projects', 'jobs', 'project_versions', 'events'} if path.name == 'workflow.sqlite3' else {'records', 'versions', 'operations', 'decisions'}
+        expected = ({'projects', 'jobs', 'project_versions', 'events'} if path.name == 'workflow.sqlite3' else
+            {'planning','planning_versions','planning_decisions','planning_batches'} if path.name=='localplanning.sqlite3' else {'records', 'versions', 'operations', 'decisions'})
         if not expected <= tables:
             raise WorkflowError('BACKUP_DATABASE_SCHEMA_UNSUPPORTED')
         counts = {table: con.execute(f'SELECT count(*) FROM "{table}"').fetchone()[0] for table in sorted(expected)}
@@ -197,6 +198,16 @@ def database_status(path):
                 history = con.execute('SELECT document FROM project_versions WHERE project_id=? AND revision=?', (identifier, revision)).fetchone()
                 if history is None or digest(json.loads(document)) != digest(json.loads(history[0])):
                     raise WorkflowError('BACKUP_PROJECT_HISTORY_INTEGRITY_FAILED')
+        elif path.name=='localplanning.sqlite3':
+            busy=0
+            for identifier,version,document,sha in con.execute('SELECT id,version,document,sha256 FROM planning'):
+                history=con.execute('SELECT document,sha256 FROM planning_versions WHERE id=? AND version=?',(identifier,version)).fetchone()
+                if history is None or digest(json.loads(document))!=sha or history[1]!=sha or digest(json.loads(history[0]))!=sha:
+                    raise WorkflowError('BACKUP_PLANNING_HISTORY_INTEGRITY_FAILED')
+            from .planning_store import PlanningStore
+            for request_sha,document,receipt_sha in con.execute('SELECT request_sha256,document,receipt_sha256 FROM planning_batches'):
+                batch=PlanningStore.decode_batch({'document':document,'request_sha256':request_sha,'receipt_sha256':receipt_sha})
+                busy+=batch['status']=='RUNNING'
         else:
             if 'native_bridge_source_events' in tables:counts['native_bridge_source_events']=con.execute('SELECT count(*) FROM native_bridge_source_events').fetchone()[0]
             busy = con.execute("SELECT count(*) FROM operations WHERE status IN ('QUEUED','RUNNING')").fetchone()[0]
