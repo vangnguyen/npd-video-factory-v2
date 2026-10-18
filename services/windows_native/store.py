@@ -210,7 +210,7 @@ class Store:
             project["archived"]=bool(state[0]) if state else False
             project["jobs"] = [self.job(r, con) for r in con.execute(
                 "SELECT * FROM jobs WHERE project_id=? ORDER BY created_at DESC", (identifier,))]
-            if project['document'].get('content_intelligence'):
+            if project['document'].get('content_intelligence') or project['document'].get('drama_casting') is not None:
                 project['script_review'] = self.current_script_review(con, project)
             if project['document'].get('drama_casting') is not None:
                 from .dialogue_runtime import library_for
@@ -231,7 +231,9 @@ class Store:
         from .intelligence_lineage import projection
         current_sha = hashlib.sha256(proposal.get('narration', '').encode('utf-8')).hexdigest()
         lineage_sha = digest(projection(project['document'])) if project['document'].get('content_intelligence') else None
-        return {**review, 'current': review['script_sha256'] == current_sha and review['lineage_sha256'] == lineage_sha}
+        draft = project['document'].get('drama_script')
+        confirmed = draft is None or draft.get('characters_confirmed') is True
+        return {**review, 'current': confirmed and review['script_sha256'] == current_sha and review['lineage_sha256'] == lineage_sha}
 
     def review_script(self, identifier, revision, reviewer, acknowledged, script_sha256, review_reference=None):
         """Record script-only human approval without approving media or dispatching jobs."""

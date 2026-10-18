@@ -1,5 +1,5 @@
 """Real loopback transport; authoring only, no provider or Owner acceptance."""
-import http.client,json,tempfile,threading,unittest
+import hashlib,http.client,json,tempfile,threading,unittest
 from pathlib import Path
 from services.windows_native.pipeline import Config
 from services.windows_native.server import LocalServer
@@ -26,3 +26,21 @@ class DramaWorkflowHTTPTests(unittest.TestCase):
         p=self.server.store.create('HTTP drama','',workflow_kind='drama')
         status,_=self.request('POST','/api/projects/'+p['id']+'/drama-script',{'revision':1,'request_key':'http-drama-denied-01','text':'An: Xin chào.'},csrf=False)
         self.assertIn(status,(401,403));self.assertEqual(self.server.store.get(p['id'])['revision'],1)
+
+    def test_drama_script_decision_round_trips_reopens_and_stales_when_draft_changes(self):
+        p=self.server.store.create('Script review HTTP fixture','',workflow_kind='drama')
+        path='/api/projects/'+p['id'];text='An: Xin chào.\nBình: Chào bạn.'
+        status,_=self.request('POST',path+'/drama-script',{'revision':1,'request_key':'drama-http-review-script-01','text':text,'confirm_characters':True})
+        self.assertEqual(status,200)
+        _,p=self.request('GET',path)
+        sha=hashlib.sha256(p['document']['proposal']['narration'].encode()).hexdigest()
+        status,p=self.request('POST',path+'/script-review',{'revision':p['revision'],'reviewer':'EXPLICIT HTTP FIXTURE','acknowledged':True,'script_sha256':sha})
+        self.assertEqual(status,200);self.assertTrue(p['script_review']['current'])
+        self.assertIsNone(p['approval']);self.assertEqual(p['jobs'],[])
+        _,reopened=self.request('GET',path)
+        self.assertEqual(reopened['script_review'],p['script_review'])
+        status,_=self.request('POST',path+'/drama-script',{'revision':p['revision'],'request_key':'drama-http-review-script-02','text':text+'\nAn: Hẹn gặp lại.','confirm_characters':False})
+        self.assertEqual(status,200)
+        _,draft=self.request('GET',path)
+        self.assertFalse(draft['script_review']['current'])
+        self.assertIsNone(draft['approval']);self.assertEqual(draft['jobs'],[])
