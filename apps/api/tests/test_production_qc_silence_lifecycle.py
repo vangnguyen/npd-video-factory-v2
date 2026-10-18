@@ -32,7 +32,7 @@ async def test_only_explicit_silent_plan_can_pass_audio_and_still_requires_visua
     qc=module.FullProductionQC()
     measurements={
         '_probe':{'streams':[
-            {'codec_type':'video','codec_name':'h264','width':1080,'height':1920,'avg_frame_rate':'30/1','duration':'3'},
+            {'codec_type':'video','codec_name':'h264','width':1080,'height':1920,'avg_frame_rate':'30/1','duration':'3','sample_aspect_ratio':'1:1'},
             {'codec_type':'audio','codec_name':'aac','sample_rate':'48000','duration':'3'}], 'format':{'duration':'3'}},
         '_black':{'black_frame_ratio':0},
         '_freeze':{'freeze_frame_seconds':0,'freeze_intervals':[]},

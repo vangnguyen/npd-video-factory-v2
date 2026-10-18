@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 import re
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -109,8 +110,21 @@ class FullProductionQC:
             "sample_rate": int(audio.get("sample_rate") or 0),
             "av_sync_delta_seconds": round(abs(video_duration - audio_duration), 3),
             "size_bytes": path.stat().st_size,
+            "sample_aspect_ratio": video.get('sample_aspect_ratio'),
+            "display_aspect_ratio": video.get('display_aspect_ratio'),
         }
         failures: list[str] = []
+        try:
+            square_pixels=Fraction(str(video.get('sample_aspect_ratio')).replace(':','/'))==1
+        except (ValueError,ZeroDivisionError):square_pixels=False
+        metadata['square_pixels_verified']=square_pixels
+        if not square_pixels:failures.append('final video must declare square pixels without aspect-ratio distortion')
+        try:
+            rotations=[float((video.get('tags') or {}).get('rotate',0)),*[float(v['rotation']) for v in video.get('side_data_list',[]) if 'rotation' in v]]
+            unrotated=all(math.isfinite(v) and abs(v%360)<.001 for v in rotations)
+        except (ValueError,TypeError):unrotated=False
+        metadata['orientation_rotation_verified']=unrotated
+        if not unrotated:failures.append('final video contains unexpected display rotation')
         if width != expected_width or height != expected_height:
             failures.append("resolution does not match the requested render profile")
         if abs(fps - expected_fps) > 0.02:
@@ -156,6 +170,15 @@ class FullProductionQC:
         freeze["unexplained_freeze_ratio"] = round(unexplained/max(duration,0.001), 4)
         if freeze["unexplained_freeze_ratio"] > 0.15:
             failures.append("freeze-frame ratio exceeds 15 percent")
+        terminal=[(start,end) for start,end in freeze.get('freeze_intervals',[]) if duration-end<=max(1/max(fps,1),.02)]
+        terminal_unexplained=0.
+        for start,end in terminal:
+            # Reuse the union of planned-still intersections above; overlapping
+            # layers may never count twice toward an intentional final hold.
+            planned=sum(max(0,min(end,b)-max(start,a)) for a,b in merged)
+            terminal_unexplained+=max(0,end-start-planned)
+        freeze['unexplained_final_freeze_seconds']=round(terminal_unexplained,3)
+        if terminal_unexplained>.5:failures.append('unexplained frozen final frame exceeds half a second')
         intentional_silence=timeline_qc.get('intentional_audio_silence') is True
         if not intentional_silence and (volume["audio_peak_db"] is None or volume["audio_peak_db"] < -35):
             failures.append("audio is effectively silent")

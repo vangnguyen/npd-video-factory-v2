@@ -33,7 +33,7 @@ async def test_full_qc_default_gate_is_two_seconds_and_requires_measurement(monk
     qc = module.FullProductionQC()
     values = {
         '_probe': {'streams': [
-            {'codec_type':'video','codec_name':'h264','width':1080,'height':1920,'avg_frame_rate':'30/1','duration':'12'},
+            {'codec_type':'video','codec_name':'h264','width':1080,'height':1920,'avg_frame_rate':'30/1','duration':'12','sample_aspect_ratio':'1:1'},
             {'codec_type':'audio','codec_name':'aac','sample_rate':'48000','duration':'12'}], 'format':{'duration':'12'}},
         '_black': {'black_frame_ratio':0}, '_freeze': {'freeze_frame_seconds':0,'freeze_intervals':[]},
         '_volume': {'audio_mean_db':-20,'audio_peak_db':-6,'audio_clipping':False},
@@ -75,3 +75,31 @@ async def test_actual_encoded_aac_three_second_tail_fails_full_qc(tmp_path):
     assert 2.9 < report['trailing_silence_seconds'] < 3.1
     assert report['silence_ratio'] < .3
     assert report['failures']==['trailing audio silence exceeds the configured threshold']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('video_fields,freeze,stills,failure',[
+    ({'sample_aspect_ratio':'2:1'},False,[], 'aspect-ratio distortion'),
+    ({'sample_aspect_ratio':None},False,[], 'aspect-ratio distortion'),
+    ({'sample_aspect_ratio':'N/A'},False,[], 'aspect-ratio distortion'),
+    ({'side_data_list':[{'rotation':90}]},False,[], 'display rotation'),
+    ({'tags':{'rotate':'180'}},False,[], 'display rotation'),
+    ({},True,[], 'frozen final frame'),
+    ({},True,[{'start':11,'end':12}], None),
+    ({},False,[], None),
+])
+async def test_aspect_rotation_and_unexplained_terminal_freeze_are_hard_gates(monkeypatch,tmp_path,video_fields,freeze,stills,failure):
+    path=tmp_path/'contract-only-not-playable.mp4';path.write_bytes(b'x'*10001)
+    video={'codec_type':'video','codec_name':'h264','width':1080,'height':1920,'avg_frame_rate':'30/1','duration':'12','sample_aspect_ratio':'1:1',**video_fields}
+    qc=module.FullProductionQC()
+    for method,value in {
+        '_probe':{'streams':[video,{'codec_type':'audio','codec_name':'aac','sample_rate':'48000','duration':'12'}],'format':{'duration':'12'}},
+        '_black':{'black_frame_ratio':0},'_freeze':{'freeze_frame_seconds':1 if freeze else 0,'freeze_intervals':[(11,12)] if freeze else []},
+        '_volume':{'audio_mean_db':-20,'audio_peak_db':-6,'audio_clipping':False},'_silence':{'silence_ratio':0,'trailing_silence_seconds':0},
+        '_vision_samples':{'dark_visual_sample_ratio':0},'_decode':{'broken_frames':0}}.items():
+        monkeypatch.setattr(qc,method,AsyncMock(return_value=value))
+    args=dict(expected_duration=12,expected_width=1080,expected_height=1920,expected_fps=30,subtitle_qc={'status':'passed'},
+        timeline_qc={'status':'passed','intentional_still_intervals':stills})
+    if failure:
+        with pytest.raises(module.ProductionQCError,match=failure):await qc.inspect(path,**args)
+    else:assert (await qc.inspect(path,**args))['status']=='passed'
