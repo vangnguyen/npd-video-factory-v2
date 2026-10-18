@@ -34,10 +34,13 @@ class VoicePresetTests(unittest.TestCase):
             body={'voice_id':records[0]['voice_id'],'voice_version':1,'kind':'sample'}
             first=auditions.submit(body);second=auditions.submit(body);self.assertEqual(first['sample_id'],second['sample_id']);self.assertEqual(first['text'],SAMPLE_TEXT)
             self.assertEqual(start.call_count,1)
+        from services.windows_native.backup import database_status
+        self.assertEqual(database_status(self.store_path())['active_operations'],1)
         restored=NativeVoiceAuditions(self.library,self.config);self.assertEqual(restored.page()['items'][0]['state'],'outcome_unknown')
         with patch.object(restored,'start') as start:
             self.assertEqual(restored.submit(body)['state'],'outcome_unknown');start.assert_not_called()
             result=restored.submit({**body,'retry':True});self.assertEqual(result['attempt'],2);start.assert_called_once()
+    def store_path(self):return self.library.store.root/'workflow.sqlite3'
     def test_queue_limit_rejects_eleventh_and_core_job_blocks_dispatch(self):
         records=register_installed(self.library,self.config,actor_ref='explicit-owner-task')['items'];auditions=NativeVoiceAuditions(self.library,self.config)
         with patch.object(auditions,'start'):

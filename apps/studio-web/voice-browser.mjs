@@ -14,12 +14,12 @@ export function initializeVoiceBrowser({root,api,voices=[],catalog={},dom=global
   function match(voice,kind,text){return items.find(v=>v.voice_id===voice.voice_id&&v.voice_version===voice.version&&v.kind===kind&&(kind==='sample'||v.text===text));}
   async function audition(card,kind){if(disposed)return;const voice=card.voice,text=getTrialText()?.trim(),existing=match(voice,kind,text);
     try{if(kind==='dialogue'&&!text)throw Error('Nhập ít nhất một câu thoại cho nhân vật trước khi nghe thử.');
-      if(existing?.state==='ready'){play(card,existing);return;}
+      if(existing?.state==='ready'&&!card.corrupt){play(card,existing);return;}
       if(existing&&['queued','running'].includes(existing.state))return;
       if(!canEdit())throw Error('Cần quyền chỉnh sửa và chờ tác vụ hiện tại xong trước khi tạo mẫu.');
       pending.add(voice.voice_id+kind);refresh();const result=await api('/api/voice-auditions',{method:'POST',body:JSON.stringify({voice_id:voice.voice_id,voice_version:voice.version,kind,...(kind==='dialogue'?{text}:{}),...(existing?{retry:true}:{})})});
       if(!/^nsample_[a-f0-9]{32}$/.test(result?.sample_id??'')||result.human_listening_accepted!==false)throw Error('Chưa xác nhận yêu cầu mẫu. Tải lại trạng thái trước khi thử tiếp.');
-      items=[result,...items.filter(v=>v.sample_id!==result.sample_id)];if(result.state==='ready')play(card,result);clearTimeout(timer);await load();
+      card.corrupt=false;items=[result,...items.filter(v=>v.sample_id!==result.sample_id)];if(result.state==='ready')play(card,result);clearTimeout(timer);await load();
     }catch(error){say(error);}finally{pending.delete(voice.voice_id+kind);refresh();}}
   function play(card,item){const url=auditionUrl(item.audio_url);if(!url){say(Error('Nguồn mẫu nghe chưa hợp lệ.'));return;}stopOtherAudio(card.audio);card.audio.src=url;card.audio.hidden=false;card.audio.play().catch(()=>{card.state.textContent='Mẫu sẵn sàng. Bấm phát để nghe.';});}
   for(const voice of voices){const preset=catalog.voices?.find(v=>v.provider_voice_id===voice.definition.provider_voice_id),card=node('article',null,list,{class:'voice-card'});
@@ -32,7 +32,7 @@ export function initializeVoiceBrowser({root,api,voices=[],catalog={},dom=global
     const href=voice.definition.source_reference;if(/^https:\/\/(huggingface.co|github.com)\//.test(href??''))node('a','Xem nguồn giấy phép',rights,{href,target:'_blank',rel:'noopener noreferrer'});
     node('p','Mẫu tạo bằng preset này; chọn giọng cho vai không phải duyệt chất lượng audio hoặc video sau này.',rights,{class:'hint'});
     const value={voice,state,sample,trial,choose,audio};cards.push(value);sample.addEventListener('click',()=>audition(value,'sample'));trial.addEventListener('click',()=>audition(value,'dialogue'));
-    audio.addEventListener('play',()=>{stopOtherAudio(audio);state.textContent='Đang phát mẫu';});audio.addEventListener('ended',()=>refresh());audio.addEventListener('error',()=>{state.textContent='Không phát được mẫu · bấm Nghe mẫu để thử đọc lại.';});
+    audio.addEventListener('play',()=>{stopOtherAudio(audio);state.textContent='Đang phát mẫu';});audio.addEventListener('ended',()=>refresh());audio.addEventListener('error',()=>{value.corrupt=true;state.textContent='Không phát được mẫu · bấm Thử lại để kiểm tra và tạo lại khi tệp bị hỏng.';sample.textContent='Thử lại mẫu nghe';});
     choose?.addEventListener('click',()=>{const c=getCharacter();if(c&&usableVoice(voice)&&canEdit())onSelect(voice,c);});
   }
   function refresh(){const ready=new Set(items.filter(v=>v.state==='ready'&&v.kind==='sample').map(v=>v.voice_id));info.textContent=`${catalog.voices?.length??0} preset phát hiện · ${voices.filter(usableVoice).length} giọng trong thư viện có căn cứ quyền · ${voices.filter(v=>ready.has(v.voice_id)).length} mẫu nghe thật. Chưa ghi nhận Owner duyệt chất lượng.`;
@@ -41,7 +41,7 @@ export function initializeVoiceBrowser({root,api,voices=[],catalog={},dom=global
       c.sample.textContent=sample&&['failed','outcome_unknown'].includes(sample.state)?'Thử tạo mẫu lại':'Nghe mẫu';
       c.sample.disabled=!usableVoice(c.voice)||Boolean(waiting)||pending.has(c.voice.voice_id+'sample')||(!canEdit()&&sample?.state!=='ready');
       c.trial.disabled=!usableVoice(c.voice)||!getTrialText()?.trim()||pending.has(c.voice.voice_id+'dialogue')||trial&&['queued','running'].includes(trial.state)||!canEdit()&&trial?.state!=='ready';
-      if(c.choose){const character=getCharacter();c.choose.textContent=character?'Chọn cho '+character.name:'Chọn nhân vật trước';c.choose.disabled=!character||!canEdit()||!usableVoice(c.voice);}
+      if(c.choose){const character=getCharacter();c.choose.textContent=character?(character.selected_voice_id===c.voice.voice_id?'Đang chọn cho ':'Chọn cho ')+character.name:'Chọn nhân vật trước';c.choose.disabled=!character||!canEdit()||!usableVoice(c.voice);}
       if(sample?.state==='ready'&&!c.audio.src){c.audio.src=auditionUrl(sample.audio_url)??'';c.audio.hidden=!c.audio.src;}
     }}
   refresh();void load();return {refresh,dispose(){disposed=true;clearTimeout(timer);for(const c of cards)c.audio.pause();}};

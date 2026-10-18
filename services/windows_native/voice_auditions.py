@@ -48,7 +48,11 @@ class NativeVoiceAuditions:
         fingerprint=digest(request)
         with self.lock,self.store.transaction() as con:
             row=con.execute('SELECT * FROM native_voice_auditions WHERE workspace_id=? AND input_sha256=?',(self.library.workspace,fingerprint)).fetchone()
-            if row and (row['state'] in ('ready','queued','running') or not body.get('retry')):return self.public(row)
+            if row and row['state']=='ready':
+                try:self._audio_path(row);return self.public(row)
+                except (OSError,ValueError,WorkflowError):
+                    if not body.get('retry'):raise WorkflowError('VOICE_SAMPLE_BYTES_CHANGED') from None
+            elif row and (row['state'] in ('queued','running') or not body.get('retry')):return self.public(row)
             if row and row['attempt']>=3:raise WorkflowError('VOICE_SAMPLE_RETRY_LIMIT',409)
             if con.execute("SELECT count(*) FROM native_voice_auditions WHERE workspace_id=? AND state IN ('queued','running')",(self.library.workspace,)).fetchone()[0]>=10:raise WorkflowError('VOICE_SAMPLE_QUEUE_FULL',409)
             if con.execute("SELECT count(*) FROM jobs WHERE status IN ('queued','running','retrying')").fetchone()[0]:raise WorkflowError('VOICE_SAMPLE_WAIT_FOR_PROJECT_JOB',409)
@@ -99,6 +103,8 @@ class NativeVoiceAuditions:
         if not re.fullmatch(SAMPLE_ID,identifier):raise WorkflowError('VOICE_SAMPLE_NOT_FOUND',404)
         with self.store.transaction() as con:row=con.execute('SELECT * FROM native_voice_auditions WHERE workspace_id=? AND sample_id=?',(self.library.workspace,identifier)).fetchone()
         if row is None or row['state']!='ready':raise WorkflowError('VOICE_SAMPLE_NOT_READY',409)
+        return self._audio_path(row)
+    def _audio_path(self,row):
         directory=guard(self.store.root/row['relative_directory'],exists=True)
         if directory.parent!=guard(self.store.root/'voice-auditions'/digest(self.library.workspace),exists=True):raise WorkflowError('VOICE_SAMPLE_SCOPE_CHANGED')
         manifest=guard(directory/'manifest.json',exists=True)

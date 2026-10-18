@@ -58,6 +58,7 @@ export const scriptReviewLabel = project => !project?.document?.content_intellig
 
 const errors = {
   DRAMA_IDEA_NEEDS_SCRIPT:'Ý tưởng đã được lưu. Chuyển sang kịch bản có lời thoại rồi xác nhận nhân vật.',
+  DRAMA_CHARACTER_CONFIRMATION_REQUIRED:'Kịch bản đã đổi. Xác nhận lại người nói ở bước Nhân vật & giọng trước khi tạo thoại.',
   DRAMA_SPEAKER_SELECTION_REQUIRED:'Có câu chưa rõ người nói. Chọn nhân vật cho câu đó ở bước Nhân vật & giọng.',
   DRAMA_ACTIVE_DIALOGUE_REQUIRED:'Cần ít nhất một câu thoại của nhân vật. Phần hành động không được đọc thành lời.',
   DRAMA_DIALOGUE_TEXT_TOO_LONG:'Lời thoại đang vượt giới hạn bản dựng 180 giây. Chia thành tập hoặc rút gọn kịch bản.',
@@ -686,7 +687,7 @@ if (typeof document !== "undefined") {
     shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,onDraftsCreated:projects,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
     if(session.capabilities?.native_drama_workflow===true&&shotStudio){
       const flow=await import('./drama-workflow.mjs');const css=document.createElement('link');css.rel='stylesheet';css.href='/drama-workflow.css';document.head.append(css);
-      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,canManage,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
         onCreated:async value=>{project=value;localStorage.setItem('vf-native-project',value.id);const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.delete('view');url.searchParams.set('project',value.id);history.replaceState(null,'',url);$('media-illustration').checked=false;renderProject(true);await projects();if(value.document.production_workflow.kind==='source')shotStudio.showStage('assets');},
         onSaved:async()=>{await reload(true);},onDirty:value=>{if(value)markDirty('drama-script');else if(dirtyPart==='drama-script'){dirty=false;dirtyPart=null;controls();}},onWorking:value=>{busy=value;controls();},onMessage:message,showStage:value=>shotStudio.showStage(value),drama:dramaUI,narration:narrationUI});
     }
