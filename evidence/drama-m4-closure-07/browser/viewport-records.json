@@ -1,0 +1,563 @@
+[
+  {
+    "stage": "entry",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1366,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "dramaVisible": true,
+    "qualified": true
+  },
+  {
+    "stage": "entry",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1920,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "dramaVisible": true,
+    "qualified": true
+  },
+  {
+    "stage": "entry",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2560,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "dramaVisible": true,
+    "qualified": true
+  },
+  {
+    "stage": "owner-dialogue-running",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "pageX": 0,
+      "pageY": 217
+    },
+    "qualified": true
+  },
+  {
+    "stage": "owner-dialogue-running",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 217
+    },
+    "qualified": true
+  },
+  {
+    "stage": "owner-dialogue-running",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "pageX": 0,
+      "pageY": 217
+    },
+    "qualified": true
+  },
+  {
+    "stage": "qa-scenes-empty-reopened",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "pageX": 0,
+      "pageY": 0
+    },
+    "qualified": true
+  },
+  {
+    "stage": "qa-scenes-empty-reopened",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 0
+    },
+    "qualified": true
+  },
+  {
+    "stage": "qa-scenes-empty-reopened",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "pageX": 0,
+      "pageY": 0
+    },
+    "qualified": true
+  },
+  {
+    "stage": "qa-casting-reopened",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "pageX": 0,
+      "pageY": 0
+    },
+    "qualified": true
+  },
+  {
+    "stage": "qa-casting-reopened",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 0
+    },
+    "qualified": true
+  },
+  {
+    "stage": "qa-casting-reopened",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "pageX": 0,
+      "pageY": 0
+    },
+    "qualified": true
+  },
+  {
+    "stage": "owner-real-preview",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 581
+    },
+    "player": {
+      "duration": 35.333333,
+      "fit": "contain",
+      "height": 599.765625,
+      "paused": false,
+      "readyState": 3,
+      "videoHeight": 1920,
+      "videoWidth": 1080,
+      "width": 336.5
+    },
+    "qualified": false,
+    "reason": "Temporary viewport applied to another claimed tab; kept for diagnosis, excluded from responsive QA."
+  },
+  {
+    "stage": "owner-real-preview",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 581
+    },
+    "player": {
+      "duration": 35.333333,
+      "fit": "contain",
+      "height": 599.765625,
+      "paused": false,
+      "readyState": 3,
+      "videoHeight": 1920,
+      "videoWidth": 1080,
+      "width": 336.5
+    },
+    "qualified": false,
+    "reason": "Temporary viewport applied to another claimed tab; kept for diagnosis, excluded from responsive QA."
+  },
+  {
+    "stage": "owner-real-preview",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 581
+    },
+    "player": {
+      "duration": 35.333333,
+      "fit": "contain",
+      "height": 599.765625,
+      "paused": false,
+      "readyState": 3,
+      "videoHeight": 1920,
+      "videoWidth": 1080,
+      "width": 336.5
+    },
+    "qualified": false,
+    "reason": "Temporary viewport applied to another claimed tab; kept for diagnosis, excluded from responsive QA."
+  },
+  {
+    "stage": "owner-real-preview-verified",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 581,
+      "scale": 1,
+      "zoom": 1
+    },
+    "layout": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "pageX": 0,
+      "pageY": 581
+    },
+    "scrollbar_width": 15,
+    "qualified": true
+  },
+  {
+    "stage": "owner-real-preview-verified",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 647,
+      "scale": 1,
+      "zoom": 1
+    },
+    "layout": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "pageX": 0,
+      "pageY": 647
+    },
+    "scrollbar_width": 15,
+    "qualified": true
+  },
+  {
+    "stage": "owner-real-preview-verified",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 581,
+      "scale": 1,
+      "zoom": 1
+    },
+    "layout": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "pageX": 0,
+      "pageY": 581
+    },
+    "scrollbar_width": 15,
+    "qualified": true
+  },
+  {
+    "stage": "owner-final-review-candidate07",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 329,
+      "scale": 1,
+      "zoom": 1
+    },
+    "qualified": true
+  },
+  {
+    "stage": "owner-final-review-candidate07",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 157,
+      "scale": 1,
+      "zoom": 1
+    },
+    "qualified": true
+  },
+  {
+    "stage": "owner-final-review-candidate07",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "qualified": true
+  },
+  {
+    "stage": "standard-existing-fixture-history-candidate07",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3107,
+      "scale": 1,
+      "zoom": 1
+    },
+    "owner_acceptance": false,
+    "qualified": true
+  },
+  {
+    "stage": "standard-existing-fixture-history-candidate07",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3163,
+      "scale": 1,
+      "zoom": 1
+    },
+    "owner_acceptance": false,
+    "qualified": true
+  },
+  {
+    "stage": "standard-existing-fixture-history-candidate07",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3343,
+      "scale": 1,
+      "zoom": 1
+    },
+    "owner_acceptance": false,
+    "qualified": true
+  },
+  {
+    "stage": "owner-delivery-ready-candidate07",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1351,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3113,
+      "scale": 1,
+      "zoom": 1
+    },
+    "final_video_owner_accepted": true,
+    "full_m4_owner_accepted": false,
+    "qualified": true
+  },
+  {
+    "stage": "owner-delivery-ready-candidate07",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1905,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3156,
+      "scale": 1,
+      "zoom": 1
+    },
+    "final_video_owner_accepted": true,
+    "full_m4_owner_accepted": false,
+    "qualified": true
+  },
+  {
+    "stage": "owner-delivery-ready-candidate07",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2545,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3048,
+      "scale": 1,
+      "zoom": 1
+    },
+    "final_video_owner_accepted": true,
+    "full_m4_owner_accepted": false,
+    "qualified": true
+  },
+  {
+    "stage": "entry-candidate07",
+    "requested": {
+      "width": 1366,
+      "height": 768
+    },
+    "actual": {
+      "clientHeight": 768,
+      "clientWidth": 1366,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "drama_entry_visible": true,
+    "qualified": true
+  },
+  {
+    "stage": "entry-candidate07",
+    "requested": {
+      "width": 1920,
+      "height": 1080
+    },
+    "actual": {
+      "clientHeight": 1080,
+      "clientWidth": 1920,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "drama_entry_visible": true,
+    "qualified": true
+  },
+  {
+    "stage": "entry-candidate07",
+    "requested": {
+      "width": 2560,
+      "height": 1440
+    },
+    "actual": {
+      "clientHeight": 1440,
+      "clientWidth": 2560,
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 0,
+      "scale": 1,
+      "zoom": 1
+    },
+    "drama_entry_visible": true,
+    "qualified": true
+  }
+]

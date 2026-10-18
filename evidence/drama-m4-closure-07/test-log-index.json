@@ -1,0 +1,96 @@
+{
+  "logs": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\full-native\\final-export-native-full-shard-0-n2.log",
+      "bytes": 129455,
+      "sha256": "ae0b722967f62228b5ae7a41bd684d82850fc0df36b907dbb30cc2bd0ae1239b"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\full-native\\final-export-native-full-shard-1-n2.log",
+      "bytes": 132345,
+      "sha256": "1c750049cacd3c37391cf8952610bbccc37a1674adc8d847b85ec84087809edc"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\full-native\\final-export-native-full-shard-2-n2.log",
+      "bytes": 132048,
+      "sha256": "13c093efdf463dcb7946de30ff61b4588231a53290e1208af0942c47cdbf977f"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\full-native\\final-export-native-full-shard-3-n2.log",
+      "bytes": 129703,
+      "sha256": "b295c514d51a9d95782ab40d7efbc7a077d9933ebe76c0e1f9d721890d62be6d"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\full-native\\final-export-native-full-shard-4-n2.log",
+      "bytes": 16696,
+      "sha256": "53a62ec58bd09687c2e7e9899d7044140c5ea60b8778ed19d517c0c1bf96c238"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\api-related-n1.log",
+      "bytes": 183,
+      "sha256": "17d5f5202605d207590029e532eaf479a4eac6f18035c235c147a44fb5556229"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\renderer-n1.log",
+      "bytes": 967,
+      "sha256": "b2b2374a95ce44da6842ad726291b4bc222812ebbff287b9622a0f94d480ecb8"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\studio-n1.log",
+      "bytes": 211973,
+      "sha256": "546d78d4272c54a4d485f4648c82bbf2e08e7af128ba937080ca3eb12c7ba920"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07-final\\typecheck-n1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07\\api-related-n1.log",
+      "bytes": 183,
+      "sha256": "ddaea149b27f2c90908f020586ea2fd437e5a8567a58618678ab9661638ff8a7"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07\\native-related-n1.log",
+      "bytes": 21058,
+      "sha256": "cd77fb663f5be29bac6f4a72d750b53c8370c4b9e9489548159dca0ef0f95d67"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07\\renderer-n1.log",
+      "bytes": 906,
+      "sha256": "ba136ba9e31022f94d5d14a7260e3fa0bf9ae9ea09a63f65f0e4fcf0ec14cc3c"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07\\studio-n1.log",
+      "bytes": 211930,
+      "sha256": "e8f62d7abe482a91fe61d77a0a47500b9fdae11094bf059cb4a9ef85193b161c"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\candidate07\\typecheck-n1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\full-native\\final-export-native-full-shard-0-n2.log",
+      "bytes": 147386,
+      "sha256": "dcbf66449ac123927cf8e63ac6aba060383ad417e60f0ebd02b8210f2c117e00"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\full-native\\final-export-native-full-shard-1-n2.log",
+      "bytes": 151811,
+      "sha256": "78188461246af9d7e2429adf6654e093eb4e84ae89cf3786a0fa3c25a26fa326"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\full-native\\final-export-native-full-shard-2-n2.log",
+      "bytes": 141204,
+      "sha256": "18dc7ba45d2e985e1352c9474e1d61be433d9d56deb19005a472aa2c697c06ec"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\full-native\\final-export-native-full-shard-3-n2.log",
+      "bytes": 134211,
+      "sha256": "a4bd40c34e8d9cf0531e968b874ddd97555e498bbe275b2e898ae364e8691018"
+    }
+  ],
+  "raw_logs_retained_locally": true,
+  "counts_not_summed_across_replays": true
+}

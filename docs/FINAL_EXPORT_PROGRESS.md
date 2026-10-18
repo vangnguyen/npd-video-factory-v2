@@ -162,3 +162,10 @@ Kiểm thử đã kết thúc. Archive 69 file bằng chứng có CRC/entry hash
 ## Cập nhật hẹp Task 06 — Nhân vật & giọng → Hình ảnh & cảnh
 
 Studio hiện phục vụ `C:/vfdr06@2b8ff625`, build `drama-casting-next-06`, tại http://127.0.0.1:62684/. Sửa giữ xác nhận khi chỉ đổi ghi chú, nút Lưu phân vai & tiếp tục có đối chiếu receipt/GET, không đòi media/TTS để vào cảnh. Full Studio 2168, Native liên quan 80, API liên quan 92, renderer 52 và typecheck PASS trên candidate cố định. Không suy thành full Native/Owner/browser PASS. Bảy project cũ, 15 video và 25 voices/10 samples nguyên; Owner đã cho phép cập nhật local. [Báo cáo chi tiết và giới hạn](DRAMA_CASTING_SAVE_NEXT_STEP_06.md). Các điểm review cũ phía trên là lịch sử; About/source hiện hành là bản này. Phạm vi publishing/analytics/full Trend Radar vẫn hoãn; production không triển khai.
+
+
+## M4 closure candidate 07 — 18–19/10/2026
+
+Ứng viên cố định `0eb7e679` / `C:/vfdr07`, build `drama-m4-closure-07`: **full Native 2313/2313 PASS, 0 failure/0 error/0 skip /4352.938s**, toàn bộ source Native/Studio/API giữ nguyên. Đây là một lượt đầy đủ mới, bốn nhóm 561 case rồi 69 case tuần tự, không cộng replay. Full Studio 2168 PASS, renderer 52 PASS, typecheck PASS, API liên quan 92 PASS trên cùng candidate. Full API qualification cũ và ba PostgreSQL NOT_RUN vẫn riêng; Native dùng SQLite.
+
+Đã browser thật tại 1366/1920/2560; sửa header save và chốt duyệt preview bị đưa vào panel ẩn. Còn nhãn phụ “Chưa tạo lời thoại” khi quay về casting sau audio (minor) và download completion chưa được công cụ xác nhận. Owner đã duyệt audio/preview/file cuối của phim tám câu, 35.333s, 1080×1920, An=Thùy Dung/Bình=Thiện Minh, narrator off; QC và package MP4/cover/SRT/caption/ZIP đã kiểm toàn vẹn. Không tự ghi nghiệm thu UI M4 hoặc video thường 1–4. 15 video lịch sử, 25 voices/10 real samples và casting cũ nguyên. Publishing API/Analytics/Full Trend Radar hoãn; production NO. [Báo cáo và giới hạn](DRAMA_M4_REAL_EXPORT_CLOSURE_07.md).

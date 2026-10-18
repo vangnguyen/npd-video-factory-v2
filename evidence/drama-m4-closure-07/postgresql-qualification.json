@@ -1,0 +1,37 @@
+{
+  "application_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "status": "NOT_RUN",
+  "cases": [
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_two_saves_contend_real_row_lock_no_lost_update",
+      "state": "skipped",
+      "reason": "real PostgreSQL contention test; separate non-PG tests remain C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:141: real PostgreSQL contention test; separate non-PG tests remain",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[edit]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    },
+    {
+      "node": "tests/test_mvp1_narration_pacing.py::test_postgres_proposal_apply_races_transactionally[cancel]",
+      "state": "skipped",
+      "reason": "real PostgreSQL transaction barrier C:\\vfns01\\apps\\api\\tests\\test_mvp1_narration_pacing.py:168: real PostgreSQL transaction barrier",
+      "passed_in_portable_linux_replay": false
+    }
+  ],
+  "required_environment": "isolated real PostgreSQL test database; no SQLite substitution",
+  "on_delivered_native_path": false,
+  "dependency_proof": {
+    "file": "services/windows_native/store.py",
+    "import_line": 9,
+    "database_line": 28,
+    "connect_line": 70,
+    "database": "workflow.sqlite3",
+    "driver": "sqlite3"
+  },
+  "full_api_qualification_unchanged": true,
+  "production_database_contacted": false,
+  "production_ready_claimed": false
+}

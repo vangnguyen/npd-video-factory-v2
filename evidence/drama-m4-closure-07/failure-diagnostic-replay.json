@@ -1,0 +1,15 @@
+{
+  "head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "kind": "failure classification only; not full regression",
+  "test_ids": [
+    "test_tiktok_distribution_http.TikTokDistributionHTTPTests.test_cold_server_reads_original_history_without_configuration_or_private_load",
+    "test_meta_runtime_http.FacebookMetaRuntimeHTTPTests.test_default_off_cold_runtime_retains_completed_history_without_decrypt_or_replay",
+    "test_meta_runtime_http.FacebookMetaRuntimeHTTPTests.test_runtime_signed_review_separate_media_selection_and_async_receipt_use_one_worker",
+    "test_meta_runtime_http.MetaRuntimeHTTPTests.test_runtime_signed_review_separate_media_selection_and_async_receipt_use_one_worker",
+    "test_google_oauth_callback.GoogleOAuthCallbackTests.test_other_routes_keep_original_cross_site_csrf_and_session_boundary",
+    "test_stock_cache_lifecycle.StockCacheLifecycleTests.test_two_process_writers_and_pinned_reader_remain_atomic_and_bounded"
+  ],
+  "exit_code": 0,
+  "seconds": 108.922,
+  "prior_full_failures_remain_open": true
+}

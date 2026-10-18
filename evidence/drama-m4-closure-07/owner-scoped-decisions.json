@@ -1,0 +1,116 @@
+{
+  "schema": "m4-owner-scoped-decisions.v1",
+  "project_id": "1c768012f9624de494a9fadab63c1a31",
+  "decisions": [
+    {
+      "decision_file": "owner-voice-choice.json",
+      "decision": {
+        "project_id": "1c768012f9624de494a9fadab63c1a31",
+        "owner_reply": "An = Thùy Dung; Bình = Thiện Minh",
+        "source": "Direct Owner answer in current thread",
+        "script_and_visual_approved_previously": true,
+        "voice_casting_authorized": true,
+        "narrator_enabled": false,
+        "production_approval_granted": false,
+        "final_approval_granted": false,
+        "owner_uat_complete": false,
+        "revision_before": 5,
+        "characters_confirmed": true,
+        "casting_version_before": 1,
+        "backup_sha256": "d66ee9d24a18c40f7f3f8cf4e3fcb72f773d207b4e208980fdd20e7c366e0e61"
+      }
+    },
+    {
+      "decision_file": "owner-tts-preview-decision.json",
+      "decision": {
+        "recorded_at": "2026-10-18T15:38:17.388644+00:00",
+        "project_id": "1c768012f9624de494a9fadab63c1a31",
+        "source": "direct Owner reply to scoped M4 request",
+        "owner_answer": "Duyệt tạo lời thoại và bản xem thử",
+        "scope": {
+          "local_dialogue_lines": 8,
+          "casting": {
+            "An": "Thùy Dung",
+            "Bình": "Thiện Minh"
+          },
+          "narrator_enabled": false,
+          "generate_preview": true,
+          "script_and_visual_previously_approved": true
+        },
+        "not_granted": {
+          "preview_quality_acceptance": false,
+          "final_render_approval": false,
+          "final_video_acceptance": false,
+          "owner_uat": false
+        },
+        "execution": "Recorded NARRATION_ONLY approval and clicked prepare once in the real Native Studio browser."
+      }
+    },
+    {
+      "decision_file": "owner-audio-listening-decision.json",
+      "decision": {
+        "recorded_at": "2026-10-18T15:46:24.640000+00:00",
+        "project_id": "1c768012f9624de494a9fadab63c1a31",
+        "job_id": "ffb25b9779204412ab06f738b353eab6",
+        "audio_sha256": "6e6a31855cdfd7da30d844cbf31c3710fd1a5de26899d63ebe934d786a01215c",
+        "answer_history": [
+          "Chưa nghe; giữ nguyên audio",
+          "Đã nghe và duyệt"
+        ],
+        "scope": "Owner heard and approved the prepared dialogue; apply measured timing and make the already-authorized preview.",
+        "timeline_seconds": 35.32,
+        "preview_quality_accepted": false,
+        "final_video_accepted": false,
+        "owner_uat_complete": false
+      }
+    },
+    {
+      "decision_file": "owner-preview-decision.json",
+      "decision": {
+        "recorded_at": "2026-10-18T15:59:28.731775+00:00",
+        "owner_answer": "Duyệt preview; tạo video cuối và chạy QC",
+        "preview_binding": {
+          "id": "5e219124bcaf4bb586662777f17304670b74e277d4b7ec50e08d2cf78b384b11",
+          "revision": 8,
+          "status": "READY",
+          "audio_mode": "measured_scene_narration_full_effects_preview",
+          "timeline_sha256": "4b096bdef5ed2ea23bfd9ddfdf505fc1f006718ad5bfb32b611d1d74ce319513",
+          "version": null,
+          "video_url": "/api/projects/1c768012f9624de494a9fadab63c1a31/preview/video?version=5",
+          "preview_profile": "native-narrated-storyboard-preview-v1",
+          "final_approval_eligible": true,
+          "video_bytes": 1263825,
+          "video_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+          "owner_preview_accepted": false,
+          "owner_final_accepted": false
+        },
+        "scope": "Approve production render from this exact preview and run QC; no final video acceptance or Owner UAT",
+        "approval_not_yet_written_to_server": true
+      }
+    },
+    {
+      "decision_file": "owner-final-video-decision.json",
+      "decision": {
+        "recorded_at": "2026-10-18T16:07:08.388245+00:00",
+        "project_id": "1c768012f9624de494a9fadab63c1a31",
+        "render_job_id": "ecf5e70c44a749f9b0068ba45c9b8d89",
+        "project_revision": 8,
+        "video_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+        "owner_answer": "Duyệt file cuối; tạo gói bàn giao",
+        "scope": "Accept this final Drama video and create a manual delivery package",
+        "not_granted": [
+          "full M4 usability acceptance",
+          "standard export cases 1-4 acceptance",
+          "external publishing",
+          "production deployment"
+        ]
+      }
+    }
+  ],
+  "script_and_cafe_image_approved_earlier": true,
+  "owner_manual_delivery_usability": "PENDING",
+  "standard_cases_1_4_owner_accepted": false,
+  "global_m4_owner_accepted": false,
+  "external_publishing_authorized": false,
+  "production_deployment_authorized": false
+}

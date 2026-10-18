@@ -1,0 +1,19 @@
+{
+  "status": "DENIED_BEFORE_EXECUTION",
+  "automatic_approval_review": "blocked by policy",
+  "targets": [
+    "C:/vfct/drama-m4-final07-native-n2/0",
+    "C:/vfct/drama-m4-final07-native-n2/2",
+    "C:/vfct/drama-m4-final07-native-n2/3"
+  ],
+  "preflight": {
+    "all_complete_success_receipts": true,
+    "active_processes": 0,
+    "reparse_points": 0,
+    "bytes": 768374034
+  },
+  "files_deleted": false,
+  "retry_or_workaround": false,
+  "preserve_do_not_retry": true,
+  "unrelated_prior_denied_target": "C:/vfct/drama-m4-final07-restored-check"
+}

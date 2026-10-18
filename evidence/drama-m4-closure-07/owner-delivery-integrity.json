@@ -1,0 +1,226 @@
+{
+  "source_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "project_id": "1c768012f9624de494a9fadab63c1a31",
+  "export_id": "nexp_fb80d14cbad44c699c73bef0f02ff9af",
+  "checked_files": {
+    "caption-variants.json": {
+      "bytes": 605,
+      "sha256": "7b9dd75298479fe4405449288bc0cd4d73fa61a08536a5cbfae5d53ae872c89d"
+    },
+    "caption.txt": {
+      "bytes": 256,
+      "sha256": "d7a5fdcb8c657801b869b298986e1cb7c9239eb10ee71b42898883c43b8518fc"
+    },
+    "cover-provenance.json": {
+      "bytes": 491,
+      "sha256": "43a436a0a52874b1e562a0ba7095482c066d1f6190ecfff581102b10e83992cd"
+    },
+    "cover.jpg": {
+      "bytes": 121127,
+      "sha256": "e1a0622006d58275c50ecbc85adb38f20b546377aa0a7d2a64a06d9ea2c17e9f"
+    },
+    "cta.txt": {
+      "bytes": 69,
+      "sha256": "2727c9c21c1400241f42a210b5f4d900cb7fb4cf770a65a4573668f8310f6933"
+    },
+    "description.txt": {
+      "bytes": 101,
+      "sha256": "ae98976787696e9b1ea5517413cfe85a31978e61befb710e7965c16ceca430b4"
+    },
+    "dialogue-qc.json": {
+      "bytes": 4781,
+      "sha256": "0af44f89332837ea75854bb24211ea282df63724b16e5cb440efba069f8bb25a"
+    },
+    "hashtags.txt": {
+      "bytes": 59,
+      "sha256": "30230ecc5cff28c2ffff3dc9a05f331f0583f28097469dd89ee79739182cc347"
+    },
+    "la-thu-truoc-con-mua.mp4": {
+      "bytes": 1263825,
+      "sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8"
+    },
+    "master-caption.txt": {
+      "bytes": 256,
+      "sha256": "d7a5fdcb8c657801b869b298986e1cb7c9239eb10ee71b42898883c43b8518fc"
+    },
+    "master-cta.txt": {
+      "bytes": 69,
+      "sha256": "2727c9c21c1400241f42a210b5f4d900cb7fb4cf770a65a4573668f8310f6933"
+    },
+    "master-description.txt": {
+      "bytes": 101,
+      "sha256": "ae98976787696e9b1ea5517413cfe85a31978e61befb710e7965c16ceca430b4"
+    },
+    "master-hashtags.txt": {
+      "bytes": 59,
+      "sha256": "30230ecc5cff28c2ffff3dc9a05f331f0583f28097469dd89ee79739182cc347"
+    },
+    "master-title.txt": {
+      "bytes": 29,
+      "sha256": "4b664f9869837bf4ac0082fe041e8bfbf7e626ce0382333909793426d0060fd3"
+    },
+    "metadata.json": {
+      "bytes": 209,
+      "sha256": "ecef57973fca727f91e46fb021d83ab445f2f07cf5a15523a8fa47a3213fb46f"
+    },
+    "qc-report.json": {
+      "bytes": 11353,
+      "sha256": "f423e481052c5d04c3100ca42bd0c0b44ceaa144a8a0a69518e4a937097f1ee4"
+    },
+    "rights-summary.json": {
+      "bytes": 1675,
+      "sha256": "c82d323dc4b655723552dd40b19aaaa0a108a08235c4193e84470d5df28371ba"
+    },
+    "subtitle.srt": {
+      "bytes": 1587,
+      "sha256": "0b7bca6f86252ae3ca89b1c7958016e9a525531298960b4590c84dd2633b634a"
+    },
+    "title.txt": {
+      "bytes": 29,
+      "sha256": "4b664f9869837bf4ac0082fe041e8bfbf7e626ce0382333909793426d0060fd3"
+    }
+  },
+  "manifest": {
+    "aspect_ratio": "9:16",
+    "audio_codec": "aac",
+    "binding": {
+      "audio_version": "f76d4ae4127311e4e1de50cdc0b5a9ec4c42712ca7904f5a93ca4ec00f473a4d",
+      "dialogue_qc_schema": "native-dialogue-qc.v1",
+      "dialogue_qc_sha256": "0af44f89332837ea75854bb24211ea282df63724b16e5cb440efba069f8bb25a",
+      "document_sha256": "f12ad431c9b04c46750ccc59eecb66d8013825000b5c7c12c40aecad34c0d9be",
+      "duration_seconds": 35.333,
+      "final_preview_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+      "final_review_sha256": "8007ce7ae897603d21e38a3c5284f63b0dc1530a47d93f72c0ae3ce702c42d7e",
+      "fps": 30.0,
+      "height": 1920,
+      "input_version": "6ac4d3dfee21fa9ace0dcd39c3da977d813e43b525bed1b94aafbbfb8f7ca773",
+      "production_approval_sha256": "fd484194bb3e1014f8308f7b513136c28e17aa26b2769f22b02f20f777f72e0c",
+      "project_id": "1c768012f9624de494a9fadab63c1a31",
+      "project_revision": 8,
+      "project_title": "Owner UAT · Lá thư trước cơn mưa · Chờ chọn giọng",
+      "render_job_id": "ecf5e70c44a749f9b0068ba45c9b8d89",
+      "render_profile": "vertical-short",
+      "script_version": "2efe22f8a72d00d77dc6b04319456b473884a582c8dc444e8a04f92d9859aedf",
+      "snapshot_sha256": "c77752f5e3c85cd35bf9a6c912878f0b474b64909020e8313ead2c28d2454147",
+      "storyboard_version": "e4915e4f4bd814f396ee354d23cadb0ca96e5b936afea8b971ff01132e692b52",
+      "subtitle_version": "5278b73e80294fb393064943c5fae251b390c60578baa6c805b2ed7882dd091f",
+      "timeline_sha256": "4b096bdef5ed2ea23bfd9ddfdf505fc1f006718ad5bfb32b611d1d74ce319513",
+      "timeline_version": 5,
+      "video_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+      "width": 1080
+    },
+    "caption_version": 1,
+    "created_at": "2026-10-18T16:07:13.086595+00:00",
+    "duration_seconds": 35.333,
+    "export_id": "nexp_fb80d14cbad44c699c73bef0f02ff9af",
+    "externally_posted": false,
+    "files": {
+      "caption-variants.json": {
+        "bytes": 605,
+        "sha256": "7b9dd75298479fe4405449288bc0cd4d73fa61a08536a5cbfae5d53ae872c89d"
+      },
+      "caption.txt": {
+        "bytes": 256,
+        "sha256": "d7a5fdcb8c657801b869b298986e1cb7c9239eb10ee71b42898883c43b8518fc"
+      },
+      "cover-provenance.json": {
+        "bytes": 491,
+        "sha256": "43a436a0a52874b1e562a0ba7095482c066d1f6190ecfff581102b10e83992cd"
+      },
+      "cover.jpg": {
+        "bytes": 121127,
+        "sha256": "e1a0622006d58275c50ecbc85adb38f20b546377aa0a7d2a64a06d9ea2c17e9f"
+      },
+      "cta.txt": {
+        "bytes": 69,
+        "sha256": "2727c9c21c1400241f42a210b5f4d900cb7fb4cf770a65a4573668f8310f6933"
+      },
+      "description.txt": {
+        "bytes": 101,
+        "sha256": "ae98976787696e9b1ea5517413cfe85a31978e61befb710e7965c16ceca430b4"
+      },
+      "dialogue-qc.json": {
+        "bytes": 4781,
+        "sha256": "0af44f89332837ea75854bb24211ea282df63724b16e5cb440efba069f8bb25a"
+      },
+      "hashtags.txt": {
+        "bytes": 59,
+        "sha256": "30230ecc5cff28c2ffff3dc9a05f331f0583f28097469dd89ee79739182cc347"
+      },
+      "la-thu-truoc-con-mua.mp4": {
+        "bytes": 1263825,
+        "sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8"
+      },
+      "master-caption.txt": {
+        "bytes": 256,
+        "sha256": "d7a5fdcb8c657801b869b298986e1cb7c9239eb10ee71b42898883c43b8518fc"
+      },
+      "master-cta.txt": {
+        "bytes": 69,
+        "sha256": "2727c9c21c1400241f42a210b5f4d900cb7fb4cf770a65a4573668f8310f6933"
+      },
+      "master-description.txt": {
+        "bytes": 101,
+        "sha256": "ae98976787696e9b1ea5517413cfe85a31978e61befb710e7965c16ceca430b4"
+      },
+      "master-hashtags.txt": {
+        "bytes": 59,
+        "sha256": "30230ecc5cff28c2ffff3dc9a05f331f0583f28097469dd89ee79739182cc347"
+      },
+      "master-title.txt": {
+        "bytes": 29,
+        "sha256": "4b664f9869837bf4ac0082fe041e8bfbf7e626ce0382333909793426d0060fd3"
+      },
+      "metadata.json": {
+        "bytes": 209,
+        "sha256": "ecef57973fca727f91e46fb021d83ab445f2f07cf5a15523a8fa47a3213fb46f"
+      },
+      "qc-report.json": {
+        "bytes": 11353,
+        "sha256": "f423e481052c5d04c3100ca42bd0c0b44ceaa144a8a0a69518e4a937097f1ee4"
+      },
+      "rights-summary.json": {
+        "bytes": 1675,
+        "sha256": "c82d323dc4b655723552dd40b19aaaa0a108a08235c4193e84470d5df28371ba"
+      },
+      "subtitle.srt": {
+        "bytes": 1587,
+        "sha256": "0b7bca6f86252ae3ca89b1c7958016e9a525531298960b4590c84dd2633b634a"
+      },
+      "title.txt": {
+        "bytes": 29,
+        "sha256": "4b664f9869837bf4ac0082fe041e8bfbf7e626ce0382333909793426d0060fd3"
+      }
+    },
+    "fps": 30.0,
+    "height": 1920,
+    "qc_result": "passed",
+    "request_sha256": "516387a2c584493a7e915e784603973c9e7196a97e61e9e6514bb1e5406dfd80",
+    "rights_summary_reference": "rights-summary.json",
+    "schema_version": "native-manual-delivery.v1",
+    "video_codec": "h264",
+    "video_filename": "la-thu-truoc-con-mua.mp4",
+    "video_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+    "width": 1080
+  },
+  "manifest_sha256": "1aab9997fa9453c17b728d6f1b896e6e7fa5173a2e64ed7ec345399d517db40e",
+  "package_bytes": 1413028,
+  "package_sha256": "625686646ab15f7a2909339b0089a2bf9c0dfa4fb55fac5a21f6d3e0060d8f4d",
+  "zip_crc": "PASS",
+  "cover_resolution": [
+    1080,
+    1920
+  ],
+  "response_headers": {
+    "Content-Type": "application/x-zip-compressed",
+    "Content-Disposition": "attachment; filename*=UTF-8''delivery-package.zip",
+    "Content-Length": "1413028",
+    "Cache-Control": "no-store"
+  },
+  "owner_final_video_accepted": true,
+  "owner_full_m4_usability_accepted": false,
+  "standard_owner_cases_1_to_4_accepted": false,
+  "browser_download_event": "TOOL_TIMEOUT_NOT_PASS",
+  "browser_copy_caption": true,
+  "externally_published": false
+}

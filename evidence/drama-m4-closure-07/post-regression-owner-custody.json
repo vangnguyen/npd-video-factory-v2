@@ -1,0 +1,10 @@
+{
+  "project_id": "1c768012f9624de494a9fadab63c1a31",
+  "revision": 8,
+  "expected_revision": 8,
+  "document_sha256": "f12ad431c9b04c46750ccc59eecb66d8013825000b5c7c12c40aecad34c0d9be",
+  "export_document_sha256": "f12ad431c9b04c46750ccc59eecb66d8013825000b5c7c12c40aecad34c0d9be",
+  "matches_export_binding": true,
+  "active_jobs": 0,
+  "script_casting_audio_modified_by_qa": false
+}

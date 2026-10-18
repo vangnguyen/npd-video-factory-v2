@@ -1,0 +1,56 @@
+{
+  "schema": "m4-targeted-dependency-closure.v1",
+  "application_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "technical_fixture_only": true,
+  "owner_acceptance": false,
+  "checks": {
+    "first_preview_approved_by_test_fixture": true,
+    "approval_invalidated_on_voice_change": true,
+    "old_preview_stale": true,
+    "old_video_url_withheld": true,
+    "old_final_approval_ineligible": true,
+    "new_preview_ready": true,
+    "new_preview_requires_new_approval": true,
+    "same_visual_assets": true,
+    "timeline_duration_follows_audio_change": true,
+    "new_preview_hash": true,
+    "dependent_timing_subtitles_mix_regenerated": true
+  },
+  "dependent_artifacts": {
+    "timeline.json": {
+      "before": "d27896d9773b0f9e965dcea010b5b274da8dce44f5953dfb028d700a925bc959",
+      "after": "8054d0f71c429c3a3b9f1a71a30deb2867acbae0306323a8a1299a19de718a3e",
+      "changed": true
+    },
+    "timeline-render.json": {
+      "before": "222a59f5ed545bf75b15895cf3155ed338fd0a8b6bab69cf93fc985af4990c3a",
+      "after": "7f29c08d9fbf3b6d973587e617e34a222860ee9321585ff94766c2e68a82116f",
+      "changed": true
+    },
+    "subtitles.ass": {
+      "before": "75ec0847e9e3d1ace63b463aea750268f003dfb82c3afdad92ecd0c5035bcadd",
+      "after": "8f8907618ae565977c66244e9002213318008e8a2f8f5b2ab776a633cdb60884",
+      "changed": true
+    },
+    "subtitles.json": {
+      "before": "60c4643498acc9019a1c8fe30c0fa7ac1ac1ee9f5a543821334a3f7b6c8dc8c5",
+      "after": "c78a8e5eaf98e060651a40225e656f6a673f114d462e81458f285dc783828c61",
+      "changed": true
+    },
+    "narrated-mix.wav": {
+      "before": "1543b9bb4ba473cebdbfa563472c062da5d7915ee44ccde11d3b6531f981d735",
+      "after": "9d1eff2be5b203b32900150f1934a50e928feb4aeca0b5a0e0f14acb96784d1a",
+      "changed": true
+    },
+    "render-voice.json": {
+      "before": "97944a9e63826291832af4b905abfee7353a78623319a5cbdf90896d7466d008",
+      "after": "74a716c1d30ce36f466afd19b9ff9ce90ef0af6dc9b5176cad584c35d56315af",
+      "changed": true
+    }
+  },
+  "preview_revisions": [
+    10,
+    13
+  ],
+  "note": "Stored old audio references are retained as history, but current voice/timing flags and approval/video gates correctly reject reuse. Audio new/reused binary comparison is in targeted-local-real-audio-comparison.json. No Owner casting changed."
+}

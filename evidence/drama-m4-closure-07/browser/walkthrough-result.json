@@ -1,0 +1,89 @@
+{
+  "application_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "source": "C:/vfdr07",
+  "browser": "Chrome Work extension on the Studio PC",
+  "layout_requested_viewports": [
+    [
+      1366,
+      768
+    ],
+    [
+      1920,
+      1080
+    ],
+    [
+      2560,
+      1440
+    ]
+  ],
+  "actual_metrics": "viewport-records.json and targeted-viewport-records.json",
+  "fake_dom_or_http_as_browser_proof": false,
+  "walkthrough": [
+    {
+      "step": "Entry and empty Drama",
+      "result": "VERIFIED",
+      "detail": "Three actual workflow choices visible before a script/shot. Original paste path used; no configured writing API fabricated."
+    },
+    {
+      "step": "Script save to characters",
+      "result": "VERIFIED",
+      "detail": "Single tab saved original QA script and confirmed An/Bình; no Owner project used for repro."
+    },
+    {
+      "step": "Voices and save to scenes",
+      "result": "VERIFIED",
+      "detail": "Two real cached samples played, one at a time. Dropdown and actual voice-card picker saved, next step opened without media/TTS. Re-saving unchanged casting kept revision13."
+    },
+    {
+      "step": "Assets",
+      "result": "VERIFIED_VIA_LIBRARY",
+      "detail": "Existing legitimate café asset selected in real Asset Picker and bound to canonical scene. File-chooser upload was blocked by extension file-URL access; no permission expansion or upload PASS claimed."
+    },
+    {
+      "step": "Dialogue, measured timing, preview",
+      "result": "VERIFIED",
+      "detail": "Owner film8 real lines; separate QA4 real lines plus selective voice regeneration. Visible preview approval panel fixed; no auto approval."
+    },
+    {
+      "step": "Final approval/render/QC/delivery",
+      "result": "VERIFIED_EXCEPT_DOWNLOAD_COMPLETION",
+      "detail": "Owner explicit approvals applied, ready package and history visible, caption clipboard text verified, open-folder API invoked. Download completion not observable through extension."
+    },
+    {
+      "step": "Reopen project",
+      "result": "VERIFIED",
+      "detail": "QA revision13, step3, two saved voices, character IDs, dialogue, note and asset retained. This is a browser reopen; not a new full application restart."
+    },
+    {
+      "step": "Standard project and history",
+      "result": "VERIFIED_EXISTING_FIXTURE_ONLY",
+      "detail": "Existing auto-edit project preview approval panel and old export history still accessible. Not Owner Standard UAT cases1–4."
+    },
+    {
+      "step": "Keyboard focus and Settings/About",
+      "result": "VERIFIED_WITH_LIMIT",
+      "detail": "Visible keyboard focus previously captured; general Settings/About actual build/source checked. Later body Control+Home unsupported by tool, not silently treated as keyboard PASS."
+    },
+    {
+      "step": "Missing voice validation",
+      "result": "VERIFIED",
+      "detail": "Only QA local draft unassigned Bình; actual UI named Bình, disabled Next and focused his select. Discard restored all stored state at rev13 with no new saves/jobs/TTS."
+    }
+  ],
+  "open_findings": [
+    {
+      "id": "M4-07-LABEL-01",
+      "severity": "minor",
+      "status": "OPEN",
+      "detail": "After audio exists, returning to casting can still show the generic “Chưa tạo lời thoại” substatus. Actual step4 audio/preview state and approval gates remain correct."
+    },
+    {
+      "id": "M4-07-DOWNLOAD-01",
+      "severity": "qualification",
+      "status": "OWNER_CHECK_PENDING",
+      "detail": "MP4/ZIP UI clicks issued; tool download-event timed out. HTTP downloads/ZIP integrity PASS are separate. No blocked chrome://downloads workaround attempted."
+    }
+  ],
+  "owner_usability_acceptance": false,
+  "production_deployed": false
+}

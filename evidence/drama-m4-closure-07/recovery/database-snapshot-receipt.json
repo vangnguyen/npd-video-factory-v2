@@ -1,0 +1,26 @@
+{
+  "schema": "m4-post-delivery-db-snapshot.v1",
+  "application_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "online_sqlite_backup": true,
+  "source_mutated": false,
+  "owner_final_video_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+  "databases": {
+    "workflow.sqlite3": {
+      "bytes": 2379776,
+      "sha256": "ce17f7f5d9b0e5de86ae4f712247d53a3ae367bb6d6fc922bb4fd747d492d04f",
+      "quick_check": "ok"
+    },
+    "intelligence.sqlite3": {
+      "bytes": 57344,
+      "sha256": "5aeb7469c35d19473560dd88a50d62041f6c2f979d4e4cc89dd0e1d67aa48e95",
+      "quick_check": "ok"
+    },
+    "localplanning.sqlite3": {
+      "bytes": 36864,
+      "sha256": "6cbc1f4daa2327ce43e7e69b3cc58218f9162381f31e68af20b496a2268ace1b",
+      "quick_check": "ok"
+    }
+  },
+  "full_restore_claimed": false,
+  "note": "Supplemental consistent SQLite snapshots after Owner final approval/package; full older offline backup/restore receipt remains separate. These snapshots alone do not include all newly referenced files."
+}

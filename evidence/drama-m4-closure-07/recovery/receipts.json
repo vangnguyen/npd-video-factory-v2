@@ -1,0 +1,15 @@
+{
+  "backup": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\owner-state-before-m4-studio-update.zip",
+  "backup_sha256": "d0afb8455277954ec194a9bc1f0e9c678e10b597b18661501649e9e5aab4efdb",
+  "backup_bytes": 124567764,
+  "backup_entries": 366,
+  "restored_entries": 366,
+  "restore_destination": "C:\\vfct\\drama-m4-final07-restored-check",
+  "restore_status": "PASS",
+  "scope": "Before local Studio update: real Owner TTS/preview present; later final export is not claimed included",
+  "source_bundle": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\source-m4-07.bundle",
+  "source_bundle_sha256": "1b95b86743ff69e82d55bd3fd4f96cdc1b262d73826a09af9102260aad17b55a",
+  "bundle_prerequisite": "dd836b8be1fa8a083aee5a5ad4c67a9aa6fc2e71",
+  "new_db_snapshots": "Separate consistent online SQLite snapshots after delivery; no full later restore claimed",
+  "private_db_or_owner_draft_pushed": false
+}

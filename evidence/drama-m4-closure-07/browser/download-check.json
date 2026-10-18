@@ -1,0 +1,13 @@
+{
+  "zip_ui_click": true,
+  "download_event": "TIMEOUT_AFTER_10000MS",
+  "mp4_ui_click": true,
+  "cdp_response_or_failure_events": 0,
+  "download_completion_claimed": false,
+  "chrome_internal_downloads_diagnostic": "BLOCKED_BY_URL_POLICY",
+  "security_settings_changed": false,
+  "workaround_for_blocked_internal_page": false,
+  "manual_open_output_folder_invoked": true,
+  "http_hash_crc_checks_recorded_separately": true,
+  "owner_confirmation_pending": true
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "m4-native-discovery-audit.v1",
+  "head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "cases": 2313,
+  "unique_cases": 2313,
+  "modules": 254,
+  "shard_sizes": [
+    561,
+    561,
+    561,
+    561,
+    69
+  ],
+  "no_omission_or_replay": true,
+  "full_run_result": "PASS",
+  "categories_are_overlapping": true,
+  "related_categories": {
+    "drama": 37,
+    "voice": 109,
+    "narration": 51,
+    "preview": 33,
+    "export": 25,
+    "recovery": 41,
+    "caption": 77,
+    "subtitle": 12,
+    "profile": 44,
+    "backup": 46
+  },
+  "run": 2313,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

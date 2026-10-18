@@ -1,0 +1,85 @@
+{
+  "source_head_at_start": "dd836b8be1fa8a083aee5a5ad4c67a9aa6fc2e71",
+  "source_trees": {
+    "services/windows_native": "827414007d8bb88fa90b131f20ca5d8e44978171",
+    "apps/studio-web": "43afa3c68951abeda3a66f1523ab8fadeed95a9f",
+    "apps/api/app": "2eb30b1819b06f2187ede2c1b35202cdf0e7ee07"
+  },
+  "source_trees_unchanged": true,
+  "loaded": 2313,
+  "run": 2313,
+  "failures": 1,
+  "errors": 11,
+  "skipped": 0,
+  "seconds": 3870.093,
+  "successful": false,
+  "shards": [
+    {
+      "shard": 0,
+      "loaded": 579,
+      "run": 579,
+      "failures": 0,
+      "errors": 4,
+      "skipped": 0,
+      "seconds": 3355.141,
+      "successful": false,
+      "failing_ids": [],
+      "error_ids": [
+        "services.windows_native.tests.test_tiktok_distribution_http.TikTokDistributionHTTPTests.test_cold_server_reads_original_history_without_configuration_or_private_load",
+        "services.windows_native.tests.test_tiktok_distribution_http.TikTokDistributionHTTPTests.test_cold_server_reads_original_history_without_configuration_or_private_load",
+        "services.windows_native.tests.test_studio_media_resolution.StudioMediaResolutionTests.test_stock_download_rejects_a_search_from_a_revised_plan_without_a_second_provider_request",
+        "services.windows_native.tests.test_google_analytics_selections_http.GoogleAnalyticsSelectionHTTPTests.test_roles_and_csrf_refuse_before_body_and_private_read"
+      ]
+    },
+    {
+      "shard": 1,
+      "loaded": 578,
+      "run": 578,
+      "failures": 0,
+      "errors": 6,
+      "skipped": 0,
+      "seconds": 3654.766,
+      "successful": false,
+      "failing_ids": [],
+      "error_ids": [
+        "services.windows_native.tests.test_meta_runtime_http.FacebookMetaRuntimeHTTPTests.test_default_off_cold_runtime_retains_completed_history_without_decrypt_or_replay",
+        "services.windows_native.tests.test_meta_runtime_http.FacebookMetaRuntimeHTTPTests.test_default_off_cold_runtime_retains_completed_history_without_decrypt_or_replay",
+        "services.windows_native.tests.test_meta_runtime_http.FacebookMetaRuntimeHTTPTests.test_runtime_signed_review_separate_media_selection_and_async_receipt_use_one_worker",
+        "services.windows_native.tests.test_meta_runtime_http.FacebookMetaRuntimeHTTPTests.test_runtime_signed_review_separate_media_selection_and_async_receipt_use_one_worker",
+        "services.windows_native.tests.test_meta_runtime_http.MetaRuntimeHTTPTests.test_runtime_signed_review_separate_media_selection_and_async_receipt_use_one_worker",
+        "services.windows_native.tests.test_meta_runtime_http.MetaRuntimeHTTPTests.test_runtime_signed_review_separate_media_selection_and_async_receipt_use_one_worker"
+      ]
+    },
+    {
+      "shard": 2,
+      "loaded": 578,
+      "run": 578,
+      "failures": 1,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 2469.625,
+      "successful": false,
+      "failing_ids": [
+        "services.windows_native.tests.test_stock_cache_lifecycle.StockCacheLifecycleTests.test_two_process_writers_and_pinned_reader_remain_atomic_and_bounded"
+      ],
+      "error_ids": [
+        "services.windows_native.tests.test_google_oauth_callback.GoogleOAuthCallbackTests.test_other_routes_keep_original_cross_site_csrf_and_session_boundary"
+      ]
+    },
+    {
+      "shard": 3,
+      "loaded": 578,
+      "run": 578,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3866.813,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    }
+  ],
+  "owner_uat_complete": false,
+  "real_provider_acceptance": false,
+  "production_deployed": false
+}

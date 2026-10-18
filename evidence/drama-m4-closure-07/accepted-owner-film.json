@@ -1,0 +1,35 @@
+{
+  "schema": "owner-accepted-drama-artifact.v1",
+  "project_id": "1c768012f9624de494a9fadab63c1a31",
+  "project_revision": 8,
+  "export_id": "nexp_fb80d14cbad44c699c73bef0f02ff9af",
+  "owner_final_video_accepted": true,
+  "owner_decision": "Duyệt file cuối; tạo gói bàn giao",
+  "historical_15_artifacts_are_separate_and_unchanged": true,
+  "full_m4_owner_acceptance": false,
+  "manual_delivery_usability_acceptance": "PENDING",
+  "files": [
+    {
+      "kind": "owner_final_video",
+      "path": "C:\\vfct\\final-export-review-n1\\deliveries\\1c768012f9624de494a9fadab63c1a31\\nexp_fb80d14cbad44c699c73bef0f02ff9af\\la-thu-truoc-con-mua.mp4",
+      "sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+      "bytes": 1263825,
+      "preserve": true
+    },
+    {
+      "kind": "delivery_package",
+      "path": "C:\\vfct\\final-export-review-n1\\deliveries\\1c768012f9624de494a9fadab63c1a31\\nexp_fb80d14cbad44c699c73bef0f02ff9af\\delivery-package.zip",
+      "sha256": "625686646ab15f7a2909339b0089a2bf9c0dfa4fb55fac5a21f6d3e0060d8f4d",
+      "bytes": 1413028,
+      "preserve": true
+    },
+    {
+      "kind": "delivery_manifest",
+      "path": "C:\\vfct\\final-export-review-n1\\deliveries\\1c768012f9624de494a9fadab63c1a31\\nexp_fb80d14cbad44c699c73bef0f02ff9af\\delivery-manifest.json",
+      "sha256": "1aab9997fa9453c17b728d6f1b896e6e7fa5173a2e64ed7ec345399d517db40e",
+      "bytes": 4177,
+      "preserve": true
+    }
+  ],
+  "external_publication": false
+}

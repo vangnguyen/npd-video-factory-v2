@@ -1,0 +1,81 @@
+{
+  "source_head_at_start": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "source_trees": {
+    "services/windows_native": "7fcd5f6070a27bf2cd8ab8f1113929a94153217d",
+    "apps/studio-web": "5345ad3157dc28d83726ddf63e43a8eda7ff4647",
+    "apps/api/app": "2eb30b1819b06f2187ede2c1b35202cdf0e7ee07"
+  },
+  "source_trees_unchanged": true,
+  "loaded": 2313,
+  "run": 2313,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 4352.938,
+  "successful": true,
+  "shards": [
+    {
+      "shard": 0,
+      "loaded": 561,
+      "run": 561,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2282.094,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    },
+    {
+      "shard": 1,
+      "loaded": 561,
+      "run": 561,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4127.343,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    },
+    {
+      "shard": 2,
+      "loaded": 561,
+      "run": 561,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2837.141,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    },
+    {
+      "shard": 3,
+      "loaded": 561,
+      "run": 561,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2657.359,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    },
+    {
+      "shard": 4,
+      "loaded": 69,
+      "run": 69,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 222.125,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    }
+  ],
+  "owner_uat_complete": false,
+  "real_provider_acceptance": false,
+  "production_deployed": false
+}

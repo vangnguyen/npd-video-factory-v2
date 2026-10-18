@@ -1,0 +1,92 @@
+{
+  "items": [
+    {
+      "file": "browser/screenshots/entry-candidate07-1366.jpg",
+      "sha256": "ca72a07a23a3bc294c11db1a1870dc8b97ac256ec618a6dfbd3f8d62ed700a85",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/entry-candidate07-1920.jpg",
+      "sha256": "00c02b194bc2269992761ec76ac7195e9b382f8dfe38ab5a2e5bfc37f78b7ae8",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/entry-candidate07-2560.jpg",
+      "sha256": "0a5a8d3b3cc58489a54418354d83c52c8b096374838c41bc35574676e8faf985",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-casting-candidate07-1366.jpg",
+      "sha256": "f9a96afc28efa8693388b896726c1648c59654115fe709e848a4b389e855a02b",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-casting-candidate07-1920.jpg",
+      "sha256": "5a37aee52233ac3f2855ae8b92a5150dce6fac26931a89b99811969d2eae0bcb",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-casting-candidate07-2560.jpg",
+      "sha256": "179ffa0e8e139dfc49142e9704344c6c74e0ca788a8128884fd4da9d615445d8",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-scenes-candidate07-1366.jpg",
+      "sha256": "708a56b6e1279fd2f64e018f74892e4e7878f15a1e75d19dad78266b7a468fe8",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-scenes-candidate07-1920.jpg",
+      "sha256": "480747cf5d12bc3f635a62718b95408e2146a796fc355f5a07d4fab5351de497",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-scenes-candidate07-2560.jpg",
+      "sha256": "9fefb081015f3ee436a6cdfa28ab05550194794f29bb7dc8eeefda82b9c482de",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/final-review-1366.jpg",
+      "sha256": "f8c5614f29a899f45ba4a0f5cade26b88aec0f4c8d929958ebd1ec745549175a",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/final-review-1920.jpg",
+      "sha256": "117461cbcd840dae7ffa43b8d0bdf30eb05834e0deeb2d0e6b701f9efc70a1d6",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/final-review-2560.jpg",
+      "sha256": "f961df960b6ed84a9c4ca35fa59e30a4407e4d5590d67037999c08938a43e625",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/delivery-ready-1366.jpg",
+      "sha256": "c2777f9e4cda6787131f881e803f2245021c9aeee868e7ece8dbac5cd8d8d8de",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/delivery-ready-1920.jpg",
+      "sha256": "4d51588bd2dd9cb7128ed17bf2bc56fb05336e421deb17bda43602b5a3e12006",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/delivery-ready-2560.jpg",
+      "sha256": "1422dc66fdfa935b89c8a68c34a1851bbf1909e6945c591f933c90cb05c3de0e",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/application-info-candidate07.jpg",
+      "sha256": "c2e804f3658819d8ab5f3af4a3e77e88fce6ea1d226dfea2c0ea1596f5791900",
+      "actual_browser_capture": true
+    },
+    {
+      "file": "browser/screenshots/qa-missing-binh-voice-1366.jpg",
+      "sha256": "9fe49d7ee958590154de6d0161822fe525ecb286acfee7c4ece3f59274aeae29",
+      "actual_browser_capture": true
+    }
+  ],
+  "complete_local_capture_index": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261018\\drama-m4-final-07\\browser\\screenshot-index.json",
+  "unqualified_captures_not_claimed_as_viewport_proof": true,
+  "not_resized": true
+}

@@ -1,0 +1,54 @@
+{
+  "source_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "technical_fixture_only": true,
+  "owner_project_touched": false,
+  "human_acknowledgements_are_test_fixtures": true,
+  "regenerated_clips": 2,
+  "reused_clips": 2,
+  "all_visuals_unchanged": true,
+  "before_audio_seconds": 8.88,
+  "after_audio_seconds": 8.89,
+  "checks": [
+    {
+      "speaker": "An",
+      "line_id": "line_44b1a94c8bf05435ba81c403c70723b3",
+      "same_audio_hash": false,
+      "reused": false,
+      "before_start": 0.0,
+      "after_start": 0.0,
+      "before_end": 1.84,
+      "after_end": 1.84
+    },
+    {
+      "speaker": "Bình",
+      "line_id": "line_124940ecceb95bca80550f81a62bd402",
+      "same_audio_hash": true,
+      "reused": true,
+      "before_start": 1.84,
+      "after_start": 1.85,
+      "before_end": 3.84,
+      "after_end": 3.85
+    },
+    {
+      "speaker": "An",
+      "line_id": "line_d7b931dfaac55474bfd7034bdc34bf19",
+      "same_audio_hash": false,
+      "reused": false,
+      "before_start": 3.84,
+      "after_start": 3.85,
+      "before_end": 6.24,
+      "after_end": 6.25
+    },
+    {
+      "speaker": "Bình",
+      "line_id": "line_9e3dfeae066a54debd98a17308f1c39d",
+      "same_audio_hash": true,
+      "reused": true,
+      "before_start": 6.24,
+      "after_start": 6.25,
+      "before_end": 8.88,
+      "after_end": 8.89
+    }
+  ],
+  "owner_listening_acceptance": false
+}

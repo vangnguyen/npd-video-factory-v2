@@ -1,0 +1,21 @@
+{
+  "application_head": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+  "technical_fixture_only": true,
+  "owner_project_touched": false,
+  "missing_voice_message": "Còn thiếu giọng của Bình.",
+  "next_button_disabled": true,
+  "fix_action_focus_visually_verified": "Giọng của nhân vật Bình trong phim này",
+  "discard_returned_to_revision": 13,
+  "unchanged_after_discard": {
+    "revision": true,
+    "casting": true,
+    "canonical_timeline": true,
+    "prepared_narration": true,
+    "approval": true,
+    "assets": true,
+    "jobs": true,
+    "lines": true,
+    "preview": true
+  },
+  "additional_tts_or_save": false
+}

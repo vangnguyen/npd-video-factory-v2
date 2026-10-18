@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-10-18T16:25:01.344308+00:00",
+  "target": "C:/vfct/drama-m4-final07-restored-check",
+  "action": "remove completed isolated restore-test copy while retaining verified ZIP",
+  "outcome": "REJECTED_BEFORE_EXECUTION",
+  "reason_provided": "blocked by policy",
+  "files_changed": false,
+  "retry_or_workaround_attempted": false,
+  "recovery_archive_preserved": true
+}
