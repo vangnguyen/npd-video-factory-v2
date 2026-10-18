@@ -112,6 +112,10 @@ class NativeDramaCasting:
                 known={s['shot_id'] for s in shots(document)}
                 if any(line['shot_id'] is not None and line['shot_id'] not in known for line in config['lines']):raise WorkflowError('DRAMA_SHOT_BINDING_CHANGED')
             record={'schema_version':SCHEMA,'version':body['expected_version']+1,'configuration':config,'sha256':digest(config)}
+            if 'dialogue_delivery_takes' in document:
+                characters={v['character_id']:v for v in config['characters']}
+                active={v['line_id'] for v in config['lines'] if v['enabled'] and (characters[v['character_id']]['role']!='narrator' or config['narrator_enabled'])}
+                document['dialogue_delivery_takes']={k:v for k,v in document['dialogue_delivery_takes'].items() if k in active}
             document['drama_casting']=record;revision=project['revision']+1;stamp=now();authorization_check()
             con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(revision,json.dumps(document,ensure_ascii=False),stamp,project_id))
             self.store.version(con,project_id)

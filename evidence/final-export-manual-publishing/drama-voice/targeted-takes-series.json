@@ -1,0 +1,10 @@
+{
+  "status": "IMPLEMENTED_COMPONENTS_MOCK_TESTED_UI_PENDING",
+  "tests": {"passed": 36, "failed": 0, "seconds": 11.569, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-reuse-Native-n1.log"},
+  "includes": {"take_and_series": 8, "backup": 19, "casting": 9},
+  "targeted_take": "Server nonce; explicit new approval; only selected line regenerates; other actor cache and old PCM unchanged",
+  "series": "Workspace-scoped versioned characters and explicit voice references, no line text, no permanent global voice-character assignment",
+  "recovery": "Exact retry retains original result; SQLite receipts and series versions verified after actual archive restore",
+  "real_provider_inferences": 0,
+  "owner_uat_complete": false
+}

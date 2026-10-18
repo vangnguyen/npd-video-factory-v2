@@ -1,5 +1,7 @@
 # North Star capability matrix
 
+2026-10-18 — P6 trong phạm vi Export: compiled dialogue đã nối narration-only approval→PCM/cache từng câu→áp thời lượng canonical→preview có tiếng→duyệt→render/QC→manual package. ASS/SRT giữ speaker, dynamic profile không giả thành legacy narrator. Cohort dialogue 68 PASS và legacy 40 PASS, compiler bổ sung 11 PASS; take/series/backup/casting 36 PASS. Các tập overlap, dùng tone mock và media local, 0 inference giọng thật mới/0 Owner UAT. Targeted take và series persistence có version/CAS/idempotency; UI/real voice acceptance còn mở. Không mở rộng platform publishing/analytics/learning/trends; [tiến độ hiện tại](FINAL_EXPORT_PROGRESS.md).
+
 2026-10-18 — VieNeu dialogue preset adapter code: isolated offline CPU child, pinned manifest/runtime, explicit capabilities, no automatic voice choice or arbitrary reference cloning, EOS and sample/gain safeguards. 24 component tests PASS (6 metadata/mocked transport + 18 PCM); 25 SDK preset metadata entries read, all rights unknown by default, 0 new real inference. Runtime/UI bridge and Owner voice acceptance remain pending.
 
 2026-10-18 — P6 isolated PCM component: 62 PASS / 21.132s (18 audio + library/casting/plan/backup). Actual WAV/cache/DB custody, targeted new take, current-rights checks, no silent/truncated output, child-exit recovery and backup restore are tested with explicit tone adapters. No real dialogue speech, public UI, runtime render integration or Owner acceptance claimed. [Status](FINAL_EXPORT_PROGRESS.md), DRAMA readiness remains NO.

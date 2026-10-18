@@ -75,6 +75,7 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | Dialogue runtime + components | 68 pass / 63.617s, có PCM/cache, duyệt narration-only, áp canonical timeline, audible preview, render/QC, ASS/SRT speaker và manual package; giọng là tone mock | final-export-dialogue-runtime-Native-n2.log |
 | Legacy sau dialogue bridge | 40 pass / 111.933s: narration, audible preview, canonical captions, manual delivery và workflow; không đổi accepted profile | final-export-dialogue-legacy-regression-Native-n1.log |
 | Compiler bổ sung | 11 pass / 3.331s, gồm shot tắt lời đọc vẫn giữ draft text | final-export-dialogue-binding-Native-n3.log |
+| Take theo câu + series | 36 pass / 11.569s: 8 take/series, 19 backup, 9 casting; server cấp nonce, exact retry, giữ câu/giọng khác và lịch sử | final-export-dialogue-reuse-Native-n1.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
@@ -95,7 +96,7 @@ Lượt `final-export-narrated-settings-regression-n2.log` có 38 test chạy qu
 | P3 | PARTIAL | Các chức năng cover/copy đã có và được kiểm thử cục bộ; còn UI acceptance thực tế, quyền nội dung và bundle UAT đích |
 | P4 | PARTIAL | History/thumbnail/compare/recreate đã có; còn UI acceptance thực tế và các ca đích |
 | P5 | PARTIAL | Render restart giữa/sau checkpoint, handoff/collision/tamper/disk error/backup-restore và bounded concurrency đã có bằng chứng; còn tổng regression và vận hành/UAT |
-| P6 | PARTIAL | Library/casting/planner/cache/adapter và compiled approval→worker→canonical playback/subtitle→final QC→delivery đã có bằng chứng mock/local media; còn series/UI và real voice/Owner acceptance |
+| P6 | PARTIAL | Library/casting/planner/cache/adapter, targeted take, series persistence và compiled approval→worker→canonical playback/subtitle→final QC→delivery đã có bằng chứng mock/local media; còn UI và real voice/Owner acceptance |
 | P7 | PENDING_OWNER_UAT | 5 case Owner UAT; không tự ghi nhận nghiệm thu |
 
 Các preset 4 hình học có hard validation; gói phải khớp video đã duyệt. Đổi format từ Export Center áp dụng lại cấu hình dự án và cần preview/duyệt mới; video nguồn còn hỗ trợ FPS/quality/burn/audio. Không transcode âm thầm một MP4 đã duyệt thành file khác. Thư mục đầu ra do Native quản lý; chưa có chọn thư mục tùy ý. Không ghi những tùy chọn chưa hỗ trợ thành đã hoàn thành.
