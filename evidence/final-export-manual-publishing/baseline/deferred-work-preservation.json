@@ -1,0 +1,87 @@
+[
+  {
+    "root": "C:\\vfbroll1",
+    "branch": "codex/vf-broll-witness-root-ui-01",
+    "head": "7d4741e5276a8e3eb8614b7be08a5e4428db938e",
+    "status": "M apps/studio-web/studio.css\n M apps/studio-web/studio.html\n M apps/studio-web/studio.js\n M apps/studio-web/tests/broll-plan-studio-shell.test.mjs\n?? apps/studio-web/tests/broll-witness-root-studio.test.mjs",
+    "files": [
+      {
+        "path": "apps/studio-web/tests/broll-witness-root-studio.test.mjs",
+        "bytes": 19624,
+        "sha256": "561b3529a6291cd68fb9e7dbcc6017c1958e7e588f456d6cfad9ece717553bc4"
+      },
+      {
+        "path": "apps/studio-web/studio.css",
+        "bytes": 44211,
+        "sha256": "b09daaf07377699252f0ce61dfcfb0878df486571a5030f625d6621b45956e35"
+      },
+      {
+        "path": "apps/studio-web/studio.html",
+        "bytes": 55365,
+        "sha256": "4e8a59ca88aa7ed00d816710c3e54a092458a63e55dade4e9f9821c870773eb6"
+      },
+      {
+        "path": "apps/studio-web/studio.js",
+        "bytes": 237920,
+        "sha256": "82506b9440de926bb6ad3a15b6790ebbc2163c5bf26a59e5956aa7463f07225b"
+      },
+      {
+        "path": "apps/studio-web/tests/broll-plan-studio-shell.test.mjs",
+        "bytes": 34022,
+        "sha256": "86f810f6449128fe1bdfb24ad0d8ff537437f2002a6ce26a48427674d452243f"
+      }
+    ],
+    "disposition": "Unfinished, not accepted, not integrated. Frozen during final export focus.",
+    "archive": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-deferred-broll-root-ui-wip-n1.zip",
+      "bytes": 96468,
+      "sha256": "baca435377ea0b5d52471865db4e23d5a1a825827ff972dc02927409146484d7"
+    },
+    "zip_crc_and_hashes_verified": true
+  },
+  {
+    "root": "C:\\vfbrs1",
+    "branch": "codex/vf-reviewed-generative-suggestions-01",
+    "head": "b0ce5e629655afbc24a968777fa7ebe4e3ea5070",
+    "status": "M apps/api/app/main.py\n?? apps/api/app/broll_generation_suggestion_api.py\n?? apps/api/app/broll_generation_suggestion_command.py\n?? apps/api/app/broll_generation_suggestion_logic.py\n?? apps/api/tests/test_broll_generation_suggestion.py\n?? docs/BROLL_GENERATIVE_SUGGESTIONS.md",
+    "files": [
+      {
+        "path": "apps/api/app/broll_generation_suggestion_api.py",
+        "bytes": 4498,
+        "sha256": "474f12129a41e04f2e4af879b34de9c6fe95b82a15a1d60a5c6040b31f0ba510"
+      },
+      {
+        "path": "apps/api/app/broll_generation_suggestion_command.py",
+        "bytes": 15476,
+        "sha256": "0d0c905ef1d96238b83403c80f042f0f2405d0c1e42a1ce0207ca3a758e44d01"
+      },
+      {
+        "path": "apps/api/app/broll_generation_suggestion_logic.py",
+        "bytes": 6263,
+        "sha256": "0057ecc1f469809a210fb66dd2fbedc7b24be82eb33a72a768d7a280c4e1c426"
+      },
+      {
+        "path": "apps/api/tests/test_broll_generation_suggestion.py",
+        "bytes": 19350,
+        "sha256": "d04ce2c13736a19073a815cbcb69ec2214ec6cd0d7756ffe32bd9d1f164f3399"
+      },
+      {
+        "path": "docs/BROLL_GENERATIVE_SUGGESTIONS.md",
+        "bytes": 2452,
+        "sha256": "daafbe520965d039ce128b6854595e189fbddb9d49754845f25c0dfa6509664b"
+      },
+      {
+        "path": "apps/api/app/main.py",
+        "bytes": 67950,
+        "sha256": "062b349aba6e3c43cb82dd8464314714ee4268f8355b8099fc75f70a19604567"
+      }
+    ],
+    "disposition": "Unfinished, not accepted, not integrated. Frozen during final export focus.",
+    "archive": {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-deferred-generative-suggestions-wip-n1.zip",
+      "bytes": 28627,
+      "sha256": "3c0079ac725cbce0be822784391e574ba77a132db65c7481d2a402e8d2dbf412"
+    },
+    "zip_crc_and_hashes_verified": true
+  }
+]

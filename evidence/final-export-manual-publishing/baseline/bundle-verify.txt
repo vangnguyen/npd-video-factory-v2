@@ -1,0 +1,7 @@
+The bundle contains these 3 refs:
+4162bc32260521277737f7c9ee118b5ba55b3f9b refs/heads/codex/vf-north-star-completion-01
+7d4741e5276a8e3eb8614b7be08a5e4428db938e refs/heads/codex/vf-broll-witness-root-ui-01
+b0ce5e629655afbc24a968777fa7ebe4e3ea5070 refs/heads/codex/vf-reviewed-generative-suggestions-01
+The bundle records a complete history.
+The bundle uses this hash algorithm: sha1
+C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-source-baseline-n1.bundle is okay
