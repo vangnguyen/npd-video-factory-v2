@@ -72,6 +72,8 @@ Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixt
 
 Full API ban đầu bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL venv, thiếu websockets và Unix `grp`. Không sửa runtime đã khóa hoặc giả module hệ điều hành. Lượt tương thích (loại rõ 5 module trên) đã kết thúc: **4139 pass, 37 fail, 17 error, 63 skip / 6513.19s**, `final-export-compatible-API-n2.log`. Đang phân loại và đối chiếu baseline; nhiều lỗi liên quan getuid/O_NOFOLLOW/POSIX custody, thiếu yaml hoặc symlink privilege, các lỗi còn lại chưa được tự quy thành môi trường. Không gọi đây là full pass. Full Native vẫn đang chạy. Hai lượt rộng được khởi chạy trước phần mở rộng cover/recovery và QC geometry; kết quả không tự chứng nhận những phần được thêm sau lúc khởi chạy. Docker/Linux E2E và toàn bộ Phase 8/9/10 acceptance chưa được tái chứng nhận ở chương trình này.
 
+Đối chiếu đã hoàn tất cho 11 lỗi ngoài nhóm Linux executor/custody: cả 11 tái hiện ở HEAD trước chương trình Export, thêm 5 ca kiểm tra authorization trước body pass. [Phân loại đầy đủ và giới hạn](FINAL_EXPORT_REGRESSION_STATUS.md). Checkout baseline tạm đã kiểm tra sạch và dọn bằng Git, thu hồi 703169497 byte; không đụng checkout nguồn chính hay accepted videos. 26 fail và 17 setup error thuộc nhóm môi trường/POSIX vẫn chưa được chứng nhận trên Linux. Full regression chưa đạt.
+
 Lượt `final-export-narrated-settings-regression-n2.log` có 38 test chạy qua nhưng gọi nhầm thêm module không tồn tại `test_shot_timeline`, nên toàn lượt không pass. Đã sửa lời gọi bằng module thật `test_shot_adapter` ở cohort canonical 39 pass phía trên; không che lỗi gọi test bằng cách đổi mã production.
 
 ## Phần còn phải hoàn thành trước khi đánh dấu ready

@@ -1,5 +1,7 @@
 # North Star capability matrix
 
+2026-10-18 — Wide API Windows filtered cohort: 4139 PASS, 37 FAIL, 17 ERROR, 63 SKIP / 6513.19s. Eleven non-POSIX functional/contract failures all reproduce at pre-export `4162bc32`; five actual pre-body auth cases pass. Remaining executor/custody/dependency/OS lanes require separate qualification. [Regression status](FINAL_EXPORT_REGRESSION_STATUS.md). Full Native pending; no readiness/Owner/production claims promoted.
+
 2026-10-18 — P6 project-casting draft và per-line dependency planner: 57 PASS (9 casting + 9 plan + 9 library + 17 backup + 13 storyboard QC), 57.894s. CAS/rights bindings/replay/restore và narrator-default-false đã có; incomplete drama bị chặn ở approval/worker. Voice change chỉ đổi planned inputs đúng character; không có cache bytes/TTS/audio/UI/series acceptance. [Chi tiết](FINAL_EXPORT_PROGRESS.md), `DRAMA_VOICE_CASTING_READY=NO`.
 
 2026-10-18 — P6 component: Native Voice Library có immutable SQLite versions, workspace scope, CAS/idempotency, hash verification, rights declaration/consent và backup/restore. 9 library + 17 backup = 26 PASS; không inference, không UI/casting/TTS integration. Không gắn character vào global voice và không nâng khai báo thành quyền đã xác minh. `DRAMA_VOICE_CASTING_READY=NO`; [evidence](../evidence/final-export-manual-publishing/drama-voice/library.json).

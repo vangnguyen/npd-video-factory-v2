@@ -1,0 +1,42 @@
+{
+  "schema_version": "final-export-baseline-comparison.v1",
+  "baseline_head": "4162bc32260521277737f7c9ee118b5ba55b3f9b",
+  "baseline_checkout": "C:\\vfexb01",
+  "log": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-api-baseline-compare-n1.log",
+  "selected_current_failures": [
+    "apps/api/tests/test_auto_edit_local_cpu.py::test_cache_lookup_verifies_physical_source_and_runtime_before_replay[source_bytes]",
+    "apps/api/tests/test_auto_edit_local_cpu.py::test_original_object_tamper_after_cpu_result_blocks_authoritative_transcript",
+    "apps/api/tests/test_human_identity_ingress.py::test_all_human_api_routes_are_protected_and_service_bridge_remains_separate",
+    "apps/api/tests/test_service_api_flows.py::test_upload_analysis_canonical_edit_preview_human_approval_render_and_dry_run_publication",
+    "apps/api/tests/test_sql_variant_api.py::test_current_bound_graph_dispatch_imports_actual_child_without_new_provider_calls[mixed]",
+    "apps/api/tests/test_sql_variant_api.py::test_unanalysed_video_core_gate_and_empty_graph_contract_never_fall_back",
+    "apps/api/tests/test_sql_variant_uploaded_derivation.py::test_mixed_storyboard_child_keeps_content_draft_and_analysis_clocks_independent",
+    "apps/api/tests/test_storyboard_rebuild_context.py::test_mixed_import_keeps_exact_historic_origin_and_old_audio_receipt_verification",
+    "apps/api/tests/test_w1_prompt_provider_path.py::test_service_uses_same_w1_context_and_callback_snapshot",
+    "apps/api/tests/test_w1_prompt_provider_path.py::test_service_profile_snapshot_cannot_drift_before_callback",
+    "apps/api/tests/test_w1_prompt_provider_path.py::test_service_freezes_provider_instance_and_does_not_add_fixture_kwargs"
+  ],
+  "baseline_failed_nodeids": [
+    "apps/api/tests/test_auto_edit_local_cpu.py::test_cache_lookup_verifies_physical_source_and_runtime_before_replay[source_bytes]",
+    "apps/api/tests/test_auto_edit_local_cpu.py::test_original_object_tamper_after_cpu_result_blocks_authoritative_transcript",
+    "apps/api/tests/test_human_identity_ingress.py::test_all_human_api_routes_are_protected_and_service_bridge_remains_separate",
+    "apps/api/tests/test_service_api_flows.py::test_upload_analysis_canonical_edit_preview_human_approval_render_and_dry_run_publication",
+    "apps/api/tests/test_sql_variant_api.py::test_current_bound_graph_dispatch_imports_actual_child_without_new_provider_calls[mixed]",
+    "apps/api/tests/test_sql_variant_api.py::test_unanalysed_video_core_gate_and_empty_graph_contract_never_fall_back",
+    "apps/api/tests/test_sql_variant_uploaded_derivation.py::test_mixed_storyboard_child_keeps_content_draft_and_analysis_clocks_independent",
+    "apps/api/tests/test_storyboard_rebuild_context.py::test_mixed_import_keeps_exact_historic_origin_and_old_audio_receipt_verification",
+    "apps/api/tests/test_w1_prompt_provider_path.py::test_service_uses_same_w1_context_and_callback_snapshot",
+    "apps/api/tests/test_w1_prompt_provider_path.py::test_service_profile_snapshot_cannot_drift_before_callback",
+    "apps/api/tests/test_w1_prompt_provider_path.py::test_service_freezes_provider_instance_and_does_not_add_fixture_kwargs"
+  ],
+  "same_failures_reproduced": true,
+  "additional_auth_behavior_test": "apps/api/tests/test_sql_variant_api.py::test_write_admission_before_body_and_no_sql_mutation",
+  "pytest_exit_code": 1,
+  "duration_seconds": 92.484,
+  "summary_lines": [
+    "11 failed, 5 passed in 88.78s (0:01:28)"
+  ],
+  "excluded_posix_or_missing_dependency_failures": 26,
+  "excluded_posix_setup_errors": 17,
+  "production_deployed": false
+}
