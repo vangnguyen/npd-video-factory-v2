@@ -18,7 +18,7 @@ class VoiceDefinition(StrictModel):
     provider_voice_id:StrictStr=Field(min_length=1,max_length=150)
     locale:StrictStr=Field(pattern=r'^[a-z]{2}(?:-[A-Z]{2})?$')
     source_type:Literal['provider_preset','licensed_reference']='provider_preset'
-    rights_status:Literal['unknown','owner_declared','blocked']='unknown'
+    rights_status:Literal['unknown','owner_declared','source_licensed','blocked']='unknown'
     license:StrictStr|None=Field(default=None,min_length=1,max_length=1000)
     source_reference:StrictStr|None=Field(default=None,min_length=1,max_length=2000)
     permission_reference:StrictStr|None=Field(default=None,min_length=1,max_length=2000)
@@ -32,7 +32,7 @@ class VoiceDefinition(StrictModel):
             if value is not None and not value.strip():raise ValueError('nonblank voice metadata required')
         if self.source_type=='provider_preset' and (self.reference_asset_id is not None or self.reference_sha256 is not None or self.cloning_consent):raise ValueError('preset cannot contain cloning material')
         if self.source_type=='licensed_reference' and (not self.reference_asset_id or not self.reference_sha256):raise ValueError('registered reference and hash required')
-        if self.rights_status=='owner_declared' and (not self.license or not self.source_reference or not self.permission_reference):raise ValueError('rights declaration evidence required')
+        if self.rights_status in ('owner_declared','source_licensed') and (not self.license or not self.source_reference or not self.permission_reference):raise ValueError('rights declaration evidence required')
         return self
 
 
@@ -95,7 +95,7 @@ class NativeVoiceLibrary:
         if for_generation:
             definition=record['definition']
             if not record['current']:raise WorkflowError('VOICE_VERSION_CHANGED')
-            if definition['rights_status']!='owner_declared':raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
+            if definition['rights_status'] not in ('owner_declared','source_licensed'):raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
             if definition['source_type']=='licensed_reference' and not definition['cloning_consent']:raise WorkflowError('VOICE_REFERENCE_CONSENT_REQUIRED')
         return record
 
@@ -110,13 +110,14 @@ class NativeVoiceLibrary:
     def update(self,identifier,payload,*,actor_ref,authorization_check=lambda:None):
         self._id(identifier);return self._write(identifier,payload,actor_ref,authorization_check)
 
-    def _write(self,identifier,payload,actor_ref,authorized):
+    def _write(self,identifier,payload,actor_ref,authorized,*,_source_evidence=None):
         self.scope();authorized();self.scope()
         if not isinstance(actor_ref,str) or not 1<=len(actor_ref.strip())<=100:raise WorkflowError('VOICE_ACTOR_REQUIRED',400)
         model=VoiceUpdate if identifier is not None else VoiceCreate
         try:body=model.model_validate(payload).model_dump(mode='json')
         except (ValidationError,TypeError):raise WorkflowError('VOICE_REQUEST_INVALID',400) from None
         fingerprint=digest({'voice_id':identifier,'body':body});definition=body['definition']
+        if definition['rights_status']=='source_licensed' and (_source_evidence is None or identifier is not None):raise WorkflowError('VOICE_PRESET_INTERNAL_IMPORT_REQUIRED',403)
         with self.store.transaction() as con:
             old=con.execute('SELECT * FROM native_voice_writes WHERE workspace_id=? AND request_key=?',(self.workspace,body['request_key'])).fetchone()
             if old:

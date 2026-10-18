@@ -7,7 +7,7 @@ from .dialogue_runtime import providers_for
 
 VOICE=r'nvoice_[a-f0-9]{32}'
 PROJECT=r'[a-f0-9]{32}'
-GLOBAL=r'/api/(?:voice-library(?:/presets|/'+VOICE+r')?|drama-series)'
+GLOBAL=r'/api/(?:voice-library(?:/presets|/import-installed|/'+VOICE+r')?|voice-auditions(?:/nsample_[a-f0-9]{32}/audio)?|drama-series)'
 LOCAL=r'/api/projects/('+PROJECT+r')/drama-casting(?:/(compile|takes|series-save|series-apply))?'
 def handles(path):return re.fullmatch(GLOBAL,path.partition('?')[0]) is not None or re.fullmatch(LOCAL,path.partition('?')[0]) is not None
 
@@ -16,6 +16,9 @@ def dispatch(handler,*,write=False):
     if '?' in path:raise WorkflowError('DRAMA_QUERY_INVALID',400)
     server=handler.server;library=server.voice_library
     if not write:
+        if path=='/api/voice-auditions':return handler.reply(server.voice_auditions.page())
+        sample=re.fullmatch('/api/voice-auditions/(nsample_[a-f0-9]{32})/audio',path)
+        if sample:return handler.file(server.voice_auditions.audio(sample[1]),video=True)
         if path=='/api/voice-library/presets':
             from .dialogue_vieneu import catalog
             return handler.reply(catalog(server.config))
@@ -45,6 +48,11 @@ def dispatch(handler,*,write=False):
     def authorized():
         if server.access is not None:server.access.authorize(handler.auth_session,'POST',path)
     actor=handler.auth_session.principal.token_id if getattr(handler,'auth_session',None) else 'loopback-owner'
+    if path=='/api/voice-library/import-installed':
+        if body!={'acknowledged':True}:raise WorkflowError('VOICE_IMPORT_ACKNOWLEDGEMENT_REQUIRED',400)
+        from .voice_presets import register_installed
+        return handler.reply(register_installed(library,server.config,actor_ref=actor,authorization_check=authorized))
+    if path=='/api/voice-auditions':return handler.reply(server.voice_auditions.submit(body,authorization_check=authorized),status=202)
     if path=='/api/voice-library':return handler.reply(library.create(body,actor_ref=actor,authorization_check=authorized))
     match=re.fullmatch('/api/voice-library/('+VOICE+')',path)
     if match:return handler.reply(library.update(match[1],body,actor_ref=actor,authorization_check=authorized))

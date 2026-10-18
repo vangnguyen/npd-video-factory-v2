@@ -31,6 +31,8 @@ def permission_for(method, path):
         return 'manage' if path in ('/api/runtime-status', '/settings/assemblyai') or path.startswith('/api/connections/') or path.startswith('/api/channel-profiles/admin') else 'read'
     if method != 'POST':
         return None
+    if path=='/api/voice-library/import-installed':return 'manage'
+    if path=='/api/voice-auditions':return 'edit'
     if re.fullmatch(r'/api/voice-library(?:/nvoice_'+ID+r')?',path):return 'manage'
     if re.fullmatch(r'/api/projects/'+ID+r'/drama-casting(?:/(compile|takes|series-save|series-apply))?',path):return 'edit'
     if re.fullmatch(r'/api/projects/'+ID+r'/drama-script',path):return 'edit'

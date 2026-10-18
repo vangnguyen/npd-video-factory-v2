@@ -17,7 +17,7 @@ function harness(){
   const base=`/api/projects/${P}/drama-casting`;
   async function answer(path,options){if(options){const body=JSON.parse(options.body);saved.push(body);return path.startsWith('/api/voice-library')?{voice_id:V,version:1,definition_sha256:H}:{project_id:P,project_revision_at_write:body.revision+1};}if(path.endsWith('/drama-casting'))return page(current);
     if(path==='/api/voice-library')return {items:[voice]};if(path==='/api/voice-library/presets')return {provider:'vieneu-local',status:'METADATA_AVAILABLE',model:'vieneu-v3-turbo',voices:[{provider_voice_id:'Preset A',display_name:'Preset A'}]};
-    if(path==='/api/drama-series')return {items:[]};throw Error('Unexpected route');}
+    if(path==='/api/drama-series')return {items:[]};if(path==='/api/voice-auditions')return {items:[],inference_dispatched:false};throw Error('Unexpected route');}
   controller=initializeNativeDrama({dom,getState:()=>current,newKey:()=>`${String(serial++).padStart(8,'0')}-1111-4111-8111-111111111111`,
     api:async(...args)=>{calls.push(args);return override?override(...args):answer(...args);},onMessage:(...v)=>messages.push(v),onWorking:v=>{current.busy=v;},
     onDirty:v=>{if(v){current.dirty=true;current.dirtyPart='drama';}else if(current.dirtyPart==='drama'){current.dirty=false;current.dirtyPart=null;}},
@@ -54,7 +54,7 @@ test('splitting keeps speaker and shot and rejects cutting through a word',()=>{
   for(const position of [0,5,999,NaN])assert.throws(()=>splitDialogueLine(original,0,position,'line_'+'1'.repeat(32)));
 });
 test('panel makes no startup requests and shows voice rights and text literally',async()=>{
-  const h=harness();assert.equal(h.calls.length,0);await h.controller.load();assert.equal(h.calls.length,4);assert.equal(h.saved.length,0);
+  const h=harness();assert.equal(h.calls.length,0);await h.controller.load();assert.equal(h.calls.length,5);assert.equal(h.saved.length,0);
   const literal=h.root.querySelectorAll('p').find(n=>n.textContent.includes('<img src=x>'));assert.ok(literal);assert.equal(literal.innerHTML,undefined);
   assert.equal(h.label('Tên nhân vật').children[0].value,'An <script>literal</script>');assert.equal(h.label('Có người kể'),undefined);
   assert.ok(h.root.querySelectorAll('input').some(n=>n.type==='checkbox'&&!n.checked));

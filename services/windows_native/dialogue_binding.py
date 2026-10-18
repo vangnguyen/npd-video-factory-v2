@@ -85,7 +85,7 @@ def validate(document,library,*,con=None,providers=None,project_id=None,require_
     for ref in record['voice_bindings']:
         voice=library._record(con,ref['voice_id'],ref['voice_version']);definition=voice['definition']
         if not voice['current'] or voice['definition_sha256']!=ref['voice_sha256'] or definition['provider']!=ref['provider']:raise WorkflowError('DRAMA_VOICE_BINDING_CHANGED')
-        if definition['rights_status']!='owner_declared':raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
+        if definition['rights_status'] not in ('owner_declared','source_licensed'):raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
         if definition['source_type']=='licensed_reference' and not definition['cloning_consent']:raise WorkflowError('VOICE_REFERENCE_CONSENT_REQUIRED')
     if providers is not None:
         for key,signature in record['provider_signatures'].items():

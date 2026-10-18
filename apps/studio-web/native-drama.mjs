@@ -1,3 +1,4 @@
+import {initializeVoiceBrowser,usableVoice} from './voice-browser.mjs';
 const ID=/^[a-f0-9]{32}$/,SHA=/^[a-f0-9]{64}$/,VOICE=/^nvoice_[a-f0-9]{32}$/;
 const source=s=>s.project?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
 const active=s=>s.active||(s.project?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
@@ -25,9 +26,10 @@ export function dramaRequest(state,page,action,{configuration,requestKey,lineId,
   validateDramaPage(page,state);if(typeof requestKey!=='string'||!/^[A-Za-z0-9_.:-]{12,128}$/.test(requestKey))throw Error('Yêu cầu chưa hợp lệ.');
   const p=state.project,base=`/api/projects/${p.id}/drama-casting`,body={revision:p.revision,request_key:requestKey};
   if(action==='save'){
-    if(!configuration?.characters?.length||!configuration.lines?.length||configuration.lines.some(v=>!configuration.characters.some(c=>c.character_id===v.character_id)||!v.text?.trim()||!page.shots.some(s=>s.shot_id===v.shot_id)))throw Error('Chọn người nói, shot và nội dung cho từng câu.');
+    if(!configuration?.characters?.length||!Array.isArray(configuration.lines)||configuration.lines.some(v=>!configuration.characters.some(c=>c.character_id===v.character_id)||!v.text?.trim()||v.shot_id!==null&&!page.shots.some(s=>s.shot_id===v.shot_id)))throw Error('Chọn người nói và nội dung hợp lệ cho từng câu.');
     if(typeof clearLegacyVoicePolicy!=='boolean')throw Error('Cần chọn rõ cách chuyển cấu hình giọng.');
-    return {path:base,body:{...body,expected_version:page.casting?.version??0,configuration,sync_canonical_script:true,clear_legacy_voice_policy:clearLegacyVoicePolicy}};
+    const bound=configuration.lines.length>0&&configuration.lines.every(v=>v.shot_id!==null);
+    return {path:base,body:{...body,expected_version:page.casting?.version??0,configuration,sync_canonical_script:bound,clear_legacy_voice_policy:clearLegacyVoicePolicy}};
   }
   if(state.dirty)throw Error('Lưu phân vai và lời thoại trước khi tiếp tục.');
   if(action==='compile')return {path:base+'/compile',body:{...body,expected_version:p.document.compiled_dialogue?.version??0}};
@@ -62,27 +64,32 @@ export function validateDramaWrite(result,request,action,projectId){
   return result;
 }
 export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},onSaved=async()=>{},onDirty=()=>{},dom=globalThis.document,newKey=()=>globalThis.crypto.randomUUID()}){
-  const root=dom.getElementById('native-drama-panel');let page=null,voices=[],catalog=null,series=[],draft=null,dialogueDirty=false,voiceDirty=false,clearLegacyChoice=false,working=false,serial=0,binding=null,pending=null,editVoice=null;
+  const root=dom.getElementById('native-drama-panel');let page=null,voices=[],catalog=null,series=[],draft=null,dialogueDirty=false,voiceDirty=false,clearLegacyChoice=false,working=false,serial=0,binding=null,pending=null,editVoice=null,voiceBrowser=null,targetCharacter=null,autoLoadContext=null;
   const context=()=>{const s=getState();return `${s.workspace_id}:${s.project?.id}:${s.project?.revision}`;},uid=prefix=>prefix+newKey().replaceAll('-','');
   const node=(tag,text,parent,attrs={})=>{const n=dom.createElement(tag);if(text!==null)n.textContent=text;for(const[k,v]of Object.entries(attrs))n.setAttribute(k,String(v));parent.append(n);return n;};
   const button=(text,parent,action,permission='edit',saved=true)=>{const b=node('button',text,parent,{type:'button','data-drama-action':action});b._permission=permission;b._saved=saved;return b;};
   const changed=()=>{if(pending||working){controls();return;}dialogueDirty=true;onDirty(true);controls();};
   node('summary','Nhân vật & giọng thoại',root);node('p','Chọn giọng riêng cho từng nhân vật. Người kể mặc định tắt. Lưu thoại vào timeline, kiểm tra rồi duyệt để tạo audio; nghe và áp thời lượng đã đo ở phần Lời đọc bên dưới.',root,{class:'hint'});
-  const tools=node('div',null,root,{class:'planner-tools'}),loadButton=button('Tải thư viện & phân vai',tools,'load','read',false),start=button('Bắt đầu phân vai',tools,'start'),discard=button('Bỏ chỉnh sửa và tải lại',tools,'discard','read',false),status=node('p','',root,{role:'status'});
+  const tools=node('div',null,root,{class:'planner-tools'}),loadButton=button('Làm mới',tools,'load','read',false),start=button('Bắt đầu phân vai',tools,'start'),discard=button('Bỏ chỉnh sửa và tải lại',tools,'discard','read',false),status=node('p','',root,{role:'status'});
   const castArea=node('div',null,root),characterArea=node('div',null,castArea),addCharacter=button('Thêm nhân vật',castArea,'character','edit',false),narratorLabel=node('label',null,castArea,{class:'check'}),narrator=node('input',null,narratorLabel,{type:'checkbox'});node('span','Có người kể',narratorLabel);
   const lineArea=node('div',null,castArea),addLine=button('Thêm câu thoại',castArea,'line','edit',false),save=button('Lưu thoại & phụ đề vào timeline',castArea,'save','edit',false),compile=button('Kiểm tra phân vai để tạo audio',castArea,'compile');
   const legacyLabel=node('label',null,castArea,{class:'check'}),legacy=node('input',null,legacyLabel,{type:'checkbox'});node('span','Chuyển từ cách đọc một giọng cũ sang giọng theo phân vai. Bản cũ giữ trong lịch sử.',legacyLabel);
   node('p','Sửa một giọng hoặc tạo lại một câu sẽ cần duyệt lại audio, preview và video cuối. Tư liệu hình ảnh được giữ lại.',castArea,{class:'hint'});
   const seriesArea=node('details',null,root);node('summary','Phân vai dùng lại cho series',seriesArea);const seriesName=node('input',null,node('label','Tên bộ phân vai mới',seriesArea),{maxlength:'100'}),seriesSave=button('Lưu bộ phân vai',seriesArea,'series-save'),seriesChoice=node('select',null,node('label','Bộ phân vai đã lưu',seriesArea)),seriesApply=button('Áp dụng phân vai từ series',seriesArea,'series-apply');
   node('p','Mỗi phim giữ bản phân vai riêng. Áp dụng series không mang theo câu thoại hoặc duyệt của phim cũ.',seriesArea,{class:'hint'});
-  const library=node('details',null,root);node('summary','Thư viện giọng dùng chung',library);const voiceList=node('div',null,library),voiceChoice=node('select',null,node('label','Thêm hoặc sửa giọng trong thư viện',library)),voiceName=node('input',null,node('label','Tên hiển thị',library),{maxlength:'100'}),preset=node('select',null,node('label','Giọng preset local',library));
-  const license=node('input',null,node('label','Giấy phép / điều kiện sử dụng',library),{maxlength:'1000'}),reference=node('input',null,node('label','Nguồn tham chiếu quyền',library),{maxlength:'2000'}),permission=node('input',null,node('label','Căn cứ được phép sử dụng',library),{maxlength:'2000'}),rightsLabel=node('label',null,library,{class:'check'}),rights=node('input',null,rightsLabel,{type:'checkbox'});
-  node('span','Tôi xác nhận có quyền dùng giọng này theo thông tin đã nhập.',rightsLabel);const voiceSave=button('Lưu giọng vào thư viện',library,'voice-save','manage',false);
-  node('p','Giọng mới có quyền chưa xác định cho tới khi Owner khai báo. Định nghĩa giọng được lưu theo phiên bản; không gán cố định cho một nhân vật. Chưa xác nhận chất lượng nghe bằng người.',library,{class:'hint'});
+  const library=node('details',null,root);library.open=true;node('summary','Nghe và chọn giọng local',library);
+  const target=node('select',null,node('label','Chọn giọng cho nhân vật',library));target.addEventListener('change',()=>{targetCharacter=target.value;voiceBrowser?.refresh();});
+  const voiceCards=node('div',null,library),registration=button('Đăng ký các preset đã cài có căn cứ quyền',library,'import-installed','manage',false);
+  const manual=node('details',null,library);node('summary','Quản lý giọng nâng cao',manual);
+  const voiceList=node('div',null,manual),voiceChoice=node('select',null,node('label','Thêm hoặc sửa giọng trong thư viện',manual)),voiceName=node('input',null,node('label','Tên hiển thị',manual),{maxlength:'100'}),preset=node('select',null,node('label','Giọng preset local',manual));
+  const license=node('input',null,node('label','Giấy phép / điều kiện sử dụng',manual),{maxlength:'1000'}),reference=node('input',null,node('label','Nguồn tham chiếu quyền',manual),{maxlength:'2000'}),permission=node('input',null,node('label','Căn cứ được phép sử dụng',manual),{maxlength:'2000'}),rightsLabel=node('label',null,manual,{class:'check'}),rights=node('input',null,rightsLabel,{type:'checkbox'});
+  node('span','Tôi xác nhận có quyền dùng giọng này theo thông tin đã nhập.',rightsLabel);const voiceSave=button('Lưu giọng vào thư viện',manual,'voice-save','manage',false);
+  node('p','Preset có căn cứ được đăng ký từ manifest đã khóa. Giọng thêm tay cần căn cứ riêng. Chọn giọng cho vai không thay cho duyệt audio hoặc video.',library,{class:'hint'});
   const option=(select,text,value)=>node('option',text,select,{value});
   function markVoice(){if(pending||working){controls();return;}voiceDirty=true;onDirty(true);controls();}
   function fillVoice(){editVoice=voices.find(v=>v.voice_id===voiceChoice.value)??null;const d=editVoice?.definition;voiceName.value=d?.display_name??'';preset.value=d?.provider_voice_id??'';license.value=d?.license??'';reference.value=d?.source_reference??'';permission.value=d?.permission_reference??'';rights.checked=d?.rights_status==='owner_declared';voiceDirty=false;onDirty(dialogueDirty);controls();}
   function draw(){
+    voiceBrowser?.dispose();voiceBrowser=null;
     characterArea.replaceChildren();lineArea.replaceChildren();voiceList.replaceChildren();seriesChoice.replaceChildren();voiceChoice.replaceChildren();preset.replaceChildren();
     option(seriesChoice,'Chọn bộ phân vai…','');for(const s of series)option(seriesChoice,`${s.name} · phiên bản ${s.version}`,s.series_id);
     option(voiceChoice,'Thêm giọng mới…','');for(const v of voices){option(voiceChoice,`${v.definition.display_name} · phiên bản ${v.version}`,v.voice_id);node('p',`${v.definition.display_name} · ${v.definition.provider_voice_id} · ${v.definition.rights_status==='owner_declared'?'Owner đã khai báo quyền':v.definition.rights_status==='blocked'?'Bị chặn':'Chưa khai báo quyền'}`,voiceList);}
@@ -91,14 +98,21 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
     status.textContent=!page?'Tải dữ liệu để bắt đầu.':page.compiled_current?'Phân vai đã kiểm tra. Duyệt nội dung và tạo lời đọc bên dưới; chưa duyệt video cuối.':page.casting?'Cần lưu / kiểm tra phân vai trước khi tạo audio.':'Chưa phân vai. Tạo nhân vật rồi chọn người nói cho từng câu.';
     if(page&&catalog?.status==='NOT_CONFIGURED')status.textContent+=' Chưa cấu hình bộ giọng local; vẫn có thể lưu bản phân vai nháp.';
     if(!draft)return;
+    target.replaceChildren();for(const c of draft.characters.filter(v=>v.role!=='narrator'||draft.narrator_enabled))option(target,c.name,c.character_id);targetCharacter=draft.characters.some(v=>v.character_id===targetCharacter)?targetCharacter:target.value;target.value=targetCharacter??'';
+    voiceBrowser=initializeVoiceBrowser({root:voiceCards,api,voices:voices.filter(v=>usableVoice(v)),catalog,dom,getCharacter:()=>draft?.characters.find(v=>v.character_id===targetCharacter),getTrialText:()=>draft?.lines.find(v=>v.character_id===targetCharacter&&v.enabled)?.text??'',
+      canEdit:()=>!working&&!active(getState())&&getState().canEdit!==false&&!getState().project?.archived,
+      onSelect:(voice,c)=>{draft.casting=draft.casting.filter(v=>v.character_id!==c.character_id);draft.casting.push({character_id:c.character_id,voice_id:voice.voice_id,voice_version:voice.version,voice_sha256:voice.definition_sha256});changed();draw();controls();},onMessage});
+    registration.hidden=(catalog?.voices??[]).every(v=>voices.some(x=>x.definition.provider_voice_id===v.provider_voice_id&&x.definition.rights_status==='source_licensed'));
     for(const character of draft.characters){const card=node('article',null,characterArea,{class:'planner-scene'}),name=node('input',null,node('label',character.role==='narrator'?'Tên người kể':'Tên nhân vật',card),{maxlength:'100'});name.value=character.name;
-      const select=node('select',null,node('label','Giọng của nhân vật trong phim này',card));option(select,'Chọn giọng…','');for(const voice of voices)option(select,`${voice.definition.display_name} · v${voice.version}${voice.definition.rights_status==='owner_declared'?'':' · cần kiểm tra quyền'}`,voice.voice_id);
+      const select=node('select',null,node('label','Giọng của nhân vật trong phim này',card));option(select,'Chọn giọng…','');for(const voice of voices)option(select,`${voice.definition.display_name}${usableVoice(voice)?'':' · cần kiểm tra quyền'}`,voice.voice_id);
       const casting=draft.casting.find(v=>v.character_id===character.character_id),current=voices.find(v=>v.voice_id===casting?.voice_id&&v.version===casting.voice_version&&v.definition_sha256===casting.voice_sha256);select.value=current?.voice_id??'';
+      const hear=button('Nghe và chọn giọng cho '+character.name,card,'browse-voices','edit',false);hear.addEventListener('click',()=>{targetCharacter=character.character_id;target.value=targetCharacter;library.open=true;voiceBrowser?.refresh();library.scrollIntoView?.({block:'start',behavior:'smooth'});});
+      const note=getState().project?.document?.drama_script?.character_notes?.[character.character_id];if(note)node('p','Vai trò / tính cách: '+note,card,{class:'hint'});
       name.addEventListener('input',()=>{character.name=name.value;changed();});select.addEventListener('change',()=>{draft.casting=draft.casting.filter(v=>v.character_id!==character.character_id);const voice=voices.find(v=>v.voice_id===select.value);if(voice)draft.casting.push({character_id:character.character_id,voice_id:voice.voice_id,voice_version:voice.version,voice_sha256:voice.definition_sha256});changed();});
       const remove=button('Xóa nhân vật chưa dùng',card,'remove-character','edit',false);remove.addEventListener('click',()=>{if(remove.disabled)return;if(draft.characters.length<=1||draft.lines.some(v=>v.character_id===character.character_id)){onMessage('Giữ ít nhất một nhân vật và đổi người nói của các câu liên quan trước khi xóa.',true);return;}draft.characters=draft.characters.filter(v=>v.character_id!==character.character_id);draft.casting=draft.casting.filter(v=>v.character_id!==character.character_id);if(character.role==='narrator')draft.narrator_enabled=false;changed();draw();controls();});
     }
     for(const [index,line] of draft.lines.entries()){const card=node('article',null,lineArea,{class:'planner-scene'}),speaker=node('select',null,node('label',`Người nói · câu ${index+1}`,card));option(speaker,'Chọn người nói…','');for(const c of draft.characters)option(speaker,c.name+(c.role==='narrator'?' · người kể':''),c.character_id);speaker.value=line.character_id??'';
-      const shot=node('select',null,node('label','Shot',card));option(shot,'Chọn shot…','');for(const s of page.shots)option(shot,`Shot ${s.scene}`,s.shot_id);shot.value=line.shot_id??'';
+      const shot=node('select',null,node('label','Cảnh quay',card));option(shot,'Chọn cảnh…','');for(const s of page.shots)option(shot,`Cảnh ${s.scene}`,s.shot_id);shot.value=line.shot_id??'';
       const text=node('textarea',null,node('label','Nội dung câu thoại',card),{rows:'3',maxlength:'4000'});text.value=line.text;
       const enabled=node('input',null,node('label','Dùng câu này',card),{type:'checkbox'});enabled.checked=line.enabled;
       for(const [element,event,callback]of [[speaker,'change',()=>line.character_id=speaker.value],[shot,'change',()=>line.shot_id=shot.value],[text,'input',()=>line.text=text.value],[enabled,'change',()=>line.enabled=enabled.checked]])element.addEventListener(event,()=>{callback();changed();});
@@ -134,15 +148,18 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
     for(const input of root.querySelectorAll('input,textarea,select'))input.disabled=edit||Boolean(pending);
     for(const input of castArea.querySelectorAll('input,textarea,select'))input.disabled=edit||voiceDirty||Boolean(pending);
     for(const input of library.querySelectorAll('input,textarea,select'))input.disabled=manage||dialogueDirty||Boolean(pending)||unsupported&&input!==voiceChoice;
-    for(const b of root.querySelectorAll('button'))b.disabled=stop||Boolean(b._boundary)||(b._permission==='manage'?s.canManage===false:b._permission==='edit'?s.canEdit===false||voiceDirty:false)||b._saved&&(dialogueDirty||voiceDirty)||Boolean(pending&&b.getAttribute('data-drama-action')!==pending.action);
+    for(const b of root.querySelectorAll('button[data-drama-action]'))b.disabled=stop||Boolean(b._boundary)||(b._permission==='manage'?s.canManage===false:b._permission==='edit'?s.canEdit===false||voiceDirty:false)||b._saved&&(dialogueDirty||voiceDirty)||Boolean(pending&&b.getAttribute('data-drama-action')!==pending.action);
     loadButton.disabled=stop||dialogueDirty||voiceDirty||Boolean(pending);discard.disabled=stop||!dialogueDirty&&!voiceDirty||Boolean(pending);
-    start.disabled=edit||!page?.shots.length||Boolean(draft)||Boolean(pending);save.disabled=edit||!draft||!dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='save');
+    start.disabled=edit||!page||Boolean(draft)||Boolean(pending);save.disabled=edit||!draft||!dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='save');
     compile.disabled=edit||!page?.casting||dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='compile');addLine.disabled=addCharacter.disabled=narrator.disabled=edit||!draft||voiceDirty||Boolean(pending);
     voiceSave.disabled=manage||unsupported||dialogueDirty||!catalog?.model||!preset.value||!voiceName.value?.trim()||Boolean(pending&&pending.action!=='voice-save');
     seriesSave.disabled=edit||!page?.casting||dialogueDirty||voiceDirty||!seriesName.value?.trim()||Boolean(pending&&pending.action!=='series-save');seriesApply.disabled=edit||!seriesChoice.value||dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='series-apply');
+    voiceBrowser?.refresh();
   }
   function sync(){const key=context();if(binding!==key){binding=key;serial++;page=null;voices=[];catalog=null;series=[];draft=null;dialogueDirty=voiceDirty=clearLegacyChoice=false;pending=null;onDirty(false);draw();}controls();}
   loadButton.addEventListener('click',()=>load());discard.addEventListener('click',()=>load({discard:true}));
+  root.addEventListener('toggle',()=>{if(root.open&&autoLoadContext!==context()&&!working&&!blocked(getState())){autoLoadContext=context();void load();}});
+  registration.addEventListener('click',async()=>{if(registration.disabled)return;try{await api('/api/voice-library/import-installed',{method:'POST',body:JSON.stringify({acknowledged:true})});await load();}catch(error){onMessage(humanError(error),true);}});
   start.addEventListener('click',()=>{if(start.disabled)return;draft={narrator_enabled:false,characters:[{character_id:uid('chr_'),name:'Nhân vật 1',role:'character'}],casting:[],lines:page.shots.filter(s=>s.narration_enabled&&s.narration.trim()).map(s=>({line_id:uid('line_'),character_id:'',shot_id:s.shot_id,text:s.narration,enabled:true,speed:1,style:'neutral',pause_after_seconds:.15}))};changed();draw();controls();});
   addCharacter.addEventListener('click',()=>{if(addCharacter.disabled)return;draft.characters.push({character_id:uid('chr_'),name:`Nhân vật ${draft.characters.length+1}`,role:'character'});changed();draw();controls();});
   addLine.addEventListener('click',()=>{if(addLine.disabled)return;draft.lines.push({line_id:uid('line_'),character_id:'',shot_id:null,text:'',enabled:true,speed:1,style:'neutral',pause_after_seconds:.15});changed();draw();controls();});

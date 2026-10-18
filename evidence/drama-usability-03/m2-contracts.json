@@ -1,0 +1,22 @@
+{
+  "milestone": "M2",
+  "state": "IMPLEMENTED_PENDING_REAL_AUDITIONS",
+  "sdk_version": "3.8.3",
+  "sdk_commit": "85344322b7258b4e25479b692e8e3396baf9db34",
+  "model": "vieneu-v3-turbo",
+  "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+  "detected_presets": 25,
+  "distinct_preset_payloads": 25,
+  "eligible_under_pinned_source_license": 25,
+  "featured_sample_target": 10,
+  "new_real_samples_completed_at_commit": 0,
+  "registration": "explicit internal management; source_licensed cannot be claimed by ordinary create/update API",
+  "audio_queue": {"max_pending": 10, "concurrency": 1, "max_explicit_attempts": 3, "automatic_inference_on_get": false, "automatic_retry": false},
+  "studio_full": {"passed": 2148, "failed": 0, "log": "m2-studio-full-n2.log"},
+  "native_related_initial": {"tests": 110, "passed": 109, "failed": 1, "note": "legacy unknown-rights error order; corrected then 11 voice/preset tests passed; full candidate rerun still required"},
+  "voice_preset_rerun": {"passed": 11, "failed": 0, "log": "m2-voices-n2.log"},
+  "renderer_full": {"passed": 52, "failed": 0, "typecheck": "PASS", "source": "cb04dfd8; renderer unchanged"},
+  "api_related_initial": {"passed": 29, "setup_errors": 115, "cause": "WinError 5 pytest shared TEMP root; isolated basetemp rerun required"},
+  "browser_walkthrough_complete": false,
+  "owner_voice_uat_complete": false
+}

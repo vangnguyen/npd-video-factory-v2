@@ -21,8 +21,13 @@ def presets(config):
 def catalog(config):
     try:
         locked,values=presets(config)
-        return {'provider':PROVIDER,'status':'METADATA_AVAILABLE','model':MODEL,'model_revision':locked['model_revision'],
-            'voices':[{'provider_voice_id':name,'display_name':name,'locale':'vi-VN','source_type':'provider_preset','rights_status':'unknown'} for name in sorted(values)],
+        from .voice_presets import licensed_inventory
+        try:eligible={v['definition']['provider_voice_id']:v for v in licensed_inventory(config)}
+        except (WorkflowError,OSError,ValueError):eligible={}
+        return {'provider':PROVIDER,'status':'METADATA_AVAILABLE','model':locked['model'],'model_revision':locked['model_revision'],
+            'voices':[{'provider_voice_id':name,'display_name':name,'locale':'vi-VN','source_type':'provider_preset','rights_status':'source_licensed' if name in eligible else 'unknown',
+                'metadata':{k:values[name].get(k) for k in ('description','gender','region','style','featured','aliases')},'installed':True,
+                'rights_evidence':eligible[name]['evidence'] if name in eligible else None,'human_listening_accepted':False} for name in sorted(values,key=lambda n:(values[n].get('featured') or 999,n))],
             'default_voice':None,'supported_speeds':[1.0],'supported_styles':['neutral'],'custom_reference_cloning':False,
             'requires_runtime_validation':True,'human_voice_uat_complete':False,'inference_calls':0,'paid':False}
     except (OSError,WorkflowError,ValueError):
@@ -37,9 +42,16 @@ class VieNeuDialoguePresetAdapter:
             'preset_asset_sha256':self.locked['rights']['preset_asset_sha256'],'adapter_source_sha256':file_sha(Path(__file__))})
 
     def validate(self,voice,line):
-        if (voice.get('provider')!=PROVIDER or voice.get('model')!=MODEL or voice.get('locale') not in {'vi','vi-VN'}
+        if voice.get('rights_status') not in ('owner_declared','source_licensed') or not all(voice.get(k) for k in ('license','source_reference','permission_reference')):raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
+        # Retain immutable historical Owner definitions which incorrectly used the content LLM label.
+        accepted_models={self.locked['model']}
+        if voice.get('rights_status')=='owner_declared':accepted_models.add(MODEL)
+        if (voice.get('provider')!=PROVIDER or voice.get('model') not in accepted_models or voice.get('locale') not in {'vi','vi-VN'}
             or voice.get('source_type')!='provider_preset' or voice.get('provider_voice_id') not in self.voices):raise WorkflowError('DRAMA_VIENEU_VOICE_NOT_CONFIGURED')
-        if voice.get('rights_status')!='owner_declared' or not all(voice.get(k) for k in ('license','source_reference','permission_reference')):raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
+        if voice.get('rights_status') not in ('owner_declared','source_licensed') or not all(voice.get(k) for k in ('license','source_reference','permission_reference')):raise WorkflowError('VOICE_RIGHTS_CONFIRMATION_REQUIRED')
+        if voice.get('rights_status')=='source_licensed':
+            from .voice_presets import verify_definition
+            verify_definition(self.config,voice)
         if type(line.get('speed')) not in (int,float) or line['speed']!=1 or line.get('style')!='neutral':raise WorkflowError('DRAMA_VIENEU_DELIVERY_NOT_SUPPORTED')
 
     def synthesize(self,*,text,voice,line,take,request_key,target):

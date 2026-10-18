@@ -534,6 +534,8 @@ class LocalServer(ThreadingHTTPServer):
         from .dialogue_takes import NativeDialogueTakes
         from .drama_series import NativeDramaSeries
         self.voice_library=NativeVoiceLibrary(self.store,workspace_id=self.publications.workspace_id)
+        from .voice_auditions import NativeVoiceAuditions
+        self.voice_auditions=NativeVoiceAuditions(self.voice_library,config)
         self.drama_casting=NativeDramaCasting(self.store,self.voice_library)
         self.dialogue_takes=NativeDialogueTakes(self.store,self.voice_library)
         self.drama_series=NativeDramaSeries(self.store,self.voice_library)
@@ -1048,6 +1050,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-export-settings.mjs'] = 'native-export-settings.mjs'
         static['/native-drama.mjs'] = 'native-drama.mjs'
         static['/drama-workflow.mjs']='drama-workflow.mjs'
+        static['/voice-browser.mjs']='voice-browser.mjs'
         static['/drama-workflow.css']='drama-workflow.css'
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'

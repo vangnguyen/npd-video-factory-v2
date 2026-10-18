@@ -18,12 +18,13 @@ class DialogueVieNeuTests(unittest.TestCase):
     def target(self,name='attempt'):
         directory=self.root/name;directory.mkdir();return directory/'line.wav'
 
-    def test_pinned_preset_catalog_is_metadata_only_unknown_rights_and_no_default_selection(self):
+    def test_pinned_preset_catalog_is_metadata_only_source_licensed_and_no_default_selection(self):
         with patch('services.windows_native.dialogue_vieneu.subprocess.run',side_effect=AssertionError('Catalog must not launch inference')):
             result=catalog(self.config)
         self.assertEqual(result['status'],'METADATA_AVAILABLE');self.assertEqual(len(result['voices']),25)
         self.assertIsNone(result['default_voice']);self.assertEqual(result['inference_calls'],0);self.assertFalse(result['custom_reference_cloning'])
-        self.assertTrue(all(v['rights_status']=='unknown' for v in result['voices']));self.assertTrue(result['requires_runtime_validation'])
+        self.assertTrue(all(v['rights_status']=='source_licensed' for v in result['voices']));self.assertTrue(result['requires_runtime_validation'])
+        self.assertEqual(result['model'],'vieneu-v3-turbo');self.assertTrue(all(v['human_listening_accepted'] is False for v in result['voices']))
 
     def test_unknown_voice_reference_cloning_language_style_and_speed_fail_without_fallback(self):
         for voice,line in [({**self.voice,'provider_voice_id':'UNKNOWN PRESET'},self.line),({**self.voice,'source_type':'licensed_reference'},self.line),

@@ -30,7 +30,7 @@ def build(configuration,library,*,provider_signatures=None):
         if voice['definition_sha256']!=cast['voice_sha256']:raise WorkflowError('DRAMA_VOICE_BINDING_CHANGED')
         reasons=[]
         if not voice['current']:reasons.append('voice_version_changed')
-        if definition['rights_status']!='owner_declared':reasons.append('voice_rights_confirmation_required')
+        if definition['rights_status'] not in ('owner_declared','source_licensed'):reasons.append('voice_rights_confirmation_required')
         if definition['source_type']=='licensed_reference' and not definition['cloning_consent']:reasons.append('reference_consent_required')
         profile=signatures.get(definition['provider'])
         if profile is None:reasons.append('provider_not_configured')
