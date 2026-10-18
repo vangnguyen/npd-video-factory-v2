@@ -47,6 +47,9 @@ class ManualDeliveryHTTPTests(unittest.TestCase):
     def test_export_caption_history_download_and_capabilities_use_real_bytes(self):
         code,session,_=self.http('GET','/api/session');self.assertEqual(code,200)
         self.assertTrue(session['capabilities']['native_manual_delivery'])
+        self.assertTrue(session['capabilities']['native_manual_delivery_focus'])
+        code,module,_=self.http('GET','/native-export-settings.mjs');self.assertEqual(code,200)
+        self.assertIn(b'applyNativeExportSettings',module)
         copybase='/api/projects/'+self.project['id']+'/delivery-copy'
         code,saved,_=self.http('POST',copybase,{'expected_version':0,'request_key':'explicit-http-caption-key','variants':{'master':{'caption':'Cần Giờ · đăng thủ công'}}})
         self.assertEqual(code,200,saved)

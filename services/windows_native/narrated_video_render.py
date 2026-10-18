@@ -93,6 +93,8 @@ def render(config,document,directory,frames,geometry,brand):
             'timeline_start':frame['start'],'duration':frame['end']-frame['start'],'source_start':0,'source_end':None,'fit':'contain',
             'crop':{'x':0,'y':0,'width':1,'height':1},'transform':{'x':0,'y':0,'scale':1,'rotation_degrees':0},'opacity':1})
     write_json(child/'timeline-render.json',manifest)
+    from .export_encoder import write as write_export_encoder
+    write_export_encoder(document,child)
     manifest_file_sha=file_sha(child/'timeline-render.json')
     node=Path(getattr(config,'node_executable',r'C:\Program Files\nodejs\node.exe'));tsx=REPO/'renderer/node_modules/tsx/dist/cli.mjs'
     if not node.is_file() or not tsx.is_file():raise WorkflowError('NARRATED_VIDEO_RENDERER_NOT_CONFIGURED')

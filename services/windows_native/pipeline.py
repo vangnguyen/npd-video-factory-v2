@@ -417,6 +417,9 @@ def render(config, snapshot, out, *, preview_only=False):
     import numpy as np
 
     doc = snapshot["document"]
+    from .export_encoder import output_options,selection
+    export_options=output_options(doc)
+    export_selected=bool(selection(doc) or export_options['fps']!=30 or 'native_export_presentation' in (doc.get('canonical_timeline') or {}).get('snapshot',{}).get('metadata',{}))
     from .narrated_media_timeline import enabled as media_tracks_enabled,VOICE_TRACK
     canonical_media=media_tracks_enabled(doc)
     from .narrated_video_timeline import enabled as video_enabled
@@ -553,7 +556,7 @@ def render(config, snapshot, out, *, preview_only=False):
                         f"pad=1080:1000:(ow-iw)/2:(oh-ih)/2:color=0x{background},setsar=1,"
                         f"pad=1080:1920:0:390:color=0x{background}[media];[media][1:v]overlay=0:0:shortest=1,format=yuv420p[v]",
                         "-map", "[v]"]
-        command += ["-frames:v", str(count), "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+        command += ["-frames:v", str(count), "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", str(export_options['crf']),
                     "-pix_fmt", "yuv420p", "-r", "30", "-video_track_timescale", "15360", segment]
         if not canonical_video:
             with (out / f"scene-{i:02}.log").open("w", encoding="utf-8") as log:
@@ -635,13 +638,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if canonical_video:
         from .narrated_video_render import render as canonical_visual_render
         canonical_visual=canonical_visual_render(config,doc,out,frames,geometry,brand)
-    filters = f"[0:v]fps=30,ass=subtitles.ass{':fontsdir=fonts' if canonical_media else ''},format=yuv420p[v];"+('[1:a]anull[a]' if canonical_media else audio_filters)
+    subtitle_filter=(f",ass=subtitles.ass{':fontsdir=fonts' if canonical_media else ''}" if export_options['burn_subtitles'] else '')
+    filters = f"[0:v]fps={export_options['fps']}{subtitle_filter},format=yuv420p[v];"+('[1:a]volume=0[a]' if not export_options['audio_included'] else '[1:a]anull[a]' if canonical_media else audio_filters)
     cmd = [str(config.ffmpeg_bin / "ffmpeg.exe"), "-hide_banner", "-nostdin", "-n", "-f", "concat", "-safe", "1", "-i", "frames.txt",
             "-i", 'narrated-mix.wav' if canonical_media else voice_file]
     if canonical_video:
         cmd=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-n','-i','narrated-video.mp4','-i','narrated-mix.wav']
-    music=doc.get("music") if doc.get("music_enabled",True) and not canonical_media else None
-    capture_audio_stems=bool(strict_quality or preview_only or canonical_media)
+    music=doc.get("music") if doc.get("music_enabled",True) and not canonical_media and export_options['audio_included'] else None
+    capture_audio_stems=bool(strict_quality or preview_only or canonical_media or export_selected)
     music_loop=None
     if music:
         music_source=media_path(config,music["id"])
@@ -654,7 +658,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         else:cmd += ["-stream_loop","-1","-i",str(music_source)]
         filters=music_filters(filters,duration,brand.music_profile.nominal_gain,canonical_fades=music_loop is not None)
     cmd += ["-filter_complex", filters, "-map", "[v]", "-map", "[a]", "-c:v", "libx264",
-           "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
+           "-preset", "veryfast", "-crf", str(export_options['crf']), "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
            "-ar", "48000", "-movflags", "+faststart", "-t", f"{duration:.4f}", "final.mp4"]
     with (out / "render.log").open("w", encoding="utf-8") as log:
         result = subprocess.run(cmd, cwd=out, stdout=log, stderr=subprocess.STDOUT, timeout=600)
@@ -666,7 +670,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         from .audio_balance import narrated_stems
         diagnostic=narrated_stems(config,out,duration=duration,voice_file=voice_file,
             music_file=music_source if music else None,voice_filters=audio_filters,
-            music_gain=brand.music_profile.nominal_gain,canonical_fades=music_loop is not None)
+            music_gain=brand.music_profile.nominal_gain,canonical_fades=music_loop is not None,intentional_silence=not export_options['audio_included'])
     write_json(out / "timeline.json",timeline(doc,frames,captions,meta))
     write_json(out / "render-manifest.json", {"duration_seconds": duration, "captions": captions, "scenes": frames,
         "voice_sha256": meta["audio_sha256"], "scene_source_policy": "exactly_one_image_or_video",
@@ -676,7 +680,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             "font_family":brand.fonts.subtitle_family,"geometry_basis":"actual_libass_pixels_required_by_full_qc"},
         "profile_sha256": PROFILE_SHA, "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
-        **({'audio_balance_inputs':{'reference_role':'narrated_voice','reference_sha256':file_sha(out/'audio-reference.f32le'),
+        **({'audio_balance_inputs':{'reference_role':'narrated_voice' if export_options['audio_included'] else 'no_reference','reference_sha256':file_sha(out/'audio-reference.f32le') if export_options['audio_included'] else None,
             'music_sha256':file_sha(out/'audio-music.f32le') if music else None,
             'filter_graph_sha256':digest(diagnostic),'diagnostic_filter_threads':1,
             'diagnostic_pass':'independent_audio_only_same_source_and_dsp'}} if capture_audio_stems and not canonical_media else {}),
@@ -688,6 +692,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             'manifest_sha256':canonical_visual['manifest_sha256'],'render_record_sha256':file_sha(out/'narrated-video-render.json'),
             'actual_canonical_visual_windows':True}} if canonical_visual else {}),
         **({'render_purpose':'narration_preview','preview_authorization':snapshot['preview_authorization']} if preview_only else {}),
+        **({'export_options':export_options} if export_selected else {}),
         "edit_plan_sha256":digest(edit_plan),"safe_area":edit_plan["safe_area"] if edit_plan else None,
         "music":{"sha256":music["sha256"],"nominal_gain":brand.music_profile.nominal_gain,"ducking":brand.music_profile.ducking} if music else None,
         **({'canonical_music_loop':music_loop} if music_loop is not None else {}),
@@ -699,14 +704,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         **({'canonical_timeline':{'version':doc['canonical_timeline']['version'],'sha256':doc['canonical_timeline']['sha256']},
             'scene_layout':retimed['scene_layout'],'source_voice_sha256':retimed['source_voice_sha256'],
             'sample_preserving_placement':True,'custom_subtitle_timing':'shot_estimate_not_word_alignment'} if retimed else {})})
-    report=qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality)
-    if strict_quality or preview_only or canonical_media:
+    report=qc(config, out, duration,expected_canvas=(width,height),quality_policy=strict_quality,expected_fps=export_options['fps'],intentional_audio_silence=not export_options['audio_included'])
+    if strict_quality or preview_only or canonical_media or export_selected:
         from .storyboard_qc import inspect
         return inspect(config,snapshot,out,report,preview_only=preview_only)
     return report
 
 
-def qc(config, out, expected_duration,expected_canvas=(1080,1920), *, quality_policy=None):
+def qc(config, out, expected_duration,expected_canvas=(1080,1920), *, quality_policy=None,expected_fps=30,intentional_audio_silence=False):
     import numpy as np
     ffprobe = subprocess.check_output([str(config.ffmpeg_bin / "ffprobe.exe"), "-v", "error", "-show_streams", "-show_format", "-of", "json", str(out / "final.mp4")], timeout=30)
     probe = json.loads(ffprobe)
@@ -724,18 +729,18 @@ def qc(config, out, expected_duration,expected_canvas=(1080,1920), *, quality_po
     if canvas_check is None:raise WorkflowError('RENDER_PROFILE_CANVAS_MISMATCH',400)
     checks = {canvas_check: (video["width"], video["height"]) == expected_canvas,
               "h264_aac": video["codec_name"] == "h264" and audio["codec_name"] == "aac",
-              "fps_30": video["avg_frame_rate"] == "30/1", "yuv420p": video["pix_fmt"] == "yuv420p",
+              ("fps_30" if expected_fps==30 else "fps_matches_export"): video["avg_frame_rate"] == f"{expected_fps}/1", "yuv420p": video["pix_fmt"] == "yuv420p",
               "audio_48khz": audio["sample_rate"] == "48000", "full_decode": decoded.returncode == 0,
               "duration_complete": abs(float(probe["format"]["duration"]) - expected_duration) < .12,
               "av_duration_match": abs(float(video["duration"]) - float(audio["duration"])) < .12,
-              "finite_audible_audio": bool(samples.size and np.isfinite(samples).all() and np.sqrt(np.mean(samples ** 2)) > .005),
+              "finite_audible_audio": bool(samples.size and np.isfinite(samples).all() and (intentional_audio_silence or np.sqrt(np.mean(samples ** 2)) > .005)),
               "no_hard_clipping": bool(samples.size and np.max(np.abs(samples)) < .999),
               "no_black_intervals": black.returncode == 0 and "black_start:" not in (out / "blackdetect.log").read_text()}
     quality_evidence={}
     if quality_policy:
         from .north_star_quality import audio_activity
         activity=audio_activity(samples,48000,threshold_db=quality_policy['silence_threshold_db'],window_seconds=quality_policy['activity_window_seconds'])
-        checks['no_trailing_audio_silence']=activity['audio_activity_detected'] and activity['trailing_silence_seconds']<=quality_policy['max_final_audio_tail_seconds']+.02
+        checks['no_trailing_audio_silence']=intentional_audio_silence or activity['audio_activity_detected'] and activity['trailing_silence_seconds']<=quality_policy['max_final_audio_tail_seconds']+.02
         quality_evidence={'decoded_audio_activity':activity,'production_quality_policy':quality_policy}
     report = {"checks": checks, "passed": all(checks.values()), "final_sha256": file_sha(out / "final.mp4"),
               "duration_seconds": float(probe["format"]["duration"]), "final_bytes": (out / "final.mp4").stat().st_size,

@@ -177,9 +177,12 @@ def artifact_names(directory):
     return tuple(name for name in (REPORT,REFERENCE,MUSIC,FINAL,'audio-stem-manifest.json',
         'audio-reference-filter.txt','audio-music-filter.txt') if (directory/name).is_file())
 
-def narrated_stems(config,directory,*,duration,voice_file,music_file,voice_filters,music_gain,canonical_fades):
+def narrated_stems(config,directory,*,duration,voice_file,music_file,voice_filters,music_gain,canonical_fades,intentional_silence=False):
     """Read the render's physical audio sources; do not alter the mixed render."""
     directory=guard(directory,exists=True);voice=guard(directory/voice_file,exists=True)
+    if intentional_silence:
+        if type(intentional_silence) is not bool:raise WorkflowError('AUDIO_BALANCE_CONFIGURATION_INVALID')
+        return {}
     video=guard(directory/'final.mp4',exists=True);before=file_sha(video)
     sources=[voice]+([guard(music_file,exists=True)] if music_file is not None else [])
     hashes=[file_sha(path) for path in sources]

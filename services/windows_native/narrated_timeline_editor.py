@@ -5,7 +5,7 @@ uploads, rights, provider/cost journals, jobs and approval authority never rewin
 """
 import copy,json,math
 from typing import Literal
-from pydantic import Field,StrictInt,field_validator,model_validator
+from pydantic import Field,StrictInt,StrictBool,field_validator,model_validator
 from app.models import StrictModel
 from app.timeline_models import TimelineSnapshot,TimelineOperation
 from app.timeline_logic import apply_operations,TimelineEditError
@@ -53,6 +53,10 @@ class Configure(Binding):
     audio_processing:AudioProcessing|None=None
     subtitle_template_ref:str|None=Field(default=None,min_length=1,max_length=100)
     keywords:list[str]=Field(default_factory=list,max_length=30)
+    fps:StrictInt|None=None
+    quality_preset:Literal['high','standard','small']|None=None
+    burn_subtitles:StrictBool|None=None
+    audio_included:StrictBool|None=None
     @field_validator('audio_processing',mode='before')
     @classmethod
     def finite(cls,v):
@@ -62,7 +66,8 @@ class Configure(Binding):
         return v
     @model_validator(mode='after')
     def choice(self):
-        if self.audio_processing is None and self.subtitle_template_ref is None or self.keywords and self.subtitle_template_ref is None:
+        if (all(v is None for v in (self.audio_processing,self.subtitle_template_ref,self.fps,self.quality_preset,self.burn_subtitles,self.audio_included))
+            or self.keywords and self.subtitle_template_ref is None or self.fps is not None and self.fps not in (24,25,30,60)):
             raise ValueError('settings choice required')
         return self
 
@@ -168,6 +173,16 @@ def configure(store,project_id,body,workspace_id):
     payload=_parse(Configure,body)
     with store.transaction() as con:
         project=store.editable(con,project_id,payload.revision);_,snapshot=_cas(store,con,project,payload)
+        if payload.fps is not None:
+            snapshot.fps=payload.fps
+            snapshot.metadata.setdefault('native_export_encoder',{'schema_version':'native-export-encoder.v1','quality_preset':'standard'})
+        if payload.quality_preset is not None:snapshot.metadata['native_export_encoder']={'schema_version':'native-export-encoder.v1','quality_preset':payload.quality_preset}
+        if payload.burn_subtitles is not None or payload.audio_included is not None:
+            from .export_encoder import presentation
+            options=presentation(snapshot)
+            if payload.burn_subtitles is not None:options['burn_subtitles']=payload.burn_subtitles
+            if payload.audio_included is not None:options['audio_included']=payload.audio_included
+            snapshot.metadata['native_export_presentation']=options
         if payload.audio_processing is not None:
             if any(t.locked for t in snapshot.tracks if t.type=='audio'):raise WorkflowError('NARRATED_TIMELINE_AUDIO_TRACK_LOCKED',400)
             snapshot.metadata['source_audio_processing']=payload.audio_processing.model_dump(mode='json')

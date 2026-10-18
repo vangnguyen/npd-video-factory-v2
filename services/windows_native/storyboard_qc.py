@@ -46,6 +46,15 @@ def subtitle_evidence(config,directory,manifest,duration,width,height):
     if not isinstance(rect,list) or len(rect)!=4 or any(type(n) is not int for n in rect) or not (0<=rect[0]<rect[2]<=width and 0<=rect[1]<rect[3]<=height):raise WorkflowError('STORYBOARD_QC_SUBTITLE_SAFE_AREA_INVALID')
     dialogue=[line.split(',',9) for line in source.read_text(encoding='utf-8').splitlines() if line.startswith('Dialogue:')]
     if len(dialogue)!=len(captions) or any(len(row)!=10 for row in dialogue):raise WorkflowError('STORYBOARD_QC_SUBTITLE_BINDING_INVALID')
+    options=manifest.get('export_options') or {};fps=options.get('fps',30)
+    if type(fps) is not int or fps not in (24,25,30,60):raise WorkflowError('STORYBOARD_QC_RENDER_BINDING_INVALID')
+    if options.get('burn_subtitles') is False:
+        from .pipeline import ass_time
+        for index,cue in enumerate(captions):
+            if (not isinstance(cue,dict) or not number(cue.get('start')) or not number(cue.get('end')) or not 0<=cue['start']<cue['end']<=duration+.001
+                or not isinstance(cue.get('text'),str) or not cue['text'].strip() or dialogue[index][1]!=ass_time(cue['start']) or dialogue[index][2]!=ass_time(cue['end'])):raise WorkflowError('STORYBOARD_QC_SUBTITLE_TIMING_INVALID')
+        return {'status':'passed','basis':'captions_intentionally_not_burned_in','cue_count':len(captions),'timing_checked':True,
+            'actual_libass_pixels':False,'sample_count':0,'external_provider_calls':0,'word_alignment_claimed':False}
     folder=directory/'subtitle-qc';folder.mkdir(exist_ok=False);samples=[];failures=[];started=time.monotonic()
     from .pipeline import ass_time
     for index,cue in enumerate(captions):
@@ -54,16 +63,16 @@ def subtitle_evidence(config,directory,manifest,duration,width,height):
         if (not number(start) or not number(end) or not 0<=start<end<=duration+.001 or not isinstance(cue.get('text'),str) or not cue['text'].strip()):raise WorkflowError('STORYBOARD_QC_SUBTITLE_TIMING_INVALID')
         # Native ASS writes centiseconds; sample an actual 30-fps frame in that interval.
         if dialogue[index][1]!=ass_time(start) or dialogue[index][2]!=ass_time(end):raise WorkflowError('STORYBOARD_QC_SUBTITLE_BINDING_INVALID')
-        left=round(start*100)/100;right=round(end*100)/100;first=math.ceil(left*30-1e-8);last=math.ceil(right*30-1e-8)-1
+        left=round(start*100)/100;right=round(end*100)/100;first=math.ceil(left*fps-1e-8);last=math.ceil(right*fps-1e-8)-1
         if first>last:failures.append({'cue_index':index,'reason':'caption_has_no_visible_output_frame'});continue
-        stamp=(first+last)//2/30
+        stamp=(first+last)//2/fps
         if time.monotonic()-started>90:raise WorkflowError('STORYBOARD_QC_SUBTITLE_TIMEOUT')
         approved_fonts=manifest.get('approved_subtitle_font_sha256')
         if approved_fonts is not None:
             from .narrated_media_captions import FONT_SHA
             if approved_fonts!=FONT_SHA or any(file_sha(guard(directory/'fonts'/name,exists=True))!=sha for name,sha in FONT_SHA.items()):
                 raise WorkflowError('NARRATED_SUBTITLE_FONT_CHANGED')
-        command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-v','error','-f','lavfi','-i',f'color=c=black@0.0:s={width}x{height}:r=30,format=rgba',
+        command=[str(config.ffmpeg_bin/'ffmpeg.exe'),'-hide_banner','-nostdin','-v','error','-f','lavfi','-i',f'color=c=black@0.0:s={width}x{height}:r={fps},format=rgba',
             '-vf',f"setpts=PTS+{stamp:.9f}/TB,ass=subtitles.ass:alpha=1{':fontsdir=fonts' if approved_fonts is not None else ''}",'-frames:v','1','-fps_mode','passthrough','-f','image2pipe','-c:v','png','pipe:1']
         try:result=subprocess.run(command,cwd=directory,capture_output=True,timeout=20,check=True)
         except (subprocess.SubprocessError,OSError):raise WorkflowError('STORYBOARD_QC_SUBTITLE_MASK_FAILED') from None
@@ -103,9 +112,13 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         elif manifest.get('approval')!=snapshot.get('approval') or not snapshot.get('approval') or snapshot['approval'].get('snapshot_sha256')!=digest(document):raise WorkflowError('STORYBOARD_QC_APPROVAL_CHANGED')
         canonical=document.get('canonical_timeline')
         if canonical and manifest.get('canonical_timeline')!={'version':canonical['version'],'sha256':canonical['sha256']}:raise WorkflowError('STORYBOARD_QC_CANONICAL_TIMELINE_CHANGED')
+        from .export_encoder import output_options
+        options=output_options(document)
+        if 'export_options' in manifest and manifest['export_options']!=options:raise WorkflowError('STORYBOARD_QC_EXPORT_OPTIONS_CHANGED')
         voice=manifest.get('voice_audio_file')
         if voice not in {'voice.wav','render-voice.wav'} or file_sha(guard(directory/voice,exists=True))!=manifest.get('voice_sha256'):raise WorkflowError('STORYBOARD_QC_VOICE_CHANGED')
         timeline=timeline_evidence(config,document,manifest,duration);subtitle=subtitle_evidence(config,directory,manifest,duration,width,height)
+        timeline['intentional_audio_silence']=not options['audio_included']
         from .narrated_media_timeline import enabled as media_enabled
         if media_enabled(document):
             from .narrated_media_mix import validate_bundle
@@ -114,7 +127,7 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
             from .narrated_music import verify_bundle
             music_loop=verify_bundle(config,document,directory,manifest)
         full=asyncio.run(FullProductionQC(ffprobe_path=str(config.ffmpeg_bin/'ffprobe.exe'),ffmpeg_path=str(config.ffmpeg_bin/'ffmpeg.exe')).inspect(directory/'final.mp4',
-            expected_duration=duration,expected_width=width,expected_height=height,expected_fps=30,subtitle_qc=subtitle,timeline_qc=timeline))
+            expected_duration=duration,expected_width=width,expected_height=height,expected_fps=options['fps'],subtitle_qc=subtitle,timeline_qc=timeline))
         # Shared measurements contain interval tuples; freeze the exact JSON shape
         # before returning it, so first delivery and checkpoint replay are identical.
         full=json.loads(json.dumps(full,allow_nan=False))
@@ -126,7 +139,7 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         from .audio_balance import inspect as inspect_audio_balance
         full['measured_audio_balance']=inspect_audio_balance(config,directory,duration=duration,document_sha256=binding['document_sha256'],
             manifest_name='audio-stem-manifest.json' if media_enabled(document) else 'render-manifest.json',
-            reference_role=manifest['canonical_media_mix']['reference_role'] if media_enabled(document) else 'narrated_voice')
+            reference_role=manifest['canonical_media_mix']['reference_role'] if media_enabled(document) else 'narrated_voice' if options['audio_included'] else 'no_reference')
         if media_enabled(document):full['canonical_audio_stem_manifest_sha256']=file_sha(directory/'audio-stem-manifest.json')
         if music_loop is not None:full['canonical_music_loop']=music_loop
         if (file_sha(manifest_path)!=binding['render_manifest_sha256'] or file_sha(directory/'final.mp4')!=binding['final_sha256'] or full['checksum_sha256']!=binding['final_sha256']):raise WorkflowError('STORYBOARD_QC_RENDER_BINDING_INVALID')

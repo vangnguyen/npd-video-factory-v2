@@ -31,6 +31,8 @@ def prepare(config,document,directory,voice_file,gain):
     verified=verify(config,document)
     if verified is None:return None
     snapshot=TimelineSnapshot.model_validate(document['canonical_timeline']['snapshot']);assets={};now=datetime.now(timezone.utc)
+    from .export_encoder import render_projection
+    snapshot=render_projection(snapshot)
     media=directory/'media';media.mkdir(exist_ok=False);ref=reference(document)
     active=[c for t in snapshot.tracks if t.type=='audio' and not t.disabled and not t.muted for c in t.clips if not c.disabled and c.volume>0]
     needed={c.asset_id for c in active}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "program": "VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01",
+  "base_head": "03e2dd71db7877ca6d162d75643c08d74eae2839",
+  "date": "2026-10-18",
+  "scope": "Windows Native prepared narration output options and manual export UI",
+  "tests": [
+    {"log": "recovery/20261007/final-export-narrated-variants-Native-n4.log", "passed": 8, "duration_seconds": 105.517},
+    {"log": "recovery/20261007/final-export-narrated-settings-Studio-n1.log", "passed": 27, "duration_ms": 156.0184},
+    {"log": "recovery/20261007/final-export-current-full-Studio-n2.log", "passed": 2119, "failed": 0, "skipped": 0, "duration_ms": 34129.3777}
+  ],
+  "actual_local_media_cases": [
+    "24 FPS high-quality narrated preview and final render with libass pixel QC",
+    "25 FPS small, intentional silent AAC, no burned subtitles, separate SRT and approved delivery"
+  ],
+  "audio_source": "synthetic PCM fixture, not speech",
+  "human_approval": "automated test fixture, not Owner acceptance",
+  "external_provider_calls": 0,
+  "fresh_tts_inference": 0,
+  "platform_api_publishing": "DEFERRED",
+  "owner_uat_complete": false,
+  "production_deployed": false,
+  "limitations": ["No current browser visual QA", "No pronunciation listening acceptance", "Broad Native/API cohorts not yet certified", "Test cohorts overlap and must not be added"]
+}

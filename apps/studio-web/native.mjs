@@ -425,12 +425,11 @@ if (typeof document !== "undefined") {
     narratedMusicLoopEnabled=session.capabilities?.native_narrated_music_loop===true;
     if(session.capabilities?.native_manual_delivery===true){
       const delivery=await import('./native-manual-delivery.mjs');
-      deliveryUI=delivery.initializeManualDelivery({api,getState:()=>({project,dirty,busy,active:jobActive(project),sourceExportConfigurable:isSourceProject(project),workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),getVideo:()=>currentVideo(project),
+      const exportSettings=await import('./native-export-settings.mjs');
+      deliveryUI=delivery.initializeManualDelivery({api,getState:()=>({project,dirty,busy,active:jobActive(project),sourceExportConfigurable:exportSettings.canConfigureExport(project),workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),getVideo:()=>currentVideo(project),
         openFolder:session.capabilities?.native_open_output_folder===true,onMessage:message,onWorking:value=>{busy=value;controls();},onOpen:()=>shotStudio?.showStage('video'),
         uploadCoverFile:async(file,id,revision)=>{const response=await fetch(`/api/projects/${id}/delivery-covers`,{method:'POST',credentials:'same-origin',headers:{'Content-Type':file.type||'application/octet-stream','X-VF-CSRF':csrf,'X-VF-Revision':String(revision),'X-VF-Filename':encodeURIComponent(file.name)},body:file});const value=await response.json();if(!response.ok)throw Error(value.code);return value;},
-        applyExportSettings:async choice=>{const shape={'vertical-short':['9:16',''],'landscape':['16:9','landscape'],'square':['1:1','square'],'portrait-feed':['4:5','feed']}[choice.profile];if(!shape)throw Error('Chọn định dạng hợp lệ.');
-          if(isSourceProject(project)){await api(`/api/projects/${project.id}/auto-edit/timeline`,{revision:project.revision,action:'configure',payload:{expected_version:project.document.canonical_timeline.version,aspect_ratio:shape[0],fps:choice.fps,quality_preset:choice.quality_preset,burn_subtitles:choice.burn_subtitles,audio_included:choice.audio_included}});}
-          else {if(choice.fps!==30||choice.quality_preset!=='standard'||!choice.burn_subtitles||!choice.audio_included)throw Error('Video này hiện hỗ trợ 30 FPS, chất lượng tiêu chuẩn, phụ đề và âm thanh đã dựng.');const current=project.document.brand_template,base=current?.template.id.replace(/-(landscape|square|feed)$/,'');const target=base?base+(shape[1]?'-'+shape[1]:''):brandCatalog?.templates.find(t=>t.aspect_ratio===shape[0]&&t.purpose==='property_presentation'&&t.duration_seconds===30)?.id;if(!target)throw Error('Chưa có mẫu cho định dạng này.');await api(`/api/projects/${project.id}/brand-template`,{revision:project.revision,brand_id:current?.brand.id??'vf-reference',template_id:target,duration_mode:current?.template.duration_policy??'fit_narration_preserve_voice_speed'});}
+        applyExportSettings:async choice=>{await exportSettings.applyNativeExportSettings({api,project,choice,catalog:brandCatalog});
           await reload(true);shotStudio?.showStage('video');message('Đã lưu cài đặt. Tạo preview mới và duyệt lại trước khi tạo video cuối.');}});
     }
     if(session.capabilities?.native_source_media_tracks===true){
@@ -569,17 +568,17 @@ if (typeof document !== "undefined") {
       narrationRightsUI=rights.initializeNativeNarrationRights({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
     }
-    if(session.capabilities?.native_analytics_review===true){
+    if(session.capabilities?.native_manual_delivery_focus!==true&&session.capabilities?.native_analytics_review===true){
       const analytics=await import('./native-analytics.mjs');$('native-analytics-card').hidden=false;
       analyticsUI=analytics.initializeNativeAnalytics({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,enableRefresh:session.capabilities?.native_analytics_refresh===true});
     }
-    if(session.capabilities?.native_official_account_review===true){
+    if(session.capabilities?.native_manual_delivery_focus!==true&&session.capabilities?.native_official_account_review===true){
       const accounts=await import('./native-official-accounts.mjs');$('native-official-accounts-card').hidden=false;
       officialAccountsUI=accounts.initializeNativeOfficialAccounts({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message});
     }
-    if(session.access?.mode==='registry'&&session.capabilities?.native_official_account_review===true){
+    if(session.capabilities?.native_manual_delivery_focus!==true&&session.access?.mode==='registry'&&session.capabilities?.native_official_account_review===true){
       const googleOAuth=await import('./native-google-oauth.mjs');$('native-google-oauth-card').hidden=false;
       googleOAuthUI=googleOAuth.initializeNativeGoogleOAuth({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access.workspace_id}),onMessage:message});
@@ -591,12 +590,12 @@ if (typeof document !== "undefined") {
       $('native-google-analytics-selections-card').hidden=false;
       googleAnalyticsSelectionUI=googleSelection.initializeNativeGoogleAnalyticsSelections({api,getState:()=>({project,dirty,busy,canManage,active:jobActive(project),workspace_id:session.access.workspace_id}),onMessage:message});
     }
-    if(session.capabilities?.native_publication_review===true){
+    if(session.capabilities?.native_manual_delivery_focus!==true&&session.capabilities?.native_publication_review===true){
       const publications=await import('./native-publications.mjs');$('native-publication-card').hidden=false;
       publicationUI=publications.initializeNativePublications({api,getTikTokDraft:()=>tiktokCreatorsUI?.currentDraft()??null,getThumbnailSelection:()=>renderThumbnailUI?.currentSelection()??null,getThumbnailRightsSelection:()=>renderThumbnailRightsUI?.currentRecord()??null,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,
         workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message});
     }
-    if(session.capabilities?.native_official_publication_review===true){
+    if(session.capabilities?.native_manual_delivery_focus!==true&&session.capabilities?.native_official_publication_review===true){
       const official=await import('./native-official-publications.mjs');$('native-official-publications-card').hidden=false;
       officialPublicationUI=official.initializeNativeOfficialPublications({api,getState:()=>({project,dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false),canManage,active:jobActive(project),
         workspace_id:session.access?.workspace_id??'wsp_native_local'}),onMessage:message,onWorking:value=>{busy=value;controls();},onSelection:()=>{publishingMediaUI?.sync();officialQueueUI?.sync();officialAnalyticsUI?.sync();officialRefreshUI?.sync();},getMediaSelection:()=>publishingMediaUI?.currentSelection()??null});

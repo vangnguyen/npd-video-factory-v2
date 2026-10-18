@@ -923,7 +923,7 @@ class Handler(BaseHTTPRequestHandler):
             csrf = self.auth_session.csrf if self.server.access is not None else self.server.csrf
             headers = None if self.server.access is not None else {"Set-Cookie": f"vf_native_session={self.server.session}; HttpOnly; SameSite=Strict; Path=/"}
             return self.reply({"csrf": csrf, 'access': access, "capabilities": {"native_shot_studio": True, "production_intelligence": True, "voice_quality_selection": True,
-                "native_studio_ux": True, "native_manual_delivery":True, "native_open_output_folder":os.name=='nt', "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
+                "native_studio_ux": True, "native_manual_delivery":True, "native_manual_delivery_focus":True, "native_open_output_folder":os.name=='nt', "asset_library": True, "native_multipart_upload": True, "native_audio_transcript_edit": True, "native_transcript_word_review":True, "native_scene_assessments":True, "native_source_media_tracks": True, "native_narrated_timeline_editor": True, "north_star_quality": True, "native_auto_edit_analysis": True,
                 "native_source_timeline":True,"native_source_broll_resolution":True,"native_media_frame_analysis":True,"native_cost_ledger":True,"native_asr_language_selection":True,"native_asr_gap_review":True,
                 "native_local_asr":local_asr_status(self.server.config.local_asr_manifest)['configured'],
                 "native_local_asr_small":local_asr_status(self.server.config.local_asr_manifest,model_key='small')['configured'],
@@ -1034,6 +1034,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-render-vision.mjs'] = 'native-render-vision.mjs'
         static['/native-render-thumbnail.mjs'] = 'native-render-thumbnail.mjs'
         static['/native-manual-delivery.mjs'] = 'native-manual-delivery.mjs'
+        static['/native-export-settings.mjs'] = 'native-export-settings.mjs'
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'
         static['/native-source-broll-review.mjs'] = 'native-source-broll-review.mjs'
         static['/native-source-broll-resolution.mjs'] = 'native-source-broll-resolution.mjs'

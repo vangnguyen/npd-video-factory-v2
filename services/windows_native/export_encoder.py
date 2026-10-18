@@ -23,6 +23,30 @@ def render_projection(snapshot):
     return result
 
 
+def output_options(document):
+    from types import SimpleNamespace
+    snapshot=(document.get('canonical_timeline') or {}).get('snapshot',{})
+    fps=snapshot.get('fps',30)
+    if type(fps) not in (int,float) or fps not in (24,25,30,60):raise WorkflowError('EXPORT_ENCODER_OPTIONS_INVALID')
+    options=selection(document)
+    return {**presentation(SimpleNamespace(metadata=snapshot.get('metadata',{}))),
+        'schema_version':'native-export-render-options.v1','fps':int(fps),'crf':options['crf'] if options else 20,
+        'quality_preset':options['quality_preset'] if options else 'legacy-standard'}
+
+
+def preserve(value,canvas):
+    if not canvas:return value
+    metadata=canvas.get('metadata',{})
+    keys=('native_export_encoder','native_export_presentation')
+    if not any(key in metadata for key in keys):return value
+    output_options({'canonical_timeline':{'snapshot':canvas}})
+    import copy
+    value['fps']=canvas['fps']
+    for key in keys:
+        if key in metadata:value['metadata'][key]=copy.deepcopy(metadata[key])
+    return value
+
+
 def selection(document):
     raw=(document.get('canonical_timeline') or {}).get('snapshot',{}).get('metadata',{}).get('native_export_encoder')
     if raw is None:return None

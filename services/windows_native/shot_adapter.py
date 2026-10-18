@@ -189,6 +189,8 @@ def snapshot_from_shots(shots, doc, *, canvas=None):
     if music is not None:
         value['tracks'].append(music)
         value['metadata']['narrated_music_loop']=decision_metadata(doc,value['duration_seconds'])
+    from .export_encoder import preserve as preserve_export
+    value=preserve_export(value,canvas)
     from .narrated_video_timeline import preserve as preserve_video
     value=preserve_video(value,doc,canvas)
     from .narrated_media_timeline import preserve
