@@ -45,10 +45,12 @@ export function previewTimingLabel(mediaMode,preview=null,project=null) {
   if(mediaMode!=='final'&&isSourceProject(project)&&(!preview||['EMPTY','QUEUED','RUNNING','STALE','FAILED','CANCELLED'].includes(preview.status)))return 'Tạo preview của phiên bản hiện tại để xem và nghe điểm cắt, âm thanh nguồn và phụ đề đã lưu. Chọn preview đầy đủ khi kiểm tra crop và hiệu ứng trước khi duyệt render.';
   if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy'&&preview?.manifest?.rendering_effects_parity===true)return `Preview đầy đủ dùng cùng hiệu ứng, crop, phụ đề đang bật và âm thanh của renderer cuối, ở độ phân giải thấp.${preview.manifest?.music_ducking?' Đã hạ nhạc theo năng lượng âm thanh nguồn.':''} Video cuối vẫn cần xem, nghe và duyệt riêng.`;
   if(mediaMode!=='final'&&preview?.audio_mode==='canonical_timeline_proxy')return `Preview dùng điểm cắt và âm thanh theo timeline.${preview.manifest?.music_ducking?' Đã hạ nhạc theo năng lượng âm thanh nguồn.':''}${preview.manifest?.audio_speech_normalization?' Đã áp dụng cân mức nguồn trước âm lượng clip.':''} Chưa dựng phụ đề hoặc keyframe reframe; cần bản render đầy đủ để duyệt cuối.`;
+  if(project?.document?.drama_casting)return mediaMode==='final'?'Bản render dùng giọng theo phân vai đã duyệt và thời lượng audio từng câu đã đo. Kiểm tra người nói, phụ đề và lời thoại từ đầu đến cuối.':'Chuẩn bị audio theo phân vai, nghe và áp thời lượng đã đo trước khi tạo preview có tiếng.';
   return mediaMode==='final'?'Bản render dùng giọng Thùy Dung đã khóa. Phụ đề theo đoạn; các shot có lời đọc dùng thời lượng audio đo được.':'Preview hình ảnh chưa tạo hay đo audio; thời điểm phụ đề là ước tính theo thời lượng shot. Bản render dùng giọng Thùy Dung đã khóa.';
 }
 export function boundPreview(project,preview) {
   if(!preview)return null;
+  if(project?.drama_voice_binding?.current===false)return {...preview,status:'STALE',video_url:null};
   if(preview.revision!==project?.revision||preview.timeline_sha256!==project?.shot_timeline?.sha256)return {...preview,status:'STALE',video_url:null};
   if(preview.status==='READY'){
     const source=project?.shot_timeline?.editing_mode==='source_footage';
@@ -66,7 +68,7 @@ export function savedPreviewPlayable(project,preview){
   return Boolean(project?.id&&!project.archived&&value?.status==='READY'&&typeof value.video_url==='string'&&value.video_url);
 }
 export function currentStudioRender(project) {
-  return project?.approval&&project.approval.approval_scope!=='narration_only'&&project.approval.revision===project.revision&&!project.archived?(project.jobs??[]).find(j=>j.kind==='render'&&j.status==='succeeded'&&j.revision===project.revision)??null:null;
+  return project?.drama_voice_binding?.current!==false&&project?.approval&&project.approval.approval_scope!=='narration_only'&&project.approval.revision===project.revision&&!project.archived?(project.jobs??[]).find(j=>j.kind==='render'&&j.status==='succeeded'&&j.revision===project.revision)??null:null;
 }
 export const narratedPreviewReady=(project,preview)=>Boolean(project?.document?.prepared_narration&&boundPreview(project,preview)?.status==='READY'&&preview?.audio_mode==='measured_scene_narration_full_effects_preview'&&preview?.final_approval_eligible===true);
 export function scriptReviewAllowed(project,{dirty=false,busy=false}={},acknowledged=false,reviewer='') {
@@ -188,7 +190,7 @@ export function initializeShotStudio({api,getProject,getGuards,getReviewedVision
     $('shot-ai-apply').disabled||=!safeSuggestion(project,selectedId,suggestion,suggestionRevision);
     document.querySelectorAll('[data-script-control]').forEach(el=>el.disabled=!project?.document.proposal||project.archived||g.busy||g.dirty||(project.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status)));
     $('approve-script-only').disabled=!scriptReviewAllowed(project,{...g,busy:g.busy},$('script-only-ack').checked,$('script-only-reviewer').value)||Boolean(project?.script_review?.current);
-    if(voiceSelect){voiceSelect.disabled=!voiceCatalog||blocked||g.dirty||shotDirty;voiceApply.disabled=!voiceQualityApplyAllowed(project,capabilities,voiceCatalog,voiceSelect.value,g)||shotDirty;}
+    if(voiceSelect){const drama=Boolean(project?.document?.drama_casting);voiceSelect.closest('section').hidden=drama;voiceSelect.disabled=drama||!voiceCatalog||blocked||g.dirty||shotDirty;voiceApply.disabled=drama||!voiceQualityApplyAllowed(project,capabilities,voiceCatalog,voiceSelect.value,g)||shotDirty;}
     if(isSourceProject(project))$('approve').disabled=blocked||g.dirty||!sourceEditor?.readyForApproval()||Boolean(project.approval);
     sourceEditor?.controls();
   }

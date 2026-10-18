@@ -37,8 +37,8 @@ export function nativeLegacyLayout(dom) {
 }
 
 export const jobActive = project => project?.jobs?.some(j => ["queued", "running", "retrying"].includes(j.status)) ?? false;
-export const currentVideo = project => project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
-export const canRender = (project, dirty, busy) => Boolean(project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
+export const currentVideo = project => project?.drama_voice_binding?.current!==false && project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived ? project.jobs.find(j => j.kind === "render" && j.status === "succeeded" && j.revision === project.revision) : null;
+export const canRender = (project, dirty, busy) => Boolean(project?.drama_voice_binding?.current!==false && project?.approval && project.approval.approval_scope!=='narration_only' && !project.archived && project.approval.revision === project.revision && !dirty && !busy && !jobActive(project));
 export const mediaLibrary = doc => (doc?.assets ?? (doc?.asset ? [doc.asset] : [])).map(a=>({...a,kind:a.kind??"image",filename:a.filename??"Ảnh đã lưu"})).filter(a=>['image','video'].includes(a.kind));
 export const mediaBindings = doc => doc?.scene_media ?? (doc?.asset ? (doc.proposal?.visual_brief??[]).map(s=>({scene:s.scene,asset_id:doc.asset.id})) : []);
 export const mediaReady = doc => {
@@ -148,7 +148,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null;
+  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null,dramaUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   let asrLanguageEnabled=false;
   let localAsrEnabled=false;
@@ -256,6 +256,7 @@ if (typeof document !== "undefined") {
     generationUI?.controls();
     mediaPlannerUI?.controls();
     narrationUI?.controls();
+    dramaUI?.controls();
     rightsOverrideUI?.controls();
     narrationRightsUI?.controls();
     variantsUI?.controls();
@@ -316,6 +317,7 @@ if (typeof document !== "undefined") {
     generationUI?.sync();
     mediaPlannerUI?.sync();
     narrationUI?.sync();
+    dramaUI?.sync();
     rightsOverrideUI?.sync();
     narrationRightsUI?.sync();
     variantsUI?.sync();
@@ -372,7 +374,7 @@ if (typeof document !== "undefined") {
       $("narration").textContent=proposal.narration;
       $("facts").innerHTML=proposal.facts_needing_source.map(f=>`<li>${esc(f)}</li>`).join("")||"<li>Đề xuất không liệt kê thêm nguồn. Bạn vẫn cần kiểm tra nội dung.</li>";
     }
-    $("approval-state").textContent=project?.approval?.approval_scope==='narration_only'?"Đã duyệt để tạo lời đọc":project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
+    $("approval-state").textContent=project?.drama_voice_binding?.current===false?'Cần kiểm tra lại giọng và phân vai':project?.approval?.approval_scope==='narration_only'?"Đã duyệt để tạo lời đọc":project?.approval?"Đã duyệt phiên bản này":"Chờ bạn duyệt";
     const workflowHint=$("narrated-workflow-hint");if(workflowHint){workflowHint.textContent=narratedWorkflowGuide(project);workflowHint.hidden=!workflowHint.textContent;}
     const reviewCopy=$("production-review-copy");if(reviewCopy)reviewCopy.textContent=usesNarratedWorkflow(project)?'Tôi đã xem và nghe preview có tiếng của phiên bản này, kiểm tra nội dung, phụ đề, nhạc và quyền sử dụng tư liệu. Tôi duyệt để render video cuối.':'Tôi đã kiểm tra lời đọc, thông tin cần nguồn, ảnh/video từng cảnh và quyền sử dụng. Tôi duyệt phiên bản này để tạo giọng đọc và video.';
     $("render").textContent=nativeRenderLabel(project);
@@ -557,6 +559,12 @@ if (typeof document !== "undefined") {
         canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local'}),
         enableResolution:session.capabilities?.native_storyboard_media_resolution===true,
         onMessage:message,onWorking:controls,onSaved:async()=>{await reload(true);}});
+    }
+    if(session.capabilities?.native_drama_voice_casting===true){
+      const drama=await import('./native-drama.mjs');
+      dramaUI=drama.initializeNativeDrama({api,getState:()=>({project,dirty,dirtyPart,busy,workspace_id:session.access?.workspace_id??'wsp_native_local',active:jobActive(project),canManage,
+        canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),onMessage:message,onWorking:value=>{busy=value;controls();},
+        onDirty:value=>{if(value)markDirty('drama');else if(dirtyPart==='drama'){dirty=false;dirtyPart=null;controls();}},onSaved:async()=>{await reload(true);}});
     }
     if(session.capabilities?.native_narration_preparation===true){
       const narration=await import('./native-narration.mjs');
