@@ -65,7 +65,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             matches=[c for t in snapshot.tracks if t.kind=='subtitles' and not t.disabled for c in t.clips if not c.disabled
                 and c.timeline_start-.002<=cue.start_seconds and c.timeline_start+c.duration+.002>=cue.end_seconds]
             if len(matches)!=1 or not all(matches[0].metadata.get(k) for k in ('speaker_id','speaker_name','dialogue_line_id')):
-                raise WorkflowError('DRAMA_SUBTITLE_SPEAKER_MAPPING_REQUIRED',400)
+                from .dialogue_qc import failed
+                failed(document,directory,'subtitle_speaker_mapping_missing_or_ambiguous')
             source=matches[0].metadata;speaker={k:source[k] for k in ('speaker_id','speaker_name','dialogue_line_id','voice_id','voice_version')}
             speaker_mapping.append({'cue_id':cue.cue_id,**speaker});display_text=source['speaker_name']+': '+cue.text
             if style.animation in {'word_by_word','word_highlight','karaoke'}:raise WorkflowError('DRAMA_SPEAKER_WORD_ALIGNMENT_UNAVAILABLE',400)
@@ -115,6 +116,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             'style_ref':style.template_ref,'animation':style.animation,'words':[w.model_dump(mode='json') for w in cue.words],
             'timing_source':'canonical_caption_bounds_words_only_when_source_evidence_exists'})
         if speaker:delivery_cues.append({'start':cue.start_seconds,'end':cue.end_seconds,'text':display_text,**speaker})
+    if document.get('drama_casting') is not None:
+        from .dialogue_qc import inspect
+        inspect(document,directory,captions)
     (directory/'subtitles.ass').write_text(header+'\n'.join(events)+'\n',encoding='utf-8')
     write_json(directory/'subtitles.json',{'cues':[c.model_dump(mode='json') for c in cues],'style':style.model_dump(mode='json'),
         'actual_renderer':'local-ffmpeg-libass','font_sha256':FONT_SHA,'word_alignment_inferred':False,'source_media_mutated':False,

@@ -45,7 +45,11 @@ def validate_context(config,value):
 
 def folder_for(config,project):
     state=project['document']['canonical_timeline']
-    return config.data_root/'shot-previews'/digest({'project':project['id'],'timeline':state['sha256'],'revision':project['revision'],'preview_profile':PROFILE})
+    extra={}
+    if project['document'].get('drama_casting') is not None:
+        from .dialogue_qc import SCHEMA as DIALOGUE_QC
+        extra['dialogue_qc_schema']=DIALOGUE_QC
+    return config.data_root/'shot-previews'/digest({'project':project['id'],'timeline':state['sha256'],'revision':project['revision'],'preview_profile':PROFILE,**extra})
 
 def render(config,store,project,folder,event):
     from .pipeline import Pipeline,render as render_storyboard
@@ -71,6 +75,7 @@ def render(config,store,project,folder,event):
         published.path('fonts').mkdir(exist_ok=True)
         names+=['subtitles.json',*[p.relative_to(attempt).as_posix() for p in sorted((attempt/'fonts').glob('*.ttf'))]]
     if (attempt/'render-voice.json').is_file():names.append('render-voice.json')
+    if (attempt/'dialogue-qc.json').is_file():names.append('dialogue-qc.json')
     if (attempt/'music-loop.json').is_file():names+=['music-loop.json','music-loop.wav']
     names+= [path.relative_to(attempt).as_posix() for path in sorted((attempt/'subtitle-qc').glob('*.png'))]
     from .render_frame_qc import artifact_names as render_frame_artifacts
@@ -125,6 +130,9 @@ def reviewed(store,config,project,*,con=None):
             except WorkflowError:raise ValueError() from None
         elif (folder/'render-frame-qc.json').exists():raise ValueError()
         from .audio_balance import validate_qc
+        if project['document'].get('drama_casting') is not None:
+            from .dialogue_qc import verify as verify_dialogue
+            verify_dialogue(project['document'],folder,json.loads((folder/'render-manifest.json').read_bytes()))
         try:validate_qc(folder,manifest['qc'],expected['document_sha256'],video_name='preview.mp4')
         except WorkflowError:raise ValueError() from None
         verify_selected_files(config,project['document'])

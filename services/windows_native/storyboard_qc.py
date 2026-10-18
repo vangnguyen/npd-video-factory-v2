@@ -114,6 +114,8 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
         if canonical and manifest.get('canonical_timeline')!={'version':canonical['version'],'sha256':canonical['sha256']}:raise WorkflowError('STORYBOARD_QC_CANONICAL_TIMELINE_CHANGED')
         from .export_encoder import output_options
         options=output_options(document)
+        from .dialogue_qc import verify as verify_dialogue
+        dialogue_quality=verify_dialogue(document,directory,manifest)
         if 'export_options' in manifest and manifest['export_options']!=options:raise WorkflowError('STORYBOARD_QC_EXPORT_OPTIONS_CHANGED')
         voice=manifest.get('voice_audio_file')
         if voice not in {'voice.wav','render-voice.wav'} or file_sha(guard(directory/voice,exists=True))!=manifest.get('voice_sha256'):raise WorkflowError('STORYBOARD_QC_VOICE_CHANGED')
@@ -136,6 +138,7 @@ def inspect(config,snapshot,directory,legacy_report,*,preview_only=False):
             document_sha256=binding['document_sha256'],manifest_name='render-manifest.json')
         from .audio_loudness import measure
         full['measured_audio_loudness']=measure(config,directory/'final.mp4')
+        if dialogue_quality is not None:full['dialogue_caption_qc']=dialogue_quality
         from .audio_balance import inspect as inspect_audio_balance
         full['measured_audio_balance']=inspect_audio_balance(config,directory,duration=duration,document_sha256=binding['document_sha256'],
             manifest_name='audio-stem-manifest.json' if media_enabled(document) else 'render-manifest.json',

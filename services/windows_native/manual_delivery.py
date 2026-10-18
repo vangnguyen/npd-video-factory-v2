@@ -163,11 +163,16 @@ class NativeManualDelivery:
         if full.get('status') != 'passed' or full.get('checksum_sha256') != checksum:
             raise WorkflowError('EXPORT_MEASURED_QC_REQUIRED')
         validate_render_profile(payload.profile, full.get('width'), full.get('height'))
-        doc = job['snapshot']['document']; timeline = doc.get('canonical_timeline') or {}
+        doc = job['snapshot']['document']; timeline = doc.get('canonical_timeline') or {};dialogue_binding={}
         if doc.get('drama_casting') is not None:
             from .dialogue_runtime import library_for
             from .dialogue_binding import validate
             validate(doc,library_for(self.store),con=con,project_id=project_id)
+            from .dialogue_qc import verify as verify_dialogue
+            source=guard(self.store.root/'jobs'/job['id'],exists=True)
+            verify_dialogue(doc,source,json.loads((source/'render-manifest.json').read_bytes()))
+            from .dialogue_qc import SCHEMA as DIALOGUE_QC
+            dialogue_binding={'dialogue_qc_schema':DIALOGUE_QC,'dialogue_qc_sha256':file_sha(source/'dialogue-qc.json')}
         return {'project_id':project_id,'project_revision':job['revision'],'project_title':doc['name'],
             'render_job_id':job['id'],'snapshot_sha256':digest(job['snapshot']),'document_sha256':digest(doc),
             'timeline_version':timeline.get('version'),'timeline_sha256':timeline.get('sha256'),
@@ -175,7 +180,7 @@ class NativeManualDelivery:
             'subtitle_version':digest({'timeline':timeline.get('sha256'),'captions':doc.get('proposal')}),
             'render_profile':payload.profile,'final_preview_sha256':checksum,'video_sha256':checksum,
             'duration_seconds':full['duration_seconds'],'width':full['width'],'height':full['height'],'fps':full['fps'],
-            'final_review_sha256':digest(review),'production_approval_sha256':digest(job['snapshot']['approval'])}, job, full
+            'final_review_sha256':digest(review),'production_approval_sha256':digest(job['snapshot']['approval']),**dialogue_binding}, job, full
 
     def row(self, con, project_id, export_id):
         self.scope()
@@ -231,6 +236,8 @@ class NativeManualDelivery:
         if current and project['document'].get('drama_casting') is not None:
             from .dialogue_runtime import library_for
             from .dialogue_binding import validate
+            from .dialogue_qc import SCHEMA as DIALOGUE_QC
+            if binding.get('dialogue_qc_schema')!=DIALOGUE_QC:current=False
             try:validate(project['document'],library_for(self.store),project_id=project_id)
             except WorkflowError:current=False
         return {'export_id':export_id,'project_id':project_id,'created_at':row['created_at'],'status':row['status'],
@@ -323,6 +330,11 @@ class NativeManualDelivery:
             expected_fps=measured['fps'],subtitle_qc=subtitle,timeline_qc=timeline))
         durable_json(stage/'qc-report.json',report)
         doc=job['snapshot']['document']
+        if doc.get('drama_casting') is not None:
+            from .dialogue_qc import verify as verify_dialogue
+            dialogue_quality=verify_dialogue(doc,source,json.loads((source/'render-manifest.json').read_bytes()))
+            report['dialogue_caption_qc']=dialogue_quality;durable_json(stage/'qc-report.json',report)
+            shutil.copyfile(source/'dialogue-qc.json',stage/'dialogue-qc.json')
         from .source_assets import canonical_assets
         rights=[]
         for asset in canonical_assets(doc):
@@ -446,9 +458,20 @@ class NativeManualDelivery:
                         path=self.file(project_id,source_export,name);shutil.copyfile(path,stage/name)
                         if file_sha(stage/name)!=facts['sha256']:raise WorkflowError('EXPORT_FILE_CHANGED')
                     original_qc=json.loads((stage/'qc-report.json').read_bytes())
+                    dialogue_quality=None
+                    rights=json.loads((stage/'rights-summary.json').read_bytes())
+                    if any(item.get('kind')=='dialogue_voice' for item in rights.get('items',[])):
+                        from .dialogue_qc import SCHEMA as DIALOGUE_QC
+                        if (binding.get('dialogue_qc_schema')!=DIALOGUE_QC or 'dialogue-qc.json' not in source_manifest['files']
+                            or file_sha(stage/'dialogue-qc.json')!=binding.get('dialogue_qc_sha256')):raise WorkflowError('EXPORT_DIALOGUE_QC_REVIEW_REQUIRED')
+                        dialogue_quality=json.loads((stage/'dialogue-qc.json').read_bytes())
+                        if (dialogue_quality.get('status')!='passed' or dialogue_quality.get('schema_version')!=DIALOGUE_QC
+                            or dialogue_quality.get('document_sha256')!=binding.get('document_sha256') or dialogue_quality.get('timeline_sha256')!=binding.get('timeline_sha256')
+                            or original_qc.get('dialogue_caption_qc')!=dialogue_quality):raise WorkflowError('EXPORT_DIALOGUE_QC_REVIEW_REQUIRED')
                     fresh_qc=asyncio.run(FullProductionQC(ffmpeg_path=str(self.config.ffmpeg_bin/'ffmpeg.exe'),ffprobe_path=str(self.config.ffmpeg_bin/'ffprobe.exe')).inspect(
                         stage/request['filename'],expected_duration=source_manifest['duration_seconds'],expected_width=source_manifest['width'],expected_height=source_manifest['height'],expected_fps=source_manifest['fps'],
                         subtitle_qc=original_qc['subtitle_bounds'],timeline_qc=original_qc['timeline']))
+                    if dialogue_quality is not None:fresh_qc.update(dialogue_caption_qc=dialogue_quality,dialogue_qc_reused_from_export_id=source_export)
                     durable_json(stage/'qc-report.json',fresh_qc)
                     metadata=json.loads((stage/'metadata.json').read_bytes());metadata.update(export_id=row['export_id'],recreated_from_export_id=source_export)
                     durable_json(stage/'metadata.json',metadata)

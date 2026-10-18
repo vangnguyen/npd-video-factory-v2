@@ -1,0 +1,21 @@
+{
+  "schema_version": "native-dialogue-qc.v1",
+  "status": "IMPLEMENTED_MOCK_AND_LOCAL_MEDIA_TESTED",
+  "cohorts_overlap": true,
+  "tests": [
+    {"passed": 64, "failed": 0, "seconds": 160.451, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-cue-qc-Native-n3.log"},
+    {"passed": 15, "failed": 0, "seconds": 42.910, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-cue-qc-Native-n4.log"}
+  ],
+  "coverage": ["actual canonical editor moves a subtitle into another actor window and QC rejects it before ASS/MP4", "speaker and line identity", "muted or unbound dialogue voice graph", "explicit audio-off export", "QC and placed-voice metadata tamper", "failed_qc job lifecycle", "audible preview and new QC cache identity", "final render and immutable manual package", "recreated package preserves pinned dialogue evidence and previous ZIP bytes", "legacy captions/preview/manual delivery/hardening/storyboard regression"],
+  "tts_evidence": "Explicit synthetic tones, never real speech",
+  "timing_basis": "Measured line activity with 0.003-second rounding tolerance; no word alignment or speech-semantic verification",
+  "real_provider_inferences": 0,
+  "owner_uat_complete": false,
+  "initial_runs": [
+    "n1 exposed a preview-folder integration mismatch after adding the dialogue QC schema. It was fixed by using the canonical narration folder helper in PreviewManager. Three corruption fixtures also needed explicit canonical human-caption override metadata; the user-move test now uses the real timeline editor.",
+    "n2 had eighteen functional passes but an additional nonexistent test selector made the whole command fail. n3 uses verified existing test modules and passes."
+  ],
+  "accepted_historical_exports_replaced": false,
+  "platform_api_publishing": "DEFERRED",
+  "production_deployed": false
+}

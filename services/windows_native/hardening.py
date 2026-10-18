@@ -17,7 +17,11 @@ LIFECYCLE = {"queued": "CREATED", "running": "RUNNING", "retrying": "RETRYING",
 def failure(code, step="", http_status=None):
     """Only known identifiers enter logs, never exception text/provider bodies/secrets."""
     value = (str(code) + " " + step).upper()
-    if code.startswith('LOCAL_ASR_'):
+    if code=='DRAMA_DIALOGUE_QC_FAILED':
+        category,action='RENDER_ERROR','Kiểm tra phụ đề có đúng người nói và nằm trong thời gian câu thoại đã đo. Khôi phục phụ đề theo câu và chỉ giữ track thoại đã duyệt; tạo preview và duyệt lại.'
+    elif code=='EXPORT_DIALOGUE_QC_REVIEW_REQUIRED':
+        category,action='RENDER_ERROR','Bản xuất thoại này chưa có bằng chứng QC người nói phù hợp. Giữ nguyên bản lịch sử; tạo preview, duyệt và tạo bản render mới trước khi xuất gói mới.'
+    elif code.startswith('LOCAL_ASR_'):
         category,action='ASR_ERROR','Kiểm tra mô hình nhận diện trên máy và transcript nguồn. Kết quả cần được kiểm tra trước khi chỉnh video; yêu cầu này giữ lựa chọn xử lý local.'
     elif code=='ASR_WORD_OVER_SOURCE_AUDIO_GAP_REVIEW_REQUIRED':
         category,action='ASR_ERROR','Mở mục Từ nhận diện cần kiểm tra ở Tư liệu. Sửa hoặc bỏ từ đi qua khoảng thiếu audio, lưu bản sửa và tiếp tục job đã biết.'

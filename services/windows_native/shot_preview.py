@@ -57,6 +57,12 @@ class PreviewManager:
         if profile:identity['preview_profile']=profile
         return self.root/digest(identity)
 
+    def _project_folder(self,project,profile):
+        if profile==NARRATION_PROFILE:
+            from .narration_preview import folder_for
+            return folder_for(self.config,project)
+        return self._folder(project['id'],project['shot_timeline']['sha256'],project['revision'],profile)
+
     def status(self, project_id):
         with self.lock:
             return self._status(project_id)
@@ -65,7 +71,7 @@ class PreviewManager:
         project=self.store.shot_view(project_id); view,_=shot_fields(project)
         source_mode=view.get('editing_mode')=='source_footage'
         profile=profile_for(project) if source_mode else NARRATION_PROFILE if project['document'].get('prepared_narration') else None
-        folder=self._folder(project_id,view['sha256'],project['revision'],profile); record=folder/'preview.json'
+        folder=self._project_folder(project,profile); record=folder/'preview.json'
         if not record.is_file():
             history=sorted(self.root.glob('*/preview.json'),key=lambda p:p.stat().st_mtime,reverse=True)
             previous=next((json.loads(p.read_bytes()) for p in history if json.loads(p.read_bytes()).get('project_id')==project_id),None)
@@ -117,7 +123,7 @@ class PreviewManager:
                     s['source_sha256']=a['sha256']
             profile=profile_for(project) if source_mode else NARRATION_PROFILE if project['document'].get('prepared_narration') else None
             if profile==NARRATION_PROFILE:narration_authorization(self.store,project)
-            folder=self._folder(project_id,view['sha256'],revision,profile); folder.mkdir(parents=True,exist_ok=True)
+            folder=self._project_folder(project,profile); folder.mkdir(parents=True,exist_ok=True)
             old=self.status(project_id)
             if old.get('status') in {'READY','RUNNING','QUEUED'}: return old
             identifier=folder.name
@@ -161,7 +167,9 @@ class PreviewManager:
         value=self.status(project_id)
         if value['status']!='READY' or str(value['timeline_version'])!=str(version):
             raise WorkflowError('PREVIEW_STALE_OR_NOT_READY')
-        return self._folder(project_id,value['timeline_sha256'],value['revision'],value.get('preview_profile'))/'preview.mp4'
+        project=self.store.shot_view(project_id)
+        if project['revision']!=value['revision'] or project['shot_timeline']['sha256']!=value['timeline_sha256']:raise WorkflowError('PREVIEW_STALE_REGENERATE')
+        return self._project_folder(project,value.get('preview_profile'))/'preview.mp4'
 
     @staticmethod
     def _command(command, directory, event):

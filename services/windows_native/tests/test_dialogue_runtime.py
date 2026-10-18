@@ -116,6 +116,13 @@ class DialogueRuntimeTests(unittest.TestCase):
         self.assertIn('An: Xin chào.',(directory/'subtitle.srt').read_text(encoding='utf-8'));self.assertIn('Bình: Cảm ơn.',(directory/'subtitle.srt').read_text(encoding='utf-8'))
         rights=json.loads((directory/'rights-summary.json').read_bytes());self.assertEqual(len([v for v in rights['items'] if v['kind']=='dialogue_voice']),2)
         self.assertFalse(rights['independently_verified']);self.assertEqual(file_sha(directory/'final-video.mp4'),rendered['qc']['final_sha256'])
+        from services.windows_native.manual_delivery import RecreatePackage
+        qp=json.loads((directory/'dialogue-qc.json').read_bytes());self.assertEqual(qp['status'],'passed')
+        self.assertEqual(json.loads((directory/'qc-report.json').read_bytes())['dialogue_caption_qc'],qp)
+        old_zip=file_sha(directory/'delivery-package.zip');recreated=service.recreate(project['id'],delivery['export_id'],RecreatePackage(
+            expected_manifest_sha256=delivery['manifest_sha256'],request_key='explicit-drama-recreate-qp-fixture'))
+        recreated_dir=Path(recreated['output_location']);self.assertEqual(json.loads((recreated_dir/'dialogue-qc.json').read_bytes()),qp)
+        self.assertEqual(json.loads((recreated_dir/'qc-report.json').read_bytes())['dialogue_caption_qc'],qp);self.assertEqual(file_sha(directory/'delivery-package.zip'),old_zip)
         # A library revocation closes fresh/current delivery even though the
         # document revision is unchanged. Historical approved bytes remain usable.
         voice=self.voices[0];self.library.update(voice['voice_id'],{'expected_version':1,'request_key':'explicit-post-export-voice-revoke',
@@ -125,4 +132,4 @@ class DialogueRuntimeTests(unittest.TestCase):
         self.assertEqual(file_sha(service.file(project['id'],delivery['export_id'],'final-video.mp4')),rendered['qc']['final_sha256'])
         with self.assertRaisesRegex(WorkflowError,'VOICE_BINDING_CHANGED'):service.create(project['id'],DeliveryCreate(revision=project['revision'],render_job_id=job['id'],
             expected_video_sha256=rendered['qc']['final_sha256'],request_key='explicit-new-export-after-revoke'))
-        self.assertEqual(len(service.page(project['id'])['items']),1)
+        self.assertEqual(len(service.page(project['id'])['items']),2)

@@ -681,6 +681,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             "safe_rectangle":[safe_left,safe_top,width-safe_right,height-safe_bottom],"ass_sha256":file_sha(out/'subtitles.ass'),
             "font_family":brand.fonts.subtitle_family,"geometry_basis":"actual_libass_pixels_required_by_full_qc"},
         "profile_sha256": meta['profile_sha256'], "subtitle_timing": "ESTIMATED_WITH_MEASURED_SCENE_AUDIO",
+        **({'dialogue_qc_sha256':file_sha(out/'dialogue-qc.json')} if doc.get('drama_casting') is not None else {}),
         "word_alignment": "none", "approval": snapshot["approval"], "voice_speed": 1,
         **({'audio_balance_inputs':{'reference_role':'narrated_voice' if export_options['audio_included'] else 'no_reference','reference_sha256':file_sha(out/'audio-reference.f32le') if export_options['audio_included'] else None,
             'music_sha256':file_sha(out/'audio-music.f32le') if music else None,
@@ -853,6 +854,9 @@ class Pipeline:
             raise WorkflowError("MUSIC_ARTIFACT_CHANGED_OR_RIGHTS_MISSING")
         checkpoint = artifacts.load("render")
         if checkpoint:
+            if job['snapshot']['document'].get('drama_casting') is not None:
+                from .dialogue_qc import verify
+                verify(job['snapshot']['document'],out,json.loads((out/'render-manifest.json').read_bytes()))
             from .audio_balance import validate_qc
             validate_qc(out,checkpoint['result']['qc'],digest(job['snapshot']['document']))
             from .narrated_media_mix import validate_bundle
@@ -938,6 +942,7 @@ class Pipeline:
             try:render_files+=render_frame_artifacts(attempt)
             except WorkflowError:raise WorkflowError('STORYBOARD_FULL_MEDIA_QC_FAILED') from None
         if (attempt/'render-voice.json').is_file(): render_files+=('render-voice.json','render-voice.wav')
+        if (attempt/'dialogue-qc.json').is_file():render_files+=('dialogue-qc.json',)
         if (attempt/'music-loop.json').is_file():render_files+=('music-loop.json','music-loop.wav')
         if (attempt/'audio-balance.json').is_file():
             from .audio_balance import artifact_names as audio_balance_artifacts
