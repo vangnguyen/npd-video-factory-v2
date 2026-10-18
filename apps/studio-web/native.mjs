@@ -1,5 +1,41 @@
 import {newProjectQuality,narratedWorkflowGuide,usesNarratedWorkflow} from './project-quality.mjs';
 import {asrLanguageSelection,asrLanguageHint} from './native-asr-language.mjs';
+import {verifyDramaSaveReceipt,matchesSavedDramaProject,stableDramaJSON} from './drama-script-save.mjs';
+export function createNativeProjectReload({api,getState,onProject,renderProject,projects,schedule}){
+  return async function reload(reset=false,{dramaSave}={}){
+    const before=getState(),identifier=before.project?.id,workspace=before.workspace_id;
+    const sameSelection=()=>getState().project?.id===identifier&&getState().workspace_id===workspace;
+    if(identifier){
+      const latest=await api(`/api/projects/${identifier}`);
+      if(!sameSelection())return {status:'stale-selection'};
+      if(dramaSave){
+        if(dramaSave.project_id!==identifier||dramaSave.workspace_id!==workspace)return {status:'stale-selection'};
+        if(dramaSave.kind==='saved'){
+          await verifyDramaSaveReceipt(dramaSave.result,dramaSave);
+          if(!sameSelection())return {status:'stale-selection'};
+          if(latest.revision>dramaSave.result.revision)return {status:'newer',project:latest};
+          if(latest.id!==identifier||latest.revision!==dramaSave.result.revision||!matchesSavedDramaProject(latest,dramaSave.request))
+            throw Error('Chưa đối chiếu được bản đã lưu. Giữ nội dung đang nhập và kiểm tra lại trạng thái.');
+          const now=getState();
+          if(now.dirty&&now.dirtyPart!=='drama-script')throw Error('Còn chỉnh sửa khác chưa lưu. Bản kịch bản đã gửi được giữ để đối chiếu.');
+          if(![dramaSave.request.revision,dramaSave.result.revision].includes(now.project.revision))return {status:'newer',project:latest};
+        }else if(dramaSave.kind==='reviewed-server'){
+          if(latest.id!==identifier||latest.revision!==dramaSave.snapshot.revision||stableDramaJSON(latest.document)!==stableDramaJSON(dramaSave.snapshot.document))return {status:'newer',project:latest};
+          if(getState().dirty&&getState().dirtyPart!=='drama-script')throw Error('Lưu chỉnh sửa khác trước khi đối chiếu kịch bản.');
+        }else throw Error('Không xác định được lần lưu cần đối chiếu.');
+        onProject(latest);renderProject(false);
+        // Ancillary list refresh failure must not turn a verified committed save into an uncertain write.
+        try{await projects();}catch{}
+        if(sameSelection())schedule();
+        return {status:dramaSave.kind==='saved'?'saved':'rebased',project:latest};
+      }
+      if(getState().dirty&&latest.revision!==getState().project.revision)throw Error('Dự án có phiên bản mới hơn. Nội dung đang nhập chưa bị thay thế.');
+      onProject(latest);
+    }
+    renderProject(reset);await projects();schedule();
+  };
+}
+export const nativeDramaSaveCallback=reload=>value=>reload(false,{dramaSave:value});
 export {newProjectQuality} from './project-quality.mjs';
 export const supportsNativeCosts = session => session?.capabilities?.native_cost_ledger===true;
 export function nativeRequestBody(value){
@@ -161,7 +197,7 @@ if (typeof document !== "undefined") {
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
   let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null,dramaUI=null,dramaFlowUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
-  let asrLanguageEnabled=false;
+  let asrLanguageEnabled=false,workspaceId='wsp_native_local';
   let localAsrEnabled=false;
   let localSmallAsrEnabled=false;
   let localPhoAsrEnabled=false;
@@ -182,8 +218,8 @@ if (typeof document !== "undefined") {
     const response = await fetch(path,{method:payload?"POST":"GET",credentials:"same-origin",headers:payload?{"Content-Type":"application/json","X-VF-CSRF":csrf}:{},body:payload?JSON.stringify(payload):undefined});
     const result=await response.json();
     if(response.status===401 && result.code==='NATIVE_AUTH_SESSION_REQUIRED')location.assign('/login');
-    if(response.status===403 && result.code==='NATIVE_AUTH_FORBIDDEN')throw new Error('Vai trò hiện tại không có quyền thực hiện thao tác này.');
-    if(!response.ok)throw new Error(`${errors[result.code] ?? result.failure?.action ?? result.code} (HTTP ${response.status})`);
+    if(response.status===403 && result.code==='NATIVE_AUTH_FORBIDDEN'){const error=new Error('Vai trò hiện tại không có quyền thực hiện thao tác này.');error.status=403;error.code=result.code;throw error;}
+    if(!response.ok){const error=new Error(`${errors[result.code] ?? result.failure?.action ?? result.code} (HTTP ${response.status})`);error.status=response.status;error.code=result.code;throw error;}
     return result;
   }
   async function uploadBinary(path,data,headers){
@@ -414,10 +450,7 @@ if (typeof document !== "undefined") {
     $("project-picker").innerHTML='<option value="">Chọn dự án…</option>'+list.map(p=>`<option value="${p.id}">${esc(p.document.name)}${p.archived?" · Đã lưu trữ":""}</option>`).join("");
     $("project-picker").value=project?.id??"";
   }
-  async function reload(reset=false) {
-    if(project){const latest=await api(`/api/projects/${project.id}`);if(dirty&&latest.revision!==project.revision)throw new Error("Phiên bản đã được sửa ở cửa sổ khác. Giữ bản đang nhập; tải lại trang sau khi lưu lại nội dung cần giữ.");project=latest;}
-    renderProject(reset);await projects();schedule();
-  }
+  const reload=createNativeProjectReload({api,getState:()=>({project,dirty,dirtyPart,workspace_id:workspaceId}),onProject:value=>{project=value;},renderProject,projects,schedule});
   function schedule() {
     clearTimeout(timer);
     if(!jobActive(project))return;
@@ -429,6 +462,7 @@ if (typeof document !== "undefined") {
   }
   const guarded=fn=>async event=>{event?.preventDefault();if(busy)return;busy=true;controls();try{await fn(event);}catch(error){message(error.message,true);}finally{busy=false;controls();}};
   async function initializeSupportedStudio(session){
+    workspaceId=session.access?.workspace_id??'wsp_native_local';
     asrLanguageEnabled=session.capabilities?.native_asr_language_selection===true;
     localAsrEnabled=session.capabilities?.native_local_asr===true;
     localSmallAsrEnabled=session.capabilities?.native_local_asr_small===true;
@@ -687,9 +721,9 @@ if (typeof document !== "undefined") {
     shotStudio=module.initializeShotStudio({api,ui:workspaceUI,sourceUI,getReviewedVision:()=>officialVisionUI?.currentBinding()??null,onDraftsCreated:projects,capabilities:session.capabilities??{},getProject:()=>project,getGuards:()=>({dirty,busy:busy||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(officialVisionUI?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(generationUI?.isWorking()??false),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canManage,workspace_id:session.access?.workspace_id??'wsp_native_local'}),onDirty:value=>{dirty=value;dirtyPart=value?'shot':null;$("review-check").checked=false;controls();},onProject:(value,reset)=>{project=value;renderProject(reset);},onMessage:message,onWorking:controls});
     if(session.capabilities?.native_drama_workflow===true&&shotStudio){
       const flow=await import('./drama-workflow.mjs');const css=document.createElement('link');css.rel='stylesheet';css.href='/drama-workflow.css';document.head.append(css);
-      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,canManage,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
+      dramaFlowUI=flow.initializeDramaWorkflow({api,getState:()=>({project,dirty,dirtyPart,busy,workspace_id:workspaceId,canManage,canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),
         onCreated:async value=>{project=value;localStorage.setItem('vf-native-project',value.id);const url=new URL(location.href);url.searchParams.delete('new');url.searchParams.delete('view');url.searchParams.set('project',value.id);history.replaceState(null,'',url);$('media-illustration').checked=false;renderProject(true);await projects();if(value.document.production_workflow.kind==='source')shotStudio.showStage('assets');},
-        onSaved:async()=>{await reload(true);},onDirty:value=>{if(value)markDirty('drama-script');else if(dirtyPart==='drama-script'){dirty=false;dirtyPart=null;controls();}},onWorking:value=>{busy=value;controls();},onMessage:message,showStage:value=>shotStudio.showStage(value),drama:dramaUI,narration:narrationUI});
+        onSaved:nativeDramaSaveCallback(reload),onDirty:value=>{if(value)markDirty('drama-script');else if(dirtyPart==='drama-script'){dirty=false;dirtyPart=null;controls();}},onWorking:value=>{busy=value;controls();},onMessage:message,showStage:value=>shotStudio.showStage(value),drama:dramaUI,narration:narrationUI});
     }
   }
   $("save-prompt").addEventListener("click",guarded(async()=>{

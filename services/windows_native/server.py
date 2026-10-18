@@ -1057,6 +1057,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/native-export-settings.mjs'] = 'native-export-settings.mjs'
         static['/native-drama.mjs'] = 'native-drama.mjs'
         static['/drama-workflow.mjs']='drama-workflow.mjs'
+        static['/drama-script-save.mjs']='drama-script-save.mjs'
         static['/voice-browser.mjs']='voice-browser.mjs'
         static['/drama-workflow.css']='drama-workflow.css'
         static['/native-render-thumbnail-rights.mjs'] = 'native-render-thumbnail-rights.mjs'

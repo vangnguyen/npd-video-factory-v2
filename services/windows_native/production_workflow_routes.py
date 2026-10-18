@@ -15,7 +15,7 @@ def app_info():
         try:return subprocess.check_output(['git','-C',str(root),*args],text=True,timeout=3,stderr=subprocess.DEVNULL).strip()
         except (OSError,subprocess.SubprocessError):return None
     return {'application':'NPD Video Studio','application_source':str(root),'branch':git('branch','--show-current'),'commit':git('rev-parse','HEAD'),
-        'build':'drama-usability-03','platform_api_publishing':'DEFERRED','analytics':'DEFERRED','full_trend_radar':'DEFERRED','production_deployed':False}
+        'build':'drama-save-fix-05','platform_api_publishing':'DEFERRED','analytics':'DEFERRED','full_trend_radar':'DEFERRED','production_deployed':False}
 
 def dispatch(handler,*,write=False):
     path=handler.path
@@ -31,4 +31,5 @@ def dispatch(handler,*,write=False):
     def authorized():
         if handler.server.access is not None:handler.server.access.authorize(handler.auth_session,'POST',path)
     actor=handler.auth_session.principal.token_id if getattr(handler,'auth_session',None) else 'loopback-owner'
-    return handler.reply(save_script(handler.server.store,match[1],handler.read_body(max_bytes=180000),actor_ref=actor,authorization_check=authorized))
+    workspace=handler.server.access.workspace_id if handler.server.access is not None else 'wsp_native_local'
+    return handler.reply(save_script(handler.server.store,match[1],handler.read_body(max_bytes=180000),actor_ref=actor,workspace_id=workspace,authorization_check=authorized))

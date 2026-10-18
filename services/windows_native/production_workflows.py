@@ -79,17 +79,18 @@ class ScriptSave(StrictModel):
     series:StrictStr|None=Field(default=None,max_length=100)
     episode:StrictStr|None=Field(default=None,max_length=100)
 
-def save_script(store,project_id,payload,*,actor_ref,authorization_check=lambda:None):
+def save_script(store,project_id,payload,*,actor_ref,workspace_id='wsp_native_local',authorization_check=lambda:None):
     try:body=ScriptSave.model_validate(payload).model_dump()
     except (ValueError,TypeError,ValidationError):raise WorkflowError('DRAMA_SCRIPT_REQUEST_INVALID',400) from None
     fingerprint=digest(body);authorization_check()
+    receipt={'request_key':body['request_key'],'request_sha256':fingerprint,'base_revision':body['revision'],'workspace_id':workspace_id}
     with store.transaction() as con:
         con.execute('CREATE TABLE IF NOT EXISTS native_drama_script_writes (project_id TEXT NOT NULL,request_key TEXT NOT NULL,fingerprint TEXT NOT NULL,response TEXT NOT NULL,PRIMARY KEY(project_id,request_key))')
         old=con.execute('SELECT * FROM native_drama_script_writes WHERE project_id=? AND request_key=?',(project_id,body['request_key'])).fetchone()
         if old:
             legacy_fingerprint=digest({k:v for k,v in body.items() if k!='input_mode'}) if body['input_mode']=='script' else None
             if old['fingerprint'] not in (fingerprint,legacy_fingerprint):raise WorkflowError('DRAMA_REQUEST_KEY_CONFLICT')
-            return {**json.loads(old['response']),'idempotent_replay':True}
+            return {**json.loads(old['response']),**receipt,'idempotent_replay':True}
         project=store.editable(con,project_id,body['revision']);doc=copy.deepcopy(project['document'])
         if not is_drama(doc):raise WorkflowError('DRAMA_WORKFLOW_REQUIRED',400)
         if body['confirm_characters'] and body['input_mode']=='idea':raise WorkflowError('DRAMA_IDEA_NEEDS_SCRIPT',400)
@@ -112,7 +113,7 @@ def save_script(store,project_id,payload,*,actor_ref,authorization_check=lambda:
         authorization_check();revision=project['revision']+1
         con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(revision,json.dumps(doc,ensure_ascii=False),now(),project_id))
         store.version(con,project_id);store.event(con,project_id,'drama_script_saved',{'revision':revision,'characters_confirmed':body['confirm_characters'],'provider_calls':0,'actor_ref':actor_ref,'approval_invalidated':True})
-        response={'project_id':project_id,'revision':revision,'characters_confirmed':body['confirm_characters'],'needs_speaker':parsed['needs_speaker'],'provider_calls':0,'human_approval_granted':False,'idempotent_replay':False}
+        response={'project_id':project_id,'revision':revision,'characters_confirmed':body['confirm_characters'],'needs_speaker':parsed['needs_speaker'],'provider_calls':0,'human_approval_granted':False,'idempotent_replay':False,**receipt}
         con.execute('INSERT INTO native_drama_script_writes VALUES(?,?,?,?)',(project_id,body['request_key'],fingerprint,json.dumps(response)))
     return response
 

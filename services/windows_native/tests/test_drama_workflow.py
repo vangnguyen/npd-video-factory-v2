@@ -1,5 +1,5 @@
 """Drama authoring is explicit, canonical and provider-free; never Owner UAT."""
-import copy,tempfile,unittest
+import copy,json,tempfile,unittest
 from pathlib import Path
 from services.windows_native.store import Store
 from services.windows_native.contracts import WorkflowError
@@ -60,3 +60,29 @@ class DramaWorkflowTests(unittest.TestCase):
         self.save();body=ScriptSave.model_validate(dict(revision=1,request_key='drama-script-test-0001',text=SCRIPT)).model_dump()
         with self.store.transaction() as con:con.execute('UPDATE native_drama_script_writes SET fingerprint=?',(digest({k:v for k,v in body.items() if k!='input_mode'}),))
         replay=save_script(self.store,self.project['id'],body,actor_ref='explicit-test-fixture');self.assertTrue(replay['idempotent_replay']);self.assertEqual(self.store.get(self.project['id'])['revision'],2)
+
+    def test_receipt_binds_normalized_request_workspace_and_exact_replay_without_new_version(self):
+        from services.windows_native.production_workflows import ScriptSave
+        from services.windows_native.contracts import digest
+        body=dict(revision=1,request_key='scoped-script-save-test-01',text=SCRIPT)
+        first=save_script(self.store,self.project['id'],body,actor_ref='fixture',workspace_id='wsp_fixture')
+        self.assertEqual(first['request_key'],body['request_key']);self.assertEqual(first['base_revision'],1)
+        self.assertEqual(first['workspace_id'],'wsp_fixture');self.assertEqual(first['request_sha256'],digest(ScriptSave.model_validate(body).model_dump()))
+        replay=save_script(self.store,self.project['id'],body,actor_ref='fixture',workspace_id='wsp_fixture')
+        self.assertTrue(replay['idempotent_replay']);self.assertEqual(replay['request_sha256'],first['request_sha256'])
+        self.assertEqual(self.store.get(self.project['id'])['revision'],2)
+        with self.assertRaisesRegex(WorkflowError,'REQUEST_KEY_CONFLICT'):
+            save_script(self.store,self.project['id'],{**body,'text':'An: Khác.'},actor_ref='fixture',workspace_id='wsp_fixture')
+        self.assertEqual(self.store.get(self.project['id'])['revision'],2)
+
+    def test_replay_enriches_legacy_receipt_without_rewriting_historical_journal_or_project(self):
+        from services.windows_native.contracts import digest
+        result=self.save()
+        with self.store.transaction() as con:
+            row=con.execute('SELECT * FROM native_drama_script_writes').fetchone();old=json.loads(row['response'])
+            for field in ('request_key','request_sha256','base_revision','workspace_id'):old.pop(field)
+            con.execute('UPDATE native_drama_script_writes SET response=?',(json.dumps(old),))
+        before=self.store.get(self.project['id']);replay=self.save()
+        self.assertEqual(replay['request_key'],'drama-script-test-0001');self.assertEqual(replay['revision'],result['revision'])
+        self.assertEqual(self.store.get(self.project['id']),before)
+        with self.store.transaction() as con:self.assertEqual(json.loads(con.execute('SELECT response FROM native_drama_script_writes').fetchone()[0]),old)

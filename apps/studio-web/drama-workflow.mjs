@@ -1,4 +1,5 @@
 import {initializeVoiceBrowser,usableVoice} from './voice-browser.mjs';
+import {verifyDramaSaveReceipt,stableDramaJSON} from './drama-script-save.mjs';
 const ACTIVE=new Set(['queued','running','retrying']);
 export const isDramaProject=project=>project?.document?.production_workflow?.kind==='drama';
 export const dramaSteps=[['script','Kịch bản'],['voices','Nhân vật & giọng'],['scenes','Hình ảnh & cảnh'],['preview','Dựng & xem thử'],['export','Xuất video']];
@@ -37,6 +38,14 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
   const tools=node('div',null,scriptPane,{class:'actions'}),save=button('Lưu nháp',tools,()=>saveScript(false)),example=button('Dùng kịch bản ví dụ nguyên bản',tools,()=>{text.value='CẢNH 1: Chiếc ô\n(An đặt chiếc ô lên bàn.)\nAn: Mình tìm thấy chiếc ô của bạn rồi.\nBình: Cảm ơn, mình đã tìm nó cả buổi.';changed();});
   node('p','Ví dụ chỉ là nội dung viết sẵn để thử thao tác, chưa có tư liệu hay phê duyệt. Bạn có thể thay bằng câu chuyện của mình.',scriptPane,{class:'hint'});
   const saved=node('p','Đã lưu',scriptPane,{role:'status','aria-live':'polite'});
+  const recoveryTools=node('div',null,scriptPane,{class:'actions'});
+  button('Sao chép bản đang nhập',recoveryTools,async()=>{try{if(!globalThis.navigator?.clipboard?.writeText)throw Error();await globalThis.navigator.clipboard.writeText(text.value);onMessage('Đã sao chép bản đang nhập.');}catch{text.focus();text.select?.();onMessage('Bản đang nhập đã được chọn. Nhấn Ctrl+C để sao chép; nội dung chưa bị thay thế.');}});
+  const viewSaved=button('Xem bản đã lưu',recoveryTools,()=>readServerSnapshot());
+  const comparison=node('section',null,scriptPane,{class:'card','aria-label':'Đối chiếu kịch bản'});comparison.hidden=true;
+  const comparisonStatus=node('p','',comparison,{role:'status'});
+  node('p','Đối chiếu bản đã lưu bên dưới với ô đang nhập phía trên. Bạn có thể sửa hoặc sao chép phần muốn giữ trước khi chọn mốc lưu; hệ thống không tự ghi đè.',comparison,{class:'hint'});
+  const serverText=node('textarea',null,node('label','Kịch bản đã lưu trên máy',comparison),{rows:'7',readonly:'', 'aria-readonly':'true'});
+  const rebase=button('Giữ bản đang nhập · dùng phiên bản này làm mốc lưu',comparison,()=>adoptReviewedSnapshot());
   const voicePane=node('section',null,flow,{class:'drama-voices-pane'}),confirmCard=node('section',null,voicePane,{class:'card'});node('h2','Xác nhận người nói',confirmCard);
   const characterList=node('div',null,confirmCard),confirm=button('Xác nhận nhân vật & tạo phân cảnh nháp',confirmCard,()=>saveScript(true));
   node('p','Xác nhận danh sách không phải duyệt kịch bản hoặc chất lượng giọng. Người kể mặc định tắt; nhân vật không có thoại không bắt buộc có giọng.',confirmCard,{class:'hint'});
@@ -52,14 +61,27 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
   const voicePageCards=node('div',null,voicesPage);let globalVoiceBrowser=null;
   const importVoices=button('Nạp các giọng local đã cài',voicesPage,async()=>{try{await api('/api/voice-library/import-installed',{method:'POST',body:JSON.stringify({acknowledged:true})});await loadGlobalVoices();}catch(error){onMessage(error.message,true);}});importVoices.hidden=true;
   async function loadGlobalVoices(){const [library,presets]=await Promise.all([api('/api/voice-library'),api('/api/voice-library/presets')]);if(!Array.isArray(library?.items)||!Array.isArray(presets?.voices))throw Error('Chưa đọc được thư viện giọng.');globalVoiceBrowser?.dispose();globalVoiceBrowser=initializeVoiceBrowser({root:voicePageCards,api,voices:library.items.filter(usableVoice),catalog:presets,dom,canEdit:()=>getState().canEdit!==false&&!getState().busy,onMessage});importVoices.hidden=presets.voices.every(v=>library.items.some(x=>x.definition.provider_voice_id===v.provider_voice_id&&x.definition.rights_status==='source_licensed'));}
-  let kind=null,step='script',binding=null,scriptDirty=false,working=false,pending=null,pendingProject=null,timer=null,assignments={},characterNotes={},audioProject=null,lastPrepared=null;
+  let kind=null,step='script',binding=null,scriptDirty=false,working=false,pending=null,pendingResult=null,timer=null,assignments={},characterNotes={},audioProject=null,lastPrepared=null;
+  let scopeKey=null,boundProject=null,conflict=null;const localDrafts=new Map();
   const homes=new Map();
   function moveHere(element,parent){if(element&&element.parentNode!==parent){if(!homes.has(element))homes.set(element,{parent:element.parentNode,next:element.nextSibling});parent.append(element);}}
   function restoreHomes(){for(const[element,home]of homes){if(element.parentNode!==home.parent&&home.parent){if(home.parent.insertBefore)home.parent.insertBefore(element,home.next?.parentNode===home.parent?home.next:null);else home.parent.append(element);}}}
-  const buffer=()=>({text:text.value,input_mode:inputMode.value,narrator_enabled:current()?.document.drama_casting?.configuration.narrator_enabled??false,speaker_assignments:assignments,character_notes:characterNotes,series:seriesInput.value.trim()||null,episode:episodeInput.value.trim()||null});
-  const sameBuffer=request=>JSON.stringify(buffer())===JSON.stringify(Object.fromEntries(Object.keys(buffer()).map(key=>[key,request[key]])));
+  const buffer=()=>({text:text.value,input_mode:inputMode.value,narrator_enabled:boundProject?.document.drama_casting?.configuration.narrator_enabled??false,speaker_assignments:assignments,character_notes:characterNotes,series:seriesInput.value.trim()||null,episode:episodeInput.value.trim()||null});
+  const sameBuffer=request=>stableDramaJSON(buffer())===stableDramaJSON(Object.fromEntries(Object.keys(buffer()).map(key=>[key,request[key]])));
   const current=()=>getState().project,blocked=()=>{const s=getState();return working||s.busy||dramaProgress(s.project).active||s.project?.archived||s.canEdit===false||(s.dirty&&s.dirtyPart!=='drama-script');};
-  function changed(){scriptDirty=true;onDirty(true);saved.textContent='Chưa lưu';clearTimeout(timer);timer=setTimeout(()=>{if(scriptDirty&&!pending&&!blocked())void saveScript(false);},1800);controls();}
+  const scope=()=>({project_id:current()?.id,workspace_id:getState().workspace_id??'wsp_native_local'});
+  const keyFor=value=>value.project_id?'vf-drama-script-draft:v1:'+encodeURIComponent(value.workspace_id)+':'+value.project_id:null;
+  const sameScope=value=>keyFor(scope())===keyFor(value);
+  function persist(){if(!scopeKey)return;const value={schema:'drama-local-draft.v1',buffer:structuredClone(buffer()),dirty:scriptDirty,pending,pendingResult};if(scriptDirty||pending)localDrafts.set(scopeKey,value);else localDrafts.delete(scopeKey);try{if(!scriptDirty&&!pending){storage.removeItem?.(scopeKey);return;}storage.setItem(scopeKey,JSON.stringify(value));}catch{}}
+  function rememberLate(value,result){const key=keyFor(value);try{const draft=localDrafts.get(key)??JSON.parse(storage.getItem(key));if(draft?.pending?.request_key===value.request.request_key){const updated={...draft,pendingResult:result};localDrafts.set(key,updated);storage.setItem(key,JSON.stringify(updated));}}catch{}}
+  function fill(value){text.value=value.text??'';inputMode.value=value.input_mode??'script';seriesInput.value=value.series??'';episodeInput.value=value.episode??'';assignments=structuredClone(value.speaker_assignments??{});characterNotes=structuredClone(value.character_notes??{});ideaHint.hidden=inputMode.value!=='idea';}
+  function showConflict(project,message='Dự án có phiên bản mới hơn. Nội dung đang nhập chưa bị thay thế.'){
+    conflict=project;comparison.hidden=false;serverText.value=project?.document.drama_script?.raw_text??'';comparisonStatus.textContent=message+' · Bản đã lưu: phiên bản '+project.revision;
+    scriptDirty=true;onDirty(true);saved.textContent='Cần đối chiếu · bản đang nhập được giữ';persist();controls();
+  }
+  async function readServerSnapshot(){const selected=scope();if(!selected.project_id||working)return;try{const latest=await api(`/api/projects/${selected.project_id}`);if(!sameScope(selected))return;conflict=latest;comparison.hidden=false;serverText.value=latest.document.drama_script?.raw_text??'';comparisonStatus.textContent=`Bản đã lưu: phiên bản ${latest.revision}. Nội dung đang nhập chưa bị thay thế.`;controls();}catch(error){if(sameScope(selected))onMessage(error.message,true);}}
+  async function adoptReviewedSnapshot(){if(!conflict||pending||blocked())return;const selected=scope(),snapshot=conflict;try{working=true;onWorking(true);controls();const value=await onSaved({...selected,kind:'reviewed-server',snapshot});if(!sameScope(selected))return;if(value?.status!=='rebased'){if(value?.project)showConflict(value.project);return;}conflict=null;comparison.hidden=true;scriptDirty=true;onDirty(true);saved.textContent='Đã đối chiếu · bản đang nhập chưa lưu';persist();onMessage('Đã chọn mốc lưu sau đối chiếu. Bấm Lưu nháp để lưu nội dung đang nhập; chưa có phê duyệt video.');}catch(error){if(sameScope(selected))onMessage(error.message,true);}finally{working=false;onWorking(false);controls();}}
+  function changed(){scriptDirty=true;onDirty(true);saved.textContent='Chưa lưu';persist();clearTimeout(timer);timer=setTimeout(()=>{if(scriptDirty&&!pending&&!conflict&&!blocked())void saveScript(false);},1800);controls();}
   text.addEventListener('input',changed);
   inputMode.addEventListener('change',()=>{ideaHint.hidden=inputMode.value!=='idea';changed();});
   seriesInput.addEventListener('input',changed);episodeInput.addEventListener('input',changed);
@@ -69,17 +91,30 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
       await onCreated(value);kind=null;onMessage('Đã tạo bản nháp. Nhập kịch bản và xác nhận nhân vật để tiếp tục.');
     }catch(error){onMessage(error.message,true);}finally{working=false;onWorking(false);sync();}}
   async function saveScript(confirmCharacters){
-    if(working||!current()||blocked())return;const project=current();
-    try{if(pending&&pendingProject!==project.id)throw Error('Có lần lưu chưa đối chiếu ở phim trước. Mở lại phim đó và bấm Đối chiếu lần lưu trước.');
+    if(working||!current()||blocked()||(conflict&&!pending)||(!scriptDirty&&!pending&&!confirmCharacters))return;const project=current(),selected=scope();
+    clearTimeout(timer);
+    try{
       const request=pending??structuredClone({revision:project.revision,request_key:globalThis.crypto.randomUUID(),...buffer(),confirm_characters:confirmCharacters});
-      pending=request;pendingProject=project.id;working=true;onWorking(true);saved.textContent='Đang lưu…';controls();
-      const result=validateDramaScriptResponse(await api(`/api/projects/${project.id}/drama-script`,request),project,request);
-      const newerBuffer=!sameBuffer(request);await onSaved();pending=null;pendingProject=null;
-      if(current()?.revision!==result.revision||current()?.document?.drama_script?.raw_text!==request.text){scriptDirty=true;onDirty(true);throw Error('Dự án đã có bản mới. Nội dung đang sửa được giữ; kiểm tra lịch sử trước khi lưu lại.');}
+      pending=request;working=true;onWorking(true);saved.textContent='Đang lưu…';persist();controls();
+      const result=validateDramaScriptResponse(pendingResult??await api(`/api/projects/${project.id}/drama-script`,request),project,request);
+      await verifyDramaSaveReceipt(result,{...selected,request});
+      if(!sameScope(selected)){rememberLate({...selected,request},result);return;}
+      pendingResult=result;persist();
+      const loaded=await onSaved({...selected,kind:'saved',request,result});
+      if(!sameScope(selected))return;
+      if(loaded?.status==='newer'){pending=null;pendingResult=null;showConflict(loaded.project,'Lần lưu của bạn đã thành công; sau đó dự án có phiên bản mới hơn. Nội dung đang nhập chưa bị thay thế.');return;}
+      if(loaded?.status!=='saved')throw Error('Chưa đối chiếu được trạng thái lưu. Giữ bản đang nhập và kiểm tra lại yêu cầu cũ.');
+      const newerBuffer=!sameBuffer(request);pending=null;pendingResult=null;conflict=null;comparison.hidden=true;
       if(newerBuffer){scriptDirty=true;onDirty(true);saved.textContent='Đã đối chiếu lần lưu trước · nội dung mới đang sửa chưa lưu';onMessage('Đã giữ nội dung mới đang sửa. Bấm Lưu nháp để lưu bản này.');return;}
-      scriptDirty=false;onDirty(false);saved.textContent='Đã lưu';binding=null;sync();if(request.confirm_characters)go('voices');
+      scriptDirty=false;onDirty(false);saved.textContent='Đã lưu';persist();binding=null;sync();if(request.confirm_characters)go('voices');
       onMessage(request.confirm_characters?'Đã xác nhận nhân vật và tạo cảnh nháp. Chọn giọng riêng cho từng người; chưa tạo audio hoặc phê duyệt video.':'Đã lưu nháp kịch bản.');
-    }catch(error){saved.textContent='Chưa lưu được · nội dung đang sửa được giữ';onMessage(error.message,true);}finally{working=false;onWorking(false);controls();}
+    }catch(error){if(!sameScope(selected))return;
+      const rejected=!pendingResult&&[400,401,403,404,409,422].includes(error.status)&&typeof error.code==='string';
+      if(rejected){pending=null;pendingResult=null;}
+      scriptDirty=true;onDirty(true);saved.textContent=pendingResult?'Đã nhận biên nhận lưu · cần đối chiếu trạng thái':pending?'Chưa rõ kết quả lưu · đối chiếu yêu cầu cũ':'Chưa lưu được · nội dung đang sửa được giữ';
+      persist();onMessage(error.message,true);
+      if(rejected&&error.status===409){try{const latest=await api(`/api/projects/${selected.project_id}`);if(sameScope(selected))showConflict(latest);}catch{}}
+    }finally{working=false;onWorking(false);if(sameScope(selected))persist();controls();}
   }
   function go(value){if(!dramaSteps.some(v=>v[0]===value))return;if(scriptDirty&&value!=='script'&&step==='script'){onMessage('Lưu nháp kịch bản trước khi chuyển bước.',true);return;}
     step=value;try{if(current())storage.setItem('vf-drama-step:'+current().id,step);}catch{}
@@ -98,10 +133,11 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
     controls();}
   function drawCharacters(){characterList.replaceChildren();const record=current()?.document.drama_script;if(!record){node('p','Lưu kịch bản ở bước 1 để gợi ý người nói. Bạn vẫn có thể lưu phim khi chưa đủ nội dung.',characterList);return;}
     for(const c of record.parsed.characters){node('p',`${c.name}${c.role==='narrator'?' · người kể, tùy chọn':''}`,characterList);const note=node('input',null,node('label','Vai trò / tính cách của '+c.name+' (tùy chọn)',characterList),{maxlength:'500','data-workspace-control':''});note.value=characterNotes[c.character_id]??'';note.addEventListener('input',()=>{characterNotes[c.character_id]=note.value;changed();});}
-    for(const line of record.parsed.lines.filter(v=>v.needs_speaker)){const select=node('select',null,node('label',`Chọn người nói: ${line.text}`,characterList),{'data-workspace-control':''});node('option','Chưa rõ người nói',select,{value:''});for(const c of record.parsed.characters)node('option',c.name,select,{value:c.character_id});select.value=assignments[line.line_id]??'';select.addEventListener('change',()=>{assignments[line.line_id]=select.value;});}
+    for(const line of record.parsed.lines.filter(v=>v.needs_speaker)){const select=node('select',null,node('label',`Chọn người nói: ${line.text}`,characterList),{'data-workspace-control':''});node('option','Chưa rõ người nói',select,{value:''});for(const c of record.parsed.characters)node('option',c.name,select,{value:c.character_id});select.value=assignments[line.line_id]??'';select.addEventListener('change',()=>{assignments[line.line_id]=select.value;changed();});}
     confirm.textContent=record.characters_confirmed?'Xác nhận lại nhân vật từ kịch bản':'Xác nhận nhân vật & tạo phân cảnh nháp';
   }
-  function controls(){const p=current(),s=dramaProgress(p),stop=blocked();create.disabled=working||getState().busy||!kind;save.disabled=stop||!scriptDirty&&!pending;example.disabled=stop;confirm.disabled=stop||!p?.document.drama_script?.raw_text?.trim();text.disabled=working||getState().busy||s.active||p?.archived||getState().canEdit===false;
+  function controls(){const p=current(),s=dramaProgress(p),stop=blocked();create.disabled=working||getState().busy||!kind;save.disabled=stop||Boolean(conflict&&!pending)||!scriptDirty&&!pending;example.disabled=stop;confirm.disabled=stop||Boolean(conflict)||!p?.document.drama_script?.raw_text?.trim();text.disabled=(getState().busy&&!working)||s.active||p?.archived||getState().canEdit===false;
+    save.title=conflict?'Đối chiếu bản đã lưu và chọn mốc lưu trước khi lưu lại.':'';viewSaved.disabled=working||!p;rebase.disabled=stop||Boolean(pending)||!conflict;
     save.textContent=pending?'Đối chiếu lần lưu trước':'Lưu nháp';confirm.disabled||=Boolean(pending);
     inputMode.disabled=seriesInput.disabled=episodeInput.disabled=text.disabled;for(const element of characterList.querySelectorAll('input,select'))element.disabled=stop;confirm.disabled||=inputMode.value==='idea';
     globalVoiceBrowser?.refresh();if(isDramaProject(p)&&step==='voices')drama?.ensureLoaded?.();if(isDramaProject(p)&&step==='preview')narration?.ensureLoaded?.();
@@ -117,6 +153,10 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
     const voiceStatus=dom.getElementById('runtime-voice-summary');if(voiceStatus)voiceStatus.textContent=isDramaProject(p)?`${s.characterCount} nhân vật · ${s.voiceCount} giọng`:p?'Giọng theo cấu hình đã lưu của dự án':'Chọn giọng theo từng dự án';
   }
   function sync(){const p=current(),url=new URL(globalThis.location?.href??'http://studio.local/'),view=url.searchParams.get('view');chooser.hidden=Boolean(p)||kind==='standard';settings.hidden=view!=='settings';voicesPage.hidden=view!=='voices';
+    const selectedKey=keyFor(scope());if(selectedKey!==scopeKey){persist();scopeKey=selectedKey;boundProject=p;scriptDirty=false;pending=null;pendingResult=null;conflict=null;comparison.hidden=true;binding=null;if(getState().dirtyPart==='drama-script')onDirty(false);
+      let draft=localDrafts.get(scopeKey);try{draft??=JSON.parse(storage.getItem(scopeKey));}catch{}
+      if(isDramaProject(p)&&draft?.schema==='drama-local-draft.v1'&&typeof draft.buffer?.text==='string'&&draft.buffer.text.length<=20000&&(draft.dirty||draft.pending)){fill(draft.buffer);scriptDirty=true;pending=draft.pending??null;pendingResult=draft.pendingResult??null;saved.textContent=pending?'Đã khôi phục bản nháp · đối chiếu lần lưu trước':'Đã khôi phục bản nháp chưa lưu';onDirty(true);}else{saved.textContent='Đã lưu';}
+    }boundProject=p;
     const k=`${p?.id}:${p?.revision}`;if(binding!==k){const changedProject=binding?.split(':')[0]!==p?.id;binding=k;if(!scriptDirty&&!pending){text.value=p?.document.drama_script?.raw_text??'';inputMode.value=p?.document.drama_script?.input_mode??'script';ideaHint.hidden=inputMode.value!=='idea';seriesInput.value=p?.document.production_workflow?.series??'';episodeInput.value=p?.document.production_workflow?.episode??'';characterNotes=structuredClone(p?.document.drama_script?.character_notes??{});assignments={};drawCharacters();}if(changedProject){try{step=storage.getItem('vf-drama-step:'+p?.id)??'script';}catch{step='script';}if(!dramaSteps.some(v=>v[0]===step))step='script';}}
     const panel=dom.getElementById('native-drama-panel');if(panel&&isDramaProject(p))moveHere(panel,voiceSlot);
     const audio=dom.getElementById('native-narration-panel');if(audio&&isDramaProject(p)){moveHere(audio,previewTools);const prepared=p.document.prepared_narration?.plan_sha256??null;if(audioProject!==p.id){audioProject=p.id;lastPrepared=prepared;audio.open=step==='preview'&&!dramaProgress(p).audio;}else if(lastPrepared!==prepared){lastPrepared=prepared;if(dramaProgress(p).audio)audio.open=false;}}
