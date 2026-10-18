@@ -185,6 +185,36 @@ class BackupTests(unittest.TestCase):
         self.assertFalse(self.destination.exists())
         self.assertTrue(any(self.base.glob('.restored.restore-*')), 'Owned failed staging is retained for inspection')
 
+    def rewrite_runtime_fields(self,name,remove=(),extra=None):
+        target=self.base/name
+        with zipfile.ZipFile(self.archive) as source,zipfile.ZipFile(target,'x',compression=zipfile.ZIP_STORED) as output:
+            for info in source.infolist():
+                raw=source.read(info.filename)
+                if info.filename=='manifest.json':
+                    value=json.loads(raw)
+                    for key in remove:value['runtime_paths'].pop(key,None)
+                    value['runtime_paths'].update(extra or {});raw=json.dumps(value).encode()
+                output.writestr(info,raw)
+        return target
+
+    def test_legacy_backup_missing_only_optional_asr_path_restores_disabled_without_rewriting_archive(self):
+        (self.root/'__vf_local_asr_not_configured__.json').write_text('{"fixture_only":true,"configured":true}')
+        self.backup();legacy=self.rewrite_runtime_fields('legacy-seven-fields.zip',remove=('local_asr_manifest',));checksum=file_sha(legacy)
+        result=restore_backup(legacy,self.destination,expected_sha256=checksum);config=Config.load(result['runtime_config_path'])
+        self.assertEqual(result['defaulted_runtime_fields'],['local_asr_manifest']);self.assertEqual(config.local_asr_manifest.parent,self.destination)
+        self.assertTrue(config.local_asr_manifest.is_absolute());self.assertFalse(config.local_asr_manifest.exists())
+        self.assertTrue((self.destination/'__vf_local_asr_not_configured__.json').exists());self.assertEqual(file_sha(legacy),checksum)
+        self.assertFalse(result['services_started']);self.assertEqual(result['provider_calls'],0)
+
+    def test_missing_required_or_unknown_runtime_field_still_fails_before_restore(self):
+        self.backup()
+        for i,key in enumerate(('secret_file','data_root','runtime_root')):
+            path=self.rewrite_runtime_fields('missing-required-'+str(i)+'.zip',remove=(key,))
+            with self.subTest(key=key),self.assertRaisesRegex(WorkflowError,'MANIFEST_INVALID'):restore_backup(path,self.destination,expected_sha256=file_sha(path))
+            self.assertFalse(self.destination.exists())
+        path=self.rewrite_runtime_fields('unknown-runtime.zip',extra={'unexpected_auto_connection':'fixture-only'})
+        with self.assertRaisesRegex(WorkflowError,'MANIFEST_INVALID'):restore_backup(path,self.destination,expected_sha256=file_sha(path))
+
     def test_archive_path_special_mode_duplicate_and_compression_reject_before_staging(self):
         good = self.backup()
         for variant in ('traversal', 'duplicate', 'symlink', 'compressed', 'foreign'):

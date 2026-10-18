@@ -6,6 +6,7 @@ from copy import deepcopy
 import http.client
 from http.cookies import SimpleCookie
 import json
+import os
 from pathlib import Path
 import tempfile
 import threading
@@ -151,7 +152,7 @@ class Phase10HTTPTests(unittest.TestCase):
         status, session, headers = self.request('GET', '/api/session', headers={'Cookie': '', 'X-VF-CSRF': ''})
         self.assertEqual(status, 200)
         self.assertEqual(session['capabilities'], {'native_shot_studio': True, 'production_intelligence': True, 'voice_quality_selection': True,
-            'native_studio_ux': True, 'asset_library': True, 'native_multipart_upload': True, 'native_audio_transcript_edit': True,
+            'native_studio_ux': True, 'native_manual_delivery':True,'native_manual_delivery_focus':True,'native_open_output_folder':os.name=='nt', 'asset_library': True, 'native_multipart_upload': True, 'native_audio_transcript_edit': True,
             'native_transcript_word_review':True,'native_scene_assessments':True,
             'native_source_media_tracks': True, 'native_narrated_timeline_editor': True, 'north_star_quality': True, 'native_auto_edit_analysis': True,
             'native_source_timeline':True,'native_source_broll_resolution':True,'native_media_frame_analysis':True,'native_cost_ledger':True,'native_channel_profile_admin':True,'native_local_subject_tracking':True,'native_asr_language_selection':True,

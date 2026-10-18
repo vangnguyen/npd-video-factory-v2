@@ -1,0 +1,18 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "1afd924c82f8810e1ba2b011477a649b62576da6",
+  "initial_wide_run": {"log": "recovery/20261007/final-export-full-Native-n1.log", "total": 2156, "passed": 2139, "failed": 3, "errors": 14, "duration_seconds": 7802.239},
+  "current_source_closure": {"log": "recovery/20261007/final-export-native-regression-closure-n1.log", "passed": 38, "duration_seconds": 302.792},
+  "causes": ["two UI module requests used an older in-memory route map with newer on-disk imports", "capability fixture omitted three additive export flags", "legacy runtime manifest did not contain optional local_asr_manifest"],
+  "restore_behavior": "only the known optional ASR field may be absent; supply an absolute absent sentinel in a new destination; all required/unknown-path/hash/archive/database validation stays enforced",
+  "preserved_archives": [
+    {"path": "recovery/20261007/native-meta-winners-contract-n3/facebook/owned-state.zip", "sha256": "c487444e3c4bcef7d26c82c6e6204887e373c8080ef01e62814751e69842ed6c"},
+    {"path": "recovery/20261007/native-meta-winners-contract-n3/instagram_reels/owned-state.zip", "sha256": "16b33273f92bb23a9031b2cae4821d7406eb4d4b52a9cb511c5118f1006c0dbf"}
+  ],
+  "full_current_runtime_rerun": false,
+  "services_started_by_restore": false,
+  "real_platform_provider_calls": 0,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

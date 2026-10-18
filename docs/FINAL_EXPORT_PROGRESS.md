@@ -74,6 +74,8 @@ Full API ban đầu bị chặn collection 5 module trên Windows: thiếu NumPy
 
 Đối chiếu đã hoàn tất cho 11 lỗi ngoài nhóm Linux executor/custody: cả 11 tái hiện ở HEAD trước chương trình Export, thêm 5 ca kiểm tra authorization trước body pass. [Phân loại đầy đủ và giới hạn](FINAL_EXPORT_REGRESSION_STATUS.md). Checkout baseline tạm đã kiểm tra sạch và dọn bằng Git, thu hồi 703169497 byte; không đụng checkout nguồn chính hay accepted videos. 26 fail và 17 setup error thuộc nhóm môi trường/POSIX vẫn chưa được chứng nhận trên Linux. Full regression chưa đạt.
 
+Full Native đã kết thúc: 2156 bài / 7802.239s, 3 fail và 14 error. Đã chạy lại trên nguồn hiện tại và đóng các 17 ca lỗi bằng cohort **38 pass / 302.792s** (`final-export-native-regression-closure-n1.log`), kèm backup/static regression. Không gọi đây là một full run mới. Hai lỗi 404 do map route cũ trong process dài đọc UI mới; fixture capability được cập nhật ba field Export mới. Legacy restore đã hỗ trợ thiếu đúng optional ASR path bằng sentinel tuyệt đối không tồn tại; không mặc định bí mật/đường bắt buộc và không bật provider. Checksum hai archive cũ giữ nguyên. [Chi tiết](FINAL_EXPORT_REGRESSION_STATUS.md).
+
 Lượt `final-export-narrated-settings-regression-n2.log` có 38 test chạy qua nhưng gọi nhầm thêm module không tồn tại `test_shot_timeline`, nên toàn lượt không pass. Đã sửa lời gọi bằng module thật `test_shot_adapter` ở cohort canonical 39 pass phía trên; không che lỗi gọi test bằng cách đổi mã production.
 
 ## Phần còn phải hoàn thành trước khi đánh dấu ready

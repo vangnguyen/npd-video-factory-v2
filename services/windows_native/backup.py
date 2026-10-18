@@ -358,7 +358,8 @@ def validate_archive(archive):
         manifest = json.loads(archive.read(info))
         if manifest['schema'] != 'native-offline-backup-v1' or not isinstance(manifest['entries'], list):
             raise ValueError()
-        if set(manifest['runtime_paths']) != set(Config.__dataclass_fields__):
+        fields=set(Config.__dataclass_fields__);provided=set(manifest['runtime_paths'])
+        if provided-fields or fields-provided-{'local_asr_manifest'}:
             raise ValueError()
         if any(not isinstance(value, str) or not 1 <= len(value) <= 2048 or '\x00' in value for value in manifest['runtime_paths'].values()):
             raise ValueError()
@@ -402,10 +403,15 @@ def restore_backup(backup, destination, *, expected_sha256):
         original_root = Path(manifest['source_root']).absolute()
         if destination == original_root or original_root in destination.parents:
             raise WorkflowError('RESTORE_REQUIRES_DIFFERENT_SOURCE_ROOT', 400)
-        config = Config(**{key: Path(value) for key, value in manifest['runtime_paths'].items()})
-        config = replace(config, data_root=destination)
-        config.validate_data_root()
         manifest_sha = hashlib.sha256(canonical(manifest)).hexdigest()
+        runtime_paths={key:Path(value) for key,value in manifest['runtime_paths'].items()}
+        defaulted=[]
+        if 'local_asr_manifest' not in runtime_paths:
+            name='.vf-local-asr-not-configured-'+manifest_sha+'.json'
+            if any(row['path'].casefold()==('state/'+name).casefold() for row in manifest['entries']):raise WorkflowError('BACKUP_RESERVED_RESTORE_PATH',400)
+            runtime_paths['local_asr_manifest']=destination/name;defaulted.append('local_asr_manifest')
+        config=replace(Config(**runtime_paths),data_root=destination)
+        config.validate_data_root()
         staging.mkdir(mode=0o700, exist_ok=False)
         for row in manifest['entries']:
             name = row['path']
@@ -428,6 +434,7 @@ def restore_backup(backup, destination, *, expected_sha256):
             if database_status(staging / name) != facts or facts['active_operations']:
                 raise WorkflowError('RESTORE_DATABASE_STATUS_MISMATCH')
         receipt = {'schema': 'native-restore-receipt-v1', 'backup_sha256': expected_sha256,
+            'defaulted_runtime_fields':defaulted,
             'manifest_sha256': manifest_sha, 'original_source_root': str(original_root),
             'destination': str(destination), 'verified_entries': len(manifest['entries']),
             'database_status': manifest['databases'], 'services_started': False, 'provider_calls': 0,

@@ -32,9 +32,15 @@ The baseline comparison also ran the actual variant-route pre-body admission beh
 
 Baseline comparison: **11 failed, 5 passed / 88.78s**, helper wall time 92.484s. [Exact node IDs and receipt](../evidence/final-export-manual-publishing/baseline/api-failed-baseline-comparison.json). A separate detached checkout was used and then removed after verifying exact baseline HEAD and a clean working tree. [Cleanup receipt](../evidence/final-export-manual-publishing/baseline/temporary-checkout-cleanup.json): 703169497 bytes in that disposable checkout; source remains in Git and verified recovery bundles.
 
-## Still pending
+## Native wide run and targeted closure
 
-Full Native launched before later cover/recovery/QC/P6 additions and remains running. Its final result will be reported with that source cutline. The focused later cohorts do not turn it into a new complete full-runtime certification.
+Full Native launched before later cover/recovery/QC/P6 additions completed **2156 tests / 7802.239s: 2139 passed, 3 failed, 14 errors**. The long-lived test process used an older in-memory static route map while reading newer UI imports; two failures requested `native-export-settings.mjs` from that mixed version. The capability contract fixture needed the three deliberately added export capabilities. Fourteen restore errors came from old seven-field runtime manifests missing the later optional `local_asr_manifest` field.
+
+Current-source closure: **38 pass / 302.792s**, `final-export-native-regression-closure-n1.log`. This reruns all seventeen originally failing/error cases plus backup and static regression checks. It is not a new full 2156-test run. The exact capability test retains all prior fields and adds manual delivery, manual-delivery focus and the runtime folder capability. HTTP module-dependency closure passes using the current route map.
+
+Legacy backup compatibility now accepts omission of exactly `local_asr_manifest`, supplies an absolute absent sentinel in the new restore destination and records the defaulted field. Missing required paths and unknown fields still fail; entry hashes, archive trusted hash and database checks remain enforced. No legacy archive is rewritten or service started. The older Facebook/Instagram fixture archives retain SHA256 `c487444e3c4bcef7d26c82c6e6204887e373c8080ef01e62814751e69842ed6c` and `16b33273f92bb23a9031b2cae4821d7406eb4d4b52a9cb511c5118f1006c0dbf` respectively. These are regression fixtures, not platform deployment or expanded publishing work.
+
+## Still pending
 
 Browser visual checks, all five consolidated Owner export cases, human pronunciation/listening, real two-voice dialogue provider acceptance, series casting and the complete per-line audio/UI integration remain open. Phase 8/9/10 accepted files were rehashed unchanged; acceptance is not silently replaced by these fixtures. Docker/Linux and production are not certified by this Windows run.
 
