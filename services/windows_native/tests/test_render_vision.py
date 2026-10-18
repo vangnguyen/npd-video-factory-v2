@@ -39,7 +39,10 @@ class NativeRenderVisionTests(unittest.TestCase):
         finally:manager.close()
         f.project=f.store.approve(f.project['id'],f.project['revision'],'EXPLICIT SYNTHETIC RENDER REVIEW — NOT OWNER UAT',True)
         job=f.store.enqueue(f.project['id'],f.project['revision'],'render',uuid.uuid4().hex)
-        assert Runner(f.store,Pipeline(f.config)).run_one();cls.original_job=f.store.get_job(job['id']);assert cls.original_job['status']=='succeeded'
+        assert Runner(f.store,Pipeline(f.config)).run_one();cls.original_job=f.store.get_job(job['id'])
+        error=cls.original_job.get('error')
+        assert cls.original_job['status']=='succeeded',{'status':cls.original_job['status'],
+            'error_code':error.get('code') if isinstance(error,dict) else None}
 
     @classmethod
     def tearDownClass(cls):cls.original.tearDown()

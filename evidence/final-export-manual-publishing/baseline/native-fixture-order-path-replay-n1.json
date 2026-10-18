@@ -1,0 +1,36 @@
+{
+  "before_http": {
+    "tests": 2,
+    "failures": 2,
+    "errors": 0,
+    "seconds": 13.969,
+    "successful": false
+  },
+  "after_http": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 58.0,
+    "successful": true
+  },
+  "before_cache": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "seconds": 0.172,
+    "successful": false
+  },
+  "after_cache": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 0.094,
+    "successful": true
+  },
+  "source_files_modified": false,
+  "runtime_guards_weakened": false,
+  "real_provider_calls": 0,
+  "fixes": "Scope the HTTP fixture resolver at its imported router alias; enumerate owned long-path fixture files with an extended path from the root",
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

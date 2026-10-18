@@ -1,0 +1,21 @@
+{
+  "schema_version": "final-export-native-regression-closure.v2",
+  "wide_run": {"loaded": 2285, "run": 2264, "failures": 3, "errors": 2, "seconds": 4516.547, "source_trees_unchanged_during_run": true, "receipt": "native-full-shards-n2.json"},
+  "initial_issues": [
+    {"issue": "Render Vision shared setup's final render job was not succeeded; its bare assertion omitted the stored error code", "cases_not_executed": 21, "classification": "Initial cause not captured; do not attribute it to resource pressure without evidence", "closure": "All 21 cases replayed successfully without changing runtime or test assertions; future setup assertion now includes status and safe error code"},
+    {"issue": "Two drama HTTP assertions depended on whether the router imported its resolver before the runtime mock", "classification": "Fixture mock scope", "closure": "Forced early import reproduces both failures; explicitly mocking the handler's imported resolver makes all eight HTTP cases pass"},
+    {"issue": "Long cache path was stored and reused, but the test's ordinary recursive walk silently omitted children beyond MAX_PATH", "classification": "Fixture inspection path", "closure": "Longer owned root reproduces the failure. Extended owned-path inspection passes; ordinary adapter input and actual cache implementation are unchanged"},
+    {"issue": "Facebook loopback receiver ready.json existed briefly before its JSON bytes were fully written", "classification": "Fixture startup publication race", "closure": "Write/fsync a private temporary readiness file, then atomically replace ready.json; signed event/receipt schemas and production transport remain unchanged"}
+  ],
+  "replays": [
+    {"tests": 21, "failures": 0, "errors": 0, "seconds": 167.349, "log": "recovery/20261007/final-export-render-vision-class-replay-n1.log"},
+    {"tests": 22, "failures": 0, "errors": 0, "seconds": 55.324, "log": "recovery/20261007/final-export-native-fixture-closure-n1.log", "scope": "All drama HTTP and stock cache binding cases after source fixture corrections"},
+    {"tests": 8, "failures": 0, "errors": 0, "seconds": 259.406, "log": "recovery/20261007/final-export-native-receiver-closure-n1.log", "scope": "Both Meta source types, independent real loopback receiver and fresh producer processes; protocol fixtures only"}
+  ],
+  "reproduction_receipt": "native-fixture-order-path-replay-n1.json",
+  "runtime_guards_weakened": false,
+  "fresh_clean_full_native_run_claimed": false,
+  "production_provider_acceptance_claimed": false,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

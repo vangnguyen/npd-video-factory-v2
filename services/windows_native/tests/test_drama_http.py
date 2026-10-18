@@ -9,6 +9,7 @@ from services.windows_native.tests.test_human_identity import fixture as human
 from services.windows_native.tests.test_phase10_http import NoProviderPipeline
 from services.windows_native.tests.test_voice_library import definition
 from services.windows_native.contracts import digest
+from services.windows_native import drama_routes
 
 class DramaHTTPTests(unittest.TestCase):
     compile=fixture.DialogueRuntimeTests.compile
@@ -16,6 +17,10 @@ class DramaHTTPTests(unittest.TestCase):
     save_cast=fixture.DialogueRuntimeTests.save_cast
     def setUp(self):
         fixture.DialogueRuntimeTests.setUp(self);self.pipeline=NoProviderPipeline()
+        # Patch where the HTTP handler resolves the provider, independently of
+        # whether another test imported this router before the runtime mock.
+        route_providers=patch.object(drama_routes,'providers_for',return_value=self.providers)
+        route_providers.start();self.addCleanup(route_providers.stop)
         raw,data=human('owner',workspace='wsp_native_local');access=NativeAccess(HumanAuthVerifier(HumanAuthRegistry.model_validate(data),max_token_ttl_seconds=86400),'wsp_native_local')
         self.server=LocalServer(0,self.config,pipeline=self.pipeline,start_worker=False,access=access)
         self.cookie,session=access.login(raw);self.csrf=session.csrf;self.thread=threading.Thread(target=self.server.serve_forever,daemon=True);self.thread.start()

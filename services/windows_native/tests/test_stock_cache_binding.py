@@ -150,9 +150,13 @@ class SharedStockCacheTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.calls),1)
         self.assertEqual(repeated.provenance['cache_binding_sha256'],first.provenance['cache_binding_sha256'])
         self.assertTrue(repeated.provenance['fixture'])
-        files=list(cache_io_path(long_root).rglob('*.json'))
+        # The recursive walk also needs the extended prefix when its children
+        # exceed MAX_PATH but long_root itself is shorter than 240 characters.
+        # Keep the adapter input ordinary; inspect only this owned fixture path.
+        owned_root=Path(self.temporary.name)/long_root.name
+        files=list(owned_root.rglob('*.json'))
         self.assertEqual(len(files),1);self.assertGreater(len(str(files[0])),260)
-        self.assertEqual(list(cache_io_path(long_root).rglob('*.tmp')),[])
+        self.assertEqual(list(owned_root.rglob('*.tmp')),[])
 
     async def test_mutating_execution_origin_or_credential_refuses_even_a_cache_hit(self):
         first=self.mocked();await self.search(first);first.mock_transport_used=False

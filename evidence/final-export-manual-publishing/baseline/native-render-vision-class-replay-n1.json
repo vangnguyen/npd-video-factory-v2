@@ -1,0 +1,12 @@
+{
+  "source_unchanged": true,
+  "tests": 21,
+  "failures": 0,
+  "errors": 0,
+  "successful": true,
+  "seconds": 167.344,
+  "purpose": "Replay all 21 cases omitted by the initial shared render-fixture setup failure",
+  "runtime_guards_weakened": false,
+  "provider_transport": "explicit HTTPX mock",
+  "owner_uat_complete": false
+}

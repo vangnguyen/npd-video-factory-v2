@@ -105,7 +105,11 @@ def main():
             return self.reply(status)
     server=ThreadingHTTPServer(('127.0.0.1',args.port),Handler);server.daemon_threads=True
     ready={'fixture':True,'port':server.server_port,'pid':os.getpid(),'workspace':args.workspace,'scenario':args.scenario}
-    (root/'ready.json').write_text(json.dumps(ready),encoding='utf-8')
+    # Readers wait for ready.json to exist; publish complete bytes atomically.
+    ready_temp=root/('ready-'+str(os.getpid())+'.tmp')
+    with ready_temp.open('w',encoding='utf-8') as output:
+        json.dump(ready,output);output.flush();os.fsync(output.fileno())
+    ready_temp.replace(root/'ready.json')
     print(json.dumps(ready),flush=True)
     try:server.serve_forever(poll_interval=.1)
     finally:server.server_close()

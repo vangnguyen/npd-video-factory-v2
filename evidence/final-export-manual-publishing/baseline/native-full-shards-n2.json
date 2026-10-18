@@ -1,0 +1,78 @@
+{
+  "source_head_at_start": "a01dbd6eff8d744ad262949dc0f5ce839fdc96ba",
+  "source_trees": {
+    "services/windows_native": "f3187aca146dcd3114cd61bb97bf59115e8d3b8e",
+    "apps/studio-web": "c501200facc56908161d3cfef020854bbd3257c2",
+    "apps/api/app": "2eb30b1819b06f2187ede2c1b35202cdf0e7ee07"
+  },
+  "source_trees_unchanged": true,
+  "loaded": 2285,
+  "run": 2264,
+  "failures": 3,
+  "errors": 2,
+  "skipped": 0,
+  "seconds": 4516.547,
+  "successful": false,
+  "shards": [
+    {
+      "shard": 0,
+      "loaded": 572,
+      "run": 551,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 3141.546,
+      "successful": false,
+      "failing_ids": [],
+      "error_ids": [
+        "setUpClass (services.windows_native.tests.test_render_vision.NativeRenderVisionTests)"
+      ]
+    },
+    {
+      "shard": 1,
+      "loaded": 571,
+      "run": 571,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3476.516,
+      "successful": false,
+      "failing_ids": [
+        "services.windows_native.tests.test_drama_http.DramaHTTPTests.test_explicit_dialogue_save_updates_same_canonical_script_and_invalidates_old_approval",
+        "services.windows_native.tests.test_drama_http.DramaHTTPTests.test_read_catalog_library_casting_and_immutable_voice_versions"
+      ],
+      "error_ids": []
+    },
+    {
+      "shard": 2,
+      "loaded": 571,
+      "run": 571,
+      "failures": 1,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 3270.61,
+      "successful": false,
+      "failing_ids": [
+        "services.windows_native.tests.test_stock_cache_binding.SharedStockCacheTests.test_long_owned_windows_cache_root_can_write_and_reuse_the_response"
+      ],
+      "error_ids": [
+        "services.windows_native.tests.test_meta_webhook_processes.FacebookWebhookProcessesTests.test_all_meta_source_types_deliver_schema_valid_signed_local_receipts"
+      ]
+    },
+    {
+      "shard": 3,
+      "loaded": 571,
+      "run": 571,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4513.562,
+      "successful": true,
+      "failing_ids": [],
+      "error_ids": []
+    }
+  ],
+  "owner_uat_complete": false,
+  "real_provider_acceptance": false,
+  "production_deployed": false
+}
