@@ -56,6 +56,9 @@ class NativeAnalyticsTests(unittest.TestCase):
         self.assertEqual(self.store.get(self.project['id']),before)
 
     def test_four_platform_fixtures_keep_missing_metrics_null_and_assessment_explainable(self):
+        # This case compares wall-clock provider receipts across real render
+        # fixtures; a frozen service clock would falsely reject them after 5s.
+        self.service.clock=lambda:datetime.now(timezone.utc)
         for platform in ['youtube','tiktok','instagram_reels','facebook']:
             pub=self.pub if platform=='youtube' else self.publish(platform)
             value=self.create(publication_id=pub['publication_id'],request_key='native-four-metric-fixture-'+platform)
@@ -136,6 +139,7 @@ class NativeAnalyticsTests(unittest.TestCase):
             with self.subTest(fields=list(changes)),self.assertRaises(ValidationError):self.payload(**changes)
 
     def test_workspace_overview_keeps_latest_distinct_posts_and_scoped_cursor_without_account_totals(self):
+        self.service.clock=lambda:datetime.now(timezone.utc)
         for platform in ['youtube','tiktok','facebook']:
             pub=self.pub if platform=='youtube' else self.publish(platform)
             for i in range(2):
