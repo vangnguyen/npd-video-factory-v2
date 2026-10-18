@@ -21,6 +21,8 @@ def failure(code, step="", http_status=None):
         category,action='RENDER_ERROR','Kiểm tra phụ đề có đúng người nói và nằm trong thời gian câu thoại đã đo. Khôi phục phụ đề theo câu và chỉ giữ track thoại đã duyệt; tạo preview và duyệt lại.'
     elif code=='EXPORT_DIALOGUE_QC_REVIEW_REQUIRED':
         category,action='RENDER_ERROR','Bản xuất thoại này chưa có bằng chứng QC người nói phù hợp. Giữ nguyên bản lịch sử; tạo preview, duyệt và tạo bản render mới trước khi xuất gói mới.'
+    elif code=='DRAMA_DELIVERY_PLAN_NOT_READY':
+        category,action='USER_INPUT_ERROR','Chọn giọng đã cấu hình cho từng nhân vật, kiểm tra quyền sử dụng và các câu thoại còn thiếu, rồi kiểm tra phân vai lại.'
     elif code.startswith('LOCAL_ASR_'):
         category,action='ASR_ERROR','Kiểm tra mô hình nhận diện trên máy và transcript nguồn. Kết quả cần được kiểm tra trước khi chỉnh video; yêu cầu này giữ lựa chọn xử lý local.'
     elif code=='ASR_WORD_OVER_SOURCE_AUDIO_GAP_REVIEW_REQUIRED':

@@ -1,0 +1,14 @@
+{
+  "schema_version": "native-drama-actionable-error.v1",
+  "error_code": "DRAMA_DELIVERY_PLAN_NOT_READY",
+  "category": "USER_INPUT_ERROR",
+  "user_action": "Choose configured voices, check usage rights and missing dialogue lines, then recheck casting",
+  "requires_cli_or_job_log": false,
+  "automatic_paid_replay": false,
+  "admission_or_approval_rules_changed": false,
+  "tests": {"passed": 20, "failed": 0, "seconds": 49.749, "log": "recovery/20261007/final-export-drama-actionable-error-Native-n1.log", "scope": "Existing hardening and drama HTTP suites; provider transport mocked"},
+  "review_server_restart": {"previous_pid": 20824, "identity_checked": true, "active_core_jobs_before_stop": 0, "production_process_touched": false, "data_deleted": false},
+  "owner_voice_uat_required": true,
+  "owner_export_uat_complete": false,
+  "production_deployed": false
+}
