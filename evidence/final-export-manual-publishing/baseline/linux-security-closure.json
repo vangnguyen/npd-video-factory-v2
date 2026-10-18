@@ -1,0 +1,36 @@
+{
+  "schema_version": "final-export-linux-security-closure.v1",
+  "root_cohort": {
+    "passed": 291,
+    "skipped": 2,
+    "failed": 0,
+    "seconds": 345.55,
+    "log": "recovery/20261007/final-export-WSL-checks-n2.log",
+    "receipt": "wsl-security-and-collection-n2.json",
+    "environment": "Ubuntu 24.04 WSL, actual UID 0, isolated venv and Linux scratch"
+  },
+  "nonroot_cohort": {
+    "passed": 2,
+    "skipped": 0,
+    "failed": 0,
+    "seconds": 15.77,
+    "uid": 65534,
+    "gid": 65534,
+    "supplementary_groups": [],
+    "log": "recovery/20261007/final-export-WSL-nonroot-n4.log",
+    "tests": ["test_executor_plane.py::test_read_only_evidence_blocks", "test_mvp1_provider_admission.py::test_nonroot_cannot_admit_self_owned_public_authority"],
+    "mechanism": "Drop privileges only in the owned subprocess using setgroups/setgid/setuid. No OS user/group/service is added or changed. The two root-skipped tests pass without UID/stat mocking."
+  },
+  "coverage": "The earlier Windows POSIX/dependency failure groups plus all five formerly uncollectable modules, across ten selected files. This is a targeted cohort, not a full API run.",
+  "initial_environment_attempts": [
+    "WSL n1 created a venv under /tmp, but it was absent after WSL restarted. No tests ran in that failed invocation, and no systemd/service repair was attempted.",
+    "WSL n2 builds and runs in one invocation; the ten-file cohort passes with the two explicit root skips.",
+    "Full API n3 setup succeeded but native Linux Git could not resolve the Windows worktree's C: gitdir pointer. That pointer was not rewritten. Full API n4 uses a native-Windows-Git physical source manifest and verifies 630 source files before/after the Linux run."
+  ],
+  "full_api_n4": "4376 cases collected, disjoint 2188/2188 shards running; no final result claimed here",
+  "production_host_qualified": false,
+  "docker_e2e_certified": false,
+  "production_services_changed": false,
+  "real_provider_acceptance_claimed": false,
+  "production_deployed": false
+}

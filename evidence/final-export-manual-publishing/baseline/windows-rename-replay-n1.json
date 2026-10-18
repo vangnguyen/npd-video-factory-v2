@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "tests": 3,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 10.64,
+  "log": "recovery/20261007/final-export-Windows-rename-replay-n1.log",
+  "scope": "All three OS-specific bounded rename retry/reverification/no-SDK-reopen cases, exact parameterized selector",
+  "production_services_changed": false,
+  "production_deployed": false
+}

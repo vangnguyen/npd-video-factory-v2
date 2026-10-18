@@ -1,0 +1,21 @@
+{
+  "schema_version": "final-export-owned-media-replay.v1",
+  "status": "PASS",
+  "tests": 5,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 73.42,
+  "log": "recovery/20261007/final-export-owned-Windows-media-replay-n1.log",
+  "python": "C:/vfns-sql-win-ci-c1/venv/Scripts/python.exe",
+  "scratch": "C:/vfct/fe-wmedia-n1",
+  "scope": [
+    "test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0]",
+    "test_auto_edit_jobs.py::test_real_mp4_upload_probe_decode_clock_in_async_job_with_explicit_mock_cpu[0.35]",
+    "test_auto_edit_local_cpu.py::test_actual_trusted_mp4_sql_analysis_preserves_measured_source_and_mock_label",
+    "test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0]",
+    "test_local_video_transcription_provider.py::test_actual_owned_mp4_decoder_uses_measured_clock_with_explicit_mock_cpu[0.35]"
+  ],
+  "qualification": "Physical Windows FFmpeg upload/probe/decode/clock and SQL workflow, ExplicitMockCPU transcription. These exact five cases intentionally skipped on Linux; no real ASR, voice inference or Owner acceptance is claimed.",
+  "production_services_changed": false,
+  "production_deployed": false
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "isolated-linux-media-runtime.v1",
+  "directory": "/var/tmp/vf-final-export-ci-20261018-n3/portable-media-n1",
+  "bin": "/var/tmp/vf-final-export-ci-20261018-n3/portable-media-n1/bin",
+  "archive_sha256": "4db8d27f1032d1162c5deec526e733cb4128b1780127af749dffd98ee1e7f813",
+  "archive_bytes": 151212184,
+  "asset_id": 651617266,
+  "tools": {
+    "ffmpeg": {
+      "version": "ffmpeg version n9.0.2-28-g669f5ab083-20261017 Copyright (c) 2000-2026 the FFmpeg developers",
+      "sha256": "a4d856572d437570ed0090d2c14203b511fe6b1b2f33dfdb104bb0466d9a1b62"
+    },
+    "ffprobe": {
+      "version": "ffprobe version n9.0.2-28-g669f5ab083-20261017 Copyright (c) 2007-2026 the FFmpeg developers",
+      "sha256": "08fd3152494176b51bd3293c57b6c535be041a345d7b2d33e2b71f3a48df8df3"
+    }
+  },
+  "download_source": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n9.0-latest-linux64-gpl-9.0.tar.xz",
+  "listed_by_project": "https://ffmpeg.org/download.html",
+  "system_install": false,
+  "production_services_changed": false,
+  "production_deployed": false
+}

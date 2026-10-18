@@ -1,0 +1,22 @@
+{
+  "schema_version": "native-export-review-recovery.v1",
+  "backup_path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-review-with-drama-draft-n1.zip",
+  "backup_bytes": 13760693,
+  "backup_sha256": "d9e3af93e3a71a8e675e6136e80ccd32366c8445b06dbcbe99c83b080df6c8a0",
+  "zip_crc": "PASS",
+  "restore_root": "C:\\vfct\\final-export-review-restore-n3",
+  "projects": 2,
+  "recovered_draft_characters": [
+    "An",
+    "B\u00ecnh"
+  ],
+  "narrator_enabled": false,
+  "voices_selected": 0,
+  "draft_approved": false,
+  "historical_video_sha256": "19d7ce9c5d59f55c353d16e5858bd2b3687cb0fbe7bdb02d3939d1cacdb65ed3",
+  "provider_calls": 0,
+  "services_started": false,
+  "accepted_historical_files_replaced": false,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

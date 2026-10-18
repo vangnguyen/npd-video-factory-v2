@@ -1,0 +1,22 @@
+{
+  "schema_version": "native-review-readiness-negative.v1",
+  "http_status": 400,
+  "error": {
+    "code": "DRAMA_DELIVERY_PLAN_NOT_READY",
+    "failure": {
+      "category": "USER_INPUT_ERROR",
+      "error_code": "DRAMA_DELIVERY_PLAN_NOT_READY",
+      "step": "",
+      "http_status": null,
+      "action": "Chọn giọng đã cấu hình cho từng nhân vật, kiểm tra quyền sử dụng và các câu thoại còn thiếu, rồi kiểm tra phân vai lại.",
+      "automatic_paid_replay": false
+    }
+  },
+  "project_revision_preserved": true,
+  "jobs_created": 0,
+  "approval_created": false,
+  "provider_calls": 0,
+  "browser_rendered": false,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

@@ -1,0 +1,14 @@
+{
+  "id": 651617266,
+  "name": "ffmpeg-n9.0-latest-linux64-gpl-9.0.tar.xz",
+  "size": 151212184,
+  "digest": "sha256:4db8d27f1032d1162c5deec526e733cb4128b1780127af749dffd98ee1e7f813",
+  "browser_download_url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n9.0-latest-linux64-gpl-9.0.tar.xz",
+  "created_at": "2026-10-17T21:14:31Z",
+  "updated_at": "2026-10-17T21:14:44Z",
+  "release_tag": "latest",
+  "release_id": 416062997,
+  "metadata_url": "https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/latest",
+  "listed_by_project": "https://ffmpeg.org/download.html",
+  "runtime_scope": "Owned disposable WSL CI only; no global install"
+}

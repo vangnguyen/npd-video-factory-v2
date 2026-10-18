@@ -1,0 +1,26 @@
+{
+  "returncode": 0,
+  "seconds": 155.267,
+  "selected": [
+    "tests/test_sql_variant_uploaded_derivation.py",
+    "tests/test_canonical_audio_processing.py"
+  ],
+  "portable_media_tools": true,
+  "source_files_modified": false,
+  "provider_credentials_inherited": false,
+  "real_provider_acceptance": false,
+  "production_services_changed": false,
+  "production_deployed": false,
+  "junit_counts": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "26",
+    "time": "152.865",
+    "timestamp": "2026-10-18T06:51:12.588820+00:00",
+    "hostname": "DESKTOP-S5UVMA3"
+  },
+  "log": "recovery/20261007/final-export-WSL-media-closure-n2.log",
+  "qualification": "Actual portable FFmpeg/PCM/local storage and SQL. ASR/TTS/identities/approvals are fixtures; no real provider or Owner UAT."
+}

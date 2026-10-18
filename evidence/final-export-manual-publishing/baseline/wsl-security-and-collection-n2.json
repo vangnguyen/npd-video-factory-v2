@@ -1,0 +1,35 @@
+{
+  "status": "TESTS_PASSED",
+  "root": "/tmp/vf-final-export-ci-20261018-n2",
+  "python": "3.12.3",
+  "uid": 0,
+  "test_files": [
+    "test_executor_plane.py",
+    "test_executor_provenance.py",
+    "test_executor_security.py",
+    "test_mvp1_provider_admission.py",
+    "test_provider_custody.py",
+    "test_local_subject_tracking.py",
+    "test_provider_secret_resolver.py",
+    "test_provider_selection_candidates.py",
+    "test_runtime_activation.py",
+    "test_runtime_role_failsafe.py"
+  ],
+  "environment": "Ubuntu-24.04 WSL, isolated owned venv/Linux scratch",
+  "real_provider_calls": 0,
+  "production_services_changed": false,
+  "production_deployed": false,
+  "host_qualification_claimed": false,
+  "docker_e2e_claimed": false,
+  "versions": {
+    "pytest": "8.4.2",
+    "fastapi": "0.143.3",
+    "sqlalchemy": "2.1.5",
+    "numpy": "2.5.3",
+    "Pillow": "12.3.0",
+    "websockets": "15.0.1",
+    "PyYAML": "6.0.1"
+  },
+  "returncode": 0,
+  "seconds": 460.849
+}
