@@ -16,6 +16,8 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 - Caption đã có chọn bản lịch sử và tái tạo riêng variant từ Master/kịch bản bằng thao tác cục bộ; không giả là đã gọi AI hoặc đăng bài. History có thumbnail và so sánh thông số phiên bản.
 - Tạo lại ZIP sinh delivery mới từ các file/hash của bản lịch sử, chạy lại QC, giữ nguyên bản trước kể cả ZIP trước hỏng. Lost response của thao tác này giữ đúng endpoint/key. History có đối chiếu/tiếp tục khi tab browser đã mất receipt; ngừng yêu cầu giữ nguyên file và chặn request-key cũ tự hồi sinh.
 - Backup nhận biết export đang chuẩn bị và đếm các journal/cover/caption mới. Đã restore một export vào thư mục mới và kiểm tra lại manifest/video; đã thử child process thật thoát ngay sau handoff rồi đối chiếu lại cùng một export.
+- P2 trên video nguồn đã thêm 24/25/30/60 FPS, 3 mức chất lượng allowlist, bật/tắt audio và burn-in. Cài đặt nằm trong canonical metadata, làm mất duyệt/preview cũ; projection không xóa hay sửa clip gốc. SRT riêng vẫn có khi không burn-in. UI chặn gói khi cài đặt chưa áp dụng. Storyboard/narration ngoài định dạng vẫn còn giới hạn, chưa nhận là hoàn tất toàn bộ P2.
+- Đã lưu [gói kỹ thuật cục bộ và hash](../evidence/final-export-manual-publishing/delivery-package/retained-local-rehearsal.json), cùng [bản backup/restore](../evidence/final-export-manual-publishing/recovery/retained-local-restore.json). Media tổng hợp, approval bằng fixture, không phải 5 case Owner UAT. Lượt rehearsal đầu đặt đường secret vắng mặt bên trong data root nên backup từ chối đúng; n2 sửa riêng config cách ly, không ghi lại video/manifest đã tạo.
 
 ## Kiểm thử đã xác nhận
 
@@ -38,6 +40,7 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | HTTP + backup regression | 22 pass / 46.315s | final-export-http-backup-Native-n1.log |
 | Thoát process thật | 1 pass / 20.475s; owned child exit 86, lease được OS giải phóng, một export được đối chiếu | final-export-process-exit-Native-n1.log |
 | UI mở rộng | 20 pass / 150.0543ms | final-export-history-resume-Studio-n2.log |
+| Source export settings | 5 pass / 62.517s, có hai ca render thật 24/25 FPS; 21 Node / 234.3394ms; 9 renderer; typecheck pass | final-export-presentation-Native-n2.log; final-export-presentation-Studio-n2.log; final-export-encoder-renderer-n1.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 
@@ -48,14 +51,14 @@ Full API bị chặn collection 5 module trên Windows: thiếu NumPy ở SQL ve
 | Ưu tiên | Trạng thái | Còn thiếu |
 |---|---|---|
 | P1 | PARTIAL | Bộ quality/cache-invalidation tổng hợp, các ca đích thật và kiểm tra tên/giọng bằng người |
-| P2 | PARTIAL | Tùy chọn FPS/quality/burn-in/audio/watermark gắn vào preview/render mới; chọn format phải tạo và duyệt bản tương ứng; UI acceptance 1366/1920/2560 |
+| P2 | PARTIAL | Video nguồn đã có FPS/quality/burn-in/audio gắn preview/render; còn mở rộng cho storyboard/narration, video watermark khi cấu hình và UI acceptance 1366/1920/2560 |
 | P3 | PARTIAL | Các chức năng cover/copy đã có và được kiểm thử cục bộ; còn UI acceptance thực tế, quyền nội dung và bundle UAT đích |
 | P4 | PARTIAL | History/thumbnail/compare/recreate đã có; còn UI acceptance thực tế và các ca đích |
 | P5 | PARTIAL | Export handoff/restart/collision/tamper/disk error/backup-restore đã có bằng chứng; còn restart giữa render, soak và tổng regression |
 | P6 | NOT_STARTED trong chương trình này | Voice Library + character/casting theo project + per-line TTS + narrator optional + targeted regeneration + UI/QC |
 | P7 | PENDING_OWNER_UAT | 5 case Owner UAT; không tự ghi nhận nghiệm thu |
 
-Các preset 4 hình học đã có hard validation; export bản đầu yêu cầu profile khớp video đã duyệt. Chọn landscape cho MP4 portrait bị từ chối rõ ràng, không transcode âm thầm. FPS/hình/tiếng/phụ đề hiện giữ nguyên bản đã duyệt. Thư mục đầu ra do Native quản lý; chưa có chọn thư mục tùy ý. Hiện không ghi những tùy chọn chưa hỗ trợ thành đã hoàn thành.
+Các preset 4 hình học có hard validation; gói phải khớp video đã duyệt. Đổi format từ Export Center áp dụng lại cấu hình dự án và cần preview/duyệt mới; video nguồn còn hỗ trợ FPS/quality/burn/audio. Không transcode âm thầm một MP4 đã duyệt thành file khác. Thư mục đầu ra do Native quản lý; chưa có chọn thư mục tùy ý. Không ghi những tùy chọn chưa hỗ trợ thành đã hoàn thành.
 
 Quan sát browser từng bị URL policy từ chối; Node/fake DOM và HTTP không thay cho quan sát UI hoặc Owner UAT. Không dùng browser/CDP khác để vượt chặn. Dọn cache từng bị policy từ chối cũng chưa thực hiện; dữ liệu và artifacts vẫn giữ nguyên.
 

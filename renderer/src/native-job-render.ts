@@ -1,6 +1,6 @@
 /** Private local job renderer; no general render API or whole-workspace static root. */
 import express from 'express';
-import {randomBytes} from 'node:crypto';
+import {randomBytes,createHash} from 'node:crypto';
 import {access, lstat, readFile, realpath, writeFile} from 'node:fs/promises';
 import {extname, isAbsolute, join, relative, resolve} from 'node:path';
 import type {Server} from 'node:http';
@@ -16,13 +16,25 @@ const inside = (root:string,path:string) => {
 export async function renderNativeJob(directory:string, engine?:RenderEngine, options:{preview?:boolean}={}) {
   if(options.preview!==undefined&&typeof options.preview!=='boolean')throw new Error('NATIVE_RENDER_OPTIONS_INVALID');
   const scale=options.preview === true ? 0.4 : 1;
-  engine ??= new RemotionRenderEngine({sourceProfile:true,scale});
   if(!isAbsolute(directory))throw new Error('NATIVE_RENDER_JOB_PATH_INVALID');
   const root=await realpath(directory),media=join(root,'media');
   const output=join(root,'final.mp4');
   try {await access(output);throw new Error('NATIVE_RENDER_OUTPUT_EXISTS');}
   catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
-  const manifest=timelineRenderManifestSchema.parse(JSON.parse(await readFile(join(root,'timeline-render.json'),'utf8')));
+  const manifestBytes=await readFile(join(root,'timeline-render.json'));
+  const manifest=timelineRenderManifestSchema.parse(JSON.parse(manifestBytes.toString('utf8')));
+  let encoder:{quality_preset:'high'|'standard'|'small';crf:18|23|27}|undefined;
+  try {
+    const path=join(root,'native-export-options.json'),info=await lstat(path);
+    if(!info.isFile()||info.isSymbolicLink()||info.nlink!==1||info.size>4096)throw Error('NATIVE_RENDER_ENCODER_OPTIONS_INVALID');
+    const value=JSON.parse(await readFile(path,'utf8')),quality={high:18,standard:23,small:27} as const;
+    if(!value||Object.keys(value).sort().join(',')!=='crf,quality_preset,render_manifest_sha256,schema_version'
+      ||value.schema_version!=='native-export-encoder.v1'||!Object.hasOwn(quality,value.quality_preset)
+      ||value.crf!==quality[value.quality_preset as keyof typeof quality]
+      ||value.render_manifest_sha256!==createHash('sha256').update(manifestBytes).digest('hex'))throw Error('NATIVE_RENDER_ENCODER_OPTIONS_INVALID');
+    encoder={quality_preset:value.quality_preset,crf:value.crf};
+  }catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw Error('NATIVE_RENDER_ENCODER_OPTIONS_INVALID');}
+  engine ??= new RemotionRenderEngine({sourceProfile:true,scale,...(encoder?{crf:encoder.crf}:{})});
   const paths=[manifest.audio.mix_uri,...manifest.visual_clips.map(clip=>clip.uri)];
   const files=new Map<string,string>();
   for(const candidate of paths){
@@ -65,6 +77,7 @@ export async function renderNativeJob(directory:string, engine?:RenderEngine, op
       ...(options.preview?{preview:true,scale,composition_width:manifest.metadata.width,
         composition_height:manifest.metadata.height,rendering_effects_parity:true}:{}),
       external_publish_requested:false,human_final_video_accepted:false};
+    if(encoder)Object.assign(receipt,{export_encoder:encoder});
     await writeFile(join(root,'renderer-receipt.json'),JSON.stringify(receipt,null,2)+'\n');
     return receipt;
   }finally{

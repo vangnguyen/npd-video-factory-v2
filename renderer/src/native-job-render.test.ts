@@ -1,6 +1,7 @@
 import {mkdtemp,mkdir,readFile,writeFile,rm,symlink} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {createHash} from 'node:crypto';
 import {afterEach,expect,it,vi} from 'vitest';
 import {renderNativeJob} from './native-job-render';
 import {makeTimelineManifest} from './test-fixtures';
@@ -17,6 +18,22 @@ async function fixture(){
   await writeFile(join(root,'private-database.sqlite3'),'PRIVATE_NATIVE_DATA_SENTINEL');
   return {root,visual,audio,manifest};
 }
+
+it('binds allowlisted export quality to exact private manifest bytes',async()=>{
+  const {root}=await fixture();const raw=await readFile(join(root,'timeline-render.json'));
+  await writeFile(join(root,'native-export-options.json'),JSON.stringify({schema_version:'native-export-encoder.v1',
+    render_manifest_sha256:createHash('sha256').update(raw).digest('hex'),quality_preset:'high',crf:18}));
+  const engine={render:vi.fn(async({outputPath}:{outputPath:string})=>{await writeFile(outputPath,'nonplayable contract fixture');})};
+  const receipt=await renderNativeJob(root,engine);expect(receipt).toMatchObject({export_encoder:{quality_preset:'high',crf:18}});expect(engine.render).toHaveBeenCalledOnce();
+});
+
+it.each(['hash','crf','extra'])('refuses changed encoder %s before any render',async(mode)=>{
+  const {root}=await fixture();const raw=await readFile(join(root,'timeline-render.json'));
+  const options:Record<string,unknown>={schema_version:'native-export-encoder.v1',render_manifest_sha256:createHash('sha256').update(raw).digest('hex'),quality_preset:'high',crf:18};
+  if(mode==='hash')options.render_manifest_sha256='0'.repeat(64);if(mode==='crf')options.crf=0;if(mode==='extra')options.ffmpeg_args='UNTRUSTED CLIENT OPTIONS';
+  await writeFile(join(root,'native-export-options.json'),JSON.stringify(options));const render=vi.fn();
+  await expect(renderNativeJob(root,{render})).rejects.toThrow('NATIVE_RENDER_ENCODER_OPTIONS_INVALID');expect(render).not.toHaveBeenCalled();
+});
 
 it('serves only selected media behind an ephemeral job token, supports ranges, closes and keeps raw manifests local',async()=>{
   const {root}=await fixture();let address='';

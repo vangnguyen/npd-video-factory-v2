@@ -75,7 +75,10 @@ def prepare(config,job,directory):
 def prepare_project(config,project,directory,render_id,cancel_event=None):
     """Shared staged effects/audio preparation. Final dispatch still requires approval."""
     if cancel_event is not None and cancel_event.is_set():raise WorkflowError('PREVIEW_CANCELLED')
-    snapshot,assets=resolve_assets(config,project)
+    original_snapshot,assets=resolve_assets(config,project)
+    from .export_encoder import render_projection,presentation
+    snapshot=render_projection(original_snapshot)
+    delivery_cues=derive_subtitle_cues(original_snapshot) if any(track.kind=='subtitles' and not track.disabled for track in original_snapshot.tracks) else []
     profile=PROFILES.get((snapshot.width,snapshot.height))
     if profile is None:raise WorkflowError('AUTO_EDIT_RENDER_PROFILE_INVALID',400)
     media=directory/'media';media.mkdir()
@@ -131,13 +134,16 @@ def prepare_project(config,project,directory,render_id,cancel_event=None):
     # Historical Source workflows still use v2.3 without optional captions.
     if manifest['version']!='2.4':manifest['version']='2.3'
     durable_json(directory/'timeline-render.json',manifest)
+    from .export_encoder import write as write_export_encoder
+    write_export_encoder(project['document'],directory)
     durable_json(directory/'timeline.json',project['document']['canonical_timeline'])
     if project['document'].get('source_media_track_imports'):
         from .source_media_track_origins import records,verify_physical
         durable_json(directory/'source-media-imports.json',{'schema_version':'native-render-media-imports-v1',
             'imports':list(records(project['document']).values()),'verified_active_source_sha256':verify_physical(config.data_root,project['document']),
             'source_media_mutated':False,'provider_calls':0,'human_review_required':True})
-    durable_json(directory/'subtitles.json',{'cues':[cue.model_dump(mode='json') for cue in cues],
+    durable_json(directory/'subtitles.json',{'cues':[cue.model_dump(mode='json') for cue in delivery_cues],
+        'burned_in':presentation(original_snapshot)['burn_subtitles'],
         'style':style.model_dump(mode='json'),'word_alignment':('human_supplied_source_intervals_not_independently_measured'
             if selected and selected.provenance.get('word_timestamp_policy')=='human_supplied_source_intervals'
             else 'source_provider_intervals_where_available' if selected and any(s.words for s in selected.segments)
@@ -291,6 +297,7 @@ def run(config,job,out,stage):
     files=('final.mp4','qc-report.json','ffprobe.json','render-manifest.json','timeline.json',
         'timeline-render.json','subtitles.json','audio-analysis.json','source-audio-clocks.json','canonical-audio-mux.json','cost.json','renderer-receipt.json')
     if (directory/'source-media-imports.json').is_file():files+=('source-media-imports.json',)
+    if (directory/'native-export-options.json').is_file():files+=('native-export-options.json',)
     try:files+=render_frame_artifacts(directory)
     except WorkflowError:raise WorkflowError('AUTO_EDIT_MEDIA_QC_FAILED') from None
     files+=audio_balance_artifacts(directory)

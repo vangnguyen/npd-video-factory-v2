@@ -1,6 +1,6 @@
 """Versioned source canvas/caption choices over the same Native timeline."""
 from typing import Literal
-from pydantic import Field,model_validator
+from pydantic import Field,StrictBool,model_validator
 from .auto_edit_timeline import _cas,_save,view
 from .contracts import WorkflowError
 from app.models import StrictModel
@@ -18,9 +18,14 @@ class Settings(StrictModel):
     keywords:list[str]=Field(default_factory=list,max_length=30)
     audio_processing:AudioProcessing|None=None
     preview_mode:Literal['lightweight','final_effects']|None=None
+    fps:int|None=Field(default=None,strict=True)
+    quality_preset:Literal['high','standard','small']|None=None
+    burn_subtitles:StrictBool|None=None
+    audio_included:StrictBool|None=None
     @model_validator(mode='after')
     def selected(self):
-        if self.aspect_ratio is None and self.subtitle_template_ref is None and self.audio_processing is None and self.preview_mode is None:raise ValueError('choice required')
+        if all(value is None for value in (self.aspect_ratio,self.subtitle_template_ref,self.audio_processing,self.preview_mode,self.fps,self.quality_preset,self.burn_subtitles,self.audio_included)):raise ValueError('choice required')
+        if self.fps is not None and self.fps not in (24,25,30,60):raise ValueError('unsupported export FPS')
         if self.keywords and not self.subtitle_template_ref:raise ValueError('caption template required')
         return self
 
@@ -31,6 +36,15 @@ def configure(store,project_id,revision,body):
     with store.transaction() as con:
         project=store.editable(con,project_id,revision);state=_cas(project,payload.expected_version)
         snapshot=TimelineSnapshot.model_validate(state['snapshot'])
+        if payload.fps is not None:snapshot.fps=payload.fps
+        if payload.quality_preset is not None:
+            snapshot.metadata['native_export_encoder']={'schema_version':'native-export-encoder.v1','quality_preset':payload.quality_preset}
+        if payload.burn_subtitles is not None or payload.audio_included is not None:
+            from .export_encoder import presentation
+            selected=presentation(snapshot)
+            if payload.burn_subtitles is not None:selected['burn_subtitles']=payload.burn_subtitles
+            if payload.audio_included is not None:selected['audio_included']=payload.audio_included
+            snapshot.metadata['native_export_presentation']=selected
         if payload.preview_mode is not None:
             snapshot.metadata['source_preview_mode']=payload.preview_mode
         if payload.aspect_ratio:

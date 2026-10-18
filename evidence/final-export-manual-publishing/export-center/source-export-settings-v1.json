@@ -1,0 +1,17 @@
+{
+  "schema_version": "final-export-source-settings-evidence.v1",
+  "scope": "Windows Native source-footage timeline; narrated storyboard extra controls remain partial",
+  "implemented": ["24/25/30/60 FPS selection", "high/standard/small allowlisted encoder presets", "explicit burned subtitle control", "explicit audio inclusion control", "separate SRT survives burned-subtitle off", "canonical version and approval invalidation", "UI blocks packaging for unapplied settings"],
+  "actual_media_cases": ["24 FPS / high / preview then fixture approval then actual render and full QC", "25 FPS / small / silent audio and nonburned captions / full effects preview / fixture approval / render / full QC / separate SRT delivery"],
+  "tests": {
+    "native": {"passed": 5, "seconds": 62.517, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-presentation-Native-n2.log"},
+    "studio": {"passed": 21, "seconds": 0.2343394, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-presentation-Studio-n2.log"},
+    "renderer": {"passed": 9, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-encoder-renderer-n1.log"},
+    "renderer_typecheck": "passed"
+  },
+  "fixture_approvals_are_owner_uat": false,
+  "external_provider_calls": 0,
+  "paid_operations": 0,
+  "production_deployed": false,
+  "notes": ["Encoder options are hash-bound to the private render manifest; raw client FFmpeg fields are rejected.", "Render projection preserves editable original clips/tracks; output preferences are frozen in canonical metadata.", "AAC silence may contain an encoded noise floor near -91 dB; the corrected test checks effective silence rather than requiring a null peak.", "These test sets overlap prior cohorts and are not added as unique tests."]
+}

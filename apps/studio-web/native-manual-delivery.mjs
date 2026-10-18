@@ -9,6 +9,9 @@ export function profileForVideo(video) {
   const raw=video?.result?.qc, qc=raw?.full_quality?.full_production_qc??raw;
   return EXPORT_PROFILES.find(p=>p[2]===qc?.width&&p[3]===qc?.height)?.[0]??null;
 }
+export function profileForProject(project,video){const actual=profileForVideo(video);if(actual)return actual;
+  const saved=project?.document?.canonical_timeline?.snapshot??project?.document?.brand_template?.template;
+  return EXPORT_PROFILES.find(p=>p[2]===saved?.width&&p[3]===saved?.height)?.[0]??'vertical-short';}
 export function manualCaption(copy={}) {
   return [copy.caption,copy.cta,copy.hashtags].filter(x=>typeof x==='string'&&x.trim()).join('\n\n');
 }
@@ -33,12 +36,15 @@ const errors={EXPORT_APPROVED_VERSION_CHANGED:'Phiên bản đã đổi. Xem pre
   EXPORT_COVER_SOURCE_CHANGED:'Ảnh bìa nguồn đã thay đổi. Chọn hoặc tải lại ảnh trước khi xuất.'};
 
 export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{},onWorking=()=>{},openFolder=false,
-  document:doc=globalThis.document,storage=globalThis.sessionStorage,clipboard=globalThis.navigator?.clipboard,newKey=()=>globalThis.crypto.randomUUID(),onOpen=()=>{},uploadCoverFile=null}) {
+  document:doc=globalThis.document,storage=globalThis.sessionStorage,clipboard=globalThis.navigator?.clipboard,newKey=()=>globalThis.crypto.randomUUID(),onOpen=()=>{},uploadCoverFile=null,applyExportSettings=null}) {
   const root=doc.getElementById('native-delivery-center');if(!root)return null;
   root.hidden=false;
   root.innerHTML=`<p class="eyebrow">EXPORT & DELIVERY</p><h2>Xuất video</h2><p>MP4, ảnh bìa và nội dung để bạn đăng thủ công.</p>
     <p id="delivery-state" role="status" aria-live="polite"></p>
     <fieldset id="delivery-settings"><legend>Cài đặt xuất</legend><label>Định dạng<select id="delivery-profile">${EXPORT_PROFILES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('')}</select></label>
+    <label>FPS<select id="delivery-fps"><option value="30">30</option></select></label><label>Chất lượng<select id="delivery-quality"><option value="standard">Tiêu chuẩn</option><option value="high">Cao</option><option value="small">File nhẹ</option></select></label>
+    <label class="check"><input id="delivery-burn-subtitles" type="checkbox" checked> Đốt phụ đề vào video</label><label class="check"><input id="delivery-include-audio" type="checkbox" checked> Kèm âm thanh</label>
+    <button id="delivery-apply-settings" type="button" ${applyExportSettings?'':'hidden'}>Áp dụng định dạng · tạo lại preview để duyệt</button>
     <label>Tên file MP4<input id="delivery-filename" value="final-video.mp4" maxlength="100"></label>
     <p id="delivery-bound-format" class="hint"></p><p class="hint">Gói giữ nguyên hình, âm thanh và phụ đề trong bản đã duyệt. Đổi định dạng hoặc cách dựng cần tạo preview, render và duyệt lại.</p>
     <label class="check"><input id="delivery-srt" type="checkbox" checked> Kèm SRT riêng khi video có phụ đề</label>
@@ -66,14 +72,21 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
   const copy=()=>Object.fromEntries(textFields.map(k=>[k,$('delivery-copy-'+k).value]));
   const holdCopy=()=>{variants[selected]=copy();};
   const fillCopy=()=>{for(const k of textFields)$('delivery-copy-'+k).value=variants[selected]?.[k]??'';};
+  function settingsDirty(){const p=getState().project,s=p?.document?.canonical_timeline?.snapshot,options=s?.metadata?.native_export_presentation;
+    return $('delivery-profile').value!==profileForProject(p,getVideo())||Number($('delivery-fps').value)!==(s?.fps??30)
+      ||($('delivery-quality').value||'standard')!==(s?.metadata?.native_export_encoder?.quality_preset??'standard')
+      ||$('delivery-burn-subtitles').checked!==(options?.burn_subtitles??true)||$('delivery-include-audio').checked!==(options?.audio_included??true);}
   function controls(){
     const video=getVideo(),approved=video?.final_review?.decision==='approve';
-    $('delivery-create').disabled=!writeable()||!approved||copyDirty||!copyReady;
+    $('delivery-create').disabled=!writeable()||!approved||copyDirty||!copyReady||settingsDirty();
     $('delivery-settings').disabled=!writeable();$('delivery-save-copy').disabled=!writeable()||!copyReady;
+    $('delivery-quality').disabled=getState().sourceExportConfigurable!==true;
+    $('delivery-burn-subtitles').disabled=getState().sourceExportConfigurable!==true;$('delivery-include-audio').disabled=getState().sourceExportConfigurable!==true;
+    $('delivery-apply-settings').disabled=!writeable()||!settingsDirty();
     let pending=null;try{pending=storage?.getItem(key());}catch{}
     for(const id of ['delivery-retry','delivery-reset']){$(id).hidden=!pending;$(id).disabled=!writeable();}
     $('delivery-refresh').disabled=working||getState().busy||!getState().project;
-    $('delivery-state').textContent=working?'Đang kiểm tra và tạo gói trên máy…':!video?'Tạo preview và render video trước khi xuất.':approved?'Video đã duyệt. Có thể tạo gói sau khi lưu nội dung đăng.':'Xem và nghe video ở trên rồi duyệt đúng bản cuối.';
+    $('delivery-state').textContent=working?'Đang kiểm tra và tạo gói trên máy…':settingsDirty()?'Có cài đặt xuất chưa áp dụng. Áp dụng, tạo preview và duyệt lại trước khi xuất.':!video?'Tạo preview và render video trước khi xuất.':approved?'Video đã duyệt. Có thể tạo gói sau khi lưu nội dung đăng.':'Xem và nghe video ở trên rồi duyệt đúng bản cuối.';
     $('delivery-copy-version').textContent=`Nội dung v${version}${copyDirty?' · Có chỉnh sửa chưa lưu':''}`;
     const raw=video?.result?.qc,qc=raw?.full_quality?.full_production_qc??raw;
     $('delivery-bound-format').textContent=qc?`${qc.width??'—'}×${qc.height??'—'} · ${qc.fps??'—'} FPS · H.264 / AAC · QC ${qc.status==='passed'?'đạt':'cần kiểm tra'}`:'';
@@ -117,7 +130,7 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
     const value=await api(endpoint??`/api/projects/${p.id}/exports`,body);if(!current(c))return;
     storage?.removeItem(key());result(value);await refresh();onMessage('Đã tạo gói bàn giao. Tải file và đăng thủ công.');
   }
-  $('delivery-create').addEventListener('click',()=>action(async()=>{if(getState().canEdit===false)throw Error('Vai trò này chỉ có quyền xem.');if(copyDirty)throw Error('Lưu caption trước khi tạo gói.');
+  $('delivery-create').addEventListener('click',()=>action(async()=>{if(getState().canEdit===false)throw Error('Vai trò này chỉ có quyền xem.');if(settingsDirty())throw Error('Áp dụng cài đặt xuất rồi tạo preview và duyệt lại trước khi xuất.');if(copyDirty)throw Error('Lưu caption trước khi tạo gói.');
     const p=getState().project,v=getVideo();if(!copyReady)throw Error('Làm mới nội dung đăng trước khi xuất.');if(v?.final_review?.decision!=='approve')throw Error('HUMAN_FINAL_VIDEO_APPROVAL_REQUIRED');
     const body={revision:p.revision,render_job_id:v.id,expected_video_sha256:v.result.qc.final_sha256,profile:$('delivery-profile').value,
       filename:$('delivery-filename').value,caption_version:version,separate_subtitle:$('delivery-srt').checked,cover:$('delivery-cover').checked,
@@ -132,6 +145,8 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
   }));
   $('delivery-reset').addEventListener('click',()=>{if(!writeable())return;storage?.removeItem(key());controls();});
   $('delivery-refresh').addEventListener('click',()=>action(refresh));
+  $('delivery-apply-settings').addEventListener('click',()=>action(async()=>{if(getState().canEdit===false||!applyExportSettings)return;const c=context();await applyExportSettings({profile:$('delivery-profile').value,fps:Number($('delivery-fps').value),quality_preset:$('delivery-quality').value||'standard',burn_subtitles:$('delivery-burn-subtitles').checked,audio_included:$('delivery-include-audio').checked});if(current(c))onMessage('Đã lưu cài đặt. Tạo preview mới, kiểm tra và duyệt lại trước khi xuất.');}));
+  for(const id of ['delivery-profile','delivery-fps','delivery-quality','delivery-burn-subtitles','delivery-include-audio'])$(id).addEventListener('change',controls);
   $('delivery-copy-platform').addEventListener('change',()=>{holdCopy();selected=$('delivery-copy-platform').value;fillCopy();});
   $('delivery-copy-history').addEventListener('change',()=>{const old=copyHistory.find(v=>String(v.version)===$('delivery-copy-history').value);if(old){variants=structuredClone(old.variants);copyDirty=true;fillCopy();controls();}});
   $('delivery-regenerate-copy').addEventListener('click',()=>{if(!writeable())return;holdCopy();variants[selected]=selected==='master'?{title:getState().project.document.name,caption:getState().project.document.proposal?.narration??''}:structuredClone(variants.master??{});copyDirty=true;fillCopy();controls();});
@@ -149,7 +164,10 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
     if(loaded!==c){loaded=c;epoch++;const p=getState().project,projectKey=key();
       if(loadedProject!==projectKey){loadedProject=projectKey;version=0;variants={};copyDirty=false;copyReady=false;selected='master';$('delivery-copy-platform').value='master';
         variants.master={title:p?.document?.name??'',caption:p?.document?.proposal?.narration??''};fillCopy();}
-      $('delivery-profile').value=profileForVideo(getVideo())??'vertical-short';$('delivery-result').replaceChildren();history=[];showHistory();
+      $('delivery-profile').value=profileForProject(p,getVideo());$('delivery-fps').innerHTML=(getState().sourceExportConfigurable===true?[24,25,30,60]:[30]).map(fps=>`<option value="${fps}">${fps}</option>`).join('');
+      $('delivery-fps').value=String(p?.document?.canonical_timeline?.snapshot?.fps??30);$('delivery-quality').value=p?.document?.canonical_timeline?.snapshot?.metadata?.native_export_encoder?.quality_preset??'standard';
+      $('delivery-burn-subtitles').checked=p?.document?.canonical_timeline?.snapshot?.metadata?.native_export_presentation?.burn_subtitles??true;$('delivery-include-audio').checked=p?.document?.canonical_timeline?.snapshot?.metadata?.native_export_presentation?.audio_included??true;
+      $('delivery-result').replaceChildren();history=[];showHistory();
       for(const [i,box] of [...$('delivery-checklist').querySelectorAll('input')].entries()){try{box.checked=storage?.getItem(key()+':check:'+i)==='true';}catch{box.checked=false;}}
       if(p)void refresh().catch(e=>onMessage(e.message,true));
     }controls();

@@ -1,0 +1,16 @@
+{
+  "backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\final-export-core-local-backup-n2.zip",
+    "bytes": 12736758,
+    "sha256": "bb0de5104f23a3af7edf81dc3de4f4b4010fb5073f78c6e6801770c6df3c7406"
+  },
+  "restore_root": "C:\\vfct\\final-export-core-restored-n2",
+  "export_id": "nexp_e9130d88491d412a8ceaacb7663af6e9",
+  "manifest_exact": true,
+  "video": {
+    "path": "C:\\vfct\\final-export-core-restored-n2\\deliveries\\d3587b7419014b76a9550931d9008cfa\\nexp_e9130d88491d412a8ceaacb7663af6e9\\final-video.mp4",
+    "bytes": 701375,
+    "sha256": "19d7ce9c5d59f55c353d16e5858bd2b3687cb0fbe7bdb02d3939d1cacdb65ed3"
+  },
+  "owner_uat_accepted": false
+}

@@ -74,6 +74,8 @@ async def render(config, project, output, event):
     if profile_for(project)==FULL_PROFILE:
         return await asyncio.to_thread(render_final_effects,config,project,Path(output),event)
     snapshot, assets = resolve_assets(config, project)
+    from .export_encoder import render_projection
+    snapshot=render_projection(snapshot)
     async def cancelled():
         return event.is_set()
     result = await FFmpegProxyRenderer(str(config.ffmpeg_bin/'ffmpeg.exe'),

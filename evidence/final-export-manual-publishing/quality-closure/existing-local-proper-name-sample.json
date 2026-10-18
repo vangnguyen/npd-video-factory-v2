@@ -1,0 +1,31 @@
+{
+  "sample": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-guided-real-narration-n2\\final.mp4",
+    "bytes": 261937,
+    "sha256": "13b83c46d468bbd85eb599d01a7ce50b63dca1f22898efae59dec90c05fe389e"
+  },
+  "audio": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-guided-real-narration-n2\\voice.wav",
+    "bytes": 702764,
+    "sha256": "763d758bebee6ef95d11618993c88a4fe48ce1c81094db6c333523a31d301185"
+  },
+  "historical_source_evidence": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261007\\native-guided-real-narration-n2\\evidence.json",
+    "bytes": 10017,
+    "sha256": "bc879baaa1c806eeeaa8c57c6f16c793810c64b262a9011089811ee8318df0c0"
+  },
+  "canonical_required_names": [
+    "Vinhomes Green Paradise Cần Giờ",
+    "Vinhomes Saigon Park",
+    "Vang Nguyễn"
+  ],
+  "spoken_source_units": [
+    "Vang Nguyễn chia sẻ cách kiểm tra nguồn thông tin về trí tuệ nhân tạo.",
+    "Hai ví dụ tên riêng là Vinhomes Green Paradise Cần Giờ và Vinhomes Saigon Park."
+  ],
+  "actual_local_vieneu_inference_calls": 2,
+  "external_provider_calls": 0,
+  "fresh_inference_in_export_program": false,
+  "human_pronunciation_accepted": false,
+  "owner_review_deferred": true
+}

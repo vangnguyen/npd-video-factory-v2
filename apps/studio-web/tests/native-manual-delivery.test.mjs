@@ -12,10 +12,10 @@ class Element {
   click(){}scrollIntoView(){this.scrolled=true;}
 }
 const tick=()=>new Promise(r=>setImmediate(r));
-function harness({handler,canEdit=true,storageFailure=false,uploadCover=null}={}){
+function harness({handler,canEdit=true,storageFailure=false,uploadCover=null,applySettings=null,sourceConfigurable=false}={}){
   const ids=new Map(),get=id=>{if(!ids.has(id))ids.set(id,new Element(id));return ids.get(id);};
   const doc={getElementById:get,createElement:()=>new Element(),createTextNode:s=>s};
-  const state={workspace_id:'wsp_test',canEdit,dirty:false,busy:false,active:false,project:{id:'a'.repeat(32),revision:7,document:{name:'Cần Giờ',proposal:{narration:'Lời đọc'}}}};
+  const state={workspace_id:'wsp_test',canEdit,sourceExportConfigurable:sourceConfigurable,dirty:false,busy:false,active:false,project:{id:'a'.repeat(32),revision:7,document:{name:'Cần Giờ',proposal:{narration:'Lời đọc'}}}};
   const video={id:'b'.repeat(32),final_review:{decision:'approve'},result:{qc:{status:'passed',width:1080,height:1920,fps:30,final_sha256:'c'.repeat(64)}}};
   const memory=new Map(),calls=[],messages=[],copied=[],working=[];let captionVersion=1,copies={master:{title:'Tiêu đề đã lưu',caption:'Caption đã lưu',hashtags:'#CanGio'}};
   const value={export_id:'nexp_'+'d'.repeat(32),project_id:state.project.id,filename:'final-video.mp4',output_location:'C:/isolated/manual-delivery',
@@ -26,7 +26,7 @@ function harness({handler,canEdit=true,storageFailure=false,uploadCover=null}={}
     if(body)return structuredClone(value);return{items:[]};};
   const controller=initializeManualDelivery({api,getState:()=>state,getVideo:()=>video,document:doc,
     storage:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>{if(storageFailure)throw Error('storage blocked');memory.set(k,v);},removeItem:k=>memory.delete(k)},
-    clipboard:{writeText:async text=>copied.push(text)},newKey:()=> 'explicit-stable-request-key',onMessage:(...args)=>messages.push(args),onWorking:v=>working.push(v),uploadCoverFile:uploadCover});
+    clipboard:{writeText:async text=>copied.push(text)},newKey:()=> 'explicit-stable-request-key',onMessage:(...args)=>messages.push(args),onWorking:v=>working.push(v),uploadCoverFile:uploadCover,applyExportSettings:applySettings});
   get('delivery-filename').value='final-video.mp4';get('delivery-srt').checked=true;get('delivery-cover').checked=true;get('delivery-cover-time').value='0';
   controller.sync();return{state,video,controller,get,memory,calls,messages,copied,working,value};
 }
@@ -109,4 +109,12 @@ test('failed export resumes from durable history without an old browser receipt'
   const h=harness({handler:(url,body)=>url.endsWith('/exports')&&!body?{items:[item]}:undefined});await tick();
   const button=h.get('delivery-history').children[0].children.find(n=>n.textContent==='Đối chiếu / tiếp tục lần xuất');await button.fire();
   assert.ok(h.calls.some(c=>c.path===path&&c.body&&Object.keys(c.body).length===0));assert.equal(h.memory.size,0);
+});
+test('unapplied FPS, quality or presentation blocks packaging until a new preview approval',async()=>{
+  const applied=[],h=harness({sourceConfigurable:true,applySettings:async value=>applied.push(value)});await tick();
+  h.get('delivery-fps').value='24';await h.get('delivery-fps').fire('change');assert.equal(h.get('delivery-create').disabled,true);
+  await h.get('delivery-create').fire();assert.equal(h.calls.filter(c=>c.body).length,0);
+  h.get('delivery-quality').value='high';h.get('delivery-burn-subtitles').checked=false;h.get('delivery-include-audio').checked=false;
+  await h.get('delivery-apply-settings').fire();assert.deepEqual(applied,[{profile:'vertical-short',fps:24,quality_preset:'high',burn_subtitles:false,audio_included:false}]);
+  assert.equal(h.get('delivery-create').disabled,true);assert.match(h.get('delivery-state').textContent,/chưa áp dụng/);
 });
