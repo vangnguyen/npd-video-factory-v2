@@ -126,12 +126,17 @@ class NativeManualDelivery:
             raise WorkflowError('EXPORT_WORKSPACE_INVALID')
         if not marker.exists() and self.workspace!='wsp_native_local':raise WorkflowError('EXPORT_WORKSPACE_INVALID')
 
-    def copies(self, project_id):
+    def copies(self, project_id, *, before_version=None, limit=100):
         self.scope(); self.store.get(project_id)
+        if type(limit) is not int or not 1<=limit<=100 or before_version is not None and (type(before_version) is not int or not 1<=before_version<=2147483647):
+            raise WorkflowError('EXPORT_QUERY_INVALID',400)
         with self.store.transaction() as con:
-            rows = con.execute('SELECT version,variants_json,created_at FROM native_delivery_copy WHERE workspace_id=? AND project_id=? ORDER BY version DESC LIMIT 100', (self.workspace,project_id)).fetchall()
+            where='workspace_id=? AND project_id=?';args=[self.workspace,project_id]
+            if before_version is not None:where+=' AND version<?';args.append(before_version)
+            rows=con.execute('SELECT version,variants_json,created_at FROM native_delivery_copy WHERE '+where+' ORDER BY version DESC LIMIT ?',(*args,limit+1)).fetchall()
+        more=len(rows)>limit;rows=rows[:limit]
         return {'items':[{'version':r['version'],'variants':json.loads(r['variants_json']),'created_at':r['created_at']} for r in rows],
-                'externally_posted':False}
+                'has_more':more,'next_cursor':rows[-1]['version'] if more else None,'externally_posted':False}
 
     def save_copy(self, project_id, payload):
         self.scope(); self.store.get(project_id)
@@ -228,11 +233,19 @@ class NativeManualDelivery:
             'manifest_sha256':row['manifest_sha256'],'availability':'present' if self.directory(row).is_dir() else 'missing',
             'files':list(manifest['files']) if manifest else [],'package_ready':row['status']=='ready'}
 
-    def page(self, project_id):
+    def page(self, project_id, *, before=None, limit=100):
         self.scope(); self.store.get(project_id)
+        if type(limit) is not int or not 1<=limit<=100 or before is not None and (not isinstance(before,str) or not re.fullmatch(EXPORT_ID,before)):
+            raise WorkflowError('EXPORT_QUERY_INVALID',400)
         with self.store.transaction() as con:
-            ids=[r[0] for r in con.execute('SELECT export_id FROM native_manual_exports WHERE workspace_id=? AND project_id=? ORDER BY created_at DESC,export_id DESC LIMIT 100',(self.workspace,project_id))]
-        return {'items':[self.get(project_id,identifier,verify=False) for identifier in ids],'externally_posted':False}
+            where='workspace_id=? AND project_id=?';args=[self.workspace,project_id]
+            if before is not None:
+                cursor=con.execute('SELECT created_at FROM native_manual_exports WHERE workspace_id=? AND project_id=? AND export_id=?',(*args,before)).fetchone()
+                if cursor is None:raise WorkflowError('EXPORT_CURSOR_INVALID',400)
+                where+=' AND (created_at<? OR (created_at=? AND export_id<?))';args.extend([cursor['created_at'],cursor['created_at'],before])
+            ids=[r[0] for r in con.execute('SELECT export_id FROM native_manual_exports WHERE '+where+' ORDER BY created_at DESC,export_id DESC LIMIT ?',(*args,limit+1))]
+        more=len(ids)>limit;ids=ids[:limit]
+        return {'items':[self.get(project_id,identifier,verify=False) for identifier in ids],'has_more':more,'next_cursor':ids[-1] if more else None,'externally_posted':False}
 
     def create(self, project_id, payload, *, authorization_check=lambda:None):
         self.scope();authorization_check()

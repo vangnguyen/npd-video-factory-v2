@@ -59,12 +59,12 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
     <label class="check"><input id="delivery-cover-logo" type="checkbox" disabled> Dùng logo thương hiệu đã cấu hình</label><p class="hint">Crop không kéo giãn ảnh. Kiểm tra bìa đã xuất trước khi đăng; quyền dùng ảnh bìa cần được duyệt riêng.</p></details></fieldset>
     <details open><summary>Caption & nội dung đăng</summary><label>Phiên bản nội dung<select id="delivery-copy-platform">${platforms.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('')}</select></label>
     ${[['title','Tiêu đề',300],['caption','Caption',10000],['description','Mô tả',10000],['hashtags','Hashtag',2000],['cta','CTA',1000]].map(([id,label,max])=>`<label>${label}<textarea id="delivery-copy-${id}" maxlength="${max}" rows="${id==='caption'?4:2}"></textarea></label>`).join('')}
-    <div class="actions"><button id="delivery-save-copy" type="button">Lưu nội dung</button><button id="delivery-copy-caption-button" type="button" data-vf-permission="read">Copy caption</button><button id="delivery-download-copy" type="button" data-vf-permission="read">Tải nội dung TXT</button><button id="delivery-regenerate-copy" type="button">Tạo lại từ Master / kịch bản</button></div><label>Lịch sử nội dung<select id="delivery-copy-history" data-vf-permission="read"><option value="">Chọn bản đã lưu…</option></select></label><p id="delivery-copy-version" class="hint"></p></details>
+    <div class="actions"><button id="delivery-save-copy" type="button">Lưu nội dung</button><button id="delivery-copy-caption-button" type="button" data-vf-permission="read">Copy caption</button><button id="delivery-download-copy" type="button" data-vf-permission="read">Tải nội dung TXT</button><button id="delivery-regenerate-copy" type="button">Tạo lại từ Master / kịch bản</button></div><label>Lịch sử nội dung<select id="delivery-copy-history" data-vf-permission="read"><option value="">Chọn bản đã lưu…</option></select></label><button id="delivery-copy-more" type="button" data-vf-permission="read" hidden>Xem thêm nội dung cũ</button><p id="delivery-copy-version" class="hint"></p></details>
     <div class="actions"><button id="delivery-create" type="button" class="primary">Tạo gói bàn giao</button><button id="delivery-retry" type="button" hidden>Thử lại cùng yêu cầu</button><button id="delivery-reset" type="button" hidden>Bỏ lần thử đang giữ</button><button id="delivery-refresh" type="button" data-vf-permission="read">Làm mới lịch sử</button></div>
     <div id="delivery-result" aria-live="polite"></div><details><summary>Kiểm tra trước khi đăng thủ công</summary><div id="delivery-checklist"></div><p class="hint">Danh sách lưu trong phiên làm việc này. Bạn tự chọn tài khoản và quyền riêng tư khi đăng.</p></details>
-    <h3>Lịch sử xuất</h3><div id="delivery-history"></div>`;
+    <h3>Lịch sử xuất</h3><div id="delivery-history"></div><button id="delivery-history-more" type="button" data-vf-permission="read" hidden>Xem thêm bản cũ</button>`;
   const $=id=>doc.getElementById(id),key=()=>`vf-manual-delivery-v1:${getState().workspace_id??'wsp_native_local'}:${getState().project?.id}`;
-  let loaded=null,loadedProject=null,working=false,epoch=0,version=0,variants={},selected='master',copyDirty=false,copyReady=false,history=[],copyHistory=[];
+  let loaded=null,loadedProject=null,working=false,epoch=0,version=0,variants={},selected='master',copyDirty=false,copyReady=false,history=[],historyCursor=null,copyHistory=[],copyHistoryCursor=null;
   const context=()=>`${getState().workspace_id}:${getState().project?.id}:${getState().project?.revision}`;
   const current=c=>context()===c;
   const blocked=()=>working||getState().busy||getState().dirty||getState().active||!getState().project||getState().project.archived;
@@ -86,6 +86,8 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
     let pending=null;try{pending=storage?.getItem(key());}catch{}
     for(const id of ['delivery-retry','delivery-reset']){$(id).hidden=!pending;$(id).disabled=!writeable();}
     $('delivery-refresh').disabled=working||getState().busy||!getState().project;
+    $('delivery-history-more').hidden=!historyCursor;$('delivery-history-more').disabled=working||getState().busy||!getState().project;
+    $('delivery-copy-more').hidden=!copyHistoryCursor;$('delivery-copy-more').disabled=working||getState().busy||!getState().project;
     $('delivery-state').textContent=working?'Đang kiểm tra và tạo gói trên máy…':settingsDirty()?'Có cài đặt xuất chưa áp dụng. Áp dụng, tạo preview và duyệt lại trước khi xuất.':!video?'Tạo preview và render video trước khi xuất.':approved?'Video đã duyệt. Có thể tạo gói sau khi lưu nội dung đăng.':'Xem và nghe video ở trên rồi duyệt đúng bản cuối.';
     $('delivery-copy-version').textContent=`Nội dung v${version}${copyDirty?' · Có chỉnh sửa chưa lưu':''}`;
     const raw=video?.result?.qc,qc=raw?.full_quality?.full_production_qc??raw;
@@ -119,12 +121,26 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
     copyReady=true;
     if(copies.items.length){version=copies.items[0].version;if(!copyDirty){variants=structuredClone(copies.items[0].variants);fillCopy();}}
     else if(!version)copyDirty=true;
-    copyHistory=copies.items;$('delivery-copy-history').innerHTML='<option value="">Chọn bản đã lưu…</option>'+copyHistory.map(v=>`<option value="${v.version}">v${v.version} · ${escape(new Date(v.created_at).toLocaleString('vi-VN'))}</option>`).join('');
+    copyHistory=copies.items;copyHistoryCursor=copies.next_cursor??null;showCopyHistory();
     const choices=[['frame','Khung từ video đã duyệt'],...(covers.uploads??[]).map(a=>['uploaded_cover:'+a.cover_id,a.filename]),...(covers.project_images??[]).map(a=>['project_image:'+a.id,'Tư liệu: '+a.filename]),...(covers.candidates??[]).filter(a=>a.render_job_id===getVideo()?.id).map((a,i)=>['render_thumbnail:'+a.id,'Candidate đã chọn '+(i+1)])];
     const selection=$('delivery-cover-source').value;$('delivery-cover-source').innerHTML=choices.map(([value,label])=>`<option value="${escape(value)}">${escape(label)}</option>`).join('');$('delivery-cover-source').value=choices.some(c=>c[0]===selection)?selection:'frame';
     $('delivery-cover-logo').disabled=!covers.logo_configured;
-    history=page.items;showHistory();controls();
+    history=page.items;historyCursor=page.next_cursor??null;showHistory();controls();
   }
+  function showCopyHistory(){const selectedVersion=$('delivery-copy-history').value;$('delivery-copy-history').innerHTML='<option value="">Chọn bản đã lưu…</option>'+copyHistory.map(v=>`<option value="${v.version}">v${v.version} · ${escape(new Date(v.created_at).toLocaleString('vi-VN'))}</option>`).join('');$('delivery-copy-history').value=copyHistory.some(v=>String(v.version)===selectedVersion)?selectedVersion:'';}
+  async function moreCopies(){if(working||getState().busy||!getState().project||!copyHistoryCursor)return;
+    const c=context(),n=epoch,p=getState().project,cursor=copyHistoryCursor;working=true;onWorking(true);controls();
+    try{const page=await api(`/api/projects/${p.id}/delivery-copy?before_version=${cursor}`);if(!current(c)||n!==epoch)return;
+      const known=new Set(copyHistory.map(v=>v.version));copyHistory.push(...page.items.filter(v=>!known.has(v.version)));copyHistoryCursor=page.next_cursor??null;showCopyHistory();
+    }catch(e){if(current(c))onMessage(errors[e.message]??e.message,true);}finally{working=false;onWorking(false);controls();}}
+  async function moreHistory(){if(working||getState().busy||!getState().project||!historyCursor)return;
+    const c=context(),n=epoch,p=getState().project,cursor=historyCursor;
+    working=true;onWorking(true);controls();
+    try{const page=await api(`/api/projects/${p.id}/exports?before=${encodeURIComponent(cursor)}`);
+      if(!current(c)||n!==epoch)return;
+      const known=new Set(history.map(v=>v.export_id));history.push(...page.items.filter(v=>!known.has(v.export_id)));historyCursor=page.next_cursor??null;showHistory();
+    }catch(e){if(current(c))onMessage(errors[e.message]??e.message,true);}
+    finally{working=false;onWorking(false);controls();}}
   function retain(record){if(!storage)throw Error('Trình duyệt chưa lưu được yêu cầu.');if(storage.getItem(key()))throw Error('Thử lại hoặc bỏ lần thử đang giữ trước khi tạo yêu cầu mới.');const raw=JSON.stringify(record);storage.setItem(key(),raw);if(storage.getItem(key())!==raw)throw Error('Không giữ được yêu cầu xuất.');}
   async function send(body,endpoint=null){const c=context(),p=getState().project;
     const value=await api(endpoint??`/api/projects/${p.id}/exports`,body);if(!current(c))return;
@@ -146,6 +162,8 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
   $('delivery-reset').addEventListener('click',()=>{if(!writeable())return;storage?.removeItem(key());controls();});
   $('delivery-refresh').addEventListener('click',()=>action(refresh));
   $('delivery-apply-settings').addEventListener('click',()=>action(async()=>{if(getState().canEdit===false||!applyExportSettings)return;const c=context();await applyExportSettings({profile:$('delivery-profile').value,fps:Number($('delivery-fps').value),quality_preset:$('delivery-quality').value||'standard',burn_subtitles:$('delivery-burn-subtitles').checked,audio_included:$('delivery-include-audio').checked});if(current(c))onMessage('Đã lưu cài đặt. Tạo preview mới, kiểm tra và duyệt lại trước khi xuất.');}));
+  $('delivery-history-more').addEventListener('click',moreHistory);
+  $('delivery-copy-more').addEventListener('click',moreCopies);
   for(const id of ['delivery-profile','delivery-fps','delivery-quality','delivery-burn-subtitles','delivery-include-audio'])$(id).addEventListener('change',controls);
   $('delivery-copy-platform').addEventListener('change',()=>{holdCopy();selected=$('delivery-copy-platform').value;fillCopy();});
   $('delivery-copy-history').addEventListener('change',()=>{const old=copyHistory.find(v=>String(v.version)===$('delivery-copy-history').value);if(old){variants=structuredClone(old.variants);copyDirty=true;fillCopy();controls();}});
@@ -163,11 +181,12 @@ export function initializeManualDelivery({api,getState,getVideo,onMessage=()=>{}
   function sync(){const c=context();root.hidden=!getState().project;
     if(loaded!==c){loaded=c;epoch++;const p=getState().project,projectKey=key();
       if(loadedProject!==projectKey){loadedProject=projectKey;version=0;variants={};copyDirty=false;copyReady=false;selected='master';$('delivery-copy-platform').value='master';
+        copyHistory=[];copyHistoryCursor=null;showCopyHistory();
         variants.master={title:p?.document?.name??'',caption:p?.document?.proposal?.narration??''};fillCopy();}
       $('delivery-profile').value=profileForProject(p,getVideo());$('delivery-fps').innerHTML=(getState().sourceExportConfigurable===true?[24,25,30,60]:[30]).map(fps=>`<option value="${fps}">${fps}</option>`).join('');
       $('delivery-fps').value=String(p?.document?.canonical_timeline?.snapshot?.fps??30);$('delivery-quality').value=p?.document?.canonical_timeline?.snapshot?.metadata?.native_export_encoder?.quality_preset??'standard';
       $('delivery-burn-subtitles').checked=p?.document?.canonical_timeline?.snapshot?.metadata?.native_export_presentation?.burn_subtitles??true;$('delivery-include-audio').checked=p?.document?.canonical_timeline?.snapshot?.metadata?.native_export_presentation?.audio_included??true;
-      $('delivery-result').replaceChildren();history=[];showHistory();
+      $('delivery-result').replaceChildren();history=[];historyCursor=null;showHistory();
       for(const [i,box] of [...$('delivery-checklist').querySelectorAll('input')].entries()){try{box.checked=storage?.getItem(key()+':check:'+i)==='true';}catch{box.checked=false;}}
       if(p)void refresh().catch(e=>onMessage(e.message,true));
     }controls();

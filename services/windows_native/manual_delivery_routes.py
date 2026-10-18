@@ -1,7 +1,7 @@
 """Native manual delivery endpoints; authenticated by the existing HTTP boundary."""
 import os
 import re
-from urllib.parse import quote,unquote
+from urllib.parse import quote,unquote,parse_qs
 from pydantic import ValidationError
 from .contracts import WorkflowError
 from .manual_delivery import DeliveryCreate, CaptionSave, RecreatePackage, EXPORT_ID
@@ -10,15 +10,28 @@ BASE = r'/api/projects/([a-f0-9]{32})/exports'
 
 
 def get(handler, path):
-    if handler.path.partition('?')[2]:raise WorkflowError('EXPORT_QUERY_INVALID',400)
     match=re.fullmatch(BASE+r'(?:/('+EXPORT_ID+r')(?:/files/([^/]+))?)?',path)
     if not match:raise WorkflowError('ROUTE_NOT_FOUND',404)
     project,export_id,filename=match.groups();service=handler.server.manual_delivery
+    query=handler.path.partition('?')[2];options={}
+    if query:
+        try:
+            values=parse_qs(query,keep_blank_values=True,strict_parsing=True,max_num_fields=2)
+            if export_id or set(values)-{'before','limit'} or any(len(v)!=1 for v in values.values()):raise ValueError()
+            if 'before' in values:
+                before=values['before'][0]
+                if not re.fullmatch(EXPORT_ID,before):raise ValueError()
+                options['before']=before
+            if 'limit' in values:
+                if not re.fullmatch(r'[1-9][0-9]{0,2}',values['limit'][0]):raise ValueError()
+                options['limit']=int(values['limit'][0])
+                if options['limit']>100:raise ValueError()
+        except ValueError:raise WorkflowError('EXPORT_QUERY_INVALID',400) from None
     if filename:
         filename=unquote(filename)
         source=service.file(project,export_id,filename)
         return handler.file(source,video=filename.endswith('.mp4'),headers={'Content-Disposition':"attachment; filename*=UTF-8''"+quote(filename), 'Cache-Control':'no-store'})
-    return handler.reply(service.get(project,export_id) if export_id else service.page(project),headers={'Cache-Control':'no-store'})
+    return handler.reply(service.get(project,export_id) if export_id else service.page(project,**options),headers={'Cache-Control':'no-store'})
 
 
 def post(handler, path, body):
@@ -49,7 +62,15 @@ def post(handler, path, body):
 
 
 def captions(handler, project, body=None):
-    if body is None:return handler.server.manual_delivery.copies(project)
+    if body is None:
+        query=handler.path.partition('?')[2];options={}
+        if query:
+            try:
+                values=parse_qs(query,keep_blank_values=True,strict_parsing=True,max_num_fields=2)
+                if set(values)-{'before_version','limit'} or any(len(v)!=1 or not re.fullmatch(r'[1-9][0-9]{0,9}',v[0]) for v in values.values()):raise ValueError()
+                options={k:int(v[0]) for k,v in values.items()}
+            except ValueError:raise WorkflowError('EXPORT_QUERY_INVALID',400) from None
+        return handler.server.manual_delivery.copies(project,**options)
     try:payload=CaptionSave.model_validate(body)
     except (ValidationError,TypeError):raise WorkflowError('EXPORT_CAPTION_FIELDS_INVALID',400) from None
     return handler.server.manual_delivery.save_copy(project,payload)

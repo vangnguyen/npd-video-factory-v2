@@ -17,6 +17,7 @@
 
 - Đổi script, giọng, âm thanh, phụ đề, crop, asset, timeline hoặc cài đặt xuất sẽ yêu cầu preview và approval mới. Bản lịch sử giữ nhãn **Đã duyệt khi xuất**, không duyệt thay cho dự án hiện tại.
 - **Tạo lại gói thành bản mới** giữ nguyên các bản trước. Không tự ghi đè một video đã được duyệt.
+- Dùng **Xem thêm bản cũ** hoặc **Xem thêm nội dung cũ** để mở các phiên bản ngoài trang đầu. Xem lịch sử không ghi đè bản caption đang sửa.
 - Nếu mất phản hồi hoặc đóng tab, dùng lịch sử và **Đối chiếu / tiếp tục lần xuất**. Không cần tìm request ID. Nếu ngừng một lần xuất, file đã có vẫn được giữ.
 - Nếu ổ đĩa thiếu chỗ hoặc không ghi được, kiểm tra dung lượng/quyền ghi rồi tiếp tục yêu cầu cũ. Nếu thư mục biến mất, kết nối lại ổ đĩa hoặc phục hồi backup; không đổi tên tùy tiện các file trong gói.
 - Nếu ứng dụng đóng giữa render, job cần được tiếp tục rõ ràng. File partial không phải bản cuối; bản hoàn tất vẫn phải qua QC và duyệt.

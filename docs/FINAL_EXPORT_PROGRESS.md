@@ -26,6 +26,7 @@ Chương trình `VF-FINAL-EXPORT-MANUAL-PUBLISHING-FOCUS-01`, bắt đầu 2026-
 - Ba ca render/QC/delivery thật bổ sung đã qua: 1920×1080/30 FPS, 1080×1080/60 FPS và 1080×1350/30 FPS. Ca 4:5 đầu tiên vượt 30s của harness khi chạy cùng hai suite lớn; lượt n2 dùng cùng giới hạn renderer 180s, toàn bộ ba subcase pass trong 99.423s. Không thay timeout production hoặc nới QC.
 - Bounded local replay trên dữ liệu restore: 4 thread, 40 exact retry, 200 lần đọc file đã kiểm hash, 0 lỗi, vẫn 2 hàng delivery và chỉ 1 ID được trả về. Thời gian 1.828s; không gọi đây là production soak dài hạn.
 - Rehash lại 15 accepted MP4, verify full/incremental Git bundle và CRC backup đều pass. HEAD checkpoint `00631a1388e4ecd27e00e55eb47a604fb0f586b5` khớp upstream; remote main không đổi. [Biên nhận](../evidence/final-export-manual-publishing/baseline/preservation-checkpoint-n2.json) ghi cả WIP test/evidence lúc kiểm.
+- P3/P4 đã bỏ giới hạn truy cập âm thầm 100 bản: phân trang theo cursor cho export và caption, có nút xem thêm, kiểm tra workspace/project, giới hạn query và quyền đọc. Test SQLite 105 bản đi qua đủ một lần kể cả trùng timestamp. Đọc caption cũ không hạ latest version để lưu. Đổi project xóa ngay danh sách caption cũ; phản hồi trang cũ đến trễ bị bỏ, bản nháp đang sửa được giữ khi xem thêm.
 - Đã lưu [gói kỹ thuật cục bộ và hash](../evidence/final-export-manual-publishing/delivery-package/retained-local-rehearsal.json), cùng [bản backup/restore](../evidence/final-export-manual-publishing/recovery/retained-local-restore.json). Media tổng hợp, approval bằng fixture, không phải 5 case Owner UAT. Lượt rehearsal đầu đặt đường secret vắng mặt bên trong data root nên backup từ chối đúng; n2 sửa riêng config cách ly, không ghi lại video/manifest đã tạo.
 
 ## Kiểm thử đã xác nhận
@@ -58,6 +59,9 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | Tất cả hình học, gồm square 60 FPS | 1 test / 3 subcase pass / 99.423s, có preview, final render, QC và delivery thật | final-export-all-shapes-Native-n2.log |
 | Full renderer hiện tại | 7 file / 52 pass / 5.35s; TypeScript typecheck pass | final-export-renderer-full-n2.log; final-export-renderer-typecheck-n2.log |
 | UI nhãn phục hồi | 27 pass / 159.3143ms; history phân biệt đã ngừng và thư mục bị mất | final-export-history-label-Studio-n1.log |
+| History pagination Native/HTTP | 9 pass / 107.661s, SQLite + signed HTTP, 105 exports/105 caption versions, scope/query/read-role/CAS | final-export-history-pagination-Native-n2.log |
+| History pagination UI | 31 pass / 161.3651ms; có late response và unsaved draft | final-export-history-pagination-Studio-n2.log |
+| Full Studio sau pagination | 2123 pass, 0 fail/skip / 32767.9766ms | final-export-current-full-Studio-n3.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 

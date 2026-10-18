@@ -120,3 +120,17 @@ class ManualDeliveryHTTPTests(unittest.TestCase):
         self.assertEqual(self.http('POST',self.base+'/'+failed['export_id']+'/abandon',{})[1]['status'],'abandoned')
         self.assertEqual(self.http('POST',self.base+'/'+failed['export_id']+'/resume',{})[0],409)
         self.assertEqual(self.pipeline.calls,0)
+
+    def test_history_query_is_strict_bounded_and_read_only(self):
+        self.account('viewer')
+        code,page,_=self.http('GET',self.base+'?limit=1');self.assertEqual(code,200,page)
+        self.assertEqual(page['items'],[]);self.assertFalse(page['has_more']);self.assertIsNone(page['next_cursor'])
+        for query in ['limit=0','limit=101','limit=1&limit=2','limit=1.0','before=','before=../private','unexpected=1','limit=1&before=nexp_'+'f'*32+'&extra=1']:
+            with self.subTest(query=query):self.assertEqual(self.http('GET',self.base+'?'+query)[0],400)
+        code,value,_=self.http('GET',self.base+'?before=nexp_'+'f'*32)
+        self.assertEqual(code,400);self.assertEqual(value['code'],'EXPORT_CURSOR_INVALID')
+        copies='/api/projects/'+self.project['id']+'/delivery-copy'
+        code,page,_=self.http('GET',copies+'?before_version=1&limit=1');self.assertEqual(code,200,page);self.assertIsNone(page['next_cursor'])
+        for query in ['limit=101','before_version=0','before_version=1&before_version=2','before=1','before_version=1.0']:
+            self.assertEqual(self.http('GET',copies+'?'+query)[0],400)
+        self.assertEqual(self.pipeline.calls,0)

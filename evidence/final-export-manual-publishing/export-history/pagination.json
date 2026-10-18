@@ -1,0 +1,25 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "c7fa6445323c89c1930508c40cfd4917ddde8d5a",
+  "scope": "Native export and caption history keyset pagination",
+  "tests": [
+    {"log": "recovery/20261007/final-export-history-pagination-Native-n2.log", "passed": 9, "duration_seconds": 107.661},
+    {"log": "recovery/20261007/final-export-history-pagination-Studio-n2.log", "passed": 31, "duration_ms": 161.3651},
+    {"log": "recovery/20261007/final-export-current-full-Studio-n3.log", "passed": 2123, "failed": 0, "skipped": 0, "duration_ms": 32767.9766}
+  ],
+  "assertions": [
+    "105 exports reachable once, including equal-timestamp tie breaker",
+    "105 caption versions reachable, latest save remains compare-and-swap at version 105",
+    "foreign project cursor and malformed/unbounded queries rejected",
+    "viewer can read older pages without writes",
+    "late response cannot populate a different project",
+    "loading older captions retains unsaved draft",
+    "project switch clears old caption choices before new data arrives"
+  ],
+  "sqlite_rows": "explicit fixture rows, no fictitious approved media",
+  "cohorts_overlap": true,
+  "external_provider_calls": 0,
+  "owner_uat_complete": false,
+  "production_deployed": false
+}

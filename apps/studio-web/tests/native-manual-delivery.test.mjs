@@ -110,6 +110,32 @@ test('failed export resumes from durable history without an old browser receipt'
   const button=h.get('delivery-history').children[0].children.find(n=>n.textContent==='Đối chiếu / tiếp tục lần xuất');await button.fire();
   assert.ok(h.calls.some(c=>c.path===path&&c.body&&Object.keys(c.body).length===0));assert.equal(h.memory.size,0);
 });
+test('viewer loads older exports without mutations or duplicate history rows',async()=>{
+  const id='nexp_'+'d'.repeat(32),older='nexp_'+'e'.repeat(32),row=exportId=>({export_id:exportId,project_id:'a'.repeat(32),status:'abandoned',binding:{project_title:'Giữ nguyên bản cũ'},created_at:'2026-10-18T00:00:00Z'});
+  const h=harness({canEdit:false,handler:(url,body)=>{if(url.endsWith('/exports')&&!body)return{items:[row(id)],next_cursor:id};if(url.includes('/exports?before='))return{items:[row(id),row(older)],next_cursor:null};}});await tick();
+  assert.equal(h.get('delivery-history-more').hidden,false);await h.get('delivery-history-more').fire();
+  assert.equal(h.get('delivery-history').children.length,2);assert.equal(h.get('delivery-history-more').hidden,true);assert.equal(h.calls.filter(c=>c.body).length,0);
+});
+test('older-page response after switching project cannot populate the new history',async()=>{
+  let resolve;const id='nexp_'+'d'.repeat(32),row={export_id:id,project_id:'a'.repeat(32),status:'abandoned',binding:{project_title:'Foreign history'},created_at:'2026-10-18T00:00:00Z'};
+  const h=harness({handler:(url,body)=>{if(url.includes('/exports?before='))return new Promise(r=>{resolve=r;});if(url.endsWith('/exports')&&!body)return{items:[],next_cursor:url.includes('a'.repeat(32))?id:null};}});await tick();
+  const request=h.get('delivery-history-more').fire();await tick();h.state.project={...h.state.project,id:'b'.repeat(32)};h.controller.sync();await tick();resolve({items:[row],next_cursor:null});await request;
+  assert.equal(h.get('delivery-history').children.length,0);assert.equal(h.get('delivery-history-more').hidden,true);
+});
+test('loading older copy history preserves a current unsaved draft and latest save version',async()=>{
+  const h=harness({handler:(url,body)=>{if(url.endsWith('/delivery-copy')&&!body)return{items:[{version:105,variants:{master:{caption:'Latest caption'}}}],next_cursor:105};
+    if(url.includes('/delivery-copy?before_version='))return{items:[{version:104,variants:{master:{caption:'Older caption'}}}],next_cursor:null};}});await tick();
+  h.get('delivery-copy-caption').value='Unsaved editor draft';await h.get('delivery-copy-caption').fire('input');
+  await h.get('delivery-copy-more').fire();assert.equal(h.get('delivery-copy-caption').value,'Unsaved editor draft');
+  assert.ok(h.get('delivery-copy-history').innerHTML.includes('v104'));assert.equal(h.get('delivery-copy-more').hidden,true);
+  await h.get('delivery-save-copy').fire();assert.equal(h.calls.find(c=>c.path.endsWith('/delivery-copy')&&c.body).body.expected_version,105);
+});
+test('switching project clears old caption choices before the next response arrives',async()=>{
+  let resolve;const h=harness({handler:(url,body)=>{if(url.endsWith('/delivery-copy')&&!body&&url.includes('b'.repeat(32)))return new Promise(r=>{resolve=r;});}});await tick();
+  assert.ok(h.get('delivery-copy-history').innerHTML.includes('v1'));h.state.project={...h.state.project,id:'b'.repeat(32),document:{name:'New project',proposal:{narration:'New project text'}}};h.controller.sync();await tick();
+  assert.ok(!h.get('delivery-copy-history').innerHTML.includes('v1'));h.get('delivery-copy-history').value='1';await h.get('delivery-copy-history').fire('change');
+  assert.equal(h.get('delivery-copy-caption').value,'New project text');resolve({items:[]});await tick();
+});
 test('unapplied FPS, quality or presentation blocks packaging until a new preview approval',async()=>{
   const applied=[],h=harness({sourceConfigurable:true,applySettings:async value=>applied.push(value)});await tick();
   h.get('delivery-fps').value='24';await h.get('delivery-fps').fire('change');assert.equal(h.get('delivery-create').disabled,true);

@@ -784,7 +784,6 @@ class Handler(BaseHTTPRequestHandler):
             return get(self,path)
         copy_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/delivery-copy',path)
         if copy_route:
-            if self.path.partition('?')[2]:raise WorkflowError('EXPORT_QUERY_INVALID',400)
             from .manual_delivery_routes import captions
             return self.reply(captions(self,copy_route[1]),headers={'Cache-Control':'no-store'})
         if re.fullmatch(r'/api/projects/[a-f0-9]{32}/delivery-covers(?:/ncov_[a-f0-9]{32}/image)?',path):
