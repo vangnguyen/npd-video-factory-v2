@@ -28,9 +28,9 @@ NEXT PRIORITY: chuẩn bị năm gói UAT thật sau khi có dự án/tư liệu
 
 | Trạng thái | Giá trị |
 |---|---|
-| SOURCE_PRESERVED | YES tại checkpoint đã verify; code sau checkpoint đã push |
-| ACCEPTED_ARTIFACTS_PRESERVED | YES tại checkpoint đã rehash 15 MP4 |
-| RECOVERY_BUNDLE_VALID | YES tại checkpoint đã verify |
+| SOURCE_PRESERVED | YES — checkpoint n7 đã push và bundle verify |
+| ACCEPTED_ARTIFACTS_PRESERVED | YES — rehash 15 MP4 sau khi dọn scratch, không đổi |
+| RECOVERY_BUNDLE_VALID | YES — n7: 277381 byte, SHA256 `2d41f75c4745029830357a2986b3c57cb3d6b8643f1d20c2bb9ccf671adb150f` |
 | FINAL_VIDEO_QUALITY_READY | NO |
 | EXPORT_CENTER_READY | NO |
 | DELIVERY_PACKAGE_READY | NO |
