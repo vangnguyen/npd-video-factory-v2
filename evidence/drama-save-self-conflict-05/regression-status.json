@@ -1,0 +1,45 @@
+{
+  "candidate_head": "758466ed97cdd6c204bed3f6d1e7fd06a6db807c",
+  "fixed_source": "C:/vfdr05",
+  "source_frozen_through_tests": true,
+  "full_studio": {
+    "pass": 2165,
+    "fail": 0,
+    "skip": 0
+  },
+  "native_related": {
+    "run": 76,
+    "fail": 0,
+    "error": 0,
+    "includes_one_parent_test_running_http_integration_cases": 9
+  },
+  "api_related": {
+    "pass": 92,
+    "files": [
+      "test_final_export_quality.py",
+      "test_verified_artifact_delivery.py",
+      "test_source_asset_delivery.py"
+    ]
+  },
+  "renderer": {
+    "pass": 52
+  },
+  "typecheck": "PASS",
+  "browser_qa": "BLOCKED",
+  "owner_save_uat": "NOT_RECORDED",
+  "prior_full_native": {
+    "source_head": "2acd7fdd3a80f6b29441fe7a29ef6d568bfd8a15",
+    "loaded": 2306,
+    "run": 2306,
+    "failures": 0,
+    "errors": 2,
+    "skipped": 0,
+    "status": "NOT_PASS",
+    "open_case": "services.windows_native.tests.test_tiktok_distribution_http.TikTokDistributionHTTPTests.test_cold_server_reads_original_history_without_configuration_or_private_load",
+    "classification": "HTTP timeout in test, followed by cleanup WinError32 while workflow.sqlite3 still in use. Not resolved or relabeled by this focused fix."
+  },
+  "postgresql_qualification": "3 cases NOT_RUN; no test PostgreSQL configured; Native review path remains SQLite; no production SQL/Docker readiness claim",
+  "prior_full_api_qualification_preserved": true,
+  "replays_added_to_full_native_pass": false,
+  "production_deployed": false
+}

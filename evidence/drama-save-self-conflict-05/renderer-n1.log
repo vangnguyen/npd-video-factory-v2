@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 C:/vfdr05/renderer
+
+ ✓ src/reframe.test.ts (3 tests) 20ms
+ ✓ src/subtitles.test.ts (4 tests) 27ms
+ ✓ src/contract.test.ts (11 tests) 39ms
+ ✓ src/RealEstateShort.test.tsx (2 tests) 15ms
+ ✓ src/TimelineRender.test.tsx (14 tests) 21ms
+ ✓ src/native-job-render.test.ts (9 tests) 282ms
+stdout | src/app.test.ts > renderer HTTP service > completes a render with metadata and 70-95 progress mapping
+{"event":"render_progress","job_id":"vid_12345678","progress":0,"overall_progress":70}
+{"event":"render_progress","job_id":"vid_12345678","progress":0.5,"overall_progress":83}
+{"event":"render_progress","job_id":"vid_12345678","progress":1,"overall_progress":95}
+
+ ✓ src/app.test.ts (9 tests) 757ms
+   ✓ renderer HTTP service > completes a render with metadata and 70-95 progress mapping  664ms
+
+ Test Files  7 passed (7)
+      Tests  52 passed (52)
+   Start at  20:34:11
+   Duration  3.44s (transform 1.09s, setup 0ms, collect 4.95s, tests 1.16s, environment 2ms, prepare 3.19s)
+

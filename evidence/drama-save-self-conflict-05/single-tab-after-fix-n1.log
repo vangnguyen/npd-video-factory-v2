@@ -1,0 +1,17 @@
+{"case":"one-tab","server_revision":2,"client_revision":2,"dirty":false,"pending_button":false,"messages":[{"text":"Đã lưu nháp kịch bản."}]}
+✔ one tab: own POST commit reloads successfully and enables step 2 without approval (191.2782ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 354.8521
+
+test_real_http_and_production_studio_save_callback (services.windows_native.tests.test_drama_save_studio_integration.DramaSaveStudioIntegrationTests.test_real_http_and_production_studio_save_callback) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.600s
+
+OK

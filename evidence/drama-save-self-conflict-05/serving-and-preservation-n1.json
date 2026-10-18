@@ -1,0 +1,49 @@
+{
+  "recorded_at": "2026-10-18T13:39:22.029591+00:00",
+  "application": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdr05",
+    "branch": "codex/vf-drama-save-self-conflict-05",
+    "commit": "758466ed97cdd6c204bed3f6d1e7fd06a6db807c",
+    "build": "drama-save-fix-05",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "url": "http://127.0.0.1:62684/",
+  "served_files": {
+    "native.html": {
+      "sha256": "c9860e88550f4b75ff979a826507e1a5965228f07d144cf547864674fb9eccdc",
+      "source_match": true,
+      "cache_control": "no-store"
+    },
+    "native.mjs": {
+      "sha256": "330d95889061c4ea4d9478aafa5f7fb8deceecfac396fd526e91d4d98d689f33",
+      "source_match": true,
+      "cache_control": "no-store"
+    },
+    "drama-workflow.mjs": {
+      "sha256": "4cb49683b84d846f85d10f1eeb71caf0970f6faa9d92f8b16946748c989f7751",
+      "source_match": true,
+      "cache_control": "no-store"
+    },
+    "drama-script-save.mjs": {
+      "sha256": "a429f5a5d3c4be54aea666142054c956840fc535dfe23342f3f6c5b72568b760",
+      "source_match": true,
+      "cache_control": "no-store"
+    },
+    "drama-workflow.css": {
+      "sha256": "60bb4171ed01ccb59fa1c0f8767ce715e5d81a01cbd465d9efebf9b91c07b29b",
+      "source_match": true,
+      "cache_control": "no-store"
+    }
+  },
+  "all_preexisting_projects_unchanged": 6,
+  "owner_content_mutations": 0,
+  "source_preserved": true,
+  "browser_qa": "BLOCKED",
+  "browser_error": "failed to write kernel assets: The system cannot find the path specified. (os error 3)",
+  "owner_acceptance": false,
+  "production_deployed": false
+}

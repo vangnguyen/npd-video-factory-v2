@@ -1,0 +1,101 @@
+{
+  "recorded_at": "2026-10-18T13:34:39.212259+00:00",
+  "projects": [
+    {
+      "project_id": "1c768012f9624de494a9fadab63c1a31",
+      "revision": 5,
+      "document_sha256": "1e27205afc27eb15cd4a9c67a79e9835786834d3411ed2eeb3b8de053a3ed49a",
+      "script_sha256": "031fac8b33cc5f392e61989ffc9f4a03dd5918c6afb73c995fc249e3468cc910",
+      "casting_sha256": "784e49a7a70a7af666abbbcbfae1a524c94d18d0748dfc2c7a71af9aa25169d6",
+      "approval_present": false
+    },
+    {
+      "project_id": "410d8fb90ed747e6a099a1e72e3f05b5",
+      "revision": 2,
+      "document_sha256": "d5d16f9f85f8762545a81ab0f6360d38983515f0b92cec613d95992bc58650ea",
+      "script_sha256": "48efb32ca9fe8c09726c9f9a700dd5d8297446cdba618d165d9e564d46eeac06",
+      "casting_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "approval_present": false
+    },
+    {
+      "project_id": "4a492a1795ae4b83b393a20db6f623a7",
+      "revision": 2,
+      "document_sha256": "38c4b75022d391118ccff18c3b44ac9a22b2e767b1b6cc7b0ff5ccb4a4b7ba3c",
+      "script_sha256": "9432f779c8d3d644180fbabd5c5027f0e646d16b2eb4bd8a1e4b12c56bd7144b",
+      "casting_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "approval_present": false
+    },
+    {
+      "project_id": "67f86fb7112d4d26aace281f31b408e1",
+      "revision": 4,
+      "document_sha256": "296cb40201f93fe0070b00c8bbc84c60efad1ec60913d9462030a309a1617c62",
+      "script_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "casting_sha256": "d211c81c4cb156186401c0ee8b2f0e021202d0f53ea11faf8ef20b342c164725",
+      "approval_present": false
+    },
+    {
+      "project_id": "ac4d188a77ae423fa1df49f0104b6750",
+      "revision": 3,
+      "document_sha256": "8298ed1427f3480aca36c9708bb84e4d45ecf5e7db8e336b143cda78d4ba53c1",
+      "script_sha256": "acbc087ae3a88316fc35b9fe725c002492389eaa270591db5db4c47542132467",
+      "casting_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "approval_present": false
+    },
+    {
+      "project_id": "d3587b7419014b76a9550931d9008cfa",
+      "revision": 6,
+      "document_sha256": "ea34fae58f34d1360dace378ed347308663a0535ffd5ccb6766cca0269eca041",
+      "script_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "casting_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "approval_present": true
+    }
+  ],
+  "committed_script_receipts": [
+    {
+      "project_id": "1c768012f9624de494a9fadab63c1a31",
+      "request_identity_sha256": "50eb2d5c388a1c6903b06017c4c1746784b1b9671efd7213f529726f5cc74833",
+      "payload_sha256": "11c80ca719272747ea43403b2c6f73ca6f63566306a4be7bf2fd53a0b9608df1",
+      "committed_revision": 2,
+      "human_approval_granted": false
+    },
+    {
+      "project_id": "1c768012f9624de494a9fadab63c1a31",
+      "request_identity_sha256": "7e470811938648ac29efe7cde5fb569aa8f98621fa6716a8e2ce1d767b7b6c7a",
+      "payload_sha256": "43dd0a88cf8dda45ea0da7861bbbff54ffc00654a37ddd55e01e6fcedcede106",
+      "committed_revision": 3,
+      "human_approval_granted": false
+    },
+    {
+      "project_id": "410d8fb90ed747e6a099a1e72e3f05b5",
+      "request_identity_sha256": "caa1de6ce7d44faddd000e536b5c551f1762a05c373005cacf904bedcc0441b3",
+      "payload_sha256": "c6cbb47178780692b4d36cc0dbea4aa9f36de12e649aa53698f093e7a6d8ed58",
+      "committed_revision": 2,
+      "human_approval_granted": false
+    },
+    {
+      "project_id": "4a492a1795ae4b83b393a20db6f623a7",
+      "request_identity_sha256": "a5aa3e10b4f49a69f66f0573bed7424dad856085e597efb7c44d333312f8df5c",
+      "payload_sha256": "597adc69293f57d2fe4b1bed1fe18e38300b5c0abc9bd6af70d89303df293209",
+      "committed_revision": 2,
+      "human_approval_granted": false
+    },
+    {
+      "project_id": "ac4d188a77ae423fa1df49f0104b6750",
+      "request_identity_sha256": "7e9b474138c3d006a04807682ff9cd98d09ba35332fe78173681190eac2b927d",
+      "payload_sha256": "44d5ff5a905bcae0aa009126da91d006cf7f3804505ff920131f45efa77f72fa",
+      "committed_revision": 2,
+      "human_approval_granted": false
+    },
+    {
+      "project_id": "ac4d188a77ae423fa1df49f0104b6750",
+      "request_identity_sha256": "330ac0213081bc671f3d4c94378285baff0ce3394405eae987ac8aa283929dc0",
+      "payload_sha256": "bac17547831297abc894dfe256e5a1c30c7bb4e39bf233af4b68d094baf29111",
+      "committed_revision": 3,
+      "human_approval_granted": false
+    }
+  ],
+  "active_jobs": 0,
+  "owner_mutations": 0,
+  "unsaved_browser_content_observed": false,
+  "reported_unsaved_form_cannot_be_compared_without_browser_access": true
+}

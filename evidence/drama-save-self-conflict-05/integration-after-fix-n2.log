@@ -1,0 +1,25 @@
+test_real_http_and_production_studio_save_callback (services.windows_native.tests.test_drama_save_studio_integration.DramaSaveStudioIntegrationTests.test_real_http_and_production_studio_save_callback) ... ok
+{"case":"one-tab","server_revision":2,"client_revision":2,"dirty":false,"pending_button":false,"messages":[{"text":"Đã lưu nháp kịch bản."}]}
+✔ one tab: own POST commit reloads successfully and enables step 2 without approval (188.2246ms)
+✔ autosave then manual Save shares one in-flight request and clean Save is a no-op (1941.9783ms)
+✔ lost response after commit replays the exact original request without a duplicate version (167.9412ms)
+✔ edits during verified POST/GET reconciliation remain dirty and are never replaced by the old reply (151.083ms)
+✔ two tabs: real CAS conflict preserves both drafts and requires explicit reviewed rebase (232.3015ms)
+✔ GET newer than own POST keeps successful receipt separate from the later conflicting snapshot (94.5372ms)
+✔ late response from film A cannot update film B; reopening A reconciles its own saved receipt (168.0523ms)
+✔ validation rejection releases the rejected attempt while network uncertainty retains the old identity (203.4925ms)
+
+----------------------------------------------------------------------
+Ran 1 test in 5.644s
+
+OK
+✔ restart restores uncertain request and newer local text, then saves a new version only after reconciliation (280.7311ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3542.5963
+

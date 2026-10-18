@@ -1,0 +1,5 @@
+{"event":"input","dirty":true}
+{"event":"POST_response","http_status":200,"project_id":"0cfcc022cd8f4017821162e1beac9765","revision":2,"request_key_matches":false,"provider_calls":0,"human_approval_granted":false}
+{"event":"GET_project","http_status":200,"project_id":"0cfcc022cd8f4017821162e1beac9765","revision":2}
+{"event":"UI_after_save","revision":1,"dirty":true,"pending":true,"messages":[{"text":"Phiên bản đã được sửa ở cửa sổ khác. Giữ bản đang nhập; tải lại trang sau khi lưu lại nội dung cần giữ.","error":true}],"next_enabled":false}
+{"event":"next_step","step":"script"}

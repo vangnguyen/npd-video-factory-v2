@@ -75,3 +75,10 @@ Browser visual checks, all five consolidated Owner export cases, human pronuncia
 `FINAL_VIDEO_QUALITY_READY=NO`, `EXPORT_CENTER_READY=NO`, `DELIVERY_PACKAGE_READY=NO`, `EXPORT_HISTORY_READY=NO`, `DRAMA_VOICE_CASTING_READY=NO`, `OWNER_EXPORT_UAT_COMPLETE=NO`.
 
 `PLATFORM_API_PUBLISHING=DEFERRED`, `ANALYTICS=DEFERRED`, `FULL_TREND_RADAR=DEFERRED`, `PRODUCTION_DEPLOYED=NO`.
+
+
+## Drama Save Self Conflict 05 — 18/10/2026
+
+Candidate code/application HEAD `758466ed97cdd6c204bed3f6d1e7fd06a6db807c`, served `C:/vfdr05`, build `drama-save-fix-05`. Full Studio 2165 PASS; Native related 76 PASS (one parent executes nine real-HTTP/callback scenarios); API related 92 PASS; renderer 52 PASS and typecheck PASS. Source frozen for all checks. Browser bootstrap remains BLOCKED; no browser/Owner acceptance claimed. Details: [report](DRAMA_SAVE_SELF_CONFLICT_05.md), evidence `evidence/drama-save-self-conflict-05/`.
+
+The previous full Native four-group run at `2acd7fdd` finished: 2306 loaded, 2306 run, 0 failures, 2 errors, 0 skips — NOT PASS. Both errors belong to the same TikTok cold-history fixture: HTTP timeout and following cleanup WinError32 while SQLite is open. This focused save fix does not resolve that qualification. Related tests and replays are not substituted for a full pass. Three PostgreSQL cases remain NOT_RUN and previous full API qualification remains separate. Publishing/analytics/trend expansion remains deferred.

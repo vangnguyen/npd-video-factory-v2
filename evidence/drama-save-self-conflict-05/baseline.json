@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-10-18T13:19:45.932048+00:00",
+  "application": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdm4u",
+    "branch": "codex/vf-drama-m4-script-review-04",
+    "commit": "2acd7fdd3a80f6b29441fe7a29ef6d568bfd8a15",
+    "build": "drama-usability-03",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "owner_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "owner_revision": 5,
+  "owner_document_sha256": "1e27205afc27eb15cd4a9c67a79e9835786834d3411ed2eeb3b8de053a3ed49a",
+  "owner_script_draft_sha256": "031fac8b33cc5f392e61989ffc9f4a03dd5918c6afb73c995fc249e3468cc910",
+  "owner_casting_sha256": "784e49a7a70a7af666abbbcbfae1a524c94d18d0748dfc2c7a71af9aa25169d6",
+  "owner_approval_present": false,
+  "owner_jobs_count": 0,
+  "owner_mutations": 0,
+  "reload_or_restart_requested": false,
+  "unsaved_browser_draft_accessed": false
+}

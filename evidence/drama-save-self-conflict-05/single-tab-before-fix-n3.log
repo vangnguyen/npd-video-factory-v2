@@ -1,0 +1,45 @@
+test_real_http_and_production_studio_save_callback (services.windows_native.tests.test_drama_save_studio_integration.DramaSaveStudioIntegrationTests.test_real_http_and_production_studio_save_callback) ... FAIL
+
+======================================================================
+FAIL: test_real_http_and_production_studio_save_callback (services.windows_native.tests.test_drama_save_studio_integration.DramaSaveStudioIntegrationTests.test_real_http_and_production_studio_save_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\vfdr05\services\windows_native\tests\test_drama_save_studio_integration.py", line 19, in test_real_http_and_production_studio_save_callback
+    self.assertEqual(result.returncode,0,result.stdout+'\n'+result.stderr)
+AssertionError: 1 != 0 : {"case":"one-tab","server_revision":2,"client_revision":1,"dirty":true,"pending_button":true,"messages":[{"text":"Phiên bản đã được sửa ở cửa sổ khác. Giữ bản đang nhập; tải lại trang sau khi lưu lại nội dung cần giữ.","error":true}]}
+✖ one tab: own POST commit reloads successfully and enables step 2 without approval (182.4786ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 349.5412
+
+✖ failing tests:
+
+test at apps\studio-web\tests\drama-save-native-integration.test.mjs:54:1
+✖ one tab: own POST commit reloads successfully and enables step 2 without approval (182.4786ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/vfdr05/apps/studio-web/tests/drama-save-native-integration.test.mjs:59:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.617s
+
+FAILED (failures=1)

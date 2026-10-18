@@ -1,0 +1,5 @@
+{"event":"input","dirty":true}
+{"event":"POST_response","http_status":200,"project_id":"25b70fdd7a564e328f814c3f444d0a33","revision":2,"base_revision":1,"request_sha256":"836f963bd843435c75e8eb6b921f1b26fe903af656c3d354ad49d5ffa6e619fc","request_key_echoed":true,"request_key_matches":true,"provider_calls":0,"human_approval_granted":false}
+{"event":"GET_project","http_status":200,"project_id":"25b70fdd7a564e328f814c3f444d0a33","revision":2,"request_key_echoed":false}
+{"event":"UI_after_save","revision":2,"dirty":false,"pending":false,"messages":[{"text":"Đã lưu nháp kịch bản."}],"next_enabled":true}
+{"event":"next_step","step":"voices"}
