@@ -1,5 +1,6 @@
 """Explicit Native analytics fixtures are never real audience or Owner acceptance."""
 import copy
+from dataclasses import replace
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime,timedelta,timezone
 import json
@@ -25,6 +26,13 @@ class NativeAnalyticsTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name);self.store=Store(self.root)
         self.project,self.job=render_fixture(self.store);self.pubservice=NativePublications(self.store,CAPABILITIES)
         self.pub=self.publish();self.clock=[datetime.now(timezone.utc)];self.service=NativeAnalytics(self.store,self.pubservice,clock=lambda:self.clock[0])
+        # Both sides of this explicit mock contract must use the controlled
+        # test clock. Real disk/render work can otherwise move the provider's
+        # wall-clock receipt beyond the unchanged five-second future guard.
+        collect=self.service.provider.collect
+        async def collect_at_test_clock(context):
+            return replace(await collect(context),collected_at=self.clock[0])
+        self.service.provider.collect=collect_at_test_clock
 
     def tearDown(self):self.temp.cleanup()
 
@@ -56,9 +64,6 @@ class NativeAnalyticsTests(unittest.TestCase):
         self.assertEqual(self.store.get(self.project['id']),before)
 
     def test_four_platform_fixtures_keep_missing_metrics_null_and_assessment_explainable(self):
-        # This case compares wall-clock provider receipts across real render
-        # fixtures; a frozen service clock would falsely reject them after 5s.
-        self.service.clock=lambda:datetime.now(timezone.utc)
         for platform in ['youtube','tiktok','instagram_reels','facebook']:
             pub=self.pub if platform=='youtube' else self.publish(platform)
             value=self.create(publication_id=pub['publication_id'],request_key='native-four-metric-fixture-'+platform)
@@ -139,10 +144,10 @@ class NativeAnalyticsTests(unittest.TestCase):
             with self.subTest(fields=list(changes)),self.assertRaises(ValidationError):self.payload(**changes)
 
     def test_workspace_overview_keeps_latest_distinct_posts_and_scoped_cursor_without_account_totals(self):
-        self.service.clock=lambda:datetime.now(timezone.utc)
         for platform in ['youtube','tiktok','facebook']:
             pub=self.pub if platform=='youtube' else self.publish(platform)
             for i in range(2):
+                self.clock[0]+=timedelta(seconds=1)
                 self.create(publication_id=pub['publication_id'],fixture_profile='normal' if i else 'insufficient_data',
                     request_key='native-overview-fixture-'+platform+'-'+str(i));self.service.process()
         first=self.service.overview(limit=2);second=self.service.overview(limit=2,cursor=first['next_cursor'])
