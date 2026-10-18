@@ -71,6 +71,7 @@ Các tập dưới có overlap; không cộng thành số lượng bài duy nh�
 | Casting + kế hoạch + regression | 57 pass / 57.894s: 9 casting, 9 dependency-plan, 9 library, 17 backup, 13 storyboard QC; các component dùng fixture, không TTS drama | final-export-drama-casting-plan-Native-n3.log |
 | Dialogue PCM/cache/recovery | 62 pass / 21.132s: 18 audio + 9 library + 9 casting + 9 plan + 17 backup; WAV thật với tone mock, child exit 89, không giọng thật | final-export-dialogue-audio-recovery-Native-n3.log |
 | Local preset adapter | 24 pass / 14.061s: 6 metadata/transport + 18 PCM; transport giả, đọc SDK thật, 0 inference mới | final-export-dialogue-local-adapter-Native-n1.log |
+| Compiled dialogue + backup | 29 pass / 11.339s: 10 compiler + 19 backup, không dispatch TTS, không cấp Owner approval | final-export-dialogue-binding-Native-n2.log |
 
 Studio baseline 66 lỗi do hàm kiểm tra dùng wall clock thay vì clock fixture. Đã sửa riêng injection clock trong harness, không nới kiểm tra phiên production. Full 2092 bài cũ và full 2107 bài có export đều pass.
 

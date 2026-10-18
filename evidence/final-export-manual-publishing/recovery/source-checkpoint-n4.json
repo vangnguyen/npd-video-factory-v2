@@ -1,0 +1,17 @@
+{
+  "checkpoint_head": "0dc61e736c8efeac9da884784f2a56c9398afae8",
+  "upstream_ahead": 0,
+  "upstream_behind": 0,
+  "branch": "codex/vf-final-export-manual-01",
+  "bundle": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-focus-progress-n4.bundle",
+  "bundle_bytes": 165108,
+  "bundle_sha256": "4c28137f74b1988353cf07396e0fe233cd64fb0d9cfbc6cabd87aa4c95100d9b",
+  "bundle_verify": "PASS",
+  "requires_baseline_commit": "4162bc32260521277737f7c9ee118b5ba55b3f9b",
+  "requires_full_baseline_bundle": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-source-baseline-n1.bundle",
+  "accepted_mp4_rehashed": 15,
+  "accepted_mp4_changed": 0,
+  "source_preserved": true,
+  "accepted_artifacts_preserved": true,
+  "note": "This checkpoint precedes the compiler commit. It does not claim later source is included."
+}

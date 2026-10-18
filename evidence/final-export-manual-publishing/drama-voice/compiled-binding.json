@@ -1,0 +1,11 @@
+{
+  "component": "native-compiled-dialogue.v1",
+  "status": "IMPLEMENTED_COMPONENT_NOT_RUNTIME_INTEGRATED",
+  "tests": {"passed": 29, "failed": 0, "seconds": 11.339, "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-dialogue-binding-Native-n2.log"},
+  "coverage": ["canonical script and shot mapping", "active voice version and rights", "actual adapter signature and evidence-mode pinning", "CAS and exact retry after later edits", "no fixed target padding", "backup and restore", "no provider calls", "execution fence remains active"],
+  "provider_inferences": 0,
+  "human_approval_granted": false,
+  "owner_uat_complete": false,
+  "first_attempt": "One test used an unsupported Store.save title argument. The harness was corrected to use a real canonical shot edit; production was not relaxed. Imported fixture test class also caused duplicate discovery and was changed to a module import.",
+  "remaining": ["approval and worker integration", "canonical audible playback and speaker subtitles", "Voice Library and casting UI", "series persistence", "real voice listening", "consolidated export UAT"]
+}

@@ -126,7 +126,7 @@ def database_status(path):
             for name in ('native_generation_bindings','native_generation_jobs','native_generation_events','native_generation_recovery_requests','native_generation_reference_admissions','native_generation_media','native_generation_results','native_generation_imports'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM "'+name+'"').fetchone()[0]
             if 'native_generation_jobs' in tables:busy+=con.execute("SELECT count(*) FROM native_generation_jobs WHERE status IN ('queued','running')").fetchone()[0]
-            for name in ('native_manual_exports','native_delivery_copy','native_delivery_covers','native_voice_versions','native_voice_writes','native_drama_writes','native_dialogue_clips'):
+            for name in ('native_manual_exports','native_delivery_copy','native_delivery_covers','native_voice_versions','native_voice_writes','native_drama_writes','native_dialogue_clips','native_dialogue_compiles'):
                 if name in tables:counts[name]=con.execute('SELECT count(*) FROM '+name).fetchone()[0]
             if 'native_manual_exports' in tables:busy+=con.execute("SELECT count(*) FROM native_manual_exports WHERE status='preparing'").fetchone()[0]
             if 'native_dialogue_clips' in tables:busy+=con.execute("SELECT count(*) FROM native_dialogue_clips WHERE state='preparing'").fetchone()[0]
