@@ -20,6 +20,7 @@ from app.auto_edit_providers import (
     require_positive_duration_transcript,
 )
 from app.auto_edit_service import AutoEditAnalysisService
+from app.object_storage import LocalObjectStorageProvider
 from app.openai_transcription_provider import (
     OpenAITranscriptionProvider,
     OpenAITranscriptionResponseError,
@@ -348,7 +349,9 @@ def service_fixture(tmp_path, adapter, *, cached=False):
     content = b"synthetic-owned-audio-01"
     asset = SimpleNamespace(
         asset_id="ast_owned_test01", project_id="project_offline", workspace_id="workspace_offline",
-        asset_class="source", kind="video", filename="owned.mp3", object_key="offline-owned.mp3",
+        project_version_id=None, version=1, asset_class="source", kind="video", filename="owned.mp3",
+        object_key="workspaces/workspace_offline/projects/project_offline/offline-owned.mp3",
+        storage_provider="local", content_type="audio/mpeg", size_bytes=len(content),
         checksum_sha256=hashlib.sha256(content).hexdigest(),
         provenance={"media_metadata": metadata().model_dump(mode="json")},
     )
@@ -359,13 +362,17 @@ def service_fixture(tmp_path, adapter, *, cached=False):
         get_analysis=AsyncMock(return_value=existing), mark_analysis_running=AsyncMock(),
         mark_analysis_failed=AsyncMock(),
     )
-    async def download(*, object_key, destination):
-        assert object_key == "offline-owned.mp3"
-        destination.write_bytes(content)
+    # Real scoped local storage exercises bounded size/hash/prefix checks.
+    # Only provider HTTP is mocked; no private byte proof is forged.
+    storage = LocalObjectStorageProvider(tmp_path / 'objects')
+    source = storage._path(asset.object_key)
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_bytes(content)
     safety = SimpleNamespace(execute=AsyncMock())
     service = AutoEditAnalysisService(
-        repository=repository, platform=SimpleNamespace(),
-        object_storage=SimpleNamespace(download_file=download),
+        repository=repository, platform=SimpleNamespace(get_project=AsyncMock(return_value=SimpleNamespace(
+            project_id=asset.project_id, workspace_id=asset.workspace_id))),
+        object_storage=storage,
         transcription_provider=adapter,
         signal_provider=SimpleNamespace(key="offline-signals", analyze=AsyncMock(return_value=None)),
         staging_root=tmp_path / "staging", provider_safety=safety,
@@ -450,7 +457,9 @@ async def test_service_profile_snapshot_cannot_drift_before_callback(tmp_path):
         await service.analyze(asset.project_id, AutoEditAnalysisRequest(asset_id=asset.asset_id))
     assert captured[0].asr_prompt_profile == w1_prompt_profile()
     assert resolver.calls == 0 and requests == []
-    repository.mark_analysis_failed.assert_awaited_once_with("analysis_offline", "AUTO_EDIT_ANALYSIS_FAILED")
+    repository.mark_analysis_failed.assert_awaited_once_with(
+        "analysis_offline", "AUTO_EDIT_ANALYSIS_FAILED", local_evidence=None,
+        expected_source_sha256=asset.checksum_sha256, job_guard=None)
 
 
 @pytest.mark.asyncio

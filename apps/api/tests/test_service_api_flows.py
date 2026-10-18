@@ -136,7 +136,8 @@ async def test_upload_analysis_canonical_edit_preview_human_approval_render_and_
     pid=flow.project.project_id;base='/v1/projects/'+pid
     data=synthetic_mp4();sha=hashlib.sha256(data).hexdigest()
     upload=await call(flow,'POST','/v1/uploads/init',{'project_id':pid,'filename':'explicit-service-fixture.mp4','media_kind':'video',
-        'content_type':'video/mp4','size_bytes':len(data),'checksum_sha256':sha},key='upload')
+        'content_type':'video/mp4','size_bytes':len(data),'checksum_sha256':sha,
+        'rights_status':'owned','license':'explicit-first-party-generated-test-media'},key='upload')
     assert upload.status_code==201,upload.text
     uid=upload.json()['upload_id']
     part_size=upload.json()['part_size_bytes']

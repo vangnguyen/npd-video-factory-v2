@@ -1,0 +1,32 @@
+{
+  "schema_version": "final-export-api-fixture-closure.v1",
+  "original_failures": 11,
+  "original_failures_reproduced_at_pre_export_baseline": true,
+  "implementation_changed": false,
+  "scope": "Update outdated regression fixtures/assertions; no publishing, analytics, auth or storage production expansion",
+  "cohorts": [
+    {"passed": 58, "failed": 0, "seconds": 87.57, "log": "recovery/20261007/final-export-api-fixture-closure-n5.log", "files": ["test_auto_edit_local_cpu.py", "test_w1_prompt_provider_path.py", "test_human_identity_ingress.py"]},
+    {"passed": 58, "failed": 0, "seconds": 226.74, "log": "recovery/20261007/final-export-api-fixture-rights-n2.log", "files": ["test_sql_variant_uploaded_derivation.py", "test_sql_variant_api.py", "test_storyboard_rebuild_context.py", "test_service_api_flows.py"]}
+  ],
+  "coverage": [
+    "Bounded storage tamper rejects with exact SIZE_MISMATCH before cache replay or transcript persistence; no guard widened",
+    "W1 provider/profile snapshot tests use real local bounded storage, scoped keys and complete asset custody fields, with mocked HTTP and synthetic protocol bytes",
+    "Failure callback checks include frozen source checksum and job guard",
+    "Every registered FamilyRoute pre-body wrapper is exercised with invalid JSON; existing actual RBAC/pre-body tests also pass",
+    "First-party FFmpeg color/sine fixtures explicitly declare source ownership at ingest; default unknown and derivative unknown rights remain enforced",
+    "Existing mock dry-run publication contract is regressed only; no live publishing request or new API capability"
+  ],
+  "initial_runs": [
+    "n1 pytest setup could not use the OS default temp root; its ACL and contents were not touched. Subsequent suites used new owned, initially absent per-suite scratch roots.",
+    "Auth n1 exposed the need to exclude the separate /v1 service ingress from the /api/v1 human ingress inventory; the scoped inventory and exhaustive FamilyRoute behavior test pass in n2 and closure n5.",
+    "Storage n2 had 49 passes and four W1 failures after the fixture was incorrectly changed to audio kind; the Video Analysis service requires video kind. Restored the original synthetic protocol video kind.",
+    "Prompt n3 had 29 passes and one outdated failure-callback assertion; exact new custody kwargs were added. Prompt n4 and full fixture closure n5 pass."
+  ],
+  "fresh_full_api_pass_claimed": false,
+  "linux_security_acceptance": "NOT_YET_VERIFIED",
+  "real_provider_calls": 0,
+  "owner_acceptance": false,
+  "platform_api_publishing": "DEFERRED",
+  "analytics": "DEFERRED",
+  "production_deployed": false
+}

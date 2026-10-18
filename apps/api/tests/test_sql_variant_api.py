@@ -411,7 +411,7 @@ async def test_unanalysed_video_core_gate_and_empty_graph_contract_never_fall_ba
     path=env.tmp/'owned-unanalysed.mp4'
     subprocess.run([shutil.which('ffmpeg'),'-v','error','-f','lavfi','-i','color=s=320x240:r=24:d=1',
         '-c:v','libx264','-threads','1','-pix_fmt','yuv420p',str(path)],check=True,timeout=30)
-    asset,_=await ingest(env,path,'video','video/mp4')
+    asset,_=await ingest(env,path,'video','video/mp4',rights='owned')
     content=await author(env,[StoryboardScene(scene_id='scene_unanalysed_fixture',narration='Explicit supplied footage.',
         media_strategy='user_asset',asset_id=asset.asset_id,source_start=0.,duration_seconds=1.)])
     with pytest.raises(TimelineEditError,match='VIDEO_ANALYSIS_REQUIRED'):

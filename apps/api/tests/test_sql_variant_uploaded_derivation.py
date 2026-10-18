@@ -35,13 +35,14 @@ from app.production_db import ProductionPackageORM,ProductionApprovalORM
 from test_sql_variant_family import env
 from test_auto_edit_analysis import bytes_stream
 
-async def ingest(env,path,kind,mime):
+async def ingest(env,path,kind,mime,*,rights='unknown'):
     raw=path.read_bytes();sha=hashlib.sha256(raw).hexdigest()
     service=UploadService(repository=env.assets,platform=env.platform,object_storage=env.storage,
         media_probe=FFprobeMediaProbe(),malware_scanner=DeterministicMediaMalwareScanner(),staging_root=env.tmp/'upload-stage',
         default_part_size_bytes=65536,max_part_size_bytes=131072,max_upload_size_bytes=8*1024*1024)
     upload=await service.initialize(UploadInitRequest(project_id=env.project.project_id,filename='supplied.bin',
-        media_kind=kind,content_type=mime,size_bytes=len(raw),checksum_sha256=sha,part_size_bytes=65536))
+        media_kind=kind,content_type=mime,size_bytes=len(raw),checksum_sha256=sha,part_size_bytes=65536,
+        rights_status=rights,license='explicit-first-party-generated-test-media' if rights=='owned' else 'user-provided'))
     for part in range(1,upload.total_parts+1):
         data=raw[(part-1)*65536:part*65536]
         await service.store_part(upload.upload_id,part,bytes_stream(data),expected_part_sha256=hashlib.sha256(data).hexdigest())
@@ -53,7 +54,9 @@ async def uploaded(env,*,audio=False,boundary=False,mixed=False,reviewed_audio=F
     path=env.tmp/'owned-source.mp4'
     subprocess.run([ffmpeg,'-v','error','-f','lavfi','-i','color=c=blue:s=320x240:r=24:d=3',
         '-f','lavfi','-i','sine=frequency=440:duration=3','-c:v','libx264','-threads','1','-pix_fmt','yuv420p','-c:a','aac','-shortest',str(path)],check=True,timeout=30)
-    asset,media=await ingest(env,path,'video','video/mp4')
+    # Only this first-party generated source receives a fixture rights decision.
+    # Derived assets still receive unknown rights and no inherited approval.
+    asset,media=await ingest(env,path,'video','video/mp4',rights='owned' if mixed else 'unknown')
     request=AutoEditAnalysisRequest(asset_id=asset.asset_id)
     analysis,_=await env.assets.create_analysis(project_id=env.project.project_id,asset=asset,fingerprint=digest(['explicit-saved-fixture',asset.checksum_sha256]),
         configuration=request,source_media=media,provenance={'fixture':True,'source_asset_checksum':asset.checksum_sha256,'provider_calls':0})

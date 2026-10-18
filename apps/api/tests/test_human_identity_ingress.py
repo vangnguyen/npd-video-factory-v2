@@ -3,12 +3,13 @@ from __future__ import annotations
 import hashlib
 import json
 import secrets
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, HTTPException
 from httpx import ASGITransport, AsyncClient
 
 from app.db import Base, create_engine, create_session_factory
@@ -24,6 +25,7 @@ from app.main import app as production_app
 from app.platform_models import ProjectCreate, WorkspaceCreate
 from app.platform_routes import router as platform_router
 from app.repositories import PlatformRepository
+from app.sql_variant_routes import FamilyRoute
 from auth_test_support import MemoryRateStore
 
 
@@ -137,21 +139,58 @@ def test_all_human_api_routes_are_protected_and_service_bridge_remains_separate(
                 dependency.dependency
                 for dependency in route.include_context.dependencies
             }
-            paths = [candidate.path for candidate in included_router.routes]
+            candidates = included_router.routes
         else:
             path = getattr(route, "path", "")
             if not path.startswith("/api/v1/"):
                 continue
             calls = {dependency.call for dependency in route.dependant.dependencies}
-            paths = [path]
-        for path in paths:
+            candidates = [route]
+        for candidate in candidates:
+            path = candidate.path
+            if not path.startswith('/api/v1/'):
+                continue
+            candidate_calls = calls | {
+                dependency.call for dependency in candidate.dependant.dependencies
+            }
             if path.startswith("/api/v1/bridge/"):
                 bridge.append(path)
-                assert authorize_human_request not in calls
+                assert authorize_human_request not in candidate_calls
+                assert not isinstance(candidate, FamilyRoute)
             else:
                 protected.append(path)
-                assert authorize_human_request in calls, path
+                # FamilyRoute authenticates in its pre-body handler. The next
+                # test executes every such registered route, including malformed
+                # requests; the actual RBAC behavior has separate contract tests.
+                assert authorize_human_request in candidate_calls or isinstance(candidate, FamilyRoute), path
     assert protected and bridge
+
+
+@pytest.mark.asyncio
+async def test_every_family_route_authenticates_before_parsing_invalid_body(monkeypatch):
+    import app.sql_variant_routes as family_routes
+    visited = []
+
+    async def reject_before_body(request):
+        visited.append((request.method, request.url.path))
+        raise HTTPException(401, detail='explicit-pre-body-auth-fixture')
+
+    monkeypatch.setattr(family_routes, 'authorize_human_request', reject_before_body)
+    routes = []
+    for route in production_app.routes:
+        included = getattr(route, 'original_router', None)
+        routes.extend(candidate for candidate in (included.routes if included else [route])
+                      if isinstance(candidate, FamilyRoute))
+    assert routes
+    async with AsyncClient(transport=ASGITransport(production_app), base_url='http://offline-auth') as client:
+        for route in routes:
+            path = re.sub(r'\{[^}]+\}', 'fixture_scope', route.path)
+            for method in sorted(route.methods - {'HEAD', 'OPTIONS'}):
+                response = await client.request(method, path, content=b'{', headers={'Content-Type': 'application/json'})
+                assert response.status_code == 401, (method, path, response.text)
+                assert response.json()['detail'] == 'explicit-pre-body-auth-fixture'
+                assert visited[-1] == (method, path)
+    assert len(visited) == sum(len(route.methods - {'HEAD', 'OPTIONS'}) for route in routes)
 
 
 @pytest.mark.asyncio

@@ -16,6 +16,7 @@ from app.platform_models import WorkspaceCreate
 from app.local_video_transcription_provider import LocalVideoTranscriptionProvider
 from app import local_video_transcription_provider as video
 from app.uploaded_audio_repository import digest
+from app.bounded_storage_download import StorageDownloadError
 from test_auto_edit_analysis import setup_services,upload_fixture,synthetic_mp4
 from test_local_uploaded_audio_provider import custody,ExplicitCpuFixture,fixture_decoder,reset_fixture
 from test_local_video_transcription_provider import FFMPEG
@@ -84,8 +85,11 @@ async def test_cache_lookup_verifies_physical_source_and_runtime_before_replay(c
         else:
             asset=await context.repository.get_asset(context.completed.asset_id)
             context.uploads.object_storage._path(asset.object_key).write_bytes(b'changed explicit fixture')
-        with pytest.raises((ValueError,RuntimeError)):
+        expected = StorageDownloadError if mutation == 'source_bytes' else (ValueError, RuntimeError)
+        with pytest.raises(expected) as rejected:
             await context.service.analyze(context.project.project_id,context.request)
+        if mutation == 'source_bytes':
+            assert rejected.value.code == 'STORAGE_DOWNLOAD_SIZE_MISMATCH'
         assert ExplicitCpuFixture.calls==1 and await count(context,'auto_edit_analyses')==1
         assert not list(context.service.staging_root.iterdir())
     finally:await context.engine.dispose()
@@ -219,7 +223,9 @@ async def test_original_object_tamper_after_cpu_result_blocks_authoritative_tran
             result=await super().transcribe(*args,**kwargs);target.write_bytes(b'changed owned source object');return result
     monkeypatch.setattr(video,'LocalCpuTranscriptionProvider',Tamper)
     try:
-        with pytest.raises(ValueError):await context.service.analyze(context.project.project_id,context.request)
+        with pytest.raises(StorageDownloadError) as rejected:
+            await context.service.analyze(context.project.project_id,context.request)
+        assert rejected.value.code == 'STORAGE_DOWNLOAD_SIZE_MISMATCH'
         failed=(await context.service.list(context.project.project_id))[0]
         assert failed.transcript is None and failed.provenance['local_video_rejected_evidence']['evidence']['model_result']['fixture']
         assert await count(context,'transcripts')==0
