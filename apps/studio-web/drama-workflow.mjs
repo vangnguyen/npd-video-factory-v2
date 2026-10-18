@@ -52,7 +52,12 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
   const voicePageCards=node('div',null,voicesPage);let globalVoiceBrowser=null;
   const importVoices=button('Nạp các giọng local đã cài',voicesPage,async()=>{try{await api('/api/voice-library/import-installed',{method:'POST',body:JSON.stringify({acknowledged:true})});await loadGlobalVoices();}catch(error){onMessage(error.message,true);}});importVoices.hidden=true;
   async function loadGlobalVoices(){const [library,presets]=await Promise.all([api('/api/voice-library'),api('/api/voice-library/presets')]);if(!Array.isArray(library?.items)||!Array.isArray(presets?.voices))throw Error('Chưa đọc được thư viện giọng.');globalVoiceBrowser?.dispose();globalVoiceBrowser=initializeVoiceBrowser({root:voicePageCards,api,voices:library.items.filter(usableVoice),catalog:presets,dom,canEdit:()=>getState().canEdit!==false&&!getState().busy,onMessage});importVoices.hidden=presets.voices.every(v=>library.items.some(x=>x.definition.provider_voice_id===v.provider_voice_id&&x.definition.rights_status==='source_licensed'));}
-  let kind=null,step='script',binding=null,scriptDirty=false,working=false,pending=null,timer=null,assignments={},characterNotes={};
+  let kind=null,step='script',binding=null,scriptDirty=false,working=false,pending=null,pendingProject=null,timer=null,assignments={},characterNotes={};
+  const homes=new Map();
+  function moveHere(element,parent){if(element&&element.parentNode!==parent){if(!homes.has(element))homes.set(element,{parent:element.parentNode,next:element.nextSibling});parent.append(element);}}
+  function restoreHomes(){for(const[element,home]of homes){if(element.parentNode!==home.parent&&home.parent){if(home.parent.insertBefore)home.parent.insertBefore(element,home.next?.parentNode===home.parent?home.next:null);else home.parent.append(element);}}}
+  const buffer=()=>({text:text.value,input_mode:inputMode.value,narrator_enabled:current()?.document.drama_casting?.configuration.narrator_enabled??false,speaker_assignments:assignments,character_notes:characterNotes,series:seriesInput.value.trim()||null,episode:episodeInput.value.trim()||null});
+  const sameBuffer=request=>JSON.stringify(buffer())===JSON.stringify(Object.fromEntries(Object.keys(buffer()).map(key=>[key,request[key]])));
   const current=()=>getState().project,blocked=()=>{const s=getState();return working||s.busy||dramaProgress(s.project).active||s.project?.archived||s.canEdit===false||(s.dirty&&s.dirtyPart!=='drama-script');};
   function changed(){scriptDirty=true;onDirty(true);saved.textContent='Chưa lưu';clearTimeout(timer);timer=setTimeout(()=>{if(scriptDirty&&!pending&&!blocked())void saveScript(false);},1800);controls();}
   text.addEventListener('input',changed);
@@ -65,15 +70,15 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
     }catch(error){onMessage(error.message,true);}finally{working=false;onWorking(false);sync();}}
   async function saveScript(confirmCharacters){
     if(working||!current()||blocked())return;const project=current();
-    try{const request=pending??{revision:project.revision,request_key:globalThis.crypto.randomUUID(),text:text.value,confirm_characters:confirmCharacters,
-        narrator_enabled:project.document.drama_casting?.configuration.narrator_enabled??false,speaker_assignments:assignments,character_notes:characterNotes,series:seriesInput.value.trim()||null,episode:episodeInput.value.trim()||null,input_mode:inputMode.value};
-      if(pending&&pending.confirm_characters!==confirmCharacters)throw Error('Đối chiếu lần lưu chưa nhận được kết quả bằng nút Lưu nháp trước.');
-      pending=request;working=true;onWorking(true);saved.textContent='Đang lưu…';controls();
+    try{if(pending&&pendingProject!==project.id)throw Error('Có lần lưu chưa đối chiếu ở phim trước. Mở lại phim đó và bấm Đối chiếu lần lưu trước.');
+      const request=pending??structuredClone({revision:project.revision,request_key:globalThis.crypto.randomUUID(),...buffer(),confirm_characters:confirmCharacters});
+      pending=request;pendingProject=project.id;working=true;onWorking(true);saved.textContent='Đang lưu…';controls();
       const result=validateDramaScriptResponse(await api(`/api/projects/${project.id}/drama-script`,request),project,request);
-      await onSaved();pending=null;
+      const newerBuffer=!sameBuffer(request);await onSaved();pending=null;pendingProject=null;
       if(current()?.revision!==result.revision||current()?.document?.drama_script?.raw_text!==request.text){scriptDirty=true;onDirty(true);throw Error('Dự án đã có bản mới. Nội dung đang sửa được giữ; kiểm tra lịch sử trước khi lưu lại.');}
-      scriptDirty=false;onDirty(false);saved.textContent='Đã lưu';binding=null;sync();if(confirmCharacters)go('voices');
-      onMessage(confirmCharacters?'Đã xác nhận nhân vật và tạo cảnh nháp. Chọn giọng riêng cho từng người; chưa tạo audio hoặc phê duyệt video.':'Đã lưu nháp kịch bản.');
+      if(newerBuffer){scriptDirty=true;onDirty(true);saved.textContent='Đã đối chiếu lần lưu trước · nội dung mới đang sửa chưa lưu';onMessage('Đã giữ nội dung mới đang sửa. Bấm Lưu nháp để lưu bản này.');return;}
+      scriptDirty=false;onDirty(false);saved.textContent='Đã lưu';binding=null;sync();if(request.confirm_characters)go('voices');
+      onMessage(request.confirm_characters?'Đã xác nhận nhân vật và tạo cảnh nháp. Chọn giọng riêng cho từng người; chưa tạo audio hoặc phê duyệt video.':'Đã lưu nháp kịch bản.');
     }catch(error){saved.textContent='Chưa lưu được · nội dung đang sửa được giữ';onMessage(error.message,true);}finally{working=false;onWorking(false);controls();}
   }
   function go(value){if(!dramaSteps.some(v=>v[0]===value))return;if(scriptDirty&&value!=='script'&&step==='script'){onMessage('Lưu nháp kịch bản trước khi chuyển bước.',true);return;}
@@ -97,12 +102,14 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
     confirm.textContent=record.characters_confirmed?'Xác nhận lại nhân vật từ kịch bản':'Xác nhận nhân vật & tạo phân cảnh nháp';
   }
   function controls(){const p=current(),s=dramaProgress(p),stop=blocked();create.disabled=working||getState().busy||!kind;save.disabled=stop||!scriptDirty&&!pending;example.disabled=stop;confirm.disabled=stop||!p?.document.drama_script?.raw_text?.trim();text.disabled=working||getState().busy||s.active||p?.archived||getState().canEdit===false;
+    save.textContent=pending?'Đối chiếu lần lưu trước':'Lưu nháp';confirm.disabled||=Boolean(pending);
     inputMode.disabled=seriesInput.disabled=episodeInput.disabled=text.disabled;for(const element of characterList.querySelectorAll('input,select'))element.disabled=stop;confirm.disabled||=inputMode.value==='idea';
     globalVoiceBrowser?.refresh();if(isDramaProject(p)&&step==='voices')drama?.ensureLoaded?.();if(isDramaProject(p)&&step==='preview')narration?.ensureLoaded?.();
     importVoices.disabled=getState().canManage===false||getState().busy;const scriptReview=dom.getElementById('script-only-review');if(isDramaProject(p)&&scriptReview)scriptReview.hidden=!s.confirmed||scriptDirty;
     back.disabled=step==='script'||working;next.disabled=working||step==='export';
     const missing=step==='script'&&!s.script?'Lưu kịch bản để tiếp tục.':step==='voices'&&!s.confirmed?'Xác nhận danh sách nhân vật trước khi chọn giọng.':step==='voices'&&s.uncast.length?`${s.uncast.join(', ')} chưa có giọng. Chọn giọng ngay trong bước này.`:step==='scenes'&&!s.scenes?'Thêm tư liệu và chọn nguồn cho từng cảnh.':step==='preview'&&!s.audio?'Chuẩn bị lời thoại và áp thời lượng audio đã đo trước khi duyệt xem thử.':'';
     state.textContent=missing||({script:'Bản nháp có thể lưu khi chưa đủ cảnh hoặc giọng.',voices:`${s.characterCount} nhân vật · ${s.voiceCount} giọng đã chọn.`,scenes:'Ảnh/video và dòng thời gian được lưu chung trong dự án.',preview:'Giữ các chốt duyệt nội dung và video; không tự tạo lại job chưa rõ kết quả.',export:'Video và nội dung đăng được tải về máy; bạn tự đăng thủ công.'})[step];
+    const audioJob=(p?.jobs??[]).find(v=>v.kind==='narration'&&ACTIVE.has(v.status));if(step==='preview'&&audioJob){const m=/^dialogue_line_(\d+)_of_(\d+)$/.exec(audioJob.stage??''),c=p.document.drama_casting?.configuration,lines=(c?.lines??[]).filter(v=>v.enabled&&(c.characters.find(x=>x.character_id===v.character_id)?.role!=='narrator'||c.narrator_enabled)),name=m?c?.characters.find(v=>v.character_id===lines[Number(m[1])-1]?.character_id)?.name:null;state.textContent=m?`Đang tạo câu ${m[1]}/${m[2]}${name?' · '+name:''}`:audioJob.status==='queued'?'Lời thoại đang chờ được tạo trên máy.':'Đang chuẩn bị audio và đo thời lượng lời thoại.';}
     if(step==='script'&&!s.script||step==='voices'&&(!s.confirmed||s.uncast.length)||step==='scenes'&&!s.scenes)next.disabled=true;
     if(getState().dirty)next.disabled=true;
     next.title=getState().dirty?'Lưu bản nháp đang sửa trước khi tiếp tục.':missing;openAudio.disabled=stop||!p?.document.drama_casting;
@@ -110,10 +117,10 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
   }
   function sync(){const p=current(),url=new URL(globalThis.location?.href??'http://studio.local/'),view=url.searchParams.get('view');chooser.hidden=Boolean(p)||kind==='standard';settings.hidden=view!=='settings';voicesPage.hidden=view!=='voices';
     const k=`${p?.id}:${p?.revision}`;if(binding!==k){const changedProject=binding?.split(':')[0]!==p?.id;binding=k;if(!scriptDirty&&!pending){text.value=p?.document.drama_script?.raw_text??'';inputMode.value=p?.document.drama_script?.input_mode??'script';ideaHint.hidden=inputMode.value!=='idea';seriesInput.value=p?.document.production_workflow?.series??'';episodeInput.value=p?.document.production_workflow?.episode??'';characterNotes=structuredClone(p?.document.drama_script?.character_notes??{});assignments={};drawCharacters();}if(changedProject){try{step=storage.getItem('vf-drama-step:'+p?.id)??'script';}catch{step='script';}if(!dramaSteps.some(v=>v[0]===step))step='script';}}
-    const panel=dom.getElementById('native-drama-panel');if(panel&&isDramaProject(p)&&panel.parentNode!==voiceSlot)voiceSlot.append(panel);
-    const audio=dom.getElementById('native-narration-panel');if(audio&&isDramaProject(p)&&audio.parentNode!==previewTools)previewTools.append(audio);
+    const panel=dom.getElementById('native-drama-panel');if(panel&&isDramaProject(p))moveHere(panel,voiceSlot);
+    const audio=dom.getElementById('native-narration-panel');if(audio&&isDramaProject(p))moveHere(audio,previewTools);
     if(isDramaProject(p)&&previewTools.parentNode!==dom.getElementById('video-stage-body'))dom.getElementById('video-stage-body').prepend(previewTools);
-    if(isDramaProject(p)){const review=dom.getElementById('approve')?.closest('.review');if(review&&review.parentNode!==approvalCard)approvalCard.append(review);if(approvalCard.parentNode!==dom.getElementById('video-review-body'))dom.getElementById('video-review-body').prepend(approvalCard);const scriptReview=dom.getElementById('script-only-review');if(scriptReview&&scriptReview.parentNode!==scriptPane)scriptPane.append(scriptReview);}
+    if(isDramaProject(p)){const review=dom.getElementById('approve')?.closest('.review');if(review)moveHere(review,approvalCard);if(approvalCard.parentNode!==dom.getElementById('video-review-body'))dom.getElementById('video-review-body').prepend(approvalCard);const scriptReview=dom.getElementById('script-only-review');if(scriptReview)moveHere(scriptReview,scriptPane);}else{restoreHomes();previewTools.hidden=approvalCard.hidden=true;dom.getElementById('brief-card').hidden=false;if(p&&!['assets','brands','voices','settings'].includes(view))dom.querySelector('.stage-navigation').hidden=false;}
     if(['settings','voices'].includes(view)){chooser.hidden=flow.hidden=true;dom.querySelectorAll('[data-stage-panel],.stage-navigation').forEach(v=>v.hidden=true);dom.getElementById('studio-title').textContent=view==='voices'?'Thư viện giọng':'Cài đặt';controls();return;}
     if(!p&&kind===null){dom.querySelectorAll('[data-stage-panel],.stage-navigation').forEach(v=>v.hidden=true);dom.getElementById('studio-title').textContent='Tạo video mới';}
     if(isDramaProject(p))display();else{flow.hidden=true;dom.body.classList.remove('drama-project');controls();}}
@@ -127,5 +134,6 @@ export function initializeDramaWorkflow({api,getState,onCreated,onSaved,onDirty,
       }
     }catch(error){onMessage(error.message,true);createHint.textContent='Chưa tải được các lựa chọn. Làm mới trang để thử đọc lại; không có TTS hoặc render được gọi.';}}
   dom.addEventListener('click',event=>{if(!isDramaProject(current()))return;const target=event.target.closest?.('[data-stage]');if(!target)return;const mapped={script:'script',assets:'scenes',storyboard:'scenes',video:'preview'}[target.dataset.stage];if(mapped){event.preventDefault();event.stopImmediatePropagation();go(mapped);}},true);
-  sync();void load();return {sync,controls,showStep:go,isDirty:()=>scriptDirty,isWorking:()=>working};
+  const beforeLeave=event=>{if(scriptDirty||pending){event.preventDefault();event.returnValue='';}};globalThis.addEventListener?.('beforeunload',beforeLeave);
+  sync();void load();return {sync,controls,showStep:go,isDirty:()=>scriptDirty,isWorking:()=>working,dispose(){clearTimeout(timer);globalVoiceBrowser?.dispose();globalThis.removeEventListener?.('beforeunload',beforeLeave);}};
 }

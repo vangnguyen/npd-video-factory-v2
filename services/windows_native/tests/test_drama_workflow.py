@@ -54,3 +54,9 @@ class DramaWorkflowTests(unittest.TestCase):
         from services.windows_native.dialogue_binding import inputs
         self.save(confirm=True);self.project=self.store.get(self.project['id']);self.save(SCRIPT+'\nAn: Mình về trước nhé.',key='changed-drama-draft-0001')
         with self.assertRaisesRegex(WorkflowError,'CHARACTER_CONFIRMATION_REQUIRED'):inputs(self.store.get(self.project['id'])['document'])
+    def test_script_replay_retains_m1_receipt_from_before_optional_idea_mode(self):
+        from services.windows_native.production_workflows import ScriptSave
+        from services.windows_native.contracts import digest
+        self.save();body=ScriptSave.model_validate(dict(revision=1,request_key='drama-script-test-0001',text=SCRIPT)).model_dump()
+        with self.store.transaction() as con:con.execute('UPDATE native_drama_script_writes SET fingerprint=?',(digest({k:v for k,v in body.items() if k!='input_mode'}),))
+        replay=save_script(self.store,self.project['id'],body,actor_ref='explicit-test-fixture');self.assertTrue(replay['idempotent_replay']);self.assertEqual(self.store.get(self.project['id'])['revision'],2)

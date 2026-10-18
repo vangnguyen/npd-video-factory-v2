@@ -5,3 +5,4 @@
 .drama-project .preview-canvas{height:auto;min-height:0;aspect-ratio:var(--drama-player-ratio,9 / 16);margin-top:0}
 .drama-project .drama-final-approval{grid-column:1/-1}.drama-next-actions{position:sticky;bottom:8px;background:var(--surface,#fff);padding:12px;border:1px solid var(--border,#d5d8df);border-radius:10px;z-index:2}
 
+.drama-project #native-drama-panel>.planner-tools{position:sticky;top:4px;z-index:3;background:var(--surface,#fff);padding:10px;border:1px solid var(--border,#d5d8df);border-radius:8px;display:flex;flex-wrap:wrap;gap:8px}

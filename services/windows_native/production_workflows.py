@@ -87,7 +87,8 @@ def save_script(store,project_id,payload,*,actor_ref,authorization_check=lambda:
         con.execute('CREATE TABLE IF NOT EXISTS native_drama_script_writes (project_id TEXT NOT NULL,request_key TEXT NOT NULL,fingerprint TEXT NOT NULL,response TEXT NOT NULL,PRIMARY KEY(project_id,request_key))')
         old=con.execute('SELECT * FROM native_drama_script_writes WHERE project_id=? AND request_key=?',(project_id,body['request_key'])).fetchone()
         if old:
-            if old['fingerprint']!=fingerprint:raise WorkflowError('DRAMA_REQUEST_KEY_CONFLICT')
+            legacy_fingerprint=digest({k:v for k,v in body.items() if k!='input_mode'}) if body['input_mode']=='script' else None
+            if old['fingerprint'] not in (fingerprint,legacy_fingerprint):raise WorkflowError('DRAMA_REQUEST_KEY_CONFLICT')
             return {**json.loads(old['response']),'idempotent_replay':True}
         project=store.editable(con,project_id,body['revision']);doc=copy.deepcopy(project['document'])
         if not is_drama(doc):raise WorkflowError('DRAMA_WORKFLOW_REQUIRED',400)
