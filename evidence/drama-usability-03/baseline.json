@@ -1,0 +1,371 @@
+{
+  "task": "VF-DRAMA-ENTRY-VOICE-CHOICES-USABILITY-03",
+  "baseline_head": "f0979e6ad47e61fd47769dfa0e0160f79bc8bf9c",
+  "branch": "codex/vf-drama-usability-03",
+  "worktree": "C:\\vfdr03",
+  "serving_source": "C:/vfns01",
+  "serving_code_checkpoint": "1cf600f737c1a52aa05e4a7a9619d361197148cf",
+  "serving_url": "http://127.0.0.1:62684/native.html",
+  "serving_pid": 9264,
+  "served": {
+    "native.html": {
+      "sha256": "ae29e1f4ed662eb7b6b1a861cef2590e9b563863f091d9bdeb0cf12683dbf6b5",
+      "matches_baseline": true,
+      "cache_control": "no-store"
+    },
+    "native.mjs": {
+      "sha256": "c2923ee20fd2754f57fb63488926c2df8d9de42aad0a245686edca51f8670911",
+      "matches_baseline": true,
+      "cache_control": "no-store"
+    },
+    "native-drama.mjs": {
+      "sha256": "37705f9b1c2f4bcfe17a02ddab30d8c6ea14f7d911f97b288ecfa52ceb2a0850",
+      "matches_baseline": true,
+      "cache_control": "no-store"
+    }
+  },
+  "active_jobs": [],
+  "relevant_flags": {
+    "native_shot_studio": true,
+    "native_studio_ux": true,
+    "native_manual_delivery": true,
+    "native_manual_delivery_focus": true,
+    "native_drama_voice_casting": true,
+    "native_narration_preparation": true,
+    "native_narration_rights_review": true
+  },
+  "voice_inventory": {
+    "sdk_version": "3.8.3",
+    "sdk_commit": "85344322b7258b4e25479b692e8e3396baf9db34",
+    "model": "vieneu-v3-turbo",
+    "model_revision": "61b85e3d937fbbacb387714180e8182823512523",
+    "runtime_version": "onnxruntime-1.30.0/cpu/numpy-2.5.3/sea-g2p-0.9.1",
+    "preset_manifest_sha256": "e1f13cd2c2e0d29fdab5e15bfd7a30f3d7b768e6132bb43dd2b853f8efefdce9",
+    "model_card_sha256": "5d5bb2de661fabc0e073b3b844dc131696fac3dddd5ea882d10fd9a849108eb7",
+    "sdk_license_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
+    "license_identifier": "Apache-2.0",
+    "runtime_validation": "PASS",
+    "actual_presets": 25,
+    "distinct_payloads": 25,
+    "voices": [
+      {
+        "provider_voice_id": "Adam bựa",
+        "description": "Nam · Bắc · Phong cách tự nhiên",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": 1,
+        "aliases": null,
+        "payload_sha256": "0b6af5039e2cef623bad1be33d61ee4f7f28b87d67622f5d21d516650963ea13"
+      },
+      {
+        "provider_voice_id": "Trúc Ly",
+        "description": "Nữ · Bắc · Phong cách tự nhiên",
+        "gender": "female",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": 2,
+        "aliases": null,
+        "payload_sha256": "5be69728d35b0255d911c377bdf965ddf9711059603d15bf50f3c93cbeb8f651"
+      },
+      {
+        "provider_voice_id": "Thiện Minh",
+        "description": "Nam · Bắc · Phong cách kể chuyện",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "doc_truyen",
+        "featured": 3,
+        "aliases": [
+          "Anh Khôi"
+        ],
+        "payload_sha256": "0ec3e57324d0649aaec1fd5ac9f2aea517a01f8e8b1a02fc89b421f4f0e9c668"
+      },
+      {
+        "provider_voice_id": "Mai Anh",
+        "description": "Nữ · Bắc · Phong cách tin tức",
+        "gender": "female",
+        "region": "Bắc",
+        "style": "tin_tuc",
+        "featured": 4,
+        "aliases": null,
+        "payload_sha256": "a222ca179232738159ea2dc76c09df5d8ebc26fbef3ebd34ea744f085294f69f"
+      },
+      {
+        "provider_voice_id": "Hải Đăng",
+        "description": "Nam · Bắc · Phong cách tự nhiên",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": 5,
+        "aliases": [
+          "Minh Quân Pro",
+          "Minh Quân"
+        ],
+        "payload_sha256": "0358e6cc918b552a2942197cb97f908884c48d6182d60be5c0b5c9f798606e80"
+      },
+      {
+        "provider_voice_id": "Thùy Dung",
+        "description": "Nữ · Nam · Phong cách tin tức",
+        "gender": "female",
+        "region": "Nam",
+        "style": "tin_tuc",
+        "featured": 6,
+        "aliases": null,
+        "payload_sha256": "ce1dbb1ed5fc08e6f7291d71fd3a6852c6b285847dfcd7ca252e79b1f7319704"
+      },
+      {
+        "provider_voice_id": "Thiền Tâm Đức",
+        "description": "Nam · Bắc · Phong cách kể chuyện",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "doc_truyen",
+        "featured": 7,
+        "aliases": null,
+        "payload_sha256": "20d5fd6215c55e0acd41105876e5d1ad04bfb0d7fb46f6a738eca0874be4c84e"
+      },
+      {
+        "provider_voice_id": "Ngọc Huyền",
+        "description": "Nữ · Bắc · Giọng đọc tự nhiên",
+        "gender": "female",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": 8,
+        "aliases": null,
+        "payload_sha256": "4a5ceafc1665a4cb49796e725af046d38b4d19718630cc6371a1c6bf1d192ab3"
+      },
+      {
+        "provider_voice_id": "Quang Sơn",
+        "description": "Nam · Trung · Phong cách tự nhiên",
+        "gender": "male",
+        "region": "Trung",
+        "style": "tu_nhien",
+        "featured": 9,
+        "aliases": null,
+        "payload_sha256": "b7aad6eb4394478ae4a2ddf52d42157aa113a9ac268791e8cee87919e71907b6"
+      },
+      {
+        "provider_voice_id": "Ngọc Trân",
+        "description": "Nữ · Trung · Phong cách tự nhiên",
+        "gender": "female",
+        "region": "Trung",
+        "style": "tu_nhien",
+        "featured": 10,
+        "aliases": null,
+        "payload_sha256": "b04d85d912a0fd531da7e005917c049387c315da6ef7ebeb283327b9bb56652a"
+      },
+      {
+        "provider_voice_id": "Minh Đức",
+        "description": "Nam · Bắc · Phong cách tin tức",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "tin_tuc",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "5478af7055bd7ed9849b0781629cbb57bc1b4a0cf68a2fbe370ddd766123956b"
+      },
+      {
+        "provider_voice_id": "Phạm Tuyên",
+        "description": "Nam · Bắc · Phong cách tự nhiên",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "51e8784b19b96f091ef2d255bdcde075173eae394c6ae57f7af4d7a4b9d1eb5d"
+      },
+      {
+        "provider_voice_id": "Thái Sơn",
+        "description": "Nam · Nam · Phong cách kể chuyện",
+        "gender": "male",
+        "region": "Nam",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "60999d297dc8a13f8fe3629381ac6ed1e2833c0852055e9914fbf1e470816974"
+      },
+      {
+        "provider_voice_id": "Xuân Vĩnh",
+        "description": "Nam · Bắc · Phong cách tự nhiên",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "28122604cf1b3607102375927a471389c6f8754e0729a4bceae37c0e486a07ef"
+      },
+      {
+        "provider_voice_id": "Thanh Bình",
+        "description": "Nam · Bắc · Phong cách kể chuyện",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "fef17041950b231e81bea5d63d515a7c3be8d006c2864a3754aeaa751b4d5e25"
+      },
+      {
+        "provider_voice_id": "Ngọc Linh",
+        "description": "Nữ · Bắc · Phong cách kể chuyện",
+        "gender": "female",
+        "region": "Bắc",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "b9c8eeefe8d0f182a1fb93cf4a8d88a6476b1465ceb3708b16b1642827498388"
+      },
+      {
+        "provider_voice_id": "Đoan Trang",
+        "description": "Nữ · Bắc · Phong cách tự nhiên",
+        "gender": "female",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "3b5a5f5a5a1613512d88fc6e6f6683cb4a0aeb2d7583056bb55148a7adcf412d"
+      },
+      {
+        "provider_voice_id": "Thục Đoan",
+        "description": "Nữ · Nam · Phong cách kể chuyện",
+        "gender": "female",
+        "region": "Nam",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "c2e33f024065f16668eba238c2d26301c7be45be06c29242881f216c4cd20802"
+      },
+      {
+        "provider_voice_id": "Minh Triết",
+        "description": "Nam · Nam · Phong cách tin tức",
+        "gender": "male",
+        "region": "Nam",
+        "style": "tin_tuc",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "ccb9069673203a7d97bb17364812374f5dbf80e2687ef830b05747cbb137de45"
+      },
+      {
+        "provider_voice_id": "Mỹ Duyên",
+        "description": "Nữ · Nam · Phong cách đọc truyện",
+        "gender": "female",
+        "region": "Nam",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "81be9ca273bf20a0bd5c572b339e5b0339d97c0f324f5ef0a090067f08c542fd"
+      },
+      {
+        "provider_voice_id": "Quỳnh Anh",
+        "description": "Nữ · Bắc · Phong cách đọc truyện",
+        "gender": "female",
+        "region": "Bắc",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "e3199e7638e7704af27fa10e2ca164aee25a75b78e867ad5f254a934f77c99f5"
+      },
+      {
+        "provider_voice_id": "Đức Trí",
+        "description": "Nam · Nam · Phong cách đọc truyện",
+        "gender": "male",
+        "region": "Nam",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "81b6b7baca3bc994b3dbfa4ae6838c18bcb8ed8b3fce8354019f37b13bc764cc"
+      },
+      {
+        "provider_voice_id": "Kim Thanh",
+        "description": "Nữ · Nam · Phong cách đọc truyện",
+        "gender": "female",
+        "region": "Nam",
+        "style": "doc_truyen",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "ab881088785442669e4350046e5566a307da284eaddcb51e01f63acbd0954c3a"
+      },
+      {
+        "provider_voice_id": "Adam",
+        "description": "Nam · Nam · Giọng đọc tự nhiên",
+        "gender": "male",
+        "region": "Nam",
+        "style": "tu_nhien",
+        "featured": null,
+        "aliases": null,
+        "payload_sha256": "aff724626235f8e197fa5e046de77f1b0bad1cd805112e7155acac4fd285b443"
+      },
+      {
+        "provider_voice_id": "Quốc Tuấn",
+        "description": "Nam · Bắc · Phong cách tự nhiên",
+        "gender": "male",
+        "region": "Bắc",
+        "style": "tu_nhien",
+        "featured": null,
+        "aliases": [
+          "Mạnh Dũng"
+        ],
+        "payload_sha256": "9353e3cfc1e275c17503a1b9b5c1b23c143c86baed0730a291369e6bb384c1ed"
+      }
+    ]
+  },
+  "existing_project_castings": [
+    {
+      "project_id": "d3587b7419014b76a9550931d9008cfa",
+      "revision": 6,
+      "legacy_voice_policy": null,
+      "drama_casting": null
+    },
+    {
+      "project_id": "67f86fb7112d4d26aace281f31b408e1",
+      "revision": 4,
+      "legacy_voice_policy": null,
+      "drama_casting": {
+        "schema_version": "native-drama-casting.v1",
+        "version": 1,
+        "configuration": {
+          "narrator_enabled": false,
+          "characters": [
+            {
+              "character_id": "chr_05457ec897164513ab50a8f016559865",
+              "name": "An",
+              "role": "character"
+            },
+            {
+              "character_id": "chr_762c2d04c8f148ab951cbb7c16c47b26",
+              "name": "Bình",
+              "role": "character"
+            }
+          ],
+          "casting": [],
+          "lines": [
+            {
+              "line_id": "line_594197e292464853b502e307870e2ebd",
+              "character_id": "chr_05457ec897164513ab50a8f016559865",
+              "shot_id": "shot_360ede2c825a5336967d71bdb1d23a04",
+              "text": "Hôm nay mình cùng kiểm tra video trước khi xuất nhé.",
+              "enabled": true,
+              "speed": 1.0,
+              "style": "neutral",
+              "pause_after_seconds": 0.15
+            },
+            {
+              "line_id": "line_a40ca0402f3f4ddaac966083c5b97afb",
+              "character_id": "chr_762c2d04c8f148ab951cbb7c16c47b26",
+              "shot_id": "shot_cddaa3d404a9598e94e59ddbb6e90799",
+              "text": "Được rồi. Mình sẽ nghe hết lời thoại và xem lại phụ đề.",
+              "enabled": true,
+              "speed": 1.0,
+              "style": "neutral",
+              "pause_after_seconds": 0.15
+            }
+          ]
+        },
+        "sha256": "772f6bed55ddc7ca4e49c9ddca7f3f9ee7c7180b1130aa1aa3859fe8cf12e629"
+      }
+    }
+  ],
+  "accepted_artifacts_checked": 15,
+  "accepted_artifacts_changed": 0,
+  "browser_observation": "BLOCKED_TOOL_INITIALIZATION_ERROR_KERNEL_ASSETS_PATH_MISSING",
+  "provider_inferences": 0,
+  "production_deployed": false
+}
