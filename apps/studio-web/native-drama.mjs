@@ -103,7 +103,7 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
     if(!draft)return;
     target.replaceChildren();for(const c of draft.characters.filter(v=>v.role!=='narrator'||draft.narrator_enabled))option(target,c.name,c.character_id);targetCharacter=draft.characters.some(v=>v.character_id===targetCharacter)?targetCharacter:target.value;target.value=targetCharacter??'';
     voiceBrowser=initializeVoiceBrowser({root:voiceCards,api,voices:voices.filter(v=>usableVoice(v)),catalog,dom,getCharacter:()=>{const c=draft?.characters.find(v=>v.character_id===targetCharacter);return c?{...c,selected_voice_id:draft.casting.find(v=>v.character_id===c.character_id)?.voice_id}:null;},getTrialText:()=>draft?.lines.find(v=>v.character_id===targetCharacter&&v.enabled)?.text??'',
-      canEdit:()=>!working&&!active(getState())&&getState().canEdit!==false&&!getState().project?.archived,
+      canEdit:()=>!working&&!blocked(getState())&&!voiceDirty&&!pending&&getState().canEdit!==false,
       onSelect:(voice,c)=>{draft.casting=draft.casting.filter(v=>v.character_id!==c.character_id);draft.casting.push({character_id:c.character_id,voice_id:voice.voice_id,voice_version:voice.version,voice_sha256:voice.definition_sha256});changed();onMessage(draft.casting.filter(v=>v.voice_id===voice.voice_id).length>1?'Hai nhân vật đang dùng cùng giọng. Bạn vẫn có thể giữ lựa chọn này.':`Đã chọn ${voice.definition.display_name} cho ${c.name}. Bấm Lưu thoại & phụ đề vào timeline để lưu phân vai.`);draw();controls();target.focus?.();},onMessage});
     registration.hidden=(catalog?.voices??[]).every(v=>voices.some(x=>x.definition.provider_voice_id===v.provider_voice_id&&x.definition.rights_status==='source_licensed'));
     for(const character of draft.characters){const card=node('article',null,characterArea,{class:'planner-scene'}),name=node('input',null,node('label',character.role==='narrator'?'Tên người kể':'Tên nhân vật',card),{maxlength:'100'});name.value=character.name;
@@ -150,7 +150,8 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
     const unsupported=Boolean(editVoice&&(editVoice.definition.source_type!=='provider_preset'||editVoice.definition.provider!==catalog?.provider||editVoice.definition.model!==catalog?.model));
     for(const input of root.querySelectorAll('input,textarea,select'))input.disabled=edit||Boolean(pending);
     for(const input of castArea.querySelectorAll('input,textarea,select'))input.disabled=edit||voiceDirty||Boolean(pending);
-    for(const input of library.querySelectorAll('input,textarea,select'))input.disabled=manage||dialogueDirty||Boolean(pending)||unsupported&&input!==voiceChoice;
+    for(const input of manual.querySelectorAll('input,textarea,select'))input.disabled=manage||dialogueDirty||Boolean(pending)||unsupported&&input!==voiceChoice;
+    target.disabled=edit||voiceDirty||Boolean(pending)||!draft;
     for(const b of root.querySelectorAll('button[data-drama-action]'))b.disabled=stop||Boolean(b._boundary)||(b._permission==='manage'?s.canManage===false:b._permission==='edit'?s.canEdit===false||voiceDirty:false)||b._saved&&(dialogueDirty||voiceDirty)||Boolean(pending&&b.getAttribute('data-drama-action')!==pending.action);
     loadButton.disabled=stop||dialogueDirty||voiceDirty||Boolean(pending);discard.disabled=stop||!dialogueDirty&&!voiceDirty||Boolean(pending);
     start.disabled=edit||!page||Boolean(draft)||Boolean(pending);save.disabled=edit||!draft||!dialogueDirty||voiceDirty||Boolean(pending&&pending.action!=='save');

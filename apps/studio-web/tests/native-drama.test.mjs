@@ -11,7 +11,7 @@ const page=s=>({schema_version:'native-drama-studio.v1',workspace_id:s.workspace
 function harness(){
   class Node{constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.listeners={};this.value='';this.checked=false;this.attributes={};this.textContent='';}
     append(...nodes){this.children.push(...nodes);}replaceChildren(...nodes){this.children=nodes;}setAttribute(k,v){this.attributes[k]=v;this[k]=v;}getAttribute(k){return this.attributes[k]??null;}
-    addEventListener(name,fn){this.listeners[name]=fn;}querySelectorAll(selector){const names=selector.split(',');return this.children.flatMap(n=>[...(names.includes(n.tagName.toLowerCase())?[n]:[]),...n.querySelectorAll(selector)]);}}
+    addEventListener(name,fn){this.listeners[name]=fn;}pause(){this.paused=true;}play(){this.paused=false;return Promise.resolve();}querySelectorAll(selector){const names=selector.split(',');return this.children.flatMap(n=>[...(names.includes(n.tagName.toLowerCase())?[n]:[]),...n.querySelectorAll(selector)]);}}
   const root=new Node('details'),dom={getElementById:()=>root,createElement:t=>new Node(t)},current=state(),calls=[],messages=[],saved=[];let serial=1,override=null,controller;
   const voice={voice_id:V,version:1,definition_sha256:H,definition:{display_name:'Giọng <img src=x>',provider:'vieneu-local',model:'vieneu-v3-turbo',provider_voice_id:'Preset A',rights_status:'unknown',source_type:'provider_preset'}};
   const base=`/api/projects/${P}/drama-casting`;
@@ -125,6 +125,17 @@ test('voice and dialogue drafts cannot trap each other with unsaved mixed forms'
   assert.equal(h.label('Tên nhân vật').children[0].disabled,true);assert.equal(h.action('character').disabled,true);
   await h.action('discard').listeners.click();await h.editName();assert.equal(h.label('Tên hiển thị').children[0].disabled,true);assert.equal(h.label('Thêm hoặc sửa giọng trong thư viện').children[0].disabled,true);
   assert.equal(h.action('save').disabled,false);assert.equal(h.calls.filter(c=>c[1]).length,0);
+});
+test('switching voice-card character remains available for an editor and for a casting draft',async()=>{
+  const h=harness();h.current.canManage=false;await h.controller.load();await h.editName();
+  assert.equal(h.label('Chọn giọng cho nhân vật').children[0].disabled,false);assert.equal(h.label('Tên hiển thị').children[0].disabled,true);
+  h.current.canEdit=false;h.controller.controls();assert.equal(h.label('Chọn giọng cho nhân vật').children[0].disabled,true);
+});
+test('an unsaved library rights form cannot create a trapped simultaneous casting draft through a voice card',async()=>{
+  const h=harness();h.override(async(path,options)=>{const value=await h.answer(path,options);if(path==='/api/voice-library')value.items[0].definition.rights_status='source_licensed';return value;});await h.controller.load();
+  const target=h.label('Chọn giọng cho nhân vật').children[0];target.value=C;target.listeners.change();const choice=h.label('Thêm hoặc sửa giọng trong thư viện').children[0];choice.value=V;choice.listeners.change();
+  const name=h.label('Tên hiển thị').children[0];name.value='Library draft only';name.listeners.input();const choose=h.root.querySelectorAll('button').find(v=>v.textContent.startsWith('Chọn cho ')||v.textContent.startsWith('Đang chọn cho '));assert.ok(choose);assert.equal(choose.disabled,true);choose.listeners.click();
+  assert.equal(h.action('save').disabled,true);assert.equal(h.action('voice-save').disabled,false);assert.equal(h.calls.filter(v=>v[1]).length,0);
 });
 test('editing an unsupported library voice cannot silently change provider model or locale',async()=>{
   const h=harness();h.override(async(path,options)=>{const value=await h.answer(path,options);if(path==='/api/voice-library')value.items[0].definition.provider='other-provider';return value;});
