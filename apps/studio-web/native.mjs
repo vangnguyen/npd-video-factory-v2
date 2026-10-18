@@ -148,7 +148,7 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
   let project = null, csrf = null, busy = false, dirty = false, dirtyPart = null, timer = null, pollFailures = 0, shotStudio = null, nativeAnalysis=null, mediaFrames=null, workspaceUI=null,brandCatalog=null,projectQuality={};
-  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null;
+  let multipartUI=null,audioTranscriptUI=null,sourceMediaUI=null,narratedTimelineUI=null,asrGapReviewUI=null,transcriptWordsUI=null,sceneAssessmentsUI=null,deliveryUI=null;
   let costRequest = 0, costUI = null, canManage = true, publicationUI = null, analyticsUI = null, visionUI = null, officialVisionUI=null, renderVisionUI=null, renderThumbnailUI=null,renderThumbnailRightsUI=null, variantsUI = null, channelUI=null,channelAdminUI=null,bridgeUI=null,rightsUI=null,stockUI=null,generationUI=null,rightsOverrideUI=null,mediaPlannerUI=null,narrationUI=null,narrationRightsUI=null,narratedVariantsUI=null,officialAccountsUI=null,googleOAuthUI=null,googleSelectionUI=null,googleAnalyticsSelectionUI=null,tiktokCreatorsUI=null,officialPublicationUI=null,publishingMediaUI=null,officialQueueUI=null,officialAnalyticsUI=null,officialRefreshUI=null,officialWinnerUI=null,officialLearningUI=null,qualifiedLearningUI=null,musicLoopEnabled=false,narratedMusicLoopEnabled=false;
   let asrLanguageEnabled=false;
   let localAsrEnabled=false;
@@ -186,6 +186,7 @@ if (typeof document !== "undefined") {
   }
   function controls() {
     bridgeUI?.controls();
+    deliveryUI?.controls();
     $("prompt").closest('label').hidden=Boolean(workspaceUI)&&$("input-kind").value==='media';
     const active=jobActive(project), shotWorking=(shotStudio?.isWorking()??false)||(nativeAnalysis?.isWorking()??false)||(mediaFrames?.isWorking()??false)||(rightsUI?.isWorking()??false)||(stockUI?.isWorking()??false)||(generationUI?.isWorking()??false)||(rightsOverrideUI?.isWorking()??false)||(mediaPlannerUI?.isWorking()??false)||(renderVisionUI?.isWorking()??false)||(renderThumbnailUI?.isWorking()??false)||(renderThumbnailRightsUI?.isWorking()??false), blocked=busy||shotWorking||active||project?.archived;
     document.querySelectorAll("input,textarea,select,button").forEach(el=>{if(!el.matches('[data-shot-control],[data-script-control],[data-asset-control],[data-workspace-control],[data-auto-edit-control],[data-studio-nav],[data-shot],[data-storyboard-shot],[data-track-shot]'))el.disabled=blocked;});
@@ -309,6 +310,7 @@ if (typeof document !== "undefined") {
     renderVisionUI?.sync();
     renderThumbnailUI?.sync();
     renderThumbnailRightsUI?.sync();
+    deliveryUI?.sync();
     rightsUI?.sync();
     stockUI?.sync();
     generationUI?.sync();
@@ -421,6 +423,11 @@ if (typeof document !== "undefined") {
     canManage=session.access?.mode!=='registry'||session.access.permissions?.includes('manage')===true;
     musicLoopEnabled=session.capabilities?.native_source_music_loop_crossfade===true;
     narratedMusicLoopEnabled=session.capabilities?.native_narrated_music_loop===true;
+    if(session.capabilities?.native_manual_delivery===true){
+      const delivery=await import('./native-manual-delivery.mjs');
+      deliveryUI=delivery.initializeManualDelivery({api,getState:()=>({project,dirty,busy,active:jobActive(project),workspace_id:session.access?.workspace_id??'wsp_native_local',canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true}),getVideo:()=>currentVideo(project),
+        openFolder:session.capabilities?.native_open_output_folder===true,onMessage:message,onWorking:value=>{busy=value;controls();},onOpen:()=>shotStudio?.showStage('video')});
+    }
     if(session.capabilities?.native_source_media_tracks===true){
       const tracks=await import('./native-source-media-tracks.mjs');
       sourceMediaUI=tracks.initializeSourceMediaTracks({api,getState:()=>({project,dirty,dirtyPart,busy,active:jobActive(project),

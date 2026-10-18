@@ -102,6 +102,7 @@ export function initializeShotStudio({api,getProject,getGuards,getReviewedVision
   const move=(selector,target)=>{const el=document.querySelector(selector);if(el)$(target).append(el);};
   move('#brief-card','script-stage-body');move('.editor>section:not([id])','script-stage-body');move('#proposal-card','script-stage-body');move('#image-card','assets-stage-body');move('.output-card','video-stage-body');move('#final-review-panel','video-review-body');move('#native-render-vision-card','video-review-body');move('#native-render-thumbnail-card','video-review-body');move('#native-render-thumbnail-rights-card','video-review-body');move('#open-output','video-review-body');move('.job-card','video-review-body');
   const canvas=document.createElement('div');canvas.className='preview-canvas';
+  move('#native-delivery-center','video-review-body');
   const output=document.querySelector('.output-card');
   const previewStage=document.createElement('div');previewStage.className='preview-stage';
   output.insertBefore(previewStage,$('video-placeholder'));previewStage.append(canvas);
