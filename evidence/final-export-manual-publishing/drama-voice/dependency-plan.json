@@ -1,0 +1,21 @@
+{
+  "schema_version": "final-export-evidence.v1",
+  "date": "2026-10-18",
+  "source_base_head": "507cafd9a3a08b9e1e660613c3765f31e3f18ea6",
+  "component": "Per-line dialogue dependency planning",
+  "source": "services/windows_native/dialogue_plan.py",
+  "test_log": "recovery/20261007/final-export-drama-casting-plan-Native-n3.log",
+  "cohort_passed": 57,
+  "cohort_duration_seconds": 57.894,
+  "component_tests": 9,
+  "planned_dependencies_verified": ["character voice change targets only its lines", "text change targets only its line", "pause/reorder preserve synthesis inputs but invalidate mix/timing", "character name changes speaker caption input", "narrator off excludes narrator lines", "same voice/text reuse fingerprint within workspace", "different workspaces cannot share fingerprints", "provider signature change invalidates affected inputs", "proper-name normalization requires visible review"],
+  "scope": "planning only, not provider or physical cache execution",
+  "cache_bytes_verified": false,
+  "audio_generated": false,
+  "duration_measurements": null,
+  "actual_cost": null,
+  "external_provider_calls": 0,
+  "DRAMA_VOICE_CASTING_READY": "NO",
+  "OWNER_VOICE_UAT_REQUIRED": "YES",
+  "production_deployed": false
+}

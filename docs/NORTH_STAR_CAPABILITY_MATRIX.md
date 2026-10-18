@@ -1,5 +1,7 @@
 # North Star capability matrix
 
+2026-10-18 — P6 project-casting draft và per-line dependency planner: 57 PASS (9 casting + 9 plan + 9 library + 17 backup + 13 storyboard QC), 57.894s. CAS/rights bindings/replay/restore và narrator-default-false đã có; incomplete drama bị chặn ở approval/worker. Voice change chỉ đổi planned inputs đúng character; không có cache bytes/TTS/audio/UI/series acceptance. [Chi tiết](FINAL_EXPORT_PROGRESS.md), `DRAMA_VOICE_CASTING_READY=NO`.
+
 2026-10-18 — P6 component: Native Voice Library có immutable SQLite versions, workspace scope, CAS/idempotency, hash verification, rights declaration/consent và backup/restore. 9 library + 17 backup = 26 PASS; không inference, không UI/casting/TTS integration. Không gắn character vào global voice và không nâng khai báo thành quyền đã xác minh. `DRAMA_VOICE_CASTING_READY=NO`; [evidence](../evidence/final-export-manual-publishing/drama-voice/library.json).
 
 2026-10-18 — Export/caption history có cursor pagination thay vì chỉ truy cập 100 bản. Scoped SQLite/HTTP 9 PASS, targeted Node 31 PASS, full Studio 2123 PASS; giữ draft và latest caption CAS, chặn phản hồi trang cũ sau đổi project. [Evidence và các trạng thái chưa đóng](FINAL_EXPORT_PROGRESS.md).
