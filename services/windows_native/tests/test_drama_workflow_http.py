@@ -21,7 +21,7 @@ class DramaWorkflowHTTPTests(unittest.TestCase):
         status,p=self.request('POST','/api/projects',{'name':'Phim HTTP nháp','prompt':'','input_kind':'script','workflow_kind':'drama','output_format':'9:16'});self.assertEqual(status,201)
         status,r=self.request('POST','/api/projects/'+p['id']+'/drama-script',{'revision':1,'request_key':'http-drama-script-0001','text':'(An mở cửa.)\nAn: Xin chào.\nBình: Chào bạn.','confirm_characters':True});self.assertEqual((status,r['provider_calls'],r['human_approval_granted']),(200,0,False))
         current=self.server.store.get(p['id']);self.assertEqual(len(current['document']['drama_casting']['configuration']['characters']),2);self.assertEqual(current['jobs'],[]);self.assertIsNone(current['approval'])
-        status,info=self.request('GET','/api/app-info');self.assertEqual(status,200);self.assertTrue(info['application_source'].endswith('vfdr03'));self.assertEqual(info['platform_api_publishing'],'DEFERRED')
+        status,info=self.request('GET','/api/app-info');self.assertEqual(status,200);self.assertEqual(Path(info['application_source']),Path(__file__).resolve().parents[3]);self.assertEqual(info['platform_api_publishing'],'DEFERRED')
     def test_new_write_uses_existing_csrf_boundary(self):
         p=self.server.store.create('HTTP drama','',workflow_kind='drama')
         status,_=self.request('POST','/api/projects/'+p['id']+'/drama-script',{'revision':1,'request_key':'http-drama-denied-01','text':'An: Xin chào.'},csrf=False)

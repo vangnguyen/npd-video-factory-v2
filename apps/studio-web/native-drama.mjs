@@ -4,6 +4,7 @@ const source=s=>s.project?.document?.canonical_timeline?.snapshot?.metadata?.nat
 const active=s=>s.active||(s.project?.jobs??[]).some(j=>['queued','running','retrying'].includes(j.status));
 const blocked=s=>!ID.test(s.project?.id??'')||s.busy||active(s)||s.project?.archived||source(s)||(s.dirty&&s.dirtyPart!=='drama');
 const messages={DRAMA_DELIVERY_PLAN_NOT_READY:'Kiểm tra giọng, quyền sử dụng, người nói và shot của từng câu. Chọn mẫu theo lời đọc trước khi thử lại.',
+  DRAMA_CHARACTER_CONFIRMATION_REQUIRED:'Kịch bản đang là bản nháp mới. Quay lại bước Nhân vật & giọng, kiểm tra người nói và bấm Xác nhận nhân vật trước.',
   DRAMA_VOICE_BINDING_CHANGED:'Giọng trong thư viện đã có phiên bản mới. Tải lại, chọn rõ giọng cho nhân vật và lưu phân vai.',
   DRAMA_FIT_NARRATION_TEMPLATE_REQUIRED:'Chọn thời lượng “Theo lời đọc” trong Thương hiệu & mẫu, rồi kiểm tra phân vai lại.',
   DRAMA_LEGACY_NARRATOR_POLICY_CONFLICT:'Dự án đang dùng cách đọc một giọng cũ. Cần bỏ lựa chọn đó trước khi chuyển sang thoại nhiều nhân vật.',
@@ -111,7 +112,7 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
       name.addEventListener('input',()=>{character.name=name.value;changed();});select.addEventListener('change',()=>{draft.casting=draft.casting.filter(v=>v.character_id!==character.character_id);const voice=voices.find(v=>v.voice_id===select.value);if(voice)draft.casting.push({character_id:character.character_id,voice_id:voice.voice_id,voice_version:voice.version,voice_sha256:voice.definition_sha256});changed();});
       const remove=button('Xóa nhân vật chưa dùng',card,'remove-character','edit',false);remove.addEventListener('click',()=>{if(remove.disabled)return;if(draft.characters.length<=1||draft.lines.some(v=>v.character_id===character.character_id)){onMessage('Giữ ít nhất một nhân vật và đổi người nói của các câu liên quan trước khi xóa.',true);return;}draft.characters=draft.characters.filter(v=>v.character_id!==character.character_id);draft.casting=draft.casting.filter(v=>v.character_id!==character.character_id);if(character.role==='narrator')draft.narrator_enabled=false;changed();draw();controls();});
     }
-    for(const [index,line] of draft.lines.entries()){const card=node('article',null,lineArea,{class:'planner-scene'}),speaker=node('select',null,node('label',`Người nói · câu ${index+1}`,card));option(speaker,'Chọn người nói…','');for(const c of draft.characters)option(speaker,c.name+(c.role==='narrator'?' · người kể':''),c.character_id);speaker.value=line.character_id??'';
+    for(const [index,line] of draft.lines.entries()){const card=node('article',null,lineArea,{class:'planner-scene','data-drama-line':line.line_id}),speaker=node('select',null,node('label',`Người nói · câu ${index+1}`,card));option(speaker,'Chọn người nói…','');for(const c of draft.characters)option(speaker,c.name+(c.role==='narrator'?' · người kể':''),c.character_id);speaker.value=line.character_id??'';
       const shot=node('select',null,node('label','Cảnh quay',card));option(shot,'Chọn cảnh…','');for(const s of page.shots)option(shot,`Cảnh ${s.scene}`,s.shot_id);shot.value=line.shot_id??'';
       const text=node('textarea',null,node('label','Nội dung câu thoại',card),{rows:'3',maxlength:'4000'});text.value=line.text;
       const enabled=node('input',null,node('label','Dùng câu này',card),{type:'checkbox'});enabled.checked=line.enabled;
@@ -174,5 +175,6 @@ export function initializeNativeDrama({api,getState,onMessage,onWorking=()=>{},o
       const definition={display_name:voiceName.value.trim(),provider:catalog.provider,model:catalog.model,provider_voice_id:preset.value,locale:'vi-VN',source_type:'provider_preset',rights_status:rights.checked?'owner_declared':editVoice?.definition.rights_status==='blocked'?'blocked':'unknown',license:license.value?.trim()||null,source_reference:reference.value?.trim()||null,permission_reference:permission.value?.trim()||null,reference_asset_id:null,reference_sha256:null,cloning_consent:false};
       await execute({path:'/api/voice-library'+(editVoice?'/'+editVoice.voice_id:''),body:{request_key:newKey(),...(editVoice?{expected_version:editVoice.version}:{}),definition}},'voice-save');
     }catch(error){onMessage(error.message,true);}});
-  sync();return {sync,controls,load,isWorking:()=>working,isDirty:()=>dialogueDirty||voiceDirty};
+  function ensureLoaded(){if(root.open&&autoLoadContext!==context()&&!working&&!blocked(getState())){autoLoadContext=context();queueMicrotask(()=>void load());}}
+  sync();return {sync,controls,load,ensureLoaded,check:()=>submit('compile'),focusLine:id=>{if(/^line_[a-f0-9]{32}$/.test(id)){const row=root.querySelector(`[data-drama-line="${id}"]`);row?.scrollIntoView?.({block:'center',behavior:'smooth'});row?.querySelector('textarea')?.focus();}},isWorking:()=>working,isDirty:()=>dialogueDirty||voiceDirty};
 }

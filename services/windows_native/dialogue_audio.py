@@ -80,7 +80,7 @@ def profile_signature(plan):
     voices=sorted({(v['voice_id'],v['voice_version'],v['voice_sha256'],v['provider_configuration_sha256']) for v in plan['lines']})
     return digest({'schema_version':SCHEMA,'workspace_id':plan['workspace_id'],'voice_bindings':voices})
 
-def prepare(config,library,snapshot,providers,output,*,authorization_check=lambda:None):
+def prepare(config,library,snapshot,providers,output,*,authorization_check=lambda:None,on_progress=lambda index,total:None):
     """Use a fresh private output; cache replay verifies bytes before reuse.
 
     No adapter is configured by this module. Paid providers are disabled here.
@@ -126,7 +126,8 @@ def prepare(config,library,snapshot,providers,output,*,authorization_check=lambd
             state TEXT NOT NULL,manifest_sha256 TEXT,error_code TEXT,created_at TEXT NOT NULL,
             PRIMARY KEY(workspace_id,input_sha256))''')
     records=[]
-    for line in plan['lines']:
+    for line_index,line in enumerate(plan['lines']):
+        on_progress(line_index+1,len(plan['lines']))
         voice,adapter=selected[line['line_id']];key=digest({'synthesis_input_sha256':line['synthesis_input_sha256'],'take':takes.get(line['line_id'])})
         with lease(guard(cache/(key+'.lock'))):
             authorization_check();current=library.get(line['voice_id'],version=line['voice_version'],for_generation=True)

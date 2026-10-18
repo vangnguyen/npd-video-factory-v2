@@ -56,6 +56,21 @@ class DialogueRuntimeTests(unittest.TestCase):
         self.assertEqual(len(self.adapter.calls),3);self.assertEqual(meta['reused_line_clips'],1);self.assertEqual(self.adapter.calls[-1]['line_id'],fixtures.LINE_A)
         self.assertEqual(file_sha(out/'voice.wav'),original);self.apply(second,result2)
 
+    def test_per_line_listening_reads_exact_verified_pcm_without_new_tts_or_approval(self):
+        import io,wave
+        from services.windows_native.dialogue_listening import lines,pcm
+        job,result,out=self.prepare();before=file_sha(out/'voice.wav');calls=len(self.adapter.calls)
+        _,page=lines(self.store,self.project['id'],job['id']);self.assertEqual(len(page['items']),2)
+        self.assertEqual(page['provider_calls'],0);self.assertFalse(page['human_voice_uat_complete'])
+        for line in page['items']:
+            raw=pcm(self.store,self.project['id'],job['id'],line['line_id'])
+            with wave.open(io.BytesIO(raw),'rb') as clip,wave.open(str(out/'voice.wav'),'rb') as mixed:
+                start=round(line['start_seconds']*48000);end=round(line['end_seconds']*48000);mixed.setpos(start)
+                self.assertEqual(clip.readframes(clip.getnframes()),mixed.readframes(end-start))
+        self.assertEqual(file_sha(out/'voice.wav'),before);self.assertEqual(len(self.adapter.calls),calls)
+        with self.assertRaisesRegex(WorkflowError,'LINE_NOT_FOUND'):pcm(self.store,self.project['id'],job['id'],'line_'+'0'*32)
+        with self.assertRaisesRegex(WorkflowError,'JOB_NOT_FOUND'):lines(self.store,'0'*32,job['id'])
+
     def test_worker_rejects_provider_change_and_revoked_project_approval_before_io(self):
         job=self.approved_job();self.adapter.configuration_sha256='2'*64
         with self.assertRaisesRegex(WorkflowError,'PROVIDER_CONFIGURATION_CHANGED'):Pipeline(self.config).run(job,lambda _:None)

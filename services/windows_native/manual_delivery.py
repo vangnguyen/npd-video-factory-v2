@@ -348,7 +348,7 @@ class NativeManualDelivery:
                 rights.append({'id':voice['voice_id'],'version':voice['version'],'sha256':voice['definition_sha256'],'kind':'dialogue_voice',
                     **{k:definition[k] for k in ('source_type','rights_status','license','provider','source_reference','permission_reference')},'independently_verified':False})
         durable_json(stage/'rights-summary.json',{'items':rights,'independently_verified':False,'manual_posting_review_required':True,
-            'unknown_rights_count':sum(a.get('rights_status') not in ('owned','licensed','owner_declared') for a in rights),'external_publishing_authorized':False})
+            'unknown_rights_count':sum(a.get('rights_status') not in ('owned','licensed','owner_declared','source_licensed') for a in rights),'external_publishing_authorized':False})
         with self.store.transaction() as con:
             copyrow=con.execute('SELECT * FROM native_delivery_copy WHERE workspace_id=? AND project_id=? AND version=?',(self.workspace,row['project_id'],payload.caption_version)).fetchone()
         if payload.caption_version and not copyrow:raise WorkflowError('EXPORT_CAPTION_VERSION_CHANGED')

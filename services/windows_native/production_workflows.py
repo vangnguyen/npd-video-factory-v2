@@ -1,5 +1,6 @@
 """Production choices and reviewed drama authoring over the existing canonical timeline."""
 import copy,json,re,uuid,unicodedata
+from typing import Literal
 from pydantic import Field,StrictBool,StrictInt,StrictStr,ValidationError
 from app.models import StrictModel
 from .contracts import WorkflowError,digest,normalize
@@ -70,6 +71,7 @@ class ScriptSave(StrictModel):
     revision:StrictInt=Field(ge=1)
     request_key:StrictStr=Field(pattern=r'^[A-Za-z0-9_.:-]{12,128}$')
     text:StrictStr=Field(max_length=20000)
+    input_mode:Literal['script','idea']='script'
     confirm_characters:StrictBool=False
     narrator_enabled:StrictBool=False
     speaker_assignments:dict[StrictStr,StrictStr]=Field(default_factory=dict)
@@ -89,7 +91,8 @@ def save_script(store,project_id,payload,*,actor_ref,authorization_check=lambda:
             return {**json.loads(old['response']),'idempotent_replay':True}
         project=store.editable(con,project_id,body['revision']);doc=copy.deepcopy(project['document'])
         if not is_drama(doc):raise WorkflowError('DRAMA_WORKFLOW_REQUIRED',400)
-        parsed=parse_script(body['text'],project_id)
+        if body['confirm_characters'] and body['input_mode']=='idea':raise WorkflowError('DRAMA_IDEA_NEEDS_SCRIPT',400)
+        parsed=parse_script(body['text'],project_id) if body['input_mode']=='script' else {'scenes':[],'characters':[],'lines':[],'needs_speaker':[],'actions_are_spoken':False,'narrator_enabled':False,'provider_calls':0}
         for line in parsed['lines']:
             selected=body['speaker_assignments'].get(line['line_id'])
             if selected:
@@ -97,13 +100,13 @@ def save_script(store,project_id,payload,*,actor_ref,authorization_check=lambda:
                 if not character:raise WorkflowError('DRAMA_SPEAKER_SELECTION_REQUIRED',400)
                 line.update(character_id=character['character_id'],speaker_name=character['name'],role=character['role'],needs_speaker=False)
         parsed['needs_speaker']=[v['line_id'] for v in parsed['lines'] if v['needs_speaker']]
-        record={'schema_version':'native-drama-script.v1','raw_text':body['text'],'parsed':parsed,'characters_confirmed':body['confirm_characters'],
+        record={'schema_version':'native-drama-script.v1','raw_text':body['text'],'input_mode':body['input_mode'],'parsed':parsed,'characters_confirmed':body['confirm_characters'],
             'character_notes':body['character_notes'],'narrator_enabled':body['narrator_enabled']}
         if any(len(k)>100 or len(v)>500 for k,v in body['character_notes'].items()):raise WorkflowError('DRAMA_CHARACTER_NOTES_INVALID',400)
         if body['confirm_characters']:
             if parsed['needs_speaker']:raise WorkflowError('DRAMA_SPEAKER_SELECTION_REQUIRED',400)
             materialize(doc,parsed,project_id,body['narrator_enabled'])
-        doc['drama_script']=record;doc['prompt']=body['text'];doc['input_kind']='script'
+        doc['drama_script']=record;doc['prompt']=body['text'];doc['input_kind']=body['input_mode']
         doc['production_workflow'].update(series=body['series'],episode=body['episode'])
         authorization_check();revision=project['revision']+1
         con.execute('UPDATE projects SET revision=?,document=?,approval=NULL,updated_at=? WHERE id=?',(revision,json.dumps(doc,ensure_ascii=False),now(),project_id))

@@ -16,7 +16,8 @@ export async function loadNativeCosts(session,loader=()=>import('./native-costs.
 }
 export const supportsShotStudio = session => session?.capabilities?.native_shot_studio===true || session?.native_shot_studio===true;
 export const isSourceProject=p=>p?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema==='native-auto-edit-timeline-v1';
-export const nativeRenderLabel=project=>isSourceProject(project)?'Render video nguồn đã duyệt':usesNarratedWorkflow(project)?'Render video đã duyệt':'Tạo giọng đọc & video';
+export const nativeRenderLabel=project=>isSourceProject(project)?'Tạo video cuối từ bản dựng đã duyệt':usesNarratedWorkflow(project)?'Tạo video cuối đã duyệt':'Tạo giọng đọc & video';
+export function dialogueJobLabel(stage,document){const match=/^dialogue_line_(\d+)_of_(\d+)$/.exec(stage??'');if(!match)return null;const [index,total]=match.slice(1).map(Number),c=document?.drama_casting?.configuration,lines=c?.lines.filter(v=>v.enabled&&(c.characters.find(x=>x.character_id===v.character_id)?.role!=='narrator'||c.narrator_enabled))??[],line=lines[index-1],character=c?.characters.find(v=>v.character_id===line?.character_id);return index>=1&&index<=total?`Đang tạo câu ${index}/${total}${character?' · '+character.name:''}`:null;}
 export const supportsMusicLoopProject=(project,sourceEnabled=false,narratedEnabled=false)=>Boolean(
   sourceEnabled&&isSourceProject(project)||narratedEnabled&&project?.document?.canonical_timeline?.snapshot?.metadata?.native_shot_schema==='native-shot-timeline-v1');
 export function musicLoopHeaders(project,value,enabled=false,narratedEnabled=false){
@@ -56,6 +57,15 @@ export const musicSummary = project => project?.document.music ? `${project.docu
 export const scriptReviewLabel = project => !project?.document?.content_intelligence ? "" : project?.script_review?.current ? (project.approval ? "Lời đọc đã được duyệt." : "Lời đọc đã lưu được duyệt. Hình ảnh và cách dựng còn chờ bạn duyệt.") : project?.script_review ? "Lời đọc đã thay đổi; cần duyệt lại bản mới." : "Lời đọc đang chờ bạn duyệt.";
 
 const errors = {
+  DRAMA_IDEA_NEEDS_SCRIPT:'Ý tưởng đã được lưu. Chuyển sang kịch bản có lời thoại rồi xác nhận nhân vật.',
+  DRAMA_SPEAKER_SELECTION_REQUIRED:'Có câu chưa rõ người nói. Chọn nhân vật cho câu đó ở bước Nhân vật & giọng.',
+  DRAMA_ACTIVE_DIALOGUE_REQUIRED:'Cần ít nhất một câu thoại của nhân vật. Phần hành động không được đọc thành lời.',
+  DRAMA_DIALOGUE_TEXT_TOO_LONG:'Lời thoại đang vượt giới hạn bản dựng 180 giây. Chia thành tập hoặc rút gọn kịch bản.',
+  DRAMA_MAX_20_SCENES:'Bản dựng hỗ trợ tối đa 20 cảnh. Chia thành tập hoặc gộp các cảnh gần nhau.',
+  DRAMA_SCRIPT_REQUEST_INVALID:'Chưa lưu được kịch bản. Kiểm tra nội dung và thử lại; bản đang sửa được giữ.',
+  VOICE_SAMPLE_QUEUE_FULL:'Hàng đợi mẫu đang đầy. Chờ các mẫu hiện tại hoàn tất rồi thử lại.',
+  VOICE_SAMPLE_WAIT_FOR_PROJECT_JOB:'Chờ tác vụ của dự án hoàn tất rồi tạo mẫu giọng.',
+  VOICE_SAMPLE_RETRY_LIMIT:'Đã thử tạo mẫu ba lần. Kiểm tra runtime trong Cài đặt trước khi tạo thêm.',
   UPLOAD_MIME_MAGIC_MISMATCH:'Nội dung file khác MIME đã chọn. Chọn đúng loại và MIME, rồi bắt đầu upload mới.',
   UPLOAD_SOURCE_CHECKSUM_MISMATCH:'Nội dung file khác nguồn đã khóa. Chọn lại đúng file gốc; chưa lưu asset vào dự án.',
   UPLOAD_PART_CHANGED_OR_MISSING:'Chunk đã lưu bị thay đổi hoặc thiếu. Giữ file gốc và kiểm tra upload trước khi tiếp tục.',
@@ -383,7 +393,7 @@ if (typeof document !== "undefined") {
     $("script-review-state").hidden=!scriptReviewLabel(project);
     const jobs=project?.jobs??[];
     $("job-empty").hidden=Boolean(jobs.length);
-    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="media_frames"?"Khung hình nguồn & gợi ý thumbnail":job.kind==="auto_edit_analysis"?"Đo cảnh & âm thanh trên máy":job.kind==="asr"?"Phân tích nguồn & lời nói":job.kind==="content"?"Nội dung":job.snapshot?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema?"Dựng video nguồn":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(["asr","auto_edit_analysis","media_frames"].includes(job.kind)&&job.status==="succeeded"?"Kết quả phân tích sẵn sàng · hãy kiểm tra":statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","failed_qc","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
+    $("jobs").innerHTML=jobs.slice(0,6).map(job=>`<div class="job ${job.error?"error":""}"><strong>${job.kind==="media_frames"?"Khung hình nguồn & gợi ý thumbnail":job.kind==="auto_edit_analysis"?"Đo cảnh & âm thanh trên máy":job.kind==="asr"?"Phân tích nguồn & lời nói":job.kind==="content"?"Nội dung":job.snapshot?.document?.canonical_timeline?.snapshot?.metadata?.native_auto_edit_schema?"Dựng video nguồn":"Giọng đọc & video"}</strong><small>${new Date(job.created_at).toLocaleString("vi-VN")} · v${job.revision}</small>${esc(["asr","auto_edit_analysis","media_frames"].includes(job.kind)&&job.status==="succeeded"?"Kết quả phân tích sẵn sàng · hãy kiểm tra":statusNames[job.status]??job.status)}${["running","retrying"].includes(job.status)?`<small>${esc(dialogueJobLabel(job.stage,project.document)??stageNames[job.stage]??job.stage)}</small>`:""}${job.error?`<small>${esc(errors[job.error.code]??job.failure?.action??job.error.code)}${job.error.http_status?` · HTTP ${job.error.http_status}`:""}</small>`:""}${["failed","failed_qc","interrupted"].includes(job.status)&&job.revision===project.revision?`<button data-resume="${esc(job.id)}">Tiếp tục từ bước đã lưu</button>`:""}</div>`).join("");
     const video=currentVideo(project);
     $("final-review-panel").hidden=!video;
     $("open-output").hidden=!video;
@@ -571,7 +581,7 @@ if (typeof document !== "undefined") {
     if(session.capabilities?.native_narration_preparation===true){
       const narration=await import('./native-narration.mjs');
       narrationUI=narration.initializeNativeNarration({api,getState:()=>({project,dirty,busy,workspace_id:session.access?.workspace_id??'wsp_native_local',active:jobActive(project),canEdit:session.access?.mode!=='registry'||session.access.permissions?.includes('edit')===true,canReview:session.access?.mode!=='registry'||session.access.permissions?.includes('review')===true}),
-        onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);}});
+        onMessage:message,onWorking:value=>{busy=value;controls();},onSaved:async()=>{await reload(true);},onEditLine:async lineId=>{dramaFlowUI?.showStep('voices');await dramaUI?.load();dramaUI?.focusLine(lineId);}});
     }
     if(session.capabilities?.native_narration_rights_review===true){
       const rights=await import('./native-narration-rights.mjs');

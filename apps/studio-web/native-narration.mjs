@@ -44,8 +44,8 @@ export function narrationRequest(state,page,action,{jobId,acknowledged=false,req
   if(action!=='apply'||!item?.result||!item.timing_apply_current||!item.result.plan.fit_narration_template||acknowledged!==true)throw new Error('Xem kết quả, chọn mẫu theo lời đọc và xác nhận áp dụng thời lượng.');
   return {path:`${base}/narration/${jobId}/apply`,body:{revision:p.revision,expected_plan_sha256:item.result.plan_sha256,acknowledged:true}};
 }
-export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>{},onSaved=async()=>{},dom=globalThis.document,newKey=()=>globalThis.crypto.randomUUID()}){
-  const root=dom.getElementById('native-narration-panel');let page=null,working=false,serial=0,binding=null,pending=null;
+export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>{},onSaved=async()=>{},onEditLine=null,dom=globalThis.document,newKey=()=>globalThis.crypto.randomUUID()}){
+  const root=dom.getElementById('native-narration-panel');let page=null,working=false,serial=0,binding=null,pending=null,autoReadKey=null;
   const context=()=>{const s=getState();return `${s.workspace_id}:${s.project?.id}:${s.project?.revision}:${source(s.project)}`;};
   function node(tag,text,parent,attributes={}){const value=dom.createElement(tag);if(text!==null)value.textContent=text;for(const [k,v]of Object.entries(attributes))value.setAttribute(k,String(v));parent.append(value);return value;}
   node('summary','Lời đọc & thời lượng đã đo',root);node('p','Duyệt nội dung trước khi tạo giọng. Nghe audio và xem thời lượng từng cảnh, rồi chọn áp dụng. Áp dụng sẽ xóa duyệt trước đó; preview có tiếng và video cuối vẫn cần xem, nghe và duyệt riêng.',root,{class:'hint'});
@@ -74,6 +74,12 @@ export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>
       if(!item.result){if(item.error)node('p',String(item.error.code??'Chưa có kết quả'),card);continue;}
       const plan=item.result.plan;node('p',`Audio gốc ${plan.source_duration_seconds.toFixed(2)} giây · bản dựng theo lời đọc ${plan.recommended_duration_seconds.toFixed(2)} giây. Chưa xác nhận chất lượng giọng hoặc căn chỉnh từng từ.`,card);
       node('audio',null,card,{controls:'',preload:'none',src:`/api/projects/${page.project_id}/narration/${item.job_id}/audio`});
+      if(getState().project.document.drama_casting){const details=node('details',null,card);node('summary','Nghe từng câu theo nhân vật',details);let loaded=false;
+        details.addEventListener('toggle',async()=>{if(!details.open||loaded)return;loaded=true;try{const result=await api(`/api/projects/${page.project_id}/narration/${item.job_id}/lines`);
+          if(result?.project_id!==getState().project?.id||result.job_id!==item.job_id||result.provider_calls!==0||!Array.isArray(result.items))throw Error('Kết quả nghe câu chưa khớp dự án.');
+          for(const line of result.items){if(!/^line_[a-f0-9]{32}$/.test(line.line_id??'')||line.audio_url!==`/api/projects/${result.project_id}/narration/${item.job_id}/lines/${line.line_id}/audio`)throw Error('Nguồn audio câu thoại chưa hợp lệ.');const row=node('article',null,details,{class:'dialogue-listening-line'});node('p',`${line.speaker_name}: ${line.text}`,row);node('p',line.reused?'Đã dùng lại audio đúng phiên bản':'Audio đã tạo cho câu này',row,{class:'hint'});const audio=node('audio',null,row,{controls:'',preload:'none',src:line.audio_url,'data-voice-audition':''});audio.addEventListener('play',()=>{for(const other of dom.querySelectorAll('audio'))if(other!==audio)other.pause();});
+            if(onEditLine){const edit=node('button','Sửa hoặc tạo lại câu này',row,{type:'button'});edit.addEventListener('click',()=>onEditLine(line.line_id));}}
+        }catch(error){loaded=false;onMessage(error.message,true);}});}
       for(const scene of plan.items)node('p',`Cảnh ${scene.scene}: ${scene.narration} · audio ${scene.measured_audio_seconds.toFixed(2)} giây · thời lượng đề xuất ${scene.recommended_duration_seconds.toFixed(2)} giây`,card);
       if(!item.voice_input_current)node('p','Lời đọc hoặc giọng đã thay đổi. Cần tạo lại.',card);
       const label=node('label',null,card,{class:'check'}),ack=node('input',null,label,{type:'checkbox'});node('span','Tôi đã nghe audio và xem thời lượng từng cảnh. Áp dụng vào timeline và duyệt lại sau đó.',label);
@@ -84,11 +90,14 @@ export function initializeNativeNarration({api,getState,onMessage,onWorking=()=>
   function controls(){const state=getState();root.hidden=!state.project||source(state.project);refresh.disabled=working||state.busy||!state.project||source(state.project);
     reviewer.disabled=working||blocked(state,true);reviewAck.disabled=reviewer.disabled;approve.disabled=reviewer.disabled||!state.project?.document.proposal||!reviewAck.checked||!reviewer.value?.trim();
     prepare.disabled=working||blocked(state)||!state.project?.approval||state.project.approval.revision!==state.project.revision||!state.project.document?.canonical_timeline;
-    for(const button of list.querySelectorAll('button'))button.disabled=working||blocked(state)||!button._narrationItem?.timing_apply_current||!button._narrationItem.result?.plan.fit_narration_template||!button._narrationAck.checked;
+    prepare.title=prepare.disabled?'Lưu phân vai, kiểm tra giọng và duyệt nội dung để tạo lời thoại.':'Tạo audio theo giọng đã chọn; không tự duyệt video.';
+    for(const button of list.querySelectorAll('button'))button.disabled=button._narrationItem?working||blocked(state)||!button._narrationItem.timing_apply_current||!button._narrationItem.result?.plan.fit_narration_template||!button._narrationAck.checked:working||state.busy||state.canEdit===false;
     for(const input of list.querySelectorAll('input'))input.disabled=working||blocked(state);
   }
   function sync(){const key=context();if(binding!==key){binding=key;serial++;page=null;pending=null;draw();}controls();}
   refresh.addEventListener('click',load);prepare.addEventListener('click',async()=>{try{const state=getState();pending=pending??narrationRequest(state,page,'prepare',{requestKey:newKey()});await execute(pending,false);}catch(error){onMessage(error.message,true);}});
   reviewer.addEventListener('input',controls);reviewAck.addEventListener('change',controls);approve.addEventListener('click',async()=>{try{await execute(narrationRequest(getState(),page,'approve',{reviewer:reviewer.value,acknowledged:reviewAck.checked}),false);}catch(error){onMessage(error.message,true);}});
-  sync();return {load,sync,controls,isWorking:()=>working};
+  function ensureLoaded(){const s=getState(),key=context()+':'+(s.project?.jobs??[]).filter(v=>v.kind==='narration').map(v=>v.id+':'+v.status).join(',');if(root.open&&!working&&!s.busy&&s.project&&!source(s.project)&&autoReadKey!==key){autoReadKey=key;queueMicrotask(()=>void load());}}
+  root.addEventListener('toggle',ensureLoaded);
+  sync();return {load,sync,controls,ensureLoaded,isWorking:()=>working};
 }

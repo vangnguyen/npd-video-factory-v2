@@ -82,7 +82,7 @@ def prepare_job(config,job,artifacts,stage):
     if completed:
         Pipeline.publish_voice(artifacts,completed[0],job,stage,extra_names=('dialogue-audio.json',),dialogue_config=config);return
     attempt=Pipeline.attempt(artifacts.out,'dialogue');stage('project_character_dialogue_tts')
-    meta=prepare(config,library,job['snapshot'],providers,attempt,authorization_check=lambda:authorize_job(config,job,providers))
+    meta=prepare(config,library,job['snapshot'],providers,attempt,authorization_check=lambda:authorize_job(config,job,providers),on_progress=lambda index,total:stage(f'dialogue_line_{index}_of_{total}'))
     meta['compiled_specification_sha256']=specification(job['snapshot']['document'])['sha256']
     write_json(attempt/'voice.json',meta);bundle=json.loads((attempt/'dialogue-audio.json').read_bytes());bundle['metadata']=meta
     write_json(attempt/'dialogue-audio.json',bundle);write_json(attempt/'input.json',job['snapshot'])

@@ -79,7 +79,7 @@ test('Final download requires a review of the same video hash and revision',()=>
 test('persisted source timelines keep their render label before async shot enrichment',()=>{
   const p={document:{canonical_timeline:{snapshot:{metadata:{native_auto_edit_schema:'native-auto-edit-timeline-v1'}}}}};
   const before=JSON.stringify(p);
-  assert.equal(nativeRenderLabel(p),'Render video nguồn đã duyệt');
+  assert.equal(nativeRenderLabel(p),'Tạo video cuối từ bản dựng đã duyệt');
   assert.equal(JSON.stringify(p),before);
   assert.equal(nativeRenderLabel(null),'Tạo giọng đọc & video');
 });

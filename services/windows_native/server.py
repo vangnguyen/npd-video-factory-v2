@@ -720,6 +720,13 @@ class Handler(BaseHTTPRequestHandler):
                 raise
         self.boundary(session=path.startswith("/api/") and path != '/api/health'
             and (path != '/api/session' or self.server.access is not None))
+        dialogue_listen=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration/([a-f0-9]{32})/lines(?:/(line_[a-f0-9]{32})/audio)?',self.path)
+        if dialogue_listen:
+            from .dialogue_listening import lines,pcm
+            project_id,job_id,line_id=dialogue_listen.groups()
+            if line_id:
+                raw=pcm(self.server.store,project_id,job_id,line_id);self.send_response(200);self.common('audio/wav',len(raw));self.end_headers();self.wfile.write(raw);return
+            return self.reply(lines(self.server.store,project_id,job_id)[1])
         narration_route=re.fullmatch(r'/api/projects/([a-f0-9]{32})/narration(?:/([a-f0-9]{32})/audio)?',self.path)
         if narration_route:
             from .narration import page,load,load_reference

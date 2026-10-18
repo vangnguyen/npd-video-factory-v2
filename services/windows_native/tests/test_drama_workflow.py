@@ -47,3 +47,10 @@ class DramaWorkflowTests(unittest.TestCase):
         first=self.save();self.project=self.store.get(self.project['id']);self.save(SCRIPT+'\nAn: Mai gặp lại nhé.',key='drama-script-test-0002')
         value=save_script(self.store,self.project['id'],dict(revision=1,request_key='drama-script-test-0001',text=SCRIPT,confirm_characters=False),actor_ref='explicit-test-fixture')
         self.assertTrue(value['idempotent_replay']);self.assertEqual(value['revision'],first['revision']);self.assertEqual(self.store.get(self.project['id'])['revision'],3)
+    def test_idea_draft_does_not_invent_speakers_or_spoken_actions(self):
+        self.save('Hai người bạn tìm lại chiếc ô.',input_mode='idea');doc=self.store.get(self.project['id'])['document']
+        self.assertEqual(doc['input_kind'],'idea');self.assertEqual(doc['drama_script']['parsed']['characters'],[]);self.assertNotIn('canonical_timeline',doc)
+    def test_new_unconfirmed_draft_blocks_old_compiled_dialogue_inputs(self):
+        from services.windows_native.dialogue_binding import inputs
+        self.save(confirm=True);self.project=self.store.get(self.project['id']);self.save(SCRIPT+'\nAn: Mình về trước nhé.',key='changed-drama-draft-0001')
+        with self.assertRaisesRegex(WorkflowError,'CHARACTER_CONFIRMATION_REQUIRED'):inputs(self.store.get(self.project['id'])['document'])
