@@ -47,7 +47,7 @@ Logs are retained in `C:\Users\PC\Documents\ChatGPT\Video Factory\recovery\20261
 |---|---|---|
 | SQL/API render, QC, verified delivery, final render admission | 52 passed, 51.61s | `final-export-baseline-API-n1.log` |
 | Full Studio | 2092 tests: 2026 pass, 66 fail, 0 skipped | `final-export-baseline-Studio-n1.log` |
-| Native quality, source render, full storyboard QC | Running when baseline was first recorded; final result will be appended | `final-export-baseline-Native-n1.log` |
+| Native quality, source render, full storyboard QC | 32 passed, 196.937s | `final-export-baseline-Native-n1.log` |
 
 The Studio failures precede product changes and are concentrated in the B-roll internal Root harness. Investigate captured session expiry versus its test clock; retain the failure log and fix the harness only if demonstrated. No full regression pass is claimed. Phase 8/9/10, renderer and Mode B historical certifications are preserved but are not a new full-suite result for this export program.
 

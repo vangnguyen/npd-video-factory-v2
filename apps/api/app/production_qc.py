@@ -54,9 +54,12 @@ class DeterministicProductionQC:
 
 
 class FullProductionQC:
-    def __init__(self, *, ffprobe_path: str = "ffprobe", ffmpeg_path: str = "ffmpeg"):
+    def __init__(self, *, ffprobe_path: str = "ffprobe", ffmpeg_path: str = "ffmpeg", max_trailing_silence_seconds: float = 2.0):
+        if type(max_trailing_silence_seconds) not in (int, float) or not math.isfinite(max_trailing_silence_seconds) or not 0 <= max_trailing_silence_seconds <= 10:
+            raise ValueError('Invalid trailing silence threshold')
         self.ffprobe_path = ffprobe_path
         self.ffmpeg_path = ffmpeg_path
+        self.max_trailing_silence_seconds = float(max_trailing_silence_seconds)
 
     async def inspect(
         self,
@@ -160,6 +163,11 @@ class FullProductionQC:
             failures.append("audio may be clipping")
         if not intentional_silence and silence["silence_ratio"] > 0.80:
             failures.append("audio silence exceeds 80 percent of the output")
+        tail = silence.get('trailing_silence_seconds')
+        if type(tail) not in (int, float) or not math.isfinite(tail) or not 0 <= tail <= duration + .001:
+            failures.append('trailing audio silence measurement is unavailable')
+        elif not intentional_silence and tail > self.max_trailing_silence_seconds:
+            failures.append('trailing audio silence exceeds the configured threshold')
         if vision["dark_visual_sample_ratio"] > 0.10:
             failures.append("sampled Vision QC found excessive dark output")
         if decode["broken_frames"]:
@@ -181,6 +189,7 @@ class FullProductionQC:
             "checksum_sha256": _sha256(path),
             "failures": failures,
             "intentional_audio_silence": intentional_silence,
+            "max_trailing_silence_seconds": self.max_trailing_silence_seconds,
         }
         if failures:
             raise ProductionQCError("; ".join(failures), report)
@@ -247,8 +256,22 @@ class FullProductionQC:
             [self.ffmpeg_path, "-hide_banner", "-i", str(path), "-vn", "-af", "silencedetect=n=-45dB:d=0.5", "-f", "null", "-"],
             "audio silence inspection",
         )
-        total = sum(float(item) for item in re.findall(r"silence_duration:\s*([0-9.]+)", stderr))
-        return {"silence_seconds": round(total, 3), "silence_ratio": round(total / max(duration, 0.001), 4)}
+        intervals = []
+        start = None
+        for event, raw in re.findall(r'silence_(start|end):\s*([0-9.eE+-]+)', stderr):
+            value = max(0., min(duration, float(raw)))
+            if event == 'start':
+                start = value
+            elif start is not None:
+                intervals.append((start, max(start, value)))
+                start = None
+        if start is not None:
+            intervals.append((start, duration))
+        total = sum(end - begin for begin, end in intervals)
+        tail = duration - intervals[-1][0] if intervals and duration - intervals[-1][1] <= .001 else 0.
+        return {"silence_seconds": round(total, 3), "silence_ratio": round(total / max(duration, 0.001), 4),
+                "trailing_silence_seconds": round(tail, 6), "silence_intervals": intervals,
+                "measurement": "ffmpeg-silencedetect-45db-0.5s"}
 
     async def _vision_samples(self, path: Path) -> dict[str, Any]:
         stdout, _stderr = await _run(

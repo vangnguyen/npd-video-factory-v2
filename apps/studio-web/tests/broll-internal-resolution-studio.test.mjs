@@ -45,7 +45,7 @@ function harness({s=stateFixture(),memory=new Map(),handler,badGuard,replaceGuar
  const sync=()=>{root?.controller.sync();root?.syncBrollInternalForm();};
  root=new Function(...args,body)(s,dom,q=>ids[q.slice(1)],()=>storage,()=>token,()=>({...s}),()=>s.analysis,peer('family'),peer('narration'),peer('words'),peer('audio'),
   peer('linked'),()=>peers.linked,peer('manual'),()=>peers.manual,()=>peers.preparation,()=>peers.placement,()=> 'saved-production',()=> 'saved-audio',audioRole,
-  bytes=>audioByteHash(bytes,webcrypto),stable,compatibleBrollPlans,validateBrollInternalContext,options=>initializeSqlBrollInternalResolution({...options,cryptoImpl:webcrypto,
+  bytes=>audioByteHash(bytes,webcrypto),stable,compatibleBrollPlans,(value,state)=>validateBrollInternalContext(value,state,clock),options=>initializeSqlBrollInternalResolution({...options,cryptoImpl:webcrypto,
    clock:()=>clock,newRequestKey:()=>raw('admitted').receipt.request_key,onResolved:async(v,g)=>{guards.push(g);return options.onResolved(v,replaceGuard?badGuard:g);}}),
   api,(...v)=>messages.push(v),sync,()=>effects.push('clear-placement'),()=>effects.push('render-browser'),class extends Date{static now(){return clock;}});
  return {...root,s,memory,storage,ids,calls,messages,guards,peers,effects,setToken:v=>{token=v;},setClock:v=>{clock=v;},setGetHook:v=>{getHook=v;},finish:()=>{ready=true;},

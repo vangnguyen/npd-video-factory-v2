@@ -1,0 +1,21 @@
+{
+  "schema_version": "final-export-quality-evidence.v1",
+  "baseline_head": "4162bc32260521277737f7c9ee118b5ba55b3f9b",
+  "implementation": "apps/api/app/production_qc.py",
+  "default_max_trailing_silence_seconds": 2.0,
+  "measurement": "ffmpeg silencedetect -45dB, minimum interval 0.5 seconds; closed and unclosed final intervals",
+  "missing_measurement": "fail QC",
+  "explicit_whole_timeline_silence": "preserves existing intentional_audio_silence behavior; visual QC remains required",
+  "tests": {
+    "command": "pytest apps/api/tests/test_final_export_quality.py apps/api/tests/test_production_qc_silence_lifecycle.py -q",
+    "passed": 22,
+    "skipped": 0,
+    "seconds": 1.06,
+    "log": "C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261007/final-export-tail-n1.log",
+    "actual_media_case": "FFmpeg H264 moving test pattern with AAC 9-second tone plus 3-second silent tail; full QC fails only the trailing-silence gate, while total silence ratio is below 30 percent"
+  },
+  "real_provider_tests": 0,
+  "owner_listening_accepted": false,
+  "final_video_quality_ready": false,
+  "remaining": ["consolidated final delivery quality and cache invalidation acceptance", "Owner pronunciation and watch/listen UAT"]
+}

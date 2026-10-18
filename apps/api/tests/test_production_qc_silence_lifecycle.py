@@ -37,7 +37,7 @@ async def test_only_explicit_silent_plan_can_pass_audio_and_still_requires_visua
         '_black':{'black_frame_ratio':0},
         '_freeze':{'freeze_frame_seconds':0,'freeze_intervals':[]},
         '_volume':{'audio_mean_db':None,'audio_peak_db':None,'audio_clipping':False},
-        '_silence':{'silence_ratio':1},
+        '_silence':{'silence_ratio':1,'trailing_silence_seconds':3},
         '_vision_samples':{'dark_visual_sample_ratio':0},
         '_decode':{'broken_frames':0}}
     for method,value in measurements.items():monkeypatch.setattr(qc,method,AsyncMock(return_value=value))
