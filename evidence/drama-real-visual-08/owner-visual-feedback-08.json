@@ -1,0 +1,18 @@
+{
+  "schema_version": "drama-visual-review-v1",
+  "source": "direct Owner feedback, task VF-DRAMA-REAL-VISUAL-PRODUCTION-08",
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "source_revision": 8,
+  "source_export_id": "nexp_fb80d14cbad44c699c73bef0f02ff9af",
+  "source_video_sha256": "a57f965e530b5100ea13d03464cf38d23300f9245f1e973e30ebf48a36381ef8",
+  "DRAMA_VISUAL_ACCEPTANCE": "NOT_ACCEPTED",
+  "DRAMA_FILM_READY": "NO",
+  "reason": "Bản cũ dùng ảnh tĩnh; chưa có nhân vật diễn xuất chuyển động, biểu cảm và tương tác theo kịch bản.",
+  "previous_audio_render_delivery_decisions_preserved": true,
+  "previous_approval_applies_to_new_visual_version": false,
+  "new_visual_version": "visual-v2/reference-v1",
+  "new_visual_approval": "PENDING",
+  "new_pilot_approval": "PENDING",
+  "canonical_timeline_mutated": false,
+  "recorded_at": "2026-10-19T00:40:41.834769+00:00"
+}

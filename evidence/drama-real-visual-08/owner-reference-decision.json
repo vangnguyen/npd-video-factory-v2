@@ -1,0 +1,37 @@
+{
+  "schema_version": "owner-reference-and-budget-decision-v1",
+  "task": "VF-DRAMA-REAL-VISUAL-PRODUCTION-08",
+  "source": "direct human answer to request_user_input_async call_40393839310d4c4cada2a31068de3d6f",
+  "recorded_at": "2026-10-19T00:46:16.020925+00:00",
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "source_revision": 8,
+  "reference_container_project_id": "213be24a515e4cf48c7857cf31f55e71",
+  "visual_version": "visual-v2/reference-v1",
+  "reference_decision": "APPROVED",
+  "owner_reference_answer": "Duyệt cả ba tham chiếu",
+  "references": [
+    {
+      "name": "An",
+      "sha256": "06668966fc4e81c9d300d50d659e710a842beeb27e28449ff7e7eee536c3d7db",
+      "studio_asset_id": "1d495bfd83dd4e30b00d64e0683c1610.jpg"
+    },
+    {
+      "name": "Bình",
+      "sha256": "68f36e17be2b731d95b6c91917456bb1b383ff016db88f960a47c752886c8ef0",
+      "studio_asset_id": "82791a402db64a348cc8881c50bc4b07.jpg"
+    },
+    {
+      "name": "Quán cà phê",
+      "sha256": "0598de0fefee4e9f3ae687785adf0c30cd2910814e83882b810d26cfd4d39bea",
+      "studio_asset_id": "86f6ad7b5c6345b4acd04ffa41510c99.jpg"
+    }
+  ],
+  "budget_decision": "NOT_APPROVED_KEEP_PREPARATION",
+  "owner_budget_answer": "Chưa duyệt chi phí; giữ bản chuẩn bị",
+  "video_generation_authorized": false,
+  "plan_purchase_authorized": false,
+  "top_up_authorized": false,
+  "pilot_accepted": false,
+  "full_film_accepted": false,
+  "rights_override_recorded": false
+}

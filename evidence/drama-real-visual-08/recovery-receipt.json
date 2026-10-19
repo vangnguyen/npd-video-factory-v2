@@ -1,0 +1,33 @@
+{
+  "archive": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-real-visual-08\\reference-v1-recovery.zip",
+  "sha256": "11f69d5a273b679ea6b96286d4533e0bcc7a80c273e0e6bc44a25a1101b1b42d",
+  "bytes": 7280789,
+  "zip_crc": "PASS",
+  "databases": [
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-real-visual-08\\state-after-reference-approval\\workflow.sqlite3",
+      "sha256": "adfa3fa4894c2613ff333e4e74955a1de694767374dc68011523a12f8ea97018",
+      "bytes": 2428928,
+      "quick_check": "ok"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-real-visual-08\\state-after-reference-approval\\intelligence.sqlite3",
+      "sha256": "5aeb7469c35d19473560dd88a50d62041f6c2f979d4e4cc89dd0e1d67aa48e95",
+      "bytes": 57344,
+      "quick_check": "ok"
+    },
+    {
+      "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-real-visual-08\\state-after-reference-approval\\localplanning.sqlite3",
+      "sha256": "6cbc1f4daa2327ce43e7e69b3cc58218f9162381f31e68af20b496a2268ace1b",
+      "bytes": 36864,
+      "quick_check": "ok"
+    }
+  ],
+  "new_reference_asset_files": 9,
+  "new_reference_assets": 3,
+  "consistent_online_sqlite_backup": true,
+  "full_new_restore_simulation": "NOT_RUN",
+  "contains_secrets": false,
+  "contains_private_source_project": true,
+  "scope": "New preparation, reference assets and consistent DB snapshots; original historical media/recovery remain in original custody paths."
+}

@@ -1,0 +1,53 @@
+{
+  "project_id": "213be24a515e4cf48c7857cf31f55e71",
+  "url": "http://127.0.0.1:62684/?project=213be24a515e4cf48c7857cf31f55e71",
+  "reference_only": true,
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "source_revision": 8,
+  "original_script_casting_audio_not_copied_or_modified": true,
+  "approval": false,
+  "assets": [
+    {
+      "name": "An",
+      "asset_id": "1d495bfd83dd4e30b00d64e0683c1610.jpg",
+      "source_sha256": "06668966fc4e81c9d300d50d659e710a842beeb27e28449ff7e7eee536c3d7db",
+      "library_sha256": "796606326f6dbaa77e1b074fe35c0095abd11b7f43cc5dfd6059d0a11f8eda0a",
+      "rights_status": "unknown",
+      "rights_confirmed": false,
+      "reference_only": true,
+      "file_url": "/api/assets/1d495bfd83dd4e30b00d64e0683c1610.jpg/file"
+    },
+    {
+      "name": "Bình",
+      "asset_id": "82791a402db64a348cc8881c50bc4b07.jpg",
+      "source_sha256": "68f36e17be2b731d95b6c91917456bb1b383ff016db88f960a47c752886c8ef0",
+      "library_sha256": "ae2915aca1c43950b44e3677264e8344164e1e3543cf89655c628cd9938868e7",
+      "rights_status": "unknown",
+      "rights_confirmed": false,
+      "reference_only": true,
+      "file_url": "/api/assets/82791a402db64a348cc8881c50bc4b07.jpg/file"
+    },
+    {
+      "name": "Quán cà phê",
+      "asset_id": "86f6ad7b5c6345b4acd04ffa41510c99.jpg",
+      "source_sha256": "0598de0fefee4e9f3ae687785adf0c30cd2910814e83882b810d26cfd4d39bea",
+      "library_sha256": "2e887df97b3988b653110495f715a82aa4850e08e9a325cc6e1ae663a8b86261",
+      "rights_status": "unknown",
+      "rights_confirmed": false,
+      "reference_only": true,
+      "file_url": "/api/assets/86f6ad7b5c6345b4acd04ffa41510c99.jpg/file"
+    }
+  ],
+  "revision": 5,
+  "library_verified": true,
+  "original_project_unchanged": true,
+  "canonical_timeline_created": false,
+  "scene_binding_created": false,
+  "rights_granted": false,
+  "approval_granted": false,
+  "tts_called": false,
+  "render_called": false,
+  "owner_reference_approval": "APPROVED_ONLY_REFERENCES",
+  "budget_approved": false,
+  "video_generation_called": false
+}

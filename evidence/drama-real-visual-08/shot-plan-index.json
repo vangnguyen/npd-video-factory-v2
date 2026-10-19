@@ -1,0 +1,381 @@
+{
+  "schema_version": "drama-acting-shot-plan-v1",
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "source_revision": 8,
+  "visual_version": "visual-v2/shot-plan-v1",
+  "canonical_timeline_mutated": false,
+  "is_separate_edit_state": false,
+  "status": "PROPOSAL_ONLY_IMPORT_TO_CANONICAL_AFTER_APPROVAL_AND_REAL_MEDIA",
+  "script_text_sha256": "9de30cafbe96f4c613b68619eee505afc21258e4768bb05e2b0cec4ebb2dbeca",
+  "dialogue_text_changed": false,
+  "actions_spoken": false,
+  "casting": {
+    "An": "Thùy Dung",
+    "Bình": "Thiện Minh"
+  },
+  "narrator_enabled": false,
+  "voice_wav_sha256": "6e6a31855cdfd7da30d844cbf31c3710fd1a5de26899d63ebe934d786a01215c",
+  "audio_duration_seconds": 35.07,
+  "canonical_duration_seconds": 35.32,
+  "pilot": {
+    "shot_keys": [
+      "P01",
+      "P02",
+      "P03"
+    ],
+    "max_generation_requests": 3,
+    "max_attempts_per_shot": 1,
+    "source_seconds": 15,
+    "edit_seconds": 11.07,
+    "additional_dead_air_seconds": 0,
+    "budget_requested_usd": 3,
+    "budget_approved": false,
+    "pricing_verified_for_account": false,
+    "no_plan_purchase_or_top_up": true,
+    "no_automatic_retry": true,
+    "source_pixel_dimensions_documented": [
+      768,
+      1344
+    ],
+    "final_delivery_target": [
+      1080,
+      1920
+    ],
+    "geometry_policy": "Preserve aspect; pad to exact 9:16 canvas before scaling, no stretch; disclose generated source pixels and upscale",
+    "approvals_required_before_dispatch": [
+      "Owner visual references",
+      "Owner budget",
+      "Verified paid API entitlement and applicable unit price"
+    ],
+    "before_full_film": "Owner reviews real moving pilot; no automatic remaining-shot generation",
+    "reference_approval": "APPROVED",
+    "budget_decision": "NOT_APPROVED_KEEP_PREPARATION",
+    "dispatch_allowed": false,
+    "dispatch_blockers": [
+      "OWNER_NEW_COST_NOT_APPROVED",
+      "PAID_API_ENTITLEMENT_NOT_VERIFIED",
+      "ACCOUNT_UNIT_PRICE_NOT_VERIFIED"
+    ]
+  },
+  "audio_policy": "Reuse exact current line PCM/mix; no time-stretch. Discard all provider-generated audio. Rebuild dependent subtitles/mix/preview against canonical timeline only after a new visual version is approved.",
+  "lip_sync": "NOT_TESTED; no direct visible speaking until separately qualified",
+  "moving_shots_generated": 0,
+  "static_shots_used_as_acted_shots": 0,
+  "visual_review": [
+    "Recognisable An/Bình across shots",
+    "Wardrobe/props/place continuity",
+    "Believable envelope action and reaction",
+    "Listener face reacts to correct speaker",
+    "Eyelines and cuts understandable",
+    "No severe hand/face/object defects",
+    "No still-frame substitution"
+  ],
+  "technical_review": [
+    "Full decode",
+    "Correct portrait geometry without stretch",
+    "No missing/black/frozen/broken frames",
+    "Exact speech ownership, subtitle timing, no duplicate provider dialogue",
+    "New preview and approval binding"
+  ],
+  "owner_visual_decision": "REFERENCES_APPROVED_ONLY_PILOT_NOT_GENERATED",
+  "DRAMA_FILM_READY": "NO",
+  "shots": [
+    {
+      "shot_key": "P01",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_b94b0b079aa75040bda8e6bc194f837b",
+      "speaker": "An",
+      "timeline_start_seconds": 0,
+      "timeline_end_seconds": 3.2,
+      "edit_duration_seconds": 3.2,
+      "source_generation_duration_seconds": 5,
+      "action": "An nhấc phong bì bên ly cà phê trong tiền cảnh; Bình quay lại từ phía cửa, hơi thở gấp, dừng cạnh ghế phải và nhận ra phong bì.",
+      "expression_start_to_end": "Bình lo lắng → nhẹ nhõm; An chú ý → ấm áp",
+      "listener_reaction": "Bình là người nghe, nhìn phong bì rồi nhìn An; môi nghỉ, không nói.",
+      "framing": "Trung rộng qua vai An, nhìn Bình và cửa vào",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Bình tiến vào ghế phải; cuối shot phong bì vẫn ở tay An. Miệng An bị che bởi góc qua vai.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": true,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "P02",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_2dd05b45e2a65720aebfb8a038acf698",
+      "speaker": "Bình",
+      "timeline_start_seconds": 3.2,
+      "timeline_end_seconds": 8.16,
+      "edit_duration_seconds": 4.96,
+      "source_generation_duration_seconds": 5,
+      "action": "An đưa phong bì về phía Bình; tay Bình nhận một lần rồi giữ ở mép bàn, không mở; An lắng nghe và dịu nét mặt.",
+      "expression_start_to_end": "An nhẹ nhõm → quan tâm; Bình bớt gấp → bộc bạch",
+      "listener_reaction": "An nhìn Bình, thoáng nhìn phong bì rồi trở lại giao tiếp mắt; môi nghỉ.",
+      "framing": "Trung cận qua vai Bình, nhìn rõ mặt An",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Bình đã ngồi ở ghế phải; phong bì chuyển sang Bình; ô chưa di chuyển. Mặt/môi người nói Bình ngoài hình.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": true,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "P03",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_e1de22c963b851eba624774b5a76f6b4",
+      "speaker": "An",
+      "timeline_start_seconds": 8.16,
+      "timeline_end_seconds": 11.07,
+      "edit_duration_seconds": 2.91,
+      "source_generation_duration_seconds": 5,
+      "action": "Bình giữ phong bì, ngẩng nhìn An, hơi gật đầu; vai hạ xuống sau nhịp thở, phản ứng với câu hỏi của An.",
+      "expression_start_to_end": "Bình nhẹ nhõm → ngập ngừng suy nghĩ",
+      "listener_reaction": "Bình là người nghe, vẻ ngập ngừng, môi khép tự nhiên.",
+      "framing": "Cận vừa Bình qua vai An, cùng phía trục",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Giữ phong bì trước Bình, An trái/Bình phải; che miệng An. Đuôi 0,03 giây là khoảng nghỉ có sẵn, không thêm.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": true,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "S04",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_f2a955dc0e495dccbb64a965c4711fac",
+      "speaker": "Bình",
+      "timeline_start_seconds": 11.07,
+      "timeline_end_seconds": 16.35,
+      "edit_duration_seconds": 5.28,
+      "source_generation_duration_seconds": 6,
+      "action": "An ngừng tay bên ly, lắng nghe lời về lá thư xin lỗi mẹ, mắt dịu lại và khẽ gật đầu.",
+      "expression_start_to_end": "An tò mò → cảm thông",
+      "listener_reaction": "An nghe Bình, không đọc thoại; Bình chỉ thấy vai/lưng.",
+      "framing": "Trung cận An qua vai Bình",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Phong bì trước Bình, chưa mở; vị trí hai người và ánh sáng giữ nguyên.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": false,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "S05",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_80eac66e79585740aef15afe51be7940",
+      "speaker": "An",
+      "timeline_start_seconds": 16.35,
+      "timeline_end_seconds": 21.31,
+      "edit_duration_seconds": 4.96,
+      "source_generation_duration_seconds": 5,
+      "action": "Bình nhìn phong bì rồi nhìn An, miết nhẹ mép phong bì một lần và thả lỏng bàn tay khi được động viên.",
+      "expression_start_to_end": "Bình ngại ngùng → có thêm can đảm",
+      "listener_reaction": "Bình nghe lời An, một cái gật đầu nhỏ, không nói.",
+      "framing": "Cận vừa Bình qua vai An",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "An ngoài khuôn miệng; giữ một phong bì; không thêm cảnh mẹ/xe/nhân vật ngoài kịch bản.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": false,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "S06",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_b57499c597585a90835ba2528df3fe7d",
+      "speaker": "Bình",
+      "timeline_start_seconds": 21.31,
+      "timeline_end_seconds": 26.99,
+      "edit_duration_seconds": 5.68,
+      "source_generation_duration_seconds": 6,
+      "action": "An lặng một nhịp rồi mỉm cười khích lệ; liếc chiếc ô và đưa tay chuẩn bị chạm cán ô cuối shot.",
+      "expression_start_to_end": "An cảm thông → quyết định giúp",
+      "listener_reaction": "An nghe Bình, cười nhẹ bằng mắt; môi không tạo lời nói.",
+      "framing": "Trung cận An qua vai Bình",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Ô vẫn gấp trên mép bàn, cán gần An; chuẩn bị nối hành động đẩy ô.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": false,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "S07",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An (tay/thân)",
+        "Bình (tay/thân)"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_910ddd9817335542bcce2953cd606ee6",
+      "speaker": "An",
+      "timeline_start_seconds": 26.99,
+      "timeline_end_seconds": 28.5,
+      "edit_duration_seconds": 1.51,
+      "source_generation_duration_seconds": 5,
+      "action": "An đẩy chiếc ô gấp về phía Bình theo mặt bàn; ô trượt một lần, dừng trong tầm tay Bình.",
+      "expression_start_to_end": "Cử chỉ dứt khoát, thân thiện; không cần diễn mặt trong cận đạo cụ",
+      "listener_reaction": "Tay Bình chuẩn bị đón; không thêm thoại.",
+      "framing": "Cận đạo cụ có tay An và thân Bình",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Đúng ô xanh đậm, đúng cán nâu; phong bì không biến mất; tay/đạo cụ cần Owner kiểm lỗi kỹ.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": false,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "S08",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_910ddd9817335542bcce2953cd606ee6",
+      "speaker": "An",
+      "timeline_start_seconds": 28.5,
+      "timeline_end_seconds": 31.15,
+      "edit_duration_seconds": 2.65,
+      "source_generation_duration_seconds": 5,
+      "action": "Bình nhìn chiếc ô rồi nhìn An, khẽ cười biết ơn; tay giữ phong bì, tay còn lại chạm cán ô.",
+      "expression_start_to_end": "Bình bất ngờ → biết ơn",
+      "listener_reaction": "Bình nghe trọn lời hẹn của An; miệng nghỉ.",
+      "framing": "Trung cận Bình qua vai An",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Ô đã ở phía Bình, phong bì còn nguyên; không kéo dài audio.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": false,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    },
+    {
+      "shot_key": "S09",
+      "status": "PLANNED_NOT_GENERATED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_3549c66f54c75e5792114a8b60bf310f",
+      "speaker": "Bình",
+      "timeline_start_seconds": 31.15,
+      "timeline_end_seconds": 35.32,
+      "edit_duration_seconds": 4.17,
+      "source_generation_duration_seconds": 5,
+      "action": "An nghe lời hẹn, gật đầu nhẹ và nở nụ cười ấm; giữ ánh mắt với Bình đến hết câu.",
+      "expression_start_to_end": "An khích lệ → vui nhẹ",
+      "listener_reaction": "An là người nghe, Bình nói ngoài khung miệng; không thêm lời dẫn.",
+      "framing": "Cận vừa An qua vai Bình, kết bằng ánh mắt ấm",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Giữ trục, trang phục và đạo cụ; 0,25 giây cuối là đuôi có chủ ý từ timeline cũ, không freeze/loop clip.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": false,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "generated_media": null
+    }
+  ]
+}

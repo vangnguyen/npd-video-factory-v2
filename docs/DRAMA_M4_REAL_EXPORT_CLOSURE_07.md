@@ -108,6 +108,10 @@ Owner còn kiểm Copy caption, Mở thư mục đầu ra, mở/tải MP4 và ZI
 
 PLATFORM_API_PUBLISHING=DEFERRED. ANALYTICS=DEFERRED. FULL_TREND_RADAR=DEFERRED. PRODUCTION_DEPLOYED=NO.
 
+## Phản hồi hình ảnh bổ sung 2026-10-19
+
+Owner xác định bản trên chỉ là ảnh tĩnh, chưa đáp ứng phim Drama có nhân vật diễn xuất. Giữ nguyên toàn bộ các quyết định/approval và bằng chứng đã ghi ở trên đúng phạm vi file cũ. Ghi bổ sung `DRAMA_VISUAL_ACCEPTANCE=NOT_ACCEPTED`, `DRAMA_FILM_READY=NO`; không dùng MP4/QC/audio PASS hoặc approval bản ảnh tĩnh để chứng nhận phim có diễn xuất. Xem [VF-DRAMA-REAL-VISUAL-PRODUCTION-08](DRAMA_REAL_VISUAL_PRODUCTION_08.md) cho tham chiếu mới đã được Owner duyệt và pilot đang chờ quyền/ngân sách; chưa có moving shot.
+
 ## Policy và dọn dữ liệu
 
 Automatic approval review từ chối trước thực thi các lệnh xóa bản restore thử `C:/vfct/drama-m4-final07-restored-check` và ba scratch đã hoàn tất `C:/vfct/drama-m4-final07-native-n2/0`, `/2`, `/3`, lý do “blocked by policy”. Dù preflight ba scratch có receipt thành công, không active process/reparse point, khoảng 768 MB vẫn giữ nguyên. Không thử lại, dùng đường vòng hoặc xóa source, 15 video, audio/casting cũ và recovery. [Receipt từ chối](../evidence/drama-m4-closure-07/completed-native-scratch-cleanup-denied.json).

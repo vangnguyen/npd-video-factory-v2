@@ -1,0 +1,89 @@
+{
+  "schema_version": "drama-preparation-verification-v1",
+  "at": "2026-10-19T00:50:31.637003+00:00",
+  "checks": [
+    {
+      "name": "An",
+      "input_sha256": "06668966fc4e81c9d300d50d659e710a842beeb27e28449ff7e7eee536c3d7db",
+      "http_library_asset_sha256": "796606326f6dbaa77e1b074fe35c0095abd11b7f43cc5dfd6059d0a11f8eda0a",
+      "decoded_dimensions": [
+        1536,
+        1024
+      ],
+      "owner_reference_approved": true,
+      "rights_remain_unknown": true,
+      "moving_shot": false
+    },
+    {
+      "name": "Bình",
+      "input_sha256": "68f36e17be2b731d95b6c91917456bb1b383ff016db88f960a47c752886c8ef0",
+      "http_library_asset_sha256": "ae2915aca1c43950b44e3677264e8344164e1e3543cf89655c628cd9938868e7",
+      "decoded_dimensions": [
+        1536,
+        1024
+      ],
+      "owner_reference_approved": true,
+      "rights_remain_unknown": true,
+      "moving_shot": false
+    },
+    {
+      "name": "Quán cà phê",
+      "input_sha256": "0598de0fefee4e9f3ae687785adf0c30cd2910814e83882b810d26cfd4d39bea",
+      "http_library_asset_sha256": "2e887df97b3988b653110495f715a82aa4850e08e9a325cc6e1ae663a8b86261",
+      "decoded_dimensions": [
+        941,
+        1672
+      ],
+      "owner_reference_approved": true,
+      "rights_remain_unknown": true,
+      "moving_shot": false
+    }
+  ],
+  "real_reference_images": 3,
+  "real_moving_shots": 0,
+  "historical_artifacts_hashes_preserved": 15,
+  "original_project_revision": 8,
+  "original_project_document_approval_jobs_unchanged": true,
+  "original_audio_hashes_checked": 8,
+  "canonical_timeline_changed": false,
+  "reference_container_has_timeline": false,
+  "source_trees_unchanged": {
+    "apps/studio-web": "5345ad3157dc28d83726ddf63e43a8eda7ff4647",
+    "apps/api/app": "2eb30b1819b06f2187ede2c1b35202cdf0e7ee07",
+    "services/windows_native": "7fcd5f6070a27bf2cd8ab8f1113929a94153217d"
+  },
+  "application_build": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdr07",
+    "branch": "codex/vf-drama-m4-closure-07",
+    "commit": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+    "build": "drama-m4-closure-07",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "browser": "Chrome Work extension on actual PC; Asset Picker/3 images verified, screenshot saved",
+  "browser_screenshot": {
+    "path": "studio-reference-library-real-browser.jpg",
+    "sha256": "060c107d1fb84e7aa2a77b1aaba45f933b1ead4d3d46f4a9d4db6a2748d58e8a"
+  },
+  "owner_reference_approval": "APPROVED_ONLY_REFERENCES",
+  "owner_video_budget": "NOT_APPROVED_KEEP_PREPARATION",
+  "new_video_generation_attempts": 0,
+  "new_provider_upload_attempts": 0,
+  "new_paid_video_jobs": 0,
+  "new_image_tool_cost": "NOT_REPORTED_BY_TOOL",
+  "new_model_download_bytes": 0,
+  "regression_run_this_task": false,
+  "previous_regression": "Preserved unchanged application qualification; not a fresh full PASS or visual acting acceptance.",
+  "DRAMA_VISUAL_ACCEPTANCE": "NOT_ACCEPTED_OLD_STATIC_FILM",
+  "DRAMA_FILM_READY": "NO",
+  "pilot_video": null,
+  "full_film": null,
+  "new_film_owner_approved": false,
+  "production_deployed": false,
+  "platform_api_publishing": "DEFERRED",
+  "analytics": "DEFERRED",
+  "full_trend_radar": "DEFERRED"
+}
