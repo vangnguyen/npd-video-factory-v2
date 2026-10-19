@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-19T08:15:14.8247078+07:00",
+  "listeners": [
+    {
+      "Address": "0.0.0.0",
+      "Port": 135,
+      "PID": 1684,
+      "Process": "svchost"
+    },
+    {
+      "Address": "172.28.176.1",
+      "Port": 139,
+      "PID": 4,
+      "Process": "System"
+    },
+    {
+      "Address": "::",
+      "Port": 445,
+      "PID": 4,
+      "Process": "System"
+    },
+    {
+      "Address": "0.0.0.0",
+      "Port": 5040,
+      "PID": 9008,
+      "Process": "svchost"
+    },
+    {
+      "Address": "::",
+      "Port": 49664,
+      "PID": 1416,
+      "Process": "lsass"
+    },
+    {
+      "Address": "::",
+      "Port": 49665,
+      "PID": 1244,
+      "Process": "wininit"
+    },
+    {
+      "Address": "::",
+      "Port": 49666,
+      "PID": 892,
+      "Process": "svchost"
+    },
+    {
+      "Address": "::",
+      "Port": 49667,
+      "PID": 3728,
+      "Process": "spoolsv"
+    },
+    {
+      "Address": "::1",
+      "Port": 49668,
+      "PID": 4480,
+      "Process": "jhi_service"
+    },
+    {
+      "Address": "0.0.0.0",
+      "Port": 49669,
+      "PID": 2468,
+      "Process": "svchost"
+    },
+    {
+      "Address": "::",
+      "Port": 61328,
+      "PID": 1368,
+      "Process": "services"
+    },
+    {
+      "Address": "127.0.0.1",
+      "Port": 62684,
+      "PID": 24476,
+      "Process": "python"
+    }
+  ],
+  "runtime_processes": [
+    {
+      "PID": 13148,
+      "Name": "python.exe",
+      "Command": "\"C:\\NPD-Video-Factory\\runtime\\venv\\Scripts\\python.exe\" -X utf8 \"C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261018/drama-m4-final-07/serve_m4_fixed.py\""
+    },
+    {
+      "PID": 24476,
+      "Name": "python.exe",
+      "Command": "\"C:\\Users\\PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -X utf8 \"C:/Users/PC/Documents/ChatGPT/Video Factory/recovery/20261018/drama-m4-final-07/serve_m4_fixed.py\""
+    }
+  ],
+  "gpu": "NVIDIA GeForce GTX 1050 Ti, 4096 MiB, 3212 MiB, 560.94",
+  "free_C_bytes": 779374592,
+  "source": "C:/vfdr07",
+  "no_process_started_or_stopped": true
+}

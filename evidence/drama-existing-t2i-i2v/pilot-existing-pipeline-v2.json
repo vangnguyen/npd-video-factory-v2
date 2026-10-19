@@ -1,0 +1,322 @@
+{
+  "schema_version": "existing-t2i-i2v-pilot-preparation-v2",
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "source_project_revision": 8,
+  "source_canonical_version": 5,
+  "source_canonical_sha256": "4b096bdef5ed2ea23bfd9ddfdf505fc1f006718ad5bfb32b611d1d74ce319513",
+  "reference_container_project_id": "213be24a515e4cf48c7857cf31f55e71",
+  "reference_version": "visual-v2/reference-v1",
+  "reference_owner_approved": true,
+  "provider_policy": "EXISTING_COMFYUI_ONLY_NO_NEW_PROVIDER",
+  "dispatch_allowed": false,
+  "blockers": [
+    "NO_EXECUTABLE_OWNER_REVIEWED_T2I_I2V_GRAPH",
+    "NO_ACTUAL_IMAGE_OR_VIDEO_MODEL_CONFIGURED",
+    "NO_COMFYUI_OR_BRIDGE_SERVICE_LISTENING",
+    "NO_PROTECTED_GENERATION_REGISTRY_OR_HUMAN_AUTH_ENABLEMENT",
+    "GENERATION_WORKER_NOT_STARTED_IN_CURRENT_REVIEW_LAUNCHER",
+    "REFERENCE_RIGHTS_UNKNOWN_NO_OWNER_OVERRIDE"
+  ],
+  "resource_policy": {
+    "max_t2i_jobs": 3,
+    "max_i2v_jobs": 3,
+    "max_attempts_per_shot": 1,
+    "automatic_retry": false,
+    "new_paid_calls_allowed": false,
+    "new_model_downloads_allowed": false,
+    "runtime_replacement_allowed": false
+  },
+  "existing_dialogue": {
+    "An": "Thùy Dung",
+    "Bình": "Thiện Minh",
+    "narrator_enabled": false,
+    "full_audio_sha256": "6e6a31855cdfd7da30d844cbf31c3710fd1a5de26899d63ebe934d786a01215c",
+    "regenerate_audio": false,
+    "time_stretch": false
+  },
+  "pilot_duration_seconds": 11.07,
+  "pilot_source_seconds": 15,
+  "target_output": [
+    1080,
+    1920
+  ],
+  "actual_source_dimensions": null,
+  "lip_sync_tested": false,
+  "lip_sync_claimed": false,
+  "shots": [
+    {
+      "shot_key": "P01",
+      "status": "BLOCKED_EXISTING_RUNTIME_NOT_CONFIGURED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_b94b0b079aa75040bda8e6bc194f837b",
+      "speaker": "An",
+      "exact_stored_dialogue": "Bạn đang tìm thứ này phải không? Mình vừa thấy nó cạnh ly cà phê.",
+      "audio_url": "/api/projects/1c768012f9624de494a9fadab63c1a31/narration/ffb25b9779204412ab06f738b353eab6/lines/line_b94b0b079aa75040bda8e6bc194f837b/audio",
+      "timeline_start_seconds": 0,
+      "timeline_end_seconds": 3.2,
+      "edit_duration_seconds": 3.2,
+      "source_generation_duration_seconds": 5,
+      "action": "An nhấc phong bì bên ly cà phê trong tiền cảnh; Bình quay lại từ phía cửa, hơi thở gấp, dừng cạnh ghế phải và nhận ra phong bì.",
+      "expression_start_to_end": "Bình lo lắng → nhẹ nhõm; An chú ý → ấm áp",
+      "listener_reaction": "Bình là người nghe, nhìn phong bì rồi nhìn An; môi nghỉ, không nói.",
+      "framing": "Trung rộng qua vai An, nhìn Bình và cửa vào",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Bình tiến vào ghế phải; cuối shot phong bì vẫn ở tay An. Miệng An bị che bởi góc qua vai.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": true,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "first_frame_status": "NOT_GENERATED_NEEDS_REVIEWED_T2I_WORKFLOW",
+      "t2i_proposal": {
+        "provider": "comfyui-image",
+        "workflow_id": "npd-text-to-image-v1",
+        "workflow_version": "1.0.0",
+        "parameters": {
+          "prompt": "Original adult fictional Vietnamese characters An and Bình, exactly as the approved character and café references; An left in dusty blue blouse, Bình right in ivory shirt, one closed cream envelope, two white cups, one folded dark teal umbrella. Prepare a single opening frame for the intended shot, preserving the conversation axis and wardrobe. The speaking character must be offscreen or seen from behind with mouth hidden; show the listening face naturally. No text, watermarks, extra people or invented story. Camera: Trung rộng qua vai An, nhìn Bình và cửa vào. Starting action context: An nhấc phong bì bên ly cà phê trong tiền cảnh; Bình quay lại từ phía cửa, hơi thở gấp, dừng cạnh ghế phải và nhận ra phong bì.",
+          "negative_prompt": "",
+          "aspect_ratio": "9:16",
+          "seed": 26081901,
+          "references": [
+            {
+              "asset_id": "1d495bfd83dd4e30b00d64e0683c1610.jpg",
+              "asset_sha256": "796606326f6dbaa77e1b074fe35c0095abd11b7f43cc5dfd6059d0a11f8eda0a"
+            },
+            {
+              "asset_id": "82791a402db64a348cc8881c50bc4b07.jpg",
+              "asset_sha256": "ae2915aca1c43950b44e3677264e8344164e1e3543cf89655c628cd9938868e7"
+            },
+            {
+              "asset_id": "86f6ad7b5c6345b4acd04ffa41510c99.jpg",
+              "asset_sha256": "2e887df97b3988b653110495f715a82aa4850e08e9a325cc6e1ae663a8b86261"
+            }
+          ],
+          "modality": "image",
+          "operation": "generate",
+          "style": "cinematic",
+          "quality": "draft",
+          "mask": null,
+          "upscale_factor": null
+        },
+        "dto_validated_only": true,
+        "submitted": false
+      },
+      "i2v_proposal": {
+        "provider": "comfyui-video",
+        "workflow_id": "npd-image-to-video-v1",
+        "workflow_version": "1.0.0",
+        "mode": "image_to_video",
+        "duration_seconds": 5.0,
+        "aspect_ratio": "9:16",
+        "seed": 26081911,
+        "first_frame_asset_id": null,
+        "resolved_parameters": null,
+        "submitted": false,
+        "performance_prompt": "An nhấc phong bì bên ly cà phê trong tiền cảnh; Bình quay lại từ phía cửa, hơi thở gấp, dừng cạnh ghế phải và nhận ra phong bì. Bình lo lắng → nhẹ nhõm; An chú ý → ấm áp Bình là người nghe, nhìn phong bì rồi nhìn An; môi nghỉ, không nói. Bình tiến vào ghế phải; cuối shot phong bì vẫn ở tay An. Miệng An bị che bởi góc qua vai. Máy cố định, nhân vật chuyển động thật, không zoom ảnh, không loop/freeze; không tự sinh lời thoại."
+      },
+      "generated_media": null,
+      "provider_job_id": null,
+      "source_clip_path": null,
+      "canonical_placement": null
+    },
+    {
+      "shot_key": "P02",
+      "status": "BLOCKED_EXISTING_RUNTIME_NOT_CONFIGURED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_2dd05b45e2a65720aebfb8a038acf698",
+      "speaker": "Bình",
+      "exact_stored_dialogue": "Đúng rồi! Trong đó là bức thư mình viết cho mẹ. Mình đã đi ba vòng quanh quán vì sợ làm mất.",
+      "audio_url": "/api/projects/1c768012f9624de494a9fadab63c1a31/narration/ffb25b9779204412ab06f738b353eab6/lines/line_2dd05b45e2a65720aebfb8a038acf698/audio",
+      "timeline_start_seconds": 3.2,
+      "timeline_end_seconds": 8.16,
+      "edit_duration_seconds": 4.96,
+      "source_generation_duration_seconds": 5,
+      "action": "An đưa phong bì về phía Bình; tay Bình nhận một lần rồi giữ ở mép bàn, không mở; An lắng nghe và dịu nét mặt.",
+      "expression_start_to_end": "An nhẹ nhõm → quan tâm; Bình bớt gấp → bộc bạch",
+      "listener_reaction": "An nhìn Bình, thoáng nhìn phong bì rồi trở lại giao tiếp mắt; môi nghỉ.",
+      "framing": "Trung cận qua vai Bình, nhìn rõ mặt An",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Bình đã ngồi ở ghế phải; phong bì chuyển sang Bình; ô chưa di chuyển. Mặt/môi người nói Bình ngoài hình.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": true,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "first_frame_status": "NOT_GENERATED_NEEDS_REVIEWED_T2I_WORKFLOW",
+      "t2i_proposal": {
+        "provider": "comfyui-image",
+        "workflow_id": "npd-text-to-image-v1",
+        "workflow_version": "1.0.0",
+        "parameters": {
+          "prompt": "Original adult fictional Vietnamese characters An and Bình, exactly as the approved character and café references; An left in dusty blue blouse, Bình right in ivory shirt, one closed cream envelope, two white cups, one folded dark teal umbrella. Prepare a single opening frame for the intended shot, preserving the conversation axis and wardrobe. The speaking character must be offscreen or seen from behind with mouth hidden; show the listening face naturally. No text, watermarks, extra people or invented story. Camera: Trung cận qua vai Bình, nhìn rõ mặt An. Starting action context: An đưa phong bì về phía Bình; tay Bình nhận một lần rồi giữ ở mép bàn, không mở; An lắng nghe và dịu nét mặt.",
+          "negative_prompt": "",
+          "aspect_ratio": "9:16",
+          "seed": 26081902,
+          "references": [
+            {
+              "asset_id": "1d495bfd83dd4e30b00d64e0683c1610.jpg",
+              "asset_sha256": "796606326f6dbaa77e1b074fe35c0095abd11b7f43cc5dfd6059d0a11f8eda0a"
+            },
+            {
+              "asset_id": "82791a402db64a348cc8881c50bc4b07.jpg",
+              "asset_sha256": "ae2915aca1c43950b44e3677264e8344164e1e3543cf89655c628cd9938868e7"
+            },
+            {
+              "asset_id": "86f6ad7b5c6345b4acd04ffa41510c99.jpg",
+              "asset_sha256": "2e887df97b3988b653110495f715a82aa4850e08e9a325cc6e1ae663a8b86261"
+            }
+          ],
+          "modality": "image",
+          "operation": "generate",
+          "style": "cinematic",
+          "quality": "draft",
+          "mask": null,
+          "upscale_factor": null
+        },
+        "dto_validated_only": true,
+        "submitted": false
+      },
+      "i2v_proposal": {
+        "provider": "comfyui-video",
+        "workflow_id": "npd-image-to-video-v1",
+        "workflow_version": "1.0.0",
+        "mode": "image_to_video",
+        "duration_seconds": 5.0,
+        "aspect_ratio": "9:16",
+        "seed": 26081912,
+        "first_frame_asset_id": null,
+        "resolved_parameters": null,
+        "submitted": false,
+        "performance_prompt": "An đưa phong bì về phía Bình; tay Bình nhận một lần rồi giữ ở mép bàn, không mở; An lắng nghe và dịu nét mặt. An nhẹ nhõm → quan tâm; Bình bớt gấp → bộc bạch An nhìn Bình, thoáng nhìn phong bì rồi trở lại giao tiếp mắt; môi nghỉ. Bình đã ngồi ở ghế phải; phong bì chuyển sang Bình; ô chưa di chuyển. Mặt/môi người nói Bình ngoài hình. Máy cố định, nhân vật chuyển động thật, không zoom ảnh, không loop/freeze; không tự sinh lời thoại."
+      },
+      "generated_media": null,
+      "provider_job_id": null,
+      "source_clip_path": null,
+      "canonical_placement": null
+    },
+    {
+      "shot_key": "P03",
+      "status": "BLOCKED_EXISTING_RUNTIME_NOT_CONFIGURED",
+      "source_scene_key": "scene_d26adfb26b3c559cbb3be5ea909d7898",
+      "visible_characters": [
+        "An",
+        "Bình"
+      ],
+      "environment_reference": "Cafe-blocking-proposed-v1.png",
+      "line_id": "line_e1de22c963b851eba624774b5a76f6b4",
+      "speaker": "An",
+      "exact_stored_dialogue": "Sao bạn không gọi điện luôn? Một cuộc gọi có vẻ nhanh hơn nhiều.",
+      "audio_url": "/api/projects/1c768012f9624de494a9fadab63c1a31/narration/ffb25b9779204412ab06f738b353eab6/lines/line_e1de22c963b851eba624774b5a76f6b4/audio",
+      "timeline_start_seconds": 8.16,
+      "timeline_end_seconds": 11.07,
+      "edit_duration_seconds": 2.91,
+      "source_generation_duration_seconds": 5,
+      "action": "Bình giữ phong bì, ngẩng nhìn An, hơi gật đầu; vai hạ xuống sau nhịp thở, phản ứng với câu hỏi của An.",
+      "expression_start_to_end": "Bình nhẹ nhõm → ngập ngừng suy nghĩ",
+      "listener_reaction": "Bình là người nghe, vẻ ngập ngừng, môi khép tự nhiên.",
+      "framing": "Cận vừa Bình qua vai An, cùng phía trục",
+      "camera_motion": "Khóa máy; chuyển động do diễn xuất, không zoom/pan vào ảnh",
+      "props": [
+        "phong bì kín",
+        "ly cà phê",
+        "ô gấp"
+      ],
+      "continuity": "Giữ phong bì trước Bình, An trái/Bình phải; che miệng An. Đuôi 0,03 giây là khoảng nghỉ có sẵn, không thêm.",
+      "transition": "Cắt thẳng có chủ ý; nối hướng nhìn và trạng thái đạo cụ",
+      "pilot": true,
+      "lip_sync_required_for_this_framing": false,
+      "direct_visible_speech_allowed": false,
+      "owner_visual_accepted": false,
+      "first_frame_status": "NOT_GENERATED_NEEDS_REVIEWED_T2I_WORKFLOW",
+      "t2i_proposal": {
+        "provider": "comfyui-image",
+        "workflow_id": "npd-text-to-image-v1",
+        "workflow_version": "1.0.0",
+        "parameters": {
+          "prompt": "Original adult fictional Vietnamese characters An and Bình, exactly as the approved character and café references; An left in dusty blue blouse, Bình right in ivory shirt, one closed cream envelope, two white cups, one folded dark teal umbrella. Prepare a single opening frame for the intended shot, preserving the conversation axis and wardrobe. The speaking character must be offscreen or seen from behind with mouth hidden; show the listening face naturally. No text, watermarks, extra people or invented story. Camera: Cận vừa Bình qua vai An, cùng phía trục. Starting action context: Bình giữ phong bì, ngẩng nhìn An, hơi gật đầu; vai hạ xuống sau nhịp thở, phản ứng với câu hỏi của An.",
+          "negative_prompt": "",
+          "aspect_ratio": "9:16",
+          "seed": 26081903,
+          "references": [
+            {
+              "asset_id": "1d495bfd83dd4e30b00d64e0683c1610.jpg",
+              "asset_sha256": "796606326f6dbaa77e1b074fe35c0095abd11b7f43cc5dfd6059d0a11f8eda0a"
+            },
+            {
+              "asset_id": "82791a402db64a348cc8881c50bc4b07.jpg",
+              "asset_sha256": "ae2915aca1c43950b44e3677264e8344164e1e3543cf89655c628cd9938868e7"
+            },
+            {
+              "asset_id": "86f6ad7b5c6345b4acd04ffa41510c99.jpg",
+              "asset_sha256": "2e887df97b3988b653110495f715a82aa4850e08e9a325cc6e1ae663a8b86261"
+            }
+          ],
+          "modality": "image",
+          "operation": "generate",
+          "style": "cinematic",
+          "quality": "draft",
+          "mask": null,
+          "upscale_factor": null
+        },
+        "dto_validated_only": true,
+        "submitted": false
+      },
+      "i2v_proposal": {
+        "provider": "comfyui-video",
+        "workflow_id": "npd-image-to-video-v1",
+        "workflow_version": "1.0.0",
+        "mode": "image_to_video",
+        "duration_seconds": 5.0,
+        "aspect_ratio": "9:16",
+        "seed": 26081913,
+        "first_frame_asset_id": null,
+        "resolved_parameters": null,
+        "submitted": false,
+        "performance_prompt": "Bình giữ phong bì, ngẩng nhìn An, hơi gật đầu; vai hạ xuống sau nhịp thở, phản ứng với câu hỏi của An. Bình nhẹ nhõm → ngập ngừng suy nghĩ Bình là người nghe, vẻ ngập ngừng, môi khép tự nhiên. Giữ phong bì trước Bình, An trái/Bình phải; che miệng An. Đuôi 0,03 giây là khoảng nghỉ có sẵn, không thêm. Máy cố định, nhân vật chuyển động thật, không zoom ảnh, không loop/freeze; không tự sinh lời thoại."
+      },
+      "generated_media": null,
+      "provider_job_id": null,
+      "source_clip_path": null,
+      "canonical_placement": null
+    }
+  ],
+  "canonical_integration": {
+    "performed": false,
+    "second_edit_state_created": false,
+    "original_approved_project_mutated": false,
+    "steps_after_configuration": [
+      "Create an independent unapproved production copy through the existing duplicate action; keep source history.",
+      "Resolve reference rights and stage owned first-frame assets with existing scoped admission.",
+      "Create three real I2V jobs; retain actual provider/bridge ticket, workflow/model/input/clip hashes.",
+      "Full-decode and review each returned clip; reject fixture provenance; retain generated source dimensions.",
+      "Explicitly import the actual results with Native generation import; select them with existing shot/canonical media controls.",
+      "Reuse exact approved dialogue PCM when inputs match; map trims to measured timing, discard provider dialogue/audio.",
+      "Rebuild dependent subtitle/mix/preview for the new canonical version; request Owner pilot review, without copying approval."
+    ],
+    "no_static_fallback": true,
+    "no_placeholder_asset_ids": true
+  },
+  "real_moving_shots": 0,
+  "pilot_video": null,
+  "DRAMA_FILM_READY": "NO"
+}

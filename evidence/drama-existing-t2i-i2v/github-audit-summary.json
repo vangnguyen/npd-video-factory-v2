@@ -1,0 +1,149 @@
+{
+  "schema_version": "github-existing-generation-audit-v1",
+  "observed_at": "2026-10-19T01:09:24.334741+00:00",
+  "repository": "https://github.com/vangnguyen/npd-video-factory-v2",
+  "source": "fresh git ls-remote branch refs, exact commit objects read through git show/ls-tree",
+  "scope": "All 160 advertised branch tips; committed workflows/comfyui JSON and existing provider implementation paths. No hidden private deployment configuration or deleted refs inferred.",
+  "branches_scanned": 160,
+  "all_commit_objects_available": true,
+  "important_branches": [
+    {
+      "ref": "refs/heads/main",
+      "commit": "fa81c59fbe6b745cba8fed979e30e52a13199afa",
+      "ancestor_of_current": true
+    },
+    {
+      "ref": "refs/heads/feat/v2-06-media-intelligence",
+      "commit": "44e4de3282ba1484117c0262d14cee89019aeb2a",
+      "ancestor_of_current": true
+    },
+    {
+      "ref": "refs/heads/codex/vf-north-star-completion-01",
+      "commit": "4162bc32260521277737f7c9ee118b5ba55b3f9b",
+      "ancestor_of_current": true
+    },
+    {
+      "ref": "refs/heads/codex/vf-drama-m4-closure-07",
+      "commit": "a75c7678d61fc00d54fd5ed07a436aff56724f1a",
+      "ancestor_of_current": true
+    },
+    {
+      "ref": "refs/heads/codex/vf-drama-real-visual-08",
+      "commit": "7187d98a29a6059fb99256c6ce8e6ed0155ca357",
+      "ancestor_of_current": true
+    }
+  ],
+  "unique_workflow_json_blobs": 9,
+  "unique_graph_blobs": 8,
+  "executable_committed_workflow_variants": [],
+  "runtime_source_checkout_changed": false,
+  "runtime_started": false,
+  "new_provider_added": false,
+  "full_local_audit_path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-existing-t2i-i2v-correction\\github-workflow-audit.json",
+  "full_local_audit_sha256": "bee96211bfb7be7aa9d92791529fdffc755f69e003ece06ab07c425e96ed5d1b",
+  "github_heads_inventory_sha256": "3eb6a9f369e0797024b244f9867b21fa43d5c2e5203fde2c5d9e49b634caa186",
+  "workflow_graphs": [
+    {
+      "blob": "cbd08d14bc2624f41492dc89f3dd8ebf205f0445",
+      "path": "workflows/comfyui/background-replacement-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-background-replacement-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "70e2a61b296a07558969b570dccd26e4f0685c58",
+      "path": "workflows/comfyui/image-to-image-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-image-to-image-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "e8226590d7312c990210de5b0306f7fd0e39413b",
+      "path": "workflows/comfyui/image-to-video-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-image-to-video-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "24c4295d8d534c7961eb03727fa9256d835ce7f8",
+      "path": "workflows/comfyui/inpaint-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-inpaint-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "3b107b5c43be2abf89268e9172667a270b0b240d",
+      "path": "workflows/comfyui/outpaint-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-outpaint-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "dc0550034b19a48e715edeaaf10ce720a9902710",
+      "path": "workflows/comfyui/text-to-image-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-text-to-image-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "72490b4885204441a008fc43ee73d389620bb25a",
+      "path": "workflows/comfyui/upscale-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-upscale-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    },
+    {
+      "blob": "88b2efe3d470e82a4bae22a341a6b0af2a167090",
+      "path": "workflows/comfyui/video-generation-v1.json",
+      "json_valid": true,
+      "graph_meta": {
+        "workflow_id": "npd-video-generation-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_node_count": 0,
+      "model_weight_names": []
+    }
+  ],
+  "provider_implementation_distinct_blob_counts": {
+    "apps/api/app/media_intelligence_providers.py": 2,
+    "services/comfyui-bridge/npd_comfyui_bridge/backend.py": 2,
+    "services/comfyui-bridge/npd_comfyui_bridge/http_backend.py": 1,
+    "services/windows_native/generation_registry.py": 1
+  }
+}

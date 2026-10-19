@@ -1,0 +1,40 @@
+{
+  "schema_version": "existing-provider-correction-verification-v1",
+  "git_branches_checked": 160,
+  "executable_committed_graphs": 0,
+  "original_project_unchanged": true,
+  "original_revision": 8,
+  "original_canonical_version": 5,
+  "historical_video_hashes_unchanged": 15,
+  "old_owner_audio_final_export_recovery_hashes_unchanged": true,
+  "source_trees_unchanged": {
+    "apps/studio-web": "5345ad3157dc28d83726ddf63e43a8eda7ff4647",
+    "apps/api/app": "2eb30b1819b06f2187ede2c1b35202cdf0e7ee07",
+    "services/windows_native": "7fcd5f6070a27bf2cd8ab8f1113929a94153217d"
+  },
+  "current_native_generation_jobs": 0,
+  "actual_i2v_output_clips": 0,
+  "new_provider_added": false,
+  "new_generation_requests": 0,
+  "new_model_downloads": 0,
+  "runtime_restarted": false,
+  "typed_T2I_parameter_preparation_only": 3,
+  "i2v_parameters_resolved": false,
+  "canonical_video_import_performed": false,
+  "owner_visual_approval_scope": "Existing three character/environment reference inputs only",
+  "new_film_approval_recorded": false,
+  "BROWSER_READ": "BLOCKED_CDP_FOCUS_TIMEOUT_NO_NEW_BROWSER_PASS",
+  "regression_this_task": "NOT_RUN_APPLICATION_SOURCE_UNCHANGED",
+  "DRAMA_FILM_READY": "NO",
+  "workflow_online_backup": {
+    "path": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-existing-t2i-i2v-correction\\workflow-after-priority-correction.sqlite3",
+    "sha256": "8b657fa0afeddf390ba068dc4e820df61e72094715fc94f9a25cfe5125742d29",
+    "quick_check": "ok",
+    "delta_requires_asset_custody": "C:\\Users\\PC\\Documents\\ChatGPT\\Video Factory\\recovery\\20261019\\drama-real-visual-08\\reference-v1-recovery.zip",
+    "full_restore_simulation": "NOT_RUN"
+  },
+  "production_deployed": false,
+  "platform_api_publishing": "DEFERRED",
+  "analytics": "DEFERRED",
+  "full_trend_radar": "DEFERRED"
+}

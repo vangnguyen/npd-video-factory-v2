@@ -1,0 +1,15 @@
+{
+  "schema_version": "existing-provider-priority-correction-v1",
+  "recorded_at": "2026-10-19T01:12:01.157128+00:00",
+  "source": "Direct Owner PRIORITY CORRECTION — REUSE EXISTING T2I / I2V; follow-up yêu cầu kiểm tra GitHub Video Factory V2",
+  "allowed_path": "Existing Native ComfyUI T2I/I2V adapter and canonical timeline",
+  "new_provider_allowed": false,
+  "heygen_allowed": false,
+  "paid_generation_authorized": false,
+  "historical_reference_approval_preserved": true,
+  "new_video_approval_recorded": false,
+  "model_download_authorized": false,
+  "runtime_replacement_authorized": false,
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "source_revision": 8
+}

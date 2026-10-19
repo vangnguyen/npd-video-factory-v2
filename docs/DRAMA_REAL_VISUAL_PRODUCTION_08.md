@@ -2,6 +2,8 @@
 
 Ngày 2026-10-19. Bộ tham chiếu và shot plan đã chuẩn bị; chưa có pilot chuyển động. Owner duyệt ba tham chiếu, **chưa duyệt chi phí**, yêu cầu giữ bản chuẩn bị. Không gửi job video, mua gói, nạp tiền hoặc tải model.
 
+**Ưu tiên hiện hành đã được Owner sửa:** chỉ tái sử dụng T2I/I2V hiện có, không thêm HeyGen/provider khác. Đã đối chiếu GitHub 160 đầu nhánh và runtime: ComfyUI adapter đã có, graph/model thực chưa cấu hình; timeline phim gốc chỉ dùng một ảnh. Xem [đối chiếu và kế hoạch pilot hiện hành](DRAMA_EXISTING_T2I_I2V_TRACE.md). Các đề xuất HeyGen trong phần báo cáo dưới đây giữ làm lịch sử, không còn là hướng triển khai hoặc yêu cầu Owner duyệt chi phí hiện tại.
+
 ## Phạm vi quyết định
 
 `DRAMA_VISUAL_ACCEPTANCE = NOT_ACCEPTED` áp dụng bản phim ảnh tĩnh cũ. `DRAMA_FILM_READY = NO`. Owner feedback được thêm vào event `owner_drama_visual_feedback`, không sửa/xóa render review, audio approval, caption, export hoặc lịch sử cũ. Duyệt tạo hình mới chỉ áp dụng ba ảnh có hash trong `owner-reference-decision.json`; không phải duyệt pilot, diễn xuất, quyền phát hành hoặc phim.

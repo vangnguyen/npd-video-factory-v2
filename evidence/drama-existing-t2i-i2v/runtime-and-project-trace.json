@@ -1,0 +1,486 @@
+{
+  "schema_version": "existing-t2i-i2v-trace-v1",
+  "at": "2026-10-19T01:05:31.418855+00:00",
+  "application": {
+    "application": "NPD Video Studio",
+    "application_source": "C:\\vfdr07",
+    "branch": "codex/vf-drama-m4-closure-07",
+    "commit": "0eb7e679be6a138fff891987bd507ea4c82b8000",
+    "build": "drama-m4-closure-07",
+    "platform_api_publishing": "DEFERRED",
+    "analytics": "DEFERRED",
+    "full_trend_radar": "DEFERRED",
+    "production_deployed": false
+  },
+  "repository_head": "7187d98a29a6059fb99256c6ce8e6ed0155ca357",
+  "source_project_id": "1c768012f9624de494a9fadab63c1a31",
+  "revision": 8,
+  "active_jobs": 0,
+  "canonical_timeline_version": 5,
+  "canonical_timeline_sha256": "4b096bdef5ed2ea23bfd9ddfdf505fc1f006718ad5bfb32b611d1d74ce319513",
+  "duration_seconds": 35.32,
+  "visual_clips": [
+    {
+      "clip_id": "clip_d26adfb26b3c559cbb3be5ea909d7898_0",
+      "kind": "image",
+      "asset_id": "ast_6fb81abe6c8c5f9a7d464f69958024cb",
+      "timeline_start": 0.0,
+      "duration": 35.32,
+      "source_start": 0.0,
+      "source_end": null,
+      "speed": 1.0,
+      "crop": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1.0,
+        "height": 1.0
+      },
+      "effects": [],
+      "track_id": "trk_native_video",
+      "native_asset_id": "8a0b0d12496943888a134b2ecc151d8b.jpg",
+      "shot_id": "shot_d26adfb26b3c559cbb3be5ea909d7898",
+      "motion": "none",
+      "source_sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+      "actual_file": "C:\\vfct\\final-export-review-n1\\assets\\8a0b0d12496943888a134b2ecc151d8b.jpg",
+      "actual_original": "C:\\vfct\\final-export-review-n1\\originals\\8a0b0d12496943888a134b2ecc151d8b.jpg",
+      "filename": "Quán cà phê · Hình đề xuất Owner đã duyệt.jpg",
+      "source_type": "user_upload",
+      "provider": "native-local-upload",
+      "generation_provenance": {},
+      "actual_file_sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+      "source_original_sha256": "d96e934ab6e132b1461da171344548a6b6e332b2687b5bf4542159a654c06bb0",
+      "source_is_image": true,
+      "source_is_video": false,
+      "source_width": 1080,
+      "source_height": 1920
+    }
+  ],
+  "source_scene_media": [
+    {
+      "scene": 1,
+      "asset_id": "8a0b0d12496943888a134b2ecc151d8b.jpg"
+    }
+  ],
+  "project_version_trace": [
+    {
+      "revision": 1,
+      "assets": [],
+      "scene_media": [],
+      "canonical_version": null,
+      "canonical_sha256": null,
+      "visual_clip_kinds": []
+    },
+    {
+      "revision": 2,
+      "assets": [],
+      "scene_media": [],
+      "canonical_version": null,
+      "canonical_sha256": null,
+      "visual_clip_kinds": []
+    },
+    {
+      "revision": 3,
+      "assets": [],
+      "scene_media": [],
+      "canonical_version": 1,
+      "canonical_sha256": "640f4020bb4d242150c9281f04041c61dc42279fd6931ab28f8d5a7c0f69d320",
+      "visual_clip_kinds": [
+        "metadata"
+      ]
+    },
+    {
+      "revision": 4,
+      "assets": [
+        {
+          "id": "8a0b0d12496943888a134b2ecc151d8b.jpg",
+          "kind": "image",
+          "sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+          "provider": "native-local-upload",
+          "source_type": "user_upload"
+        }
+      ],
+      "scene_media": [],
+      "canonical_version": 2,
+      "canonical_sha256": "640f4020bb4d242150c9281f04041c61dc42279fd6931ab28f8d5a7c0f69d320",
+      "visual_clip_kinds": [
+        "metadata"
+      ]
+    },
+    {
+      "revision": 5,
+      "assets": [
+        {
+          "id": "8a0b0d12496943888a134b2ecc151d8b.jpg",
+          "kind": "image",
+          "sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+          "provider": "native-local-upload",
+          "source_type": "user_upload"
+        }
+      ],
+      "scene_media": [
+        {
+          "scene": 1,
+          "asset_id": "8a0b0d12496943888a134b2ecc151d8b.jpg"
+        }
+      ],
+      "canonical_version": 3,
+      "canonical_sha256": "69710af6f5be97fafd1b0da46c3b5f23f9337086972ef91b577baaef0c4a9677",
+      "visual_clip_kinds": [
+        "image"
+      ]
+    },
+    {
+      "revision": 6,
+      "assets": [
+        {
+          "id": "8a0b0d12496943888a134b2ecc151d8b.jpg",
+          "kind": "image",
+          "sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+          "provider": "native-local-upload",
+          "source_type": "user_upload"
+        }
+      ],
+      "scene_media": [
+        {
+          "scene": 1,
+          "asset_id": "8a0b0d12496943888a134b2ecc151d8b.jpg"
+        }
+      ],
+      "canonical_version": 4,
+      "canonical_sha256": "69710af6f5be97fafd1b0da46c3b5f23f9337086972ef91b577baaef0c4a9677",
+      "visual_clip_kinds": [
+        "image"
+      ]
+    },
+    {
+      "revision": 7,
+      "assets": [
+        {
+          "id": "8a0b0d12496943888a134b2ecc151d8b.jpg",
+          "kind": "image",
+          "sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+          "provider": "native-local-upload",
+          "source_type": "user_upload"
+        }
+      ],
+      "scene_media": [
+        {
+          "scene": 1,
+          "asset_id": "8a0b0d12496943888a134b2ecc151d8b.jpg"
+        }
+      ],
+      "canonical_version": 4,
+      "canonical_sha256": "69710af6f5be97fafd1b0da46c3b5f23f9337086972ef91b577baaef0c4a9677",
+      "visual_clip_kinds": [
+        "image"
+      ]
+    },
+    {
+      "revision": 8,
+      "assets": [
+        {
+          "id": "8a0b0d12496943888a134b2ecc151d8b.jpg",
+          "kind": "image",
+          "sha256": "112cf777b130936002690b62f89f5da17f01532bdecdc7dccdc1969d939c5851",
+          "provider": "native-local-upload",
+          "source_type": "user_upload"
+        }
+      ],
+      "scene_media": [
+        {
+          "scene": 1,
+          "asset_id": "8a0b0d12496943888a134b2ecc151d8b.jpg"
+        }
+      ],
+      "canonical_version": 5,
+      "canonical_sha256": "4b096bdef5ed2ea23bfd9ddfdf505fc1f006718ad5bfb32b611d1d74ce319513",
+      "visual_clip_kinds": [
+        "image"
+      ]
+    }
+  ],
+  "project_job_trace": [
+    {
+      "id": "ffb25b9779204412ab06f738b353eab6",
+      "kind": "narration",
+      "status": "succeeded",
+      "stage": "succeeded",
+      "output_directory": null,
+      "video_url": null,
+      "render_version": null
+    },
+    {
+      "id": "ecf5e70c44a749f9b0068ba45c9b8d89",
+      "kind": "render",
+      "status": "succeeded",
+      "stage": "succeeded",
+      "output_directory": "C:\\vfct\\final-export-review-n1\\jobs\\ecf5e70c44a749f9b0068ba45c9b8d89",
+      "video_url": "/api/jobs/ecf5e70c44a749f9b0068ba45c9b8d89/video",
+      "render_version": "3e41badd51fcd8b2e0e7850b3cf0f8c6732f2209781acdad4a1ac847f659c089"
+    }
+  ],
+  "native_generation_table_counts": {
+    "native_generation_jobs": {
+      "workspace_rows": 0,
+      "project_rows": 0
+    },
+    "native_generation_media": {
+      "workspace_rows": 0,
+      "project_rows": 0
+    },
+    "native_generation_reference_admissions": {
+      "workspace_rows": 0,
+      "project_rows": 0
+    },
+    "native_generation_events": {
+      "workspace_rows": 0,
+      "project_rows": 0
+    }
+  },
+  "generation_jobs": [],
+  "generation_page": {
+    "schema_version": "native-generation-page-v1",
+    "workspace_id": "wsp_native_local",
+    "project_id": "1c768012f9624de494a9fadab63c1a31",
+    "items": [],
+    "worker_wired": true,
+    "publish_enabled": false,
+    "automatic_attachment": false,
+    "total": 0,
+    "has_more": false
+  },
+  "current_providers": {
+    "schema_version": "native-generation-providers-v1",
+    "workspace_id": "wsp_native_local",
+    "items": [
+      {
+        "modality": "image",
+        "operation": "generate",
+        "provider": "comfyui-image",
+        "workflow_id": "npd-text-to-image-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "6778b2211e910467a833c2cfb921b2fd75ba29c6145a4e0652a315483fcb8b7e",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "image",
+        "operation": "image_to_image",
+        "provider": "comfyui-image",
+        "workflow_id": "npd-image-to-image-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "4b5cee5081e9627cad6139d431d3a71e13e94af41f4ae9d72b71fb700b2f83fb",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "image",
+        "operation": "variation",
+        "provider": "comfyui-image",
+        "workflow_id": "npd-image-to-image-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "4b5cee5081e9627cad6139d431d3a71e13e94af41f4ae9d72b71fb700b2f83fb",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "image",
+        "operation": "inpaint",
+        "provider": "comfyui-image",
+        "workflow_id": "npd-inpaint-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "6ec42b8d261363a75d70d3ceeda02df2ef0104aac01c907ec8539a63ac1c55de",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "image",
+        "operation": "upscale",
+        "provider": "comfyui-image",
+        "workflow_id": "npd-upscale-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "8929cde49a80c9b41d62956d8fb6d3feef4dde2a3a7961021a71aed442ea336c",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "video",
+        "operation": "text_to_video",
+        "provider": "comfyui-video",
+        "workflow_id": "npd-video-generation-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "4cf5c3cc38d1ab1adffcb1c99c2292b670179f2fef02c692b87de9362d72317c",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "video",
+        "operation": "image_to_video",
+        "provider": "comfyui-video",
+        "workflow_id": "npd-image-to-video-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "bbf1f8df6b762da70fa99cbc194dfdb1a5c98207fcf48f55a90d3f3362855b34",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      },
+      {
+        "modality": "video",
+        "operation": "reference_assisted",
+        "provider": "comfyui-video",
+        "workflow_id": "npd-image-to-video-v1",
+        "workflow_version": "1.0.0",
+        "workflow_sha256": "bbf1f8df6b762da70fa99cbc194dfdb1a5c98207fcf48f55a90d3f3362855b34",
+        "manifest_sha256": "9af7ee958e3400c1821e3210a97605721238ee88da52191b88aeab91fa45bfda",
+        "provider_configuration_sha256": null,
+        "mode": "official",
+        "status": "NOT_CONFIGURED",
+        "executable_workflow_reviewed": false,
+        "real_provider_tested": false
+      }
+    ],
+    "ui_enablement_supported": false,
+    "owner_enabled": false,
+    "automatic_attachment": false,
+    "publish_enabled": false,
+    "real_provider_tested": false
+  },
+  "workflows": [
+    {
+      "workflow_id": "npd-text-to-image-v1",
+      "version": "1.0.0",
+      "graph_path": "C:\\vfdr07\\workflows\\comfyui\\text-to-image-v1.json",
+      "graph_sha256": "1614ab8619e223c7c0966acfc6aadcf2b7ba6dc95a36a75745718b7dca11edfe",
+      "graph_meta": {
+        "workflow_id": "npd-text-to-image-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_nodes": 0,
+      "model_identifiers": [
+        "owner-provisioned-image-model"
+      ],
+      "expected_vram_gb_in_manifest": 12.0,
+      "reviewed_executable": false,
+      "execution_binding": null
+    },
+    {
+      "workflow_id": "npd-image-to-video-v1",
+      "version": "1.0.0",
+      "graph_path": "C:\\vfdr07\\workflows\\comfyui\\image-to-video-v1.json",
+      "graph_sha256": "bc976e2b59f650bfa85dd6a0d85d3d37399d22950a6515e37ffef6ea776a2961",
+      "graph_meta": {
+        "workflow_id": "npd-image-to-video-v1",
+        "version": "1.0.0",
+        "execution": "owner-provisioned-only"
+      },
+      "executable_nodes": 0,
+      "model_identifiers": [
+        "owner-provisioned-video-model"
+      ],
+      "expected_vram_gb_in_manifest": 24.0,
+      "reviewed_executable": false,
+      "execution_binding": null
+    }
+  ],
+  "served_frontend_checks": [
+    {
+      "file": "native.mjs",
+      "served_sha256": "c7554910296518ad5f80d5c1da6ae640cd6a9447c443e5606b5a24f0fd51eced",
+      "source_sha256": "c7554910296518ad5f80d5c1da6ae640cd6a9447c443e5606b5a24f0fd51eced",
+      "match": true
+    },
+    {
+      "file": "drama-workflow.mjs",
+      "served_sha256": "2542ac8e4c828c286094842b1e284b777a28ed3088f3353a35ac0b30b18f147b",
+      "source_sha256": "2542ac8e4c828c286094842b1e284b777a28ed3088f3353a35ac0b30b18f147b",
+      "match": true
+    },
+    {
+      "file": "native-generation.mjs",
+      "served_sha256": "73e48b4ec227480ad466afaf08e1a1c37ef826fdf162d3a237b7fea685867936",
+      "source_sha256": "73e48b4ec227480ad466afaf08e1a1c37ef826fdf162d3a237b7fea685867936",
+      "match": true
+    }
+  ],
+  "runtime_models_directory": "C:\\NPD-Video-Factory\\runtime\\models",
+  "runtime_model_folders": [
+    "moss-codec",
+    "vieneu-v3-turbo"
+  ],
+  "reference_images": [
+    {
+      "name": "An",
+      "source_provider": "OpenAI built-in image_gen tool",
+      "source_reference": "exec-28a86232-1709-4f94-874e-2570b8ff3a76",
+      "sha256": "06668966fc4e81c9d300d50d659e710a842beeb27e28449ff7e7eee536c3d7db",
+      "studio_asset_id": "1d495bfd83dd4e30b00d64e0683c1610.jpg",
+      "real_image_generation": true,
+      "native_t2i_job": null,
+      "i2v_job": null,
+      "owner_reference_approved": true,
+      "selected_by_original_timeline": false
+    },
+    {
+      "name": "Bình",
+      "source_provider": "OpenAI built-in image_gen tool",
+      "source_reference": "exec-e4df1822-e982-40ce-8d43-00872ee90fef",
+      "sha256": "68f36e17be2b731d95b6c91917456bb1b383ff016db88f960a47c752886c8ef0",
+      "studio_asset_id": "82791a402db64a348cc8881c50bc4b07.jpg",
+      "real_image_generation": true,
+      "native_t2i_job": null,
+      "i2v_job": null,
+      "owner_reference_approved": true,
+      "selected_by_original_timeline": false
+    },
+    {
+      "name": "Quán cà phê",
+      "source_provider": "OpenAI built-in image_gen tool",
+      "source_reference": "exec-3c20f976-8698-44eb-b5d6-562b5dfed83e",
+      "sha256": "0598de0fefee4e9f3ae687785adf0c30cd2910814e83882b810d26cfd4d39bea",
+      "studio_asset_id": "86f6ad7b5c6345b4acd04ffa41510c99.jpg",
+      "real_image_generation": true,
+      "native_t2i_job": null,
+      "i2v_job": null,
+      "owner_reference_approved": true,
+      "selected_by_original_timeline": false
+    }
+  ],
+  "narrator_enabled": false,
+  "project_unchanged": true,
+  "approval_changed": false,
+  "timeline_changed": false,
+  "new_provider_added": false,
+  "real_i2v_output_clips_found": 0,
+  "i2v_output_location": null,
+  "fixture_used_as_owner_pilot": false,
+  "pilot_video": null,
+  "DRAMA_FILM_READY": "NO"
+}
